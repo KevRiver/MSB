@@ -16,6 +16,7 @@ public class Player : MonoBehaviour {
     //movement 브랜치 테스트 1
     //movement 브랜치 테스트 1
     //movement 브랜치 테스트 222
+    //깃 테스트 12412412
     
 	// Use this for initialization
 	void Start () {
