@@ -3,42 +3,69 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour {
+    private Transform m_tr;
+    private Rigidbody2D m_rb;
 
-    //Player 게임오브젝트의 Transform, Rigidbody2D, Capsulecollider2D 를 드래그 앤 드롭
-    public Transform tr;
-    public Rigidbody2D rb;
-    public BoxCollider2D bc;
-
-    public int hp;
-    public float dir;
-    public float speed;
-
-    void TakeDamage()
-    {
-        //공격 받았을 때 hp 깎임
-        //피격 이펙트 : 캐릭터 색깔이 0.1초간 붉은색으로 바뀜
-    }
-
-    void Die()
-    {
-        //죽으면 죽는 이펙트 나오고, 게임오브젝트 삭제
-    }
-	
-    // Use this for initialization
+    public float m_hp;
+    public float m_moveSpeed;
+    private float m_maxSpeed;
+    public bool isMovable;
+    public Vector3 m_velocity;
+    //public Weapon weapon;
+    
+	// Use this for initialization
 	void Start () {
-        hp = 10;
-        dir = 0;
-        speed = 10f;
+        m_tr = GetComponent<Transform>();
+        m_rb = GetComponent<Rigidbody2D>();
+        m_hp = 3.0f;
+        m_moveSpeed = 15.0f;
+        m_maxSpeed = 6.0f;
+        isMovable = true;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if (hp <= 0) //업데이트 마다 죽었는지 안죽었는지 체크
-        {
-            Die(); //죽었으면 Die 호출
-        }
-
-        GetComponent<Move>().move(rb,tr); // 화살표키로 이동
-        GetComponent<Skill>().useSkill(rb, GetComponent<Move>().move(rb, tr)); //a키로 스킬사용
+        move();
+        m_velocity = m_rb.velocity;
+            
 	}
+
+    public void die() {
+
+    }
+
+    public void move() {
+        if (!isMovable)
+            return;
+
+        if (Mathf.Abs(m_rb.velocity.x) > m_maxSpeed)
+        {
+
+        }
+        else if (Input.GetKey(KeyCode.RightArrow))
+        {
+            m_rb.AddForce(Vector3.right * m_moveSpeed);
+            m_tr.localScale = new Vector3(1.5f,1.5f, 0f);
+        }
+        else if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            m_rb.AddForce(Vector3.left * m_moveSpeed);
+            m_tr.localScale = new Vector3(-1.5f, 1.5f, 0f);
+        }
+        else {}
+    }
+
+    public float getDamage(float currentHp, float damage) {
+        float updatedHp = currentHp - damage;
+        return updatedHp;
+    }
+
+    public void attack() {
+
+    }
+
+    public void useSkill()
+    {
+         
+    }
 }

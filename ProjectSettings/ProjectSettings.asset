@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 15
-  productGUID: dcbdb83b15f066a4ea0c671d267e62eb
+  productGUID: 1131563d3435e014d970a619e529e22e
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: DefaultCompany
-  productName: project_MSB
+  productName: MSB
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -646,8 +646,8 @@ PlayerSettings:
     UNet: 1
   facebookSdkVersion: 7.9.4
   apiCompatibilityLevel: 2
-  cloudProjectId: a7a5dce0-1e28-4bf5-a1fe-29b4fce126a2
-  projectName: project_MSB
+  cloudProjectId: 098708bf-37b3-4c33-bc26-79e7f9f423a8
+  projectName: MSB
   organizationId: kanggakky1214
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
