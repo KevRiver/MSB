@@ -13,9 +13,8 @@ public class Player : MonoBehaviour {
     public Vector3 m_velocity;
     //public Weapon weapon;
 
-    // 깃 테스트 1
-    // 깃 테스트 1
-    // 깃 테스트 1
+    //movement 브랜치 테스트 1
+    //movement 브랜치 테스트 1
     
 	// Use this for initialization
 	void Start () {
