@@ -20,7 +20,7 @@ public class Player : MonoBehaviour {
         m_rb = GetComponent<Rigidbody2D>();
         m_hp = 3.0f;
         m_moveSpeed = 15.0f;
-        m_jumpForce = 800.0f;
+        m_jumpForce = 700.0f; //git - pull test by Gon
         m_maxSpeed = 6.0f;
         isMovable = true;
 	}
