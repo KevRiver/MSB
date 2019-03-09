@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class JumpPad : MonoBehaviour {
 
+    //190309 깃 테스트 1
     public float stayTime;  //Player가 점프패드에 닿아있는 시간을 담는 변수
     public float maxTime;   //점프를 하기 위해 플레이어가 점프패드에 접촉을 유지해야하는 시간
 	// Use this for initialization
