@@ -20,7 +20,7 @@ public class Player : MonoBehaviour {
         m_rb = GetComponent<Rigidbody2D>();
         m_hp = 3.0f;
         m_moveSpeed = 15.0f;
-        m_jumpForce = 600.0f;
+        m_jumpForce = 800.0f;
         m_maxSpeed = 6.0f;
         isMovable = true;
 	}
@@ -46,29 +46,20 @@ public class Player : MonoBehaviour {
 
         if (Mathf.Abs(m_rb.velocity.x) > m_maxSpeed)
         {
-            Debug.Log("blank");
-            /*if (m_rb.velocity.x > 0)
-            {
-                m_rb.velocity = new Vector2(5.9f, 0f);
-            }
-            else if (m_rb.velocity.x < 0) {
-                m_rb.velocity = new Vector2(-5.9f, 0f);
-            }*/
+
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
-            Debug.Log("right");
             m_rb.AddForce(Vector3.right * m_moveSpeed);    //AddForce는 Time.deltaTime을 곱해줄 필요가 없다
             m_tr.localScale = new Vector3(1.5f,1.5f,0f);   //localScale을 좌우로 바꾼다
         }
         else if (Input.GetKey(KeyCode.LeftArrow))
         {
-            Debug.Log("left");
             m_rb.AddForce(Vector3.left * m_moveSpeed);
             m_tr.localScale = new Vector3(-1.5f,1.5f,0f);
         }
         else {
-            Debug.Log("else");
+            // stop condition
         }
     }
 
