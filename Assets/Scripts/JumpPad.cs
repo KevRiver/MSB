@@ -22,7 +22,7 @@ public class JumpPad : MonoBehaviour {
         stayTime = 0;
         Debug.Log("Entered");
     }
-
+    
     private void OnTriggerStay2D(Collider2D collision)
     {
         //접촉을 유지하고 있을 동안 stayTime 변수의 값을 증가시켜 maxTime 까지 증가되면 Player.jump() 를 실행
