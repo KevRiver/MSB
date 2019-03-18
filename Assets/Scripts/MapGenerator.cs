@@ -4,9 +4,17 @@ using System.IO;
 using UnityEngine;
 using System;
 
-public class MapMaker : MonoBehaviour
+public class MapGenerator : MonoBehaviour
 {
-    public GameObject obj;
+    // Map Tile Block
+    public GameObject blockGray_12;
+    public GameObject blockGray_11;
+    public GameObject blockBrown_12;
+    public GameObject blockBrown_11;
+
+    // Map Object
+    public GameObject jumpPad;
+
 
     // 맵 속성 구조체
     public struct MapStruct
@@ -14,12 +22,14 @@ public class MapMaker : MonoBehaviour
         public int mapHeight;
         public int mapWidth;
         public char[,] mapArray;
+        public char[,] objectArray;
 
         public MapStruct(int height, int width)
         {
             mapHeight = height;
             mapWidth = width;
             mapArray = new char[width, height];
+            objectArray = new char[width, height];
 
         }
     }
@@ -42,7 +52,8 @@ public class MapMaker : MonoBehaviour
     MapStruct loadFile(MapStruct mapStruct)
     {
         // 텍스트 파일로 만든 맵 파일 로드
-        string loadedFile = File.ReadAllText(@"Assets/Scripts/mapText.txt");
+        string loadedFile = File.ReadAllText(@"Assets/Scripts/MapText.txt");
+        string loadedObjectFile = File.ReadAllText(@"Assets/Scripts/MapObjectText.txt");
 
         // 맵의 가로와 세로 측정
         int height = 1;
@@ -69,6 +80,7 @@ public class MapMaker : MonoBehaviour
             if (loadedFile[x] != '\n')
             {
                 mapStruct.mapArray[x1, y1] = loadedFile[x];
+                mapStruct.objectArray[x1, y1] = loadedObjectFile[x];
                 x1++;
             }
             else
@@ -90,10 +102,30 @@ public class MapMaker : MonoBehaviour
         {
             for (int x = 0; x < mapStruct.mapWidth; x++)
             {
-                if (mapStruct.mapArray[x, y] == '1')
+               
+                switch(mapStruct.mapArray[x, y])
                 {
-                    Instantiate(obj, new Vector3(x - (mapStruct.mapWidth/2), mapStruct.mapHeight - 5.5f  - y, 0), Quaternion.identity);
+                    case '1':
+                        Instantiate(blockGray_12, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
+                        break;
+                    case '2':
+                        Instantiate(blockGray_11, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
+                        break;
+                    case '3':
+                        Instantiate(blockBrown_12, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
+                        break;
+                    case '4':
+                        Instantiate(blockBrown_11, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
+                        break;
                 }
+
+                switch (mapStruct.objectArray[x, y])
+                {
+                    case '2':
+                        Instantiate(jumpPad, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
+                        break;
+                }
+
             }
         }
     }
