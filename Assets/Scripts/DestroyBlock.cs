@@ -16,11 +16,15 @@ public class DestroyBlock : MonoBehaviour
 
     }
 
+    public GameObject particleEffect;
+
     private void OnCollisionStay2D(Collision2D collision)
     {
         if (Input.GetKey(KeyCode.Space))
         {
             Debug.Log("space");
+            Vector3 objectPosition = gameObject.transform.position;
+            Instantiate(particleEffect, objectPosition, Quaternion.identity);
             Destroy(gameObject);
         }
     }
