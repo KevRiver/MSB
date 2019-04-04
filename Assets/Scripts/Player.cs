@@ -6,29 +6,36 @@ public class Player : MonoBehaviour {
     private Transform m_tr;
     private Rigidbody2D m_rb;
 
-    public float m_hp;
+    public int m_hp;
     public float m_moveSpeed;
     public float m_jumpForce;
     private float m_maxSpeed;
     public bool isMovable; //Player의 이동가능여부 플래그
     public Vector3 m_velocity;
+
+    private GameObject hitbox;
+    private bool isAttacking = false;
     //public Weapon weapon; 
 
 	// Use this for initialization
 	void Start () {
         m_tr = GetComponent<Transform>();
         m_rb = GetComponent<Rigidbody2D>();
-        m_hp = 3.0f;
+        m_hp = 5;
         m_moveSpeed = 15.0f;
         m_jumpForce = 700.0f; //git - pull test by Gon
         m_maxSpeed = 6.0f;
         isMovable = true;
+
+        hitbox = transform.GetChild(0).gameObject;
+        hitbox.SetActive(false);
 	}
 	
 	// Update is called once per frame
 	void Update () {
         move();
         m_velocity = m_rb.velocity;
+        attack();
             
 	}
 
@@ -74,7 +81,31 @@ public class Player : MonoBehaviour {
     }
 
     public void attack() {
+        // Hit Box 를 0.2 초간 enabled = true 후 다시 enable = false 시킨다
+        // 추후 업그레이드
+        // Animation을 실행시키고 Animation 프레임마다 BoxCollider로 HitBox 넣어줌 << 이게 제일 괜찮아 보임 판정상
+        // +모든 공격은 조준을 해야되므로 플레이어가 조준한 곳으로 애니메이션, 히트박스가 생성되어야함
+        if (Input.GetKeyDown(KeyCode.Space) && !isAttacking)
+        {
+            isAttacking = true;
+            hitbox.SetActive(true);
+            StartCoroutine(WaitForIt());
+            StartCoroutine(CoolTime());
+        }
+    }
 
+    IEnumerator WaitForIt()
+    {
+        yield return new WaitForSeconds(0.1f);
+        hitbox.SetActive(false);
+        //isAttacking = false;
+    }
+
+    IEnumerator CoolTime()
+    {
+        yield return new WaitForSeconds(0.5f);
+        //hitbox.SetActive(false);
+        isAttacking = false;
     }
 
     public void useSkill()
