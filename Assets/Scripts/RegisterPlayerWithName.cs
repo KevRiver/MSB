@@ -21,19 +21,21 @@ public class RegisterPlayerWithName : MonoBehaviour
         userData.AddField("userKey", strPlayerName);
         
 
-        socket = networkmodule.GetComponent<NetworkModule>().get_socket();
+        socket = networkmodule.GetComponent<NetworkModule>().getSocket();
         socket.On("loginSuccess", loginSuccess);
         socket.On("loginFail", loginFail);
         socket.Emit("login",userData);
-        Debug.Log(strPlayerName);
+        //Debug.Log(strPlayerName);
     }
 
     public void loginSuccess(SocketIOEvent obj)
     {
-        User localPlayer = new User();
         Debug.Log("Login Success!" + obj);
+
+        User localPlayer = new User();
         JSONObject data = obj.data;
         int userNumber;
+
         try
         {
             localPlayer.Num = (int)data[0].n;
