@@ -5,25 +5,26 @@ using SocketIO;
 
 public class NetworkModule : MonoBehaviour
 {
-    public GameObject socketManager;
+    public GameObject m_SocketManager;
 
     private SocketIOComponent m_SocketIOComponet;
 
     private void Awake()
     {
+        Debug.Log("NetworkModule Awaked");
         DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
     {
-        m_SocketIOComponet = socketManager.GetComponent<SocketIOComponent>();
+        m_SocketIOComponet = m_SocketManager.GetComponent<SocketIOComponent>();
         m_SocketIOComponet.On("open", onSocketOpen);
         m_SocketIOComponet.On("error", onSocketError);
         m_SocketIOComponet.On("close", onSocketClose);
 
     }
 
-    public SocketIOComponent get_socket()
+    public SocketIOComponent getSocket()
     {
         if (m_SocketIOComponet == null)
         {
