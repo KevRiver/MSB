@@ -6,6 +6,9 @@ public class Player : MonoBehaviour {
     private Transform m_tr;
     private Rigidbody2D m_rb;
 
+    public int m_userIndex;
+    public string m_userID;
+
     public int m_hp;
     public float m_moveSpeed;
     public float m_jumpForce;
@@ -15,10 +18,37 @@ public class Player : MonoBehaviour {
 
     private GameObject hitbox;
     private bool isAttacking = false;
+
+    /*public int UserIndex
+    {
+        get
+        {
+            return userIndex;
+        }
+
+        set
+        {
+            userIndex = value;
+        }
+    }
+    //public string UserID
+    {
+        get
+        {
+            return userID;
+        }
+
+        set
+        {
+            userID = value;
+        }
+    }*/
+
     //public Weapon weapon; 
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
+        Debug.Log("Hoo Ha");
         m_tr = GetComponent<Transform>();
         m_rb = GetComponent<Rigidbody2D>();
         m_hp = 5;

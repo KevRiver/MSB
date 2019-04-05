@@ -14,6 +14,7 @@ public class MapGenerator : MonoBehaviour
 
     // Map Object
     public GameObject jumpPad;
+    public GameObject sampleEnemy;
 
 
     // 맵 속성 구조체
@@ -106,23 +107,26 @@ public class MapGenerator : MonoBehaviour
                 switch(mapStruct.mapArray[x, y])
                 {
                     case '1':
-                        Instantiate(blockGray_12, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 100), Quaternion.identity);
+                        Instantiate(blockGray_12, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
                         break;
                     case '2':
-                        Instantiate(blockGray_11, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 100), Quaternion.identity);
+                        Instantiate(blockGray_11, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
                         break;
                     case '3':
-                        Instantiate(blockBrown_12, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 100), Quaternion.identity);
+                        Instantiate(blockBrown_12, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
                         break;
                     case '4':
-                        Instantiate(blockBrown_11, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 100), Quaternion.identity);
+                        Instantiate(blockBrown_11, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
                         break;
                 }
 
                 switch (mapStruct.objectArray[x, y])
                 {
                     case '2':
-                        Instantiate(jumpPad, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 100), Quaternion.identity);
+                        Instantiate(jumpPad, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.85f - y, 0), Quaternion.identity);
+                        break;
+                    case '3':
+                        Instantiate(sampleEnemy, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
                         break;
                 }
 
