@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using SocketIO;
+using System;
 
 public class RegisterPlayerWithName : MonoBehaviour
 {
@@ -29,7 +30,24 @@ public class RegisterPlayerWithName : MonoBehaviour
 
     public void loginSuccess(SocketIOEvent obj)
     {
+        User localPlayer = new User();
         Debug.Log("Login Success!" + obj);
+        JSONObject data = obj.data;
+        int userNumber;
+        try
+        {
+            localPlayer.Num = (int)data[0].n;
+        }
+        catch (Exception err)
+        {
+            userNumber = -1;
+            Debug.Log("Error : UserNumber = -1");
+        };
+        
+        Debug.Log("User number is : " + localPlayer.Num);
+        GameObject.Find("Me").GetComponent<LocalPlayer>().setUser(localPlayer);
+
+        //로그인 버튼 -> 로그 아웃 버튼, 큐 입장 버튼 생성
     }
 
     public void loginFail(SocketIOEvent obj)
