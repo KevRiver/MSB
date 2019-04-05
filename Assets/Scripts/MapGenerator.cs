@@ -14,6 +14,7 @@ public class MapGenerator : MonoBehaviour
 
     // Map Object
     public GameObject jumpPad;
+    public GameObject sampleEnemy;
 
 
     // 맵 속성 구조체
@@ -122,7 +123,10 @@ public class MapGenerator : MonoBehaviour
                 switch (mapStruct.objectArray[x, y])
                 {
                     case '2':
-                        Instantiate(jumpPad, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
+                        Instantiate(jumpPad, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.85f - y, 0), Quaternion.identity);
+                        break;
+                    case '3':
+                        Instantiate(sampleEnemy, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
                         break;
                 }
 
