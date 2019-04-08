@@ -74,10 +74,7 @@ public class TestSocketIO : MonoBehaviour
 	public void TestOpen(SocketIOEvent e)
 	{
 		Debug.Log("[SocketIO] Open received: " + e.name + " " + e.data);
-        JSONObject data = e.data;
-        int userNumber = (int)data[0].n;
-        Debug.Log("User number is : " + userNumber);
-    }
+	}
 	
 	public void TestBoop(SocketIOEvent e)
 	{
