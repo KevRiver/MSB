@@ -7,9 +7,7 @@ using System;
 public class MapGenerator : MonoBehaviour
 {
     // Map Tile Block
-    public GameObject blockGray_12;
     public GameObject blockGray_11;
-    public GameObject blockBrown_12;
     public GameObject blockBrown_11;
 
     // Map Object
@@ -106,14 +104,8 @@ public class MapGenerator : MonoBehaviour
                
                 switch(mapStruct.mapArray[x, y])
                 {
-                    case '1':
-                        Instantiate(blockGray_12, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
-                        break;
                     case '2':
                         Instantiate(blockGray_11, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
-                        break;
-                    case '3':
-                        Instantiate(blockBrown_12, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
                         break;
                     case '4':
                         Instantiate(blockBrown_11, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);

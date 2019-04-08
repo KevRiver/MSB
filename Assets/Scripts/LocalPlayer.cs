@@ -4,20 +4,21 @@ using UnityEngine;
 
 public class LocalPlayer : MonoBehaviour
 {
-    User me;
+    private User localPlayer;
 
     private void Awake()
     {
         DontDestroyOnLoad(this);
     }
-    void Start()
-    {
 
+    public void setLocalPlayer(User user)
+    {
+        localPlayer = user;
     }
 
-    public void setUser(User user)
+    public User getLocalPlayer()
     {
-        me = user;
+        return localPlayer;
     }
 }
     

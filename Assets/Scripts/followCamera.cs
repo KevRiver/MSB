@@ -4,12 +4,11 @@ using UnityEngine;
 
 public class followCamera : MonoBehaviour
 {
-    public Transform target;
+    public Transform target = null;
     public float dist = 10.0f;
     public float height = 5.0f;
     public float smoothRotate = 5.0f;
-
-    private Transform tr;
+    public Transform tr;
 
     // Start is called before the first frame update
     void Start()
@@ -19,6 +18,9 @@ public class followCamera : MonoBehaviour
 
     void LateUpdate()
     {
+        if (target == null)
+            return;
+
         float currYAngle = Mathf.LerpAngle(tr.eulerAngles.y, target.eulerAngles.y, smoothRotate * Time.deltaTime);
 
         Quaternion rot = Quaternion.Euler(0, currYAngle, 0);
@@ -28,9 +30,8 @@ public class followCamera : MonoBehaviour
         tr.LookAt(target);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void setTarget(Transform tr)
     {
-        
+        target = tr;
     }
 }

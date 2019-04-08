@@ -5,6 +5,8 @@ using UnityEngine;
 public class UserData : MonoBehaviour
 {
     ArrayList m_userlist;
+    int gameRoomIndex;
+    int gamePlayerIndex;
 
     private void Awake()
     {
@@ -22,6 +24,26 @@ public class UserData : MonoBehaviour
     public ArrayList getUserlist()
     {
         return m_userlist;
+    }
+
+    public void setRoomIndex(int gameRoomIndex)
+    {
+        this.gameRoomIndex = gameRoomIndex;
+    }
+
+    public void setPlayerIndex(int playerIndex)
+    {
+        this.gamePlayerIndex = playerIndex;
+    }
+
+    public int getRoomIndex()
+    {
+        return gameRoomIndex;
+    }
+
+    public int getPlayerIndex()
+    {
+        return gamePlayerIndex;
     }
 
     public void clearUserData()
