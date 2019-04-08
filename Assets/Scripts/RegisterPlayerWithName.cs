@@ -45,7 +45,7 @@ public class RegisterPlayerWithName : MonoBehaviour
         };
         
         Debug.Log("User number is : " + localPlayer.Num);
-        GameObject.Find("Me").GetComponent<LocalPlayer>().setUser(localPlayer);
+        GameObject.Find("LocalPlayer").GetComponent<LocalPlayer>().setLocalPlayer(localPlayer);
 
         //로그인 버튼 -> 로그 아웃 버튼, 큐 입장 버튼 생성
     }

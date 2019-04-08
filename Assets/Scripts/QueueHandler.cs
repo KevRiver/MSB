@@ -31,14 +31,14 @@ public class QueueHandler : MonoBehaviour
 
         JSONObject data = e.data;
 
-        int gameRoomIndex;
+        int gameRoomIndex = -1;
         try
         {
             gameRoomIndex = (int)data[0].n;
         }
         catch (Exception err) { };
 
-        int position;
+        int position = -1;
         try
         {
             position = (int)data[1].n;
@@ -54,7 +54,7 @@ public class QueueHandler : MonoBehaviour
             int i = 0;
             foreach (JSONObject userData in userListJSON.list)
             {
-                Debug.Log("Queue Handler log" + ++i);
+                //Debug.Log("Queue Handler log" + ++i);
                 User player = new User();
                 player.Num = (int)userData[0].n;
                 player.Id = userData[1].str;
@@ -65,7 +65,9 @@ public class QueueHandler : MonoBehaviour
         }
         catch (Exception err) { }
 
-        
+        GameObject.Find("UserData").GetComponent<UserData>().setRoomIndex(gameRoomIndex);
+        GameObject.Find("UserData").GetComponent<UserData>().setPlayerIndex(position);
+
     }
 
     public void soloRoomFull(SocketIOEvent e)
