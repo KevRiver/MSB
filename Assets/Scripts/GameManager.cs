@@ -45,7 +45,7 @@ public class GameManager : MonoBehaviour
         {
             GameObject player = new GameObject();
             Debug.Log(userData.Num);
-            player = Instantiate(PlayerPrefab, new Vector3(0, 0, 100), Quaternion.identity);
+            player = Instantiate(PlayerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
             player.GetComponent<PlayerDetail>().Controller = userData;
             players.Add(player);
 

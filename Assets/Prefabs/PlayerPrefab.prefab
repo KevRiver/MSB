@@ -219,6 +219,12 @@ PrefabInstance:
       propertyPath: m_LocalScale.y
       value: 0.6666667
       objectReference: {fileID: 0}
+    - target: {fileID: 7500814420836811336, guid: 6a7accebe88f79d40827bf2cc6dc3c01,
+        type: 3}
+      propertyPath: hitmarkerSound
+      value: 
+      objectReference: {fileID: 5348942138279765315, guid: a86e47599f82049f7b10178b23bd03bf,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6a7accebe88f79d40827bf2cc6dc3c01, type: 3}
 --- !u!4 &4171277590035050380 stripped
