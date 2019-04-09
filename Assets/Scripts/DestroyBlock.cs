@@ -22,11 +22,17 @@ public class DestroyBlock : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            Debug.Log("space");
-            Vector3 objectPosition = gameObject.transform.position;
-            Instantiate(particleEffect, objectPosition, Quaternion.identity);
-            Destroy(gameObject);
+            destroyBlock();
             //서버에 어떤 블록이 부셔졌는지 보내야댐 블록마다 정보가 있어야됨
         }
+    }
+
+    public void destroyBlock()
+    {
+               
+        Vector3 objectPosition = gameObject.transform.position;
+        objectPosition.z--;
+        Instantiate(particleEffect, objectPosition, Quaternion.identity);
+        Destroy(gameObject);
     }
 }

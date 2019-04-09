@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7854902288729704347}
   - component: {fileID: 5219016080262926392}
   - component: {fileID: 6804912338115053531}
+  - component: {fileID: 5124857888580164462}
   m_Layer: 0
   m_Name: BlockGray_11
   m_TagString: Untagged
@@ -164,3 +165,16 @@ CompositeCollider2D:
       - {x: -0.4937827, y: -0.49692062}
       - {x: 0.4968692, y: -0.49692062}
   m_VertexDistance: 0.0005
+--- !u!114 &5124857888580164462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7854902288729704344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 514b2a5b4ec724bffaf8f1303196343c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blockID: 0

@@ -95,27 +95,35 @@ public class MapGenerator : MonoBehaviour
 
     // 맵 오브젝트 출력
     void printMap(MapStruct mapStruct)
-    { 
+    {
         // 맵 파일을 기반으로 오브젝트 생성
+        int putBlockID = 0;
+        int putObjectID = 0;
         for (int y = 0; y < mapStruct.mapHeight; y++)
         {
             for (int x = 0; x < mapStruct.mapWidth; x++)
             {
-               
+                GameObject block;
                 switch(mapStruct.mapArray[x, y])
                 {
                     case '2':
-                        Instantiate(blockGray_11, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
+                        block = Instantiate(blockGray_11, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
+                        block.GetComponent<BlockData>().blockID = putBlockID;
+                        putBlockID++;
                         break;
                     case '4':
-                        Instantiate(blockBrown_11, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
+                        block = Instantiate(blockBrown_11, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
+                        block.GetComponent<BlockData>().blockID = putBlockID;
+                        putBlockID++;
                         break;
                 }
 
                 switch (mapStruct.objectArray[x, y])
                 {
                     case '2':
-                        Instantiate(jumpPad, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.85f - y, 0), Quaternion.identity);
+                        block = Instantiate(jumpPad, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.85f - y, 0), Quaternion.identity);
+                        block.GetComponent<BlockData>().objectID = putObjectID;
+                        putObjectID++;
                         break;
                     case '3':
                         Instantiate(sampleEnemy, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
