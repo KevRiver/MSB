@@ -13,6 +13,7 @@ public class MapGenerator : MonoBehaviour
     // Map Object
     public GameObject jumpPad;
     public GameObject sampleEnemy;
+    public GameObject flag;
 
     // Camera
     public GameObject mainCamera;
@@ -46,6 +47,8 @@ public class MapGenerator : MonoBehaviour
         mainCamera = GameObject.Find("Main Camera");
         mainCamera.GetComponent<followCamera>().mapHeight = map1.mapHeight;
         mainCamera.GetComponent<followCamera>().mapWidth = map1.mapWidth;
+
+
     }
 
     // Update is called once per frame
@@ -110,17 +113,23 @@ public class MapGenerator : MonoBehaviour
         {
             for (int x = 0; x < mapStruct.mapWidth; x++)
             {
-                GameObject block;
+                GameObject generatedObject;
                 switch(mapStruct.mapArray[x, y])
                 {
                     case '2':
-                        block = Instantiate(blockGray_11, new Vector3(x, -y, 0), Quaternion.identity);
-                        block.GetComponent<BlockData>().blockID = putBlockID;
+                        generatedObject = Instantiate(blockGray_11, new Vector3(x, -y, 0), Quaternion.identity);
+                        generatedObject.GetComponent<BlockData>().objectType = 0;
+                        generatedObject.GetComponent<BlockData>().blockID = putBlockID;
                         putBlockID++;
+                        Debug.Log(generatedObject);
+                        Debug.Log(generatedObject.GetComponent<BlockData>().blockID);
                         break;
                     case '4':
-                        block = Instantiate(blockBrown_11, new Vector3(x, -y, 0), Quaternion.identity);
-                        block.GetComponent<BlockData>().blockID = putBlockID;
+                        generatedObject = Instantiate(blockBrown_11, new Vector3(x, -y, 0), Quaternion.identity);
+                        generatedObject.GetComponent<BlockData>().objectType = 1;
+                        generatedObject.GetComponent<BlockData>().blockID = putBlockID;
+                        Debug.Log(generatedObject);
+                        Debug.Log(generatedObject.GetComponent<BlockData>().blockID);
                         putBlockID++;
                         break;
                         /*
@@ -151,12 +160,18 @@ public class MapGenerator : MonoBehaviour
                         */
 
                     case '2':
-                        block = Instantiate(jumpPad, new Vector3(x,- 0.35f - y, 0), Quaternion.identity);
-                        block.GetComponent<BlockData>().objectID = putObjectID;
+                        generatedObject = Instantiate(jumpPad, new Vector3(x,- 0.35f - y, 0), Quaternion.identity);
+                        generatedObject.GetComponent<BlockData>().objectType = 10;
+                        generatedObject.GetComponent<BlockData>().objectID = putObjectID;
                         putObjectID++;
                         break;
                     case '3':
-                        Instantiate(sampleEnemy, new Vector3(x,- y, 0), Quaternion.identity);
+                        generatedObject = Instantiate(sampleEnemy, new Vector3(x, -y, 0), Quaternion.identity);
+                        generatedObject.GetComponent<BlockData>().objectType = 12;
+                        break;
+                    case '4':
+                        generatedObject = Instantiate(flag, new Vector3(x, 0.55f -y, 0), Quaternion.identity);
+                        generatedObject.GetComponent<BlockData>().objectType = 11;
                         break;
                 }
 

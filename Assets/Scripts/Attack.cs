@@ -6,6 +6,11 @@ public class Attack : MonoBehaviour
 {
     public GameObject hitmarkerSound;
     public GameObject hitmarker;
+    private void Start()
+    {
+        hitmarkerSound = GameObject.Find("hitmarkerSound");
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag == "Player")

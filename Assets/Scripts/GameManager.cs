@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SocketIO;
+using System;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class GameManager : MonoBehaviour
     Vector3[] spawnPoints = new Vector3[6];
     public GameObject PlayerPrefab;
     public ArrayList players = new ArrayList();
+
+    public Hashtable mapHashtable = new Hashtable();
 
     private SocketIOComponent socketIO;
 
@@ -45,7 +48,7 @@ public class GameManager : MonoBehaviour
         {
             GameObject player = new GameObject();
             Debug.Log(userData.Num);
-            player = Instantiate(PlayerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+            player = Instantiate(PlayerPrefab, new Vector3(1, -2, 0), Quaternion.identity);
             player.GetComponent<PlayerDetail>().Controller = userData;
             players.Add(player);
 
@@ -60,6 +63,7 @@ public class GameManager : MonoBehaviour
 
         socketIO.On("userGameMove", OnUserMove);
         socketIO.On("userGameAction", OnUserAction);
+        socketIO.On("userBlockDestroy", OnBlockDestroy);
 
     }
 
@@ -101,6 +105,40 @@ public class GameManager : MonoBehaviour
     void OnUserAction(SocketIOEvent e)
     {
         Debug.Log(e.name + " / " + e.data);
+    }
+
+    void OnBlockDestroy(SocketIOEvent e)
+    {
+        JSONObject data = e.data;
+        int destroyedBlock = (int)data[1].n;
+        Debug.Log("0404040404 On Block Destroy!!!!");
+
+        GameObject targetBlock = (GameObject)mapHashtable[destroyedBlock];
+        Debug.Log(mapHashtable[destroyedBlock]);
+        Debug.Log(destroyedBlock);
+        targetBlock.GetComponent<DestroyBlock>().destroyBlock();
+
+        /*
+        try
+        {
+
+            GameObject targetBlock = (GameObject)mapHashtable[destroyedBlock];
+            targetBlock.GetComponent<DestroyBlock>().destroyBlock();
+        }
+        catch(Exception)
+        {
+            Debug.Log("Block Destroy Error!");
+        }*/
+    }
+
+    public void sendBlockDestroy(int blockID)
+    {
+        Debug.Log("sendBlock!!!!");
+        JSONObject jsonData = new JSONObject();
+
+        jsonData.AddField("gameRoomIndex", gameRoomIndex);
+        jsonData.AddField("blockIndex", blockID);
+        socketIO.Emit("userBlockDestroy", jsonData);
     }
 
 }

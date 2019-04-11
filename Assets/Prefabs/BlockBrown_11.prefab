@@ -122,6 +122,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 867256fd979e5427b80cff79d12fd0b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  breakSound: {fileID: 925641813247863394, guid: 0cc67e60df53841df91f9fa89efc47e8,
+    type: 3}
   particleEffect: {fileID: 4141968403967226175, guid: 7a8cc2d25d2ba49f08f90eed5828c272,
     type: 3}
 --- !u!50 &5897944023832723757
