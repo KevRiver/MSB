@@ -57,8 +57,14 @@ public class GameManager : MonoBehaviour
             {
                 Debug.Log("Check local player");
                 Debug.Log(player.GetComponent<PlayerDetail>().Controller.Num);
+                
                 player.AddComponent<Player>();
                 GameObject.Find("Main Camera").GetComponent<followCamera>().setTarget(player.transform);
+            }
+            else
+            {
+               //player.GetComponent<BasePlayer>().Rb.gravityScale = 0;
+               //player.GetComponent<Rigidbody>().useGravity = false;
             }
         }
 
@@ -75,7 +81,7 @@ public class GameManager : MonoBehaviour
 
     void OnUserMove(SocketIOEvent e)
     {
-        //Debug.Log(e.name + " / " + e.data);
+        // Debug.Log(e.name + " / " + e.data);
         JSONObject data = e.data;
         int userIndex = (int)data[0].n;
         JSONObject moveData = data[1];
@@ -88,15 +94,17 @@ public class GameManager : MonoBehaviour
         toward = moveData[3].n;
         velocityX = moveData[4].n;
         velocityY = moveData[5].n;
-        
         //GameObject.Find
         foreach (GameObject player in players)
         {
             if (player.GetComponent<PlayerDetail>().Controller.Num == userIndex)
             {
+
                 player.transform.SetPositionAndRotation(newPosition, Quaternion.identity);
                 player.transform.localScale = new Vector3(toward, 1.5f);
-                player.GetComponent<Rigidbody>().AddForce(new Vector3(velocityX, velocityY, 0));
+                player.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+                player.GetComponent<Rigidbody2D>().AddForce(new Vector2(velocityX, velocityY));
+
                 break;
                 //Debug.Log("other player moved");
             }

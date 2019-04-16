@@ -41,7 +41,7 @@ public class BasePlayer : MonoBehaviour
         }
     }
     
-    void Start()
+    void Awake()
     {
         Debug.Log("Hoo Ha");
         Tr = GetComponent<Transform>();

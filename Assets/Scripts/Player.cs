@@ -110,7 +110,7 @@ public class Player : MonoBehaviour {
         while (true)
         {
             sendUserMove();
-            yield return new WaitForSeconds(0.01f);
+            yield return new WaitForSeconds(0.016f);
         }
     }
 
@@ -124,7 +124,8 @@ public class Player : MonoBehaviour {
         jsonData.AddField("forceX", this.gameObject.GetComponent<Rigidbody2D>().velocity.x);
         jsonData.AddField("forceY", this.gameObject.GetComponent<Rigidbody2D>().velocity.y);
         gameManager.sendUserMove(jsonData);
-       // Debug.Log("userGameMove SENT");
+        // Debug.Log("userGameMove SENT");
+        // Debug.Log(this.gameObject.GetComponent<Rigidbody2D>().velocity);
     }
 
     public void sendUserAttack()
