@@ -9,27 +9,22 @@ public class Player : MonoBehaviour {
 
     public int m_userIndex;
     public string m_userID;
-    //public bool isLocalPlayer = false;
 
     public int m_hp;
     public float m_moveSpeed;
     public float m_jumpForce;
     private float m_maxSpeed;
-    public bool isMovable; //Player의 이동가능여부 플래그
+    public bool isMovable;
     public Vector3 m_velocity;
 
-    private GameObject hitbox;
     private bool isAttacking = false;
-    //bool isPlayerUser = true;
 
     public enum ACTION_TYPE
     {
         TYPE_ATTACK, TYPE_SKILL, TYPE_HIT
     }
-    
-    private int gameRoomIndex;
-    private int gamePlayerIndex;
-    private SocketIOComponent socketIO;
+
+    private GameManager gameManager;
 
     public Transform Tr
     {
@@ -57,35 +52,6 @@ public class Player : MonoBehaviour {
         }
     }
 
-
-    /*public int UserIndex
-    {
-        get
-        {
-            return userIndex;
-        }
-
-        set
-        {
-            userIndex = value;
-        }
-    }
-    //public string UserID
-    {
-        get
-        {
-            return userID;
-        }
-
-        set
-        {
-            userID = value;
-        }
-    }*/
-
-    //public Weapon weapon; 
-
-    // Use this for initialization
     void Start () {
         Debug.Log("Hoo Ha");
         Tr = GetComponent<Transform>();
@@ -96,19 +62,11 @@ public class Player : MonoBehaviour {
         m_maxSpeed = 6.0f;
         isMovable = true;
 
-        hitbox = transform.GetChild(0).gameObject;
-        hitbox.SetActive(false);
-
-        GameObject networkmodule = GameObject.Find("NetworkModule");
-        UserData userData = GameObject.Find("UserData").GetComponent<UserData>();
-        gameRoomIndex = userData.getRoomIndex();
-        gamePlayerIndex = userData.getPlayerIndex();
-
-        socketIO = networkmodule.GetComponent<NetworkModule>().get_socket();
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
         StartCoroutine("syncUserMove");
     }
-	
+
 	// Update is called once per frame
 	void Update () {
         move();
@@ -126,7 +84,7 @@ public class Player : MonoBehaviour {
             Debug.Log("return");
             return;
         }
-            
+
 
         if (Mathf.Abs(Rb.velocity.x) > m_maxSpeed)
         {
@@ -152,54 +110,51 @@ public class Player : MonoBehaviour {
         while (true)
         {
             sendUserMove();
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.01f);
         }
     }
 
     public void sendUserMove()
     {
         JSONObject jsonData = new JSONObject();
-        jsonData.AddField("gameRoomIndex", gameRoomIndex);
         jsonData.AddField("positionX", this.gameObject.transform.position.x);
         jsonData.AddField("positionY", this.gameObject.transform.position.y);
         jsonData.AddField("positionZ", this.gameObject.transform.position.z);
         jsonData.AddField("toward", this.gameObject.transform.localScale.x);
         jsonData.AddField("forceX", this.gameObject.GetComponent<Rigidbody2D>().velocity.x);
         jsonData.AddField("forceY", this.gameObject.GetComponent<Rigidbody2D>().velocity.y);
-        socketIO.Emit("userGameMove", jsonData);
+        gameManager.sendUserMove(jsonData);
        // Debug.Log("userGameMove SENT");
     }
 
     public void sendUserAttack()
     {
         JSONObject jsonData = new JSONObject();
-        jsonData.AddField("gameRoomIndex", gameRoomIndex);
-        jsonData.AddField("action", "Attack");
+        jsonData.AddField("action", ACTION_TYPE.TYPE_ATTACK.ToString());
         //jsonData.AddField("animation",) 애니메이션 만들 떄 뭐 필요함?
         //jsonData.AddField("direction",) 애니메이션이 실행되는 방향
-        socketIO.Emit("userGameAction", jsonData);
+        gameManager.sendUserAction(jsonData);
         Debug.Log("userGameAction SENT");
     }
 
     public void sendUserSkill()
     {
         JSONObject jsonData = new JSONObject();
-        jsonData.AddField("gameRoomIndex", gameRoomIndex);
-        jsonData.AddField("action", "Skill");
+        jsonData.AddField("action", ACTION_TYPE.TYPE_SKILL.ToString());
         //jsonData.AddField("mel") 스킬 애니메이션에 필요한 것들을 가져와야댐
-        socketIO.Emit("userGameAction", jsonData);
+        gameManager.sendUserAction(jsonData);
         Debug.Log("userGameAction SENT");
     }
 
-    public void sendUserHit()
+    public void sendUserHit(int targetUserIndex, ACTION_TYPE actionType)
     {
         JSONObject jsonData = new JSONObject();
-        jsonData.AddField("gameRoomIndex", gameRoomIndex);
-        jsonData.AddField("action", "Hit");
+        jsonData.AddField("target", targetUserIndex);
+        jsonData.AddField("type", actionType.ToString());
         //jsonData.AddField("mel") 어떻게 누구를 때렸는지, CC기가 적용되는지 안되는지
         // 상대방이 어떻게 제어되는지까지 각 무기마다 다 다르기 때문에 Weapon을 가져오고
-        socketIO.Emit("userGameAction", jsonData);
-        Debug.Log("userGameAction SENT");
+        gameManager.sendUserHit(jsonData);
+        Debug.Log("userGameHit SENT");
     }
 
     public void jump() {
@@ -212,7 +167,8 @@ public class Player : MonoBehaviour {
         return updatedHp;
     }
 
-    public void attack() {
+    public void attack()
+    {
         // Hit Box 를 0.2 초간 enabled = true 후 다시 enable = false 시킨다
         // 추후 업그레이드
         // Animation을 실행시키고 Animation 프레임마다 BoxCollider로 HitBox 넣어줌 << 이게 제일 괜찮아 보임 판정상
@@ -220,17 +176,17 @@ public class Player : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.Space) && !isAttacking)
         {
             isAttacking = true;
-            hitbox.SetActive(true);
+            gameObject.GetComponent<BasePlayer>().showAttackMotion();
             StartCoroutine(WaitForIt());
             StartCoroutine(CoolTime());
             sendUserAttack();
+
         }
     }
 
     IEnumerator WaitForIt()
     {
         yield return new WaitForSeconds(0.1f);
-        hitbox.SetActive(false);
         //isAttacking = false;
     }
 
@@ -243,6 +199,6 @@ public class Player : MonoBehaviour {
 
     public void useSkill()
     {
-         
+
     }
 }

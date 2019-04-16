@@ -6,14 +6,14 @@ public class DestroyBlock : MonoBehaviour
 {
     public GameObject breakSound;
 
-    public GameObject gameManager;
+    public GameManager gameManager;
 
     // Start is called before the first frame update
     void Start()
     {
         breakSound = GameObject.Find("WoodBreak001");
 
-        gameManager = GameObject.Find("GameManager");
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     // Update is called once per frame
@@ -30,16 +30,14 @@ public class DestroyBlock : MonoBehaviour
         {
             destroyBlock();
             // 서버에 어떤 블록이 부셔졌는지 보내야댐 블록마다 정보가 있어야됨
-            Debug.Log("SEND");
-            Debug.Log(gameObject.GetComponent<BlockData>().blockID);
-            Debug.Log(gameObject);
-            gameManager.GetComponent<GameManager>().sendBlockDestroy(gameObject.GetComponent<BlockData>().blockID);
+            JSONObject jsonData = new JSONObject();
+            jsonData.AddField("blockIndex", gameObject.GetComponent<BlockData>().blockID);
+            gameManager.sendBlockDestroy(jsonData);
         }
     }
 
     public void destroyBlock()
-    {
-        Debug.Log("DESTROY!!");         
+    { 
         Vector3 objectPosition = gameObject.transform.position;
         objectPosition.z--;
         Instantiate(particleEffect, objectPosition, Quaternion.identity);

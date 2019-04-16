@@ -50,6 +50,7 @@ public class GameManager : MonoBehaviour
             Debug.Log(userData.Num);
             player = Instantiate(PlayerPrefab, new Vector3(1, -2, 0), Quaternion.identity);
             player.GetComponent<PlayerDetail>().Controller = userData;
+            player.AddComponent<BasePlayer>();
             players.Add(player);
 
             if (userData.Num == GameObject.Find("LocalPlayer").GetComponent<LocalPlayer>().getLocalPlayer().Num) //localPlayer의 index와 생성한 Player의 인덱스가 같으면
@@ -81,12 +82,12 @@ public class GameManager : MonoBehaviour
         Vector3 newPosition = new Vector3(0, 0, 0);
         float toward;
         float velocityX, velocityY;
-        newPosition.x = moveData[1].n;
-        newPosition.y = moveData[2].n;
-        newPosition.z = moveData[3].n;
-        toward = moveData[4].n;
-        velocityX = moveData[5].n;
-        velocityY = moveData[6].n;
+        newPosition.x = moveData[0].n;
+        newPosition.y = moveData[1].n;
+        newPosition.z = moveData[2].n;
+        toward = moveData[3].n;
+        velocityX = moveData[4].n;
+        velocityY = moveData[5].n;
         
         //GameObject.Find
         foreach (GameObject player in players)
@@ -96,14 +97,45 @@ public class GameManager : MonoBehaviour
                 player.transform.SetPositionAndRotation(newPosition, Quaternion.identity);
                 player.transform.localScale = new Vector3(toward, 1.5f);
                 player.GetComponent<Rigidbody>().AddForce(new Vector3(velocityX, velocityY, 0));
-                Debug.Log("called transform translate");
+                break;
+                //Debug.Log("other player moved");
             }
-            
         }
     }
 
     void OnUserAction(SocketIOEvent e)
     {
+        JSONObject data = e.data;
+        int userIndex = (int)data[0].n;
+        JSONObject actionData = data[1];
+        string actionTypeString = actionData[0].str;
+        Player.ACTION_TYPE actionType = Player.ACTION_TYPE.TYPE_ATTACK;
+        if (String.Equals(actionTypeString, Player.ACTION_TYPE.TYPE_ATTACK.ToString()))
+        {
+            actionType = Player.ACTION_TYPE.TYPE_ATTACK;
+        }
+        if (String.Equals(actionTypeString, Player.ACTION_TYPE.TYPE_SKILL.ToString()))
+        {
+            actionType = Player.ACTION_TYPE.TYPE_SKILL;
+        }
+
+        foreach (GameObject player in players)
+        {
+            if (player.GetComponent<PlayerDetail>().Controller.Num == userIndex)
+            {
+                if (actionType == Player.ACTION_TYPE.TYPE_ATTACK)
+                {
+                    player.GetComponent<BasePlayer>().showAttackMotion();
+                    break;
+                }
+                if (actionType == Player.ACTION_TYPE.TYPE_SKILL)
+                {
+                    player.GetComponent<BasePlayer>().showSkillMotion();
+                    break;
+                }
+                //Debug.Log("called transform translate");
+            }
+        }
         Debug.Log(e.name + " / " + e.data);
     }
 
@@ -111,34 +143,40 @@ public class GameManager : MonoBehaviour
     {
         JSONObject data = e.data;
         int destroyedBlock = (int)data[1].n;
-        Debug.Log("0404040404 On Block Destroy!!!!");
 
         GameObject targetBlock = (GameObject)mapHashtable[destroyedBlock];
         Debug.Log(mapHashtable[destroyedBlock]);
         Debug.Log(destroyedBlock);
         targetBlock.GetComponent<DestroyBlock>().destroyBlock();
-
-        /*
-        try
-        {
-
-            GameObject targetBlock = (GameObject)mapHashtable[destroyedBlock];
-            targetBlock.GetComponent<DestroyBlock>().destroyBlock();
-        }
-        catch(Exception)
-        {
-            Debug.Log("Block Destroy Error!");
-        }*/
     }
 
-    public void sendBlockDestroy(int blockID)
+    void OnUserHit(SocketIOEvent e)
     {
-        Debug.Log("sendBlock!!!!");
-        JSONObject jsonData = new JSONObject();
+        Debug.Log(e.name + " / " + e.data);
+    }
 
-        jsonData.AddField("gameRoomIndex", gameRoomIndex);
-        jsonData.AddField("blockIndex", blockID);
-        socketIO.Emit("userBlockDestroy", jsonData);
+    public void sendUserMove(JSONObject data)
+    {
+        data.AddField("gameRoomIndex", gameRoomIndex);
+        socketIO.Emit("userGameMove", data);
+    }
+
+    public void sendUserAction(JSONObject data)
+    {
+        data.AddField("gameRoomIndex", gameRoomIndex);
+        socketIO.Emit("userGameAction", data);
+    }
+
+    public void sendBlockDestroy(JSONObject data)
+    {
+        data.AddField("gameRoomIndex", gameRoomIndex);
+        socketIO.Emit("userBlockDestroy", data);
+    }
+
+    public void sendUserHit(JSONObject data)
+    {
+        data.AddField("gameRoomIndex", gameRoomIndex);
+        socketIO.Emit("userGameHit", data);
     }
 
 }
