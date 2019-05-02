@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5854152021129367048}
   - component: {fileID: 5897944023832723757}
   - component: {fileID: 387244424721237127}
+  - component: {fileID: 1056093116349323410}
   m_Layer: 0
   m_Name: BlockBrown_11
   m_TagString: Untagged
@@ -121,7 +122,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 867256fd979e5427b80cff79d12fd0b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  particleEffect: {fileID: 3460457248004797996, guid: ba860333748df4e35b5d6ae74ee76510,
+  breakSound: {fileID: 925641813247863394, guid: 0cc67e60df53841df91f9fa89efc47e8,
+    type: 3}
+  particleEffect: {fileID: 4141968403967226175, guid: 7a8cc2d25d2ba49f08f90eed5828c272,
     type: 3}
 --- !u!50 &5897944023832723757
 Rigidbody2D:
@@ -179,3 +182,17 @@ CompositeCollider2D:
       - {x: -0.4929231, y: -0.4936342}
       - {x: 0.4839063, y: -0.4936342}
   m_VertexDistance: 0.0005
+--- !u!114 &1056093116349323410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9216536163680413356}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 514b2a5b4ec724bffaf8f1303196343c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blockID: 0
+  objectID: 0
