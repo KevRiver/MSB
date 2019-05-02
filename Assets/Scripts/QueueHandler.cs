@@ -7,12 +7,6 @@ using UnityEngine.SceneManagement;
 
 public class QueueHandler : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
     public void OnQueueButtonClick()
     {
         GameObject networkmodule = GameObject.Find("NetworkModule");

@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     int gamePlayerIndex;
     ArrayList userlist;
     Vector3[] spawnPoints = new Vector3[6];
+    //19.04.28 PlayerPrefab2가 적용됨
     public GameObject PlayerPrefab;
     public ArrayList players = new ArrayList();
 
@@ -23,7 +24,8 @@ public class GameManager : MonoBehaviour
         UserData userData = GameObject.Find("UserData").GetComponent<UserData>();
         userlist = userData.getUserlist();
         gameRoomIndex = userData.getRoomIndex();
-        gamePlayerIndex = userData.getPlayerIndex();
+        //gamePlayerIndex = userData.getPlayerIndex();
+
 
         GameObject networkmodule = GameObject.Find("NetworkModule");
         socketIO = networkmodule.GetComponent<NetworkModule>().get_socket();
@@ -43,11 +45,12 @@ public class GameManager : MonoBehaviour
         //Debug.Log("AAAAA"+userlist);
         //Debug.Log(userlist[0]);
         //Debug.Log(userlist[1]);
-        int i = 0;
+        //int i = 0;
         foreach(User userData in userlist)
         {
             GameObject player = new GameObject();
             Debug.Log(userData.Num);
+            //19.04.28 이제 playerPrefab2가 생성됨
             player = Instantiate(PlayerPrefab, new Vector3(1, -2, 0), Quaternion.identity);
             player.GetComponent<PlayerDetail>().Controller = userData;
             player.AddComponent<BasePlayer>();
@@ -55,23 +58,20 @@ public class GameManager : MonoBehaviour
 
             if (userData.Num == GameObject.Find("LocalPlayer").GetComponent<LocalPlayer>().getLocalPlayer().Num) //localPlayer의 index와 생성한 Player의 인덱스가 같으면
             {
-                Debug.Log("Check local player");
                 Debug.Log(player.GetComponent<PlayerDetail>().Controller.Num);
-                
+                gamePlayerIndex = player.GetComponent<PlayerDetail>().Controller.Num;
                 player.AddComponent<Player>();
                 GameObject.Find("Main Camera").GetComponent<followCamera>().setTarget(player.transform);
-            }
-            else
-            {
-               //player.GetComponent<BasePlayer>().Rb.gravityScale = 0;
-               //player.GetComponent<Rigidbody>().useGravity = false;
-            }
+            } else
+			{
+			//	player.GetComponent<BasePlayer>().Rb.gravityScale = 0;
+			}
         }
 
         socketIO.On("userGameMove", OnUserMove);
         socketIO.On("userGameAction", OnUserAction);
         socketIO.On("userBlockDestroy", OnBlockDestroy);
-
+        socketIO.On("userGameHit", OnUserHit);
     }
 
     void Update()
@@ -81,7 +81,7 @@ public class GameManager : MonoBehaviour
 
     void OnUserMove(SocketIOEvent e)
     {
-        // Debug.Log(e.name + " / " + e.data);
+        //Debug.Log(e.name + " / " + e.data);
         JSONObject data = e.data;
         int userIndex = (int)data[0].n;
         JSONObject moveData = data[1];
@@ -94,18 +94,18 @@ public class GameManager : MonoBehaviour
         toward = moveData[3].n;
         velocityX = moveData[4].n;
         velocityY = moveData[5].n;
+        
         //GameObject.Find
         foreach (GameObject player in players)
         {
             if (player.GetComponent<PlayerDetail>().Controller.Num == userIndex)
             {
-
                 player.transform.SetPositionAndRotation(newPosition, Quaternion.identity);
                 player.transform.localScale = new Vector3(toward, 1.5f);
-                player.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-                player.GetComponent<Rigidbody2D>().AddForce(new Vector2(velocityX, velocityY));
-
-                break;
+				player.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+				player.GetComponent<BasePlayer>().Rb.AddForce(new Vector2(velocityX, velocityY));
+				//Debug.Log("other player moved");
+				break;
                 //Debug.Log("other player moved");
             }
         }
@@ -160,7 +160,28 @@ public class GameManager : MonoBehaviour
 
     void OnUserHit(SocketIOEvent e)
     {
-        Debug.Log(e.name + " / " + e.data);
+        Debug.Log("onUserHit " + e.name + " / " + e.data);
+        JSONObject data = e.data[1];
+        float hitDirX, hitDirY;
+
+        if (gamePlayerIndex != (int)data[0].n)
+        {
+            Debug.Log("Not My Hit playerIndex" + gamePlayerIndex + " targetIndex" + (int)data[0].n);
+            return;
+        }
+
+        hitDirX = data[2].n;
+        hitDirY = data[3].n;
+
+        foreach (GameObject p in players)
+        {
+            if (p.GetComponent<Player>() != null)
+            {
+                p.GetComponent<BasePlayer>().Rb.AddForce(new Vector2(hitDirX, hitDirY) * 1000);
+                Debug.Log("OnUserHit Test");
+            }
+        }
+
     }
 
     public void sendUserMove(JSONObject data)

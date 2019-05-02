@@ -43,13 +43,12 @@ public class BasePlayer : MonoBehaviour
     
     void Awake()
     {
-        Debug.Log("Hoo Ha");
         Tr = GetComponent<Transform>();
         Rb = GetComponent<Rigidbody2D>();
         m_hp = 5;
 
-        hitbox = transform.GetChild(0).gameObject;
-        hitbox.SetActive(false);
+        //hitbox = transform.GetChild(0).gameObject;
+        //hitbox.SetActive(false);
     }
 
     public void die()
@@ -65,8 +64,10 @@ public class BasePlayer : MonoBehaviour
 
     public void showAttackMotion()
     {
-        hitbox.SetActive(true);
-        StartCoroutine(WaitForIt());
+        //19.04.28 이제 히트박스 애니메이션이 실행됨
+        //hitbox.SetActive(true);
+        //gameObject.transform.GetChild(0).GetComponent<HitBox>().HitAnimStart();
+        //StartCoroutine(WaitForIt());
     }
 
     IEnumerator WaitForIt()

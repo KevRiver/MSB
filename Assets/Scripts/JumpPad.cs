@@ -21,7 +21,7 @@ public class JumpPad : MonoBehaviour {
     {
         // 플레이어와 접촉 중 일때만 실행
         if (collision.gameObject.GetComponent("Player") != null)
-        { 
+        {
             stayTime = 0;
             // Debug.Log("Entered");
         }

@@ -121,13 +121,15 @@ public class MapGenerator : MonoBehaviour
                         generatedObject.GetComponent<BlockData>().objectType = 0;
                         generatedObject.GetComponent<BlockData>().blockID = putBlockID;
                         putBlockID++;
-
+                        //Debug.Log(generatedObject);
+                        //Debug.Log(generatedObject.GetComponent<BlockData>().blockID);
                         break;
                     case '4':
                         generatedObject = Instantiate(blockBrown_11, new Vector3(x, -y, 0), Quaternion.identity);
                         generatedObject.GetComponent<BlockData>().objectType = 1;
                         generatedObject.GetComponent<BlockData>().blockID = putBlockID;
-
+                        //Debug.Log(generatedObject);
+                        //Debug.Log(generatedObject.GetComponent<BlockData>().blockID);
                         putBlockID++;
                         break;
                         /*
