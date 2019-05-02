@@ -21,14 +21,20 @@ public class JumpPad : MonoBehaviour {
     {
         // 플레이어와 접촉 중 일때만 실행
         if (collision.gameObject.GetComponent("Player") != null)
+<<<<<<< HEAD
         {
             stayTime = 0;
+=======
+        { 
+            stayTime = 0;
+>>>>>>> origin/develop_Test
             // Debug.Log("Entered");
         }
     }
 
     private void OnTriggerStay2D(Collider2D collision)
     {
+<<<<<<< HEAD
         // 플레이어와 접촉 중 일때만 실행
         if (collision.gameObject.GetComponent("Player") != null)
         {
@@ -42,6 +48,21 @@ public class JumpPad : MonoBehaviour {
             else
             {
                 stayTime += Time.deltaTime;
+=======
+        // 플레이어와 접촉 중 일때만 실행
+        if (collision.gameObject.GetComponent("Player") != null)
+        {
+            //접촉을 유지하고 있을 동안 stayTime 변수의 값을 증가시켜 maxTime 까지 증가되면 Player.jump() 를 실행
+            if (stayTime > maxTime)
+            {
+                stayTime = 0;
+                // Debug.Log("Player have stayed over 2secs");
+                collision.gameObject.GetComponent<Player>().jump();
+            }
+            else
+            {
+                stayTime += Time.deltaTime;
+>>>>>>> origin/develop_Test
             }
         }
 

@@ -10,7 +10,10 @@ public class Player : MonoBehaviour {
 
     public int m_userIndex;
     public string m_userID;
+<<<<<<< HEAD
     public Animator m_animator;
+=======
+>>>>>>> origin/develop_Test
 
     public int m_hp;
     public float m_moveSpeed;
@@ -18,7 +21,11 @@ public class Player : MonoBehaviour {
     private float m_maxSpeed;
     public bool isMovable;
     public Vector3 m_velocity;
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> origin/develop_Test
     private bool isAttacking = false;
 
     public enum ACTION_TYPE
@@ -53,7 +60,11 @@ public class Player : MonoBehaviour {
             m_rb = value;
         }
     }
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> origin/develop_Test
     void Start () {
         //Debug.Log("Hoo Ha");
         Tr = GetComponent<Transform>();
@@ -69,7 +80,7 @@ public class Player : MonoBehaviour {
 
         StartCoroutine("syncUserMove");
     }
-	
+
 	// Update is called once per frame
 	void Update () {
         move();
@@ -87,6 +98,10 @@ public class Player : MonoBehaviour {
             Debug.Log("return");
             return;
         }
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/develop_Test
 
         //m_animator.SetFloat("Speed", Mathf.Abs(Rb.velocity.x));
         animator.SetFloat("Speed", Mathf.Abs(Rb.velocity.x));
@@ -129,8 +144,14 @@ public class Player : MonoBehaviour {
         jsonData.AddField("toward", this.gameObject.transform.localScale.x);
         jsonData.AddField("forceX", this.gameObject.GetComponent<Rigidbody2D>().velocity.x);
         jsonData.AddField("forceY", this.gameObject.GetComponent<Rigidbody2D>().velocity.y);
+<<<<<<< HEAD
         gameManager.sendUserMove(jsonData);
        // Debug.Log("userGameMove SENT");
+=======
+        gameManager.sendUserMove(jsonData);
+        // Debug.Log("userGameMove SENT");
+        // Debug.Log(this.gameObject.GetComponent<Rigidbody2D>().velocity);
+>>>>>>> origin/develop_Test
     }
 
     public void sendUserAttack()
@@ -152,13 +173,20 @@ public class Player : MonoBehaviour {
         Debug.Log("userGameAction SENT");
     }
 
+<<<<<<< HEAD
     public void sendUserHit(int targetUserIndex, Vector2 hitDirection, ACTION_TYPE actionType)
+=======
+    public void sendUserHit(int targetUserIndex, ACTION_TYPE actionType)
+>>>>>>> origin/develop_Test
     {
         JSONObject jsonData = new JSONObject();
         jsonData.AddField("target", targetUserIndex);
         jsonData.AddField("type", actionType.ToString());
+<<<<<<< HEAD
         jsonData.AddField("hitDirectionX", hitDirection.x);
         jsonData.AddField("hitDirectionY", hitDirection.y);
+=======
+>>>>>>> origin/develop_Test
         //jsonData.AddField("mel") 어떻게 누구를 때렸는지, CC기가 적용되는지 안되는지
         // 상대방이 어떻게 제어되는지까지 각 무기마다 다 다르기 때문에 Weapon을 가져오고
         gameManager.sendUserHit(jsonData);
@@ -187,7 +215,12 @@ public class Player : MonoBehaviour {
             gameObject.GetComponent<BasePlayer>().showAttackMotion();
             StartCoroutine(WaitForIt());
             StartCoroutine(CoolTime());
+<<<<<<< HEAD
             //sendUserAttack();
+=======
+            sendUserAttack();
+
+>>>>>>> origin/develop_Test
         }
     }
 
@@ -206,6 +239,6 @@ public class Player : MonoBehaviour {
 
     public void useSkill()
     {
-         
+
     }
 }

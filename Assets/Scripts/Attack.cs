@@ -6,20 +6,31 @@ public class Attack : MonoBehaviour
 {
     public GameObject hitmarkerSound;
     public GameObject hitmarker;
+<<<<<<< HEAD
     Vector2 hitDirection;
 
     private void Start()
     {
         hitmarkerSound = GameObject.Find("hitmarkerSound");
+=======
+    private void Start()
+    {
+        hitmarkerSound = GameObject.Find("hitmarkerSound");
+>>>>>>> origin/develop_Test
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+<<<<<<< HEAD
         // 공격한 상대가 플레이어면 
+=======
+        // 공격한 상대가 플레이어면
+>>>>>>> origin/develop_Test
         if (other.gameObject.GetComponent("BasePlayer") != null)
         {
             hitmarkerSound.GetComponent<AudioSource>().Play();
             /* 히트마커 임시 삭제
+<<<<<<< HEAD
                Vector3 playerPos = this.gameObject.transform.position;
                Instantiate(hitmarker, playerPos, Quaternion.identity);
                */
@@ -40,6 +51,18 @@ public class Attack : MonoBehaviour
                 //playerObject.GetComponent<Player>().sendUserHit(targetUserIndex, hitDirection, Player.ACTION_TYPE.TYPE_ATTACK); 190429 주석처리함
             }
 
+=======
+            Vector3 playerPos = this.gameObject.transform.position;
+            Instantiate(hitmarker, playerPos, Quaternion.identity);
+            */          
+            // 공격한 사람이 자기자신 플레이어면
+            if (gameObject.GetComponent("Player") != null)
+            {
+                int targetUserIndex = other.gameObject.GetComponent<PlayerDetail>().Controller.Num;
+                gameObject.GetComponent<Player>().sendUserHit(targetUserIndex, Player.ACTION_TYPE.TYPE_ATTACK);
+            }
+
+>>>>>>> origin/develop_Test
         }
     }
 }

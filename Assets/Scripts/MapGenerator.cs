@@ -48,7 +48,11 @@ public class MapGenerator : MonoBehaviour
         mainCamera.GetComponent<followCamera>().mapHeight = map1.mapHeight;
         mainCamera.GetComponent<followCamera>().mapWidth = map1.mapWidth;
 
+<<<<<<< HEAD
 
+=======
+
+>>>>>>> origin/develop_Test
     }
 
     // Update is called once per frame
@@ -104,6 +108,7 @@ public class MapGenerator : MonoBehaviour
     }
 
     // 맵 오브젝트 출력
+<<<<<<< HEAD
     void printMap(MapStruct mapStruct)
     {
         // 맵 파일을 기반으로 오브젝트 생성
@@ -116,18 +121,37 @@ public class MapGenerator : MonoBehaviour
                 GameObject generatedObject;
                 switch(mapStruct.mapArray[x, y])
                 {
+=======
+    void printMap(MapStruct mapStruct)
+    {
+        // 맵 파일을 기반으로 오브젝트 생성
+        int putBlockID = 0;
+        int putObjectID = 0;
+        for (int y = 0; y < mapStruct.mapHeight; y++)
+        {
+            for (int x = 0; x < mapStruct.mapWidth; x++)
+            {
+                GameObject generatedObject;
+                switch(mapStruct.mapArray[x, y])
+                {
+>>>>>>> origin/develop_Test
                     case '2':
                         generatedObject = Instantiate(blockGray_11, new Vector3(x, -y, 0), Quaternion.identity);
                         generatedObject.GetComponent<BlockData>().objectType = 0;
                         generatedObject.GetComponent<BlockData>().blockID = putBlockID;
                         putBlockID++;
+<<<<<<< HEAD
                         //Debug.Log(generatedObject);
                         //Debug.Log(generatedObject.GetComponent<BlockData>().blockID);
+=======
+
+>>>>>>> origin/develop_Test
                         break;
                     case '4':
                         generatedObject = Instantiate(blockBrown_11, new Vector3(x, -y, 0), Quaternion.identity);
                         generatedObject.GetComponent<BlockData>().objectType = 1;
                         generatedObject.GetComponent<BlockData>().blockID = putBlockID;
+<<<<<<< HEAD
                         //Debug.Log(generatedObject);
                         //Debug.Log(generatedObject.GetComponent<BlockData>().blockID);
                         putBlockID++;
@@ -148,17 +172,47 @@ public class MapGenerator : MonoBehaviour
 
                 switch (mapStruct.objectArray[x, y])
                 {
+=======
+
+                        putBlockID++;
+                        break;
+                        /*
+                        case '2':
+                            block = Instantiate(blockGray_11, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
+                            block.GetComponent<BlockData>().blockID = putBlockID;
+                            putBlockID++;
+                            break;
+                        case '4':
+                            block = Instantiate(blockBrown_11, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
+                            block.GetComponent<BlockData>().blockID = putBlockID;
+                            putBlockID++;
+                            break;
+                            */
+                }
+
+                switch (mapStruct.objectArray[x, y])
+                {
+>>>>>>> origin/develop_Test
                     /*
                     case '2':
                         block = Instantiate(jumpPad, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.85f - y, 0), Quaternion.identity);
                         block.GetComponent<BlockData>().objectID = putObjectID;
                         putObjectID++;
+<<<<<<< HEAD
                         break;
                     case '3':
                         Instantiate(sampleEnemy, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
                         break;
                         */
 
+=======
+                        break;
+                    case '3':
+                        Instantiate(sampleEnemy, new Vector3(x - (mapStruct.mapWidth / 2), mapStruct.mapHeight - 5.5f - y, 0), Quaternion.identity);
+                        break;
+                        */
+
+>>>>>>> origin/develop_Test
                     case '2':
                         generatedObject = Instantiate(jumpPad, new Vector3(x,- 0.35f - y, 0), Quaternion.identity);
                         generatedObject.GetComponent<BlockData>().objectType = 10;
@@ -166,6 +220,7 @@ public class MapGenerator : MonoBehaviour
                         putObjectID++;
                         break;
                     case '3':
+<<<<<<< HEAD
                         generatedObject = Instantiate(sampleEnemy, new Vector3(x, -y, 0), Quaternion.identity);
                         generatedObject.GetComponent<BlockData>().objectType = 12;
                         break;
@@ -173,6 +228,15 @@ public class MapGenerator : MonoBehaviour
                         generatedObject = Instantiate(flag, new Vector3(x, 0.55f -y, 0), Quaternion.identity);
                         generatedObject.GetComponent<BlockData>().objectType = 11;
                         break;
+=======
+                        generatedObject = Instantiate(sampleEnemy, new Vector3(x, -y, 0), Quaternion.identity);
+                        generatedObject.GetComponent<BlockData>().objectType = 12;
+                        break;
+                    case '4':
+                        generatedObject = Instantiate(flag, new Vector3(x, 0.55f -y, 0), Quaternion.identity);
+                        generatedObject.GetComponent<BlockData>().objectType = 11;
+                        break;
+>>>>>>> origin/develop_Test
                 }
 
             }
