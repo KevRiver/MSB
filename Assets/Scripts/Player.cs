@@ -6,9 +6,11 @@ using SocketIO;
 public class Player : MonoBehaviour {
     private Transform m_tr;
     private Rigidbody2D m_rb;
+    private Animator animator;
 
     public int m_userIndex;
     public string m_userID;
+    public Animator m_animator;
 
     public int m_hp;
     public float m_moveSpeed;
@@ -16,7 +18,7 @@ public class Player : MonoBehaviour {
     private float m_maxSpeed;
     public bool isMovable;
     public Vector3 m_velocity;
-
+    
     private bool isAttacking = false;
 
     public enum ACTION_TYPE
@@ -51,22 +53,23 @@ public class Player : MonoBehaviour {
             m_rb = value;
         }
     }
-
+    
     void Start () {
-        Debug.Log("Hoo Ha");
+        //Debug.Log("Hoo Ha");
         Tr = GetComponent<Transform>();
         Rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
         m_hp = 5;
-        m_moveSpeed = 15.0f;
-        m_jumpForce = 700.0f; //git - pull test by Gon
-        m_maxSpeed = 6.0f;
+        m_moveSpeed = 100.0f;
+        m_jumpForce = 1050.0f; //git - pull test by Gon
+        m_maxSpeed = 10.0f;
         isMovable = true;
 
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
         StartCoroutine("syncUserMove");
     }
-
+	
 	// Update is called once per frame
 	void Update () {
         move();
@@ -85,18 +88,21 @@ public class Player : MonoBehaviour {
             return;
         }
 
+        //m_animator.SetFloat("Speed", Mathf.Abs(Rb.velocity.x));
+        animator.SetFloat("Speed", Mathf.Abs(Rb.velocity.x));
 
-        if (Mathf.Abs(Rb.velocity.x) > m_maxSpeed)
+        if (Input.GetKey(KeyCode.RightArrow))
         {
-
-        }
-        else if (Input.GetKey(KeyCode.RightArrow))
-        {
+            //Debug.Log("Right Arrow input");
+            if (Rb.velocity.x > m_maxSpeed)
+                return;
             Rb.AddForce(Vector3.right * m_moveSpeed);    //AddForce는 Time.deltaTime을 곱해줄 필요가 없다
             Tr.localScale = new Vector3(1.5f,1.5f,0f);   //localScale을 좌우로 바꾼다
         }
         else if (Input.GetKey(KeyCode.LeftArrow))
         {
+            if (Rb.velocity.x < -m_maxSpeed)
+                return;
             Rb.AddForce(Vector3.left * m_moveSpeed);
             Tr.localScale = new Vector3(-1.5f,1.5f,0f);
         }
@@ -104,7 +110,7 @@ public class Player : MonoBehaviour {
             // stop condition
         }
     }
-
+/*
     IEnumerator syncUserMove()
     {
         while (true)
@@ -124,8 +130,7 @@ public class Player : MonoBehaviour {
         jsonData.AddField("forceX", this.gameObject.GetComponent<Rigidbody2D>().velocity.x);
         jsonData.AddField("forceY", this.gameObject.GetComponent<Rigidbody2D>().velocity.y);
         gameManager.sendUserMove(jsonData);
-        // Debug.Log("userGameMove SENT");
-        // Debug.Log(this.gameObject.GetComponent<Rigidbody2D>().velocity);
+       // Debug.Log("userGameMove SENT");
     }
 
     public void sendUserAttack()
@@ -147,17 +152,19 @@ public class Player : MonoBehaviour {
         Debug.Log("userGameAction SENT");
     }
 
-    public void sendUserHit(int targetUserIndex, ACTION_TYPE actionType)
+    public void sendUserHit(int targetUserIndex, Vector2 hitDirection, ACTION_TYPE actionType)
     {
         JSONObject jsonData = new JSONObject();
         jsonData.AddField("target", targetUserIndex);
         jsonData.AddField("type", actionType.ToString());
+        jsonData.AddField("hitDirectionX", hitDirection.x);
+        jsonData.AddField("hitDirectionY", hitDirection.y);
         //jsonData.AddField("mel") 어떻게 누구를 때렸는지, CC기가 적용되는지 안되는지
         // 상대방이 어떻게 제어되는지까지 각 무기마다 다 다르기 때문에 Weapon을 가져오고
         gameManager.sendUserHit(jsonData);
         Debug.Log("userGameHit SENT");
     }
-
+    */
     public void jump() {
         Debug.Log("Jump!");
         Rb.AddForce(Vector3.up * m_jumpForce);
@@ -180,8 +187,7 @@ public class Player : MonoBehaviour {
             gameObject.GetComponent<BasePlayer>().showAttackMotion();
             StartCoroutine(WaitForIt());
             StartCoroutine(CoolTime());
-            sendUserAttack();
-
+            //sendUserAttack();
         }
     }
 
@@ -200,6 +206,6 @@ public class Player : MonoBehaviour {
 
     public void useSkill()
     {
-
+         
     }
 }

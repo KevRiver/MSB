@@ -23,8 +23,5 @@ public class PlayerDetail : MonoBehaviour
     {
         
     }
-
-
-    
     
 }
