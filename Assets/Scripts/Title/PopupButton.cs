@@ -5,10 +5,13 @@ using UnityEngine;
 public class PopupButton : MonoBehaviour
 {
     public GameObject popup;
+    public GameObject policyUI;
+    public GameObject nickNameUI;
+    Vector2 centerPos;
     // Start is called before the first frame update
     void Start()
     {
-        
+       
     }
 
     // Update is called once per frame
@@ -17,8 +20,15 @@ public class PopupButton : MonoBehaviour
         
     }
 
-    public void buttonClick()
+    public void policyButtonClick()
     {
-        popup.transform.position = new Vector2(1000, 173);
+        centerPos = popup.transform.position;
+        policyUI.transform.position = new Vector2(1000, 0);
+        nickNameUI.transform.position = centerPos;
+    }
+
+    public void nicknameButtonClick()
+    {
+        popup.transform.position = new Vector2(1000, 0);
     }
 }
