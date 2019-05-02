@@ -12,6 +12,7 @@ public class NetworkModule : MonoBehaviour
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
+
     }
 
     private void Start()

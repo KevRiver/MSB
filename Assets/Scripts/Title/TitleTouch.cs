@@ -2,30 +2,45 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using SocketIO;
 using System;
 
-public class RegisterPlayerWithName : MonoBehaviour
+public class TitleTouch : MonoBehaviour, IPointerClickHandler
 {
-    public InputField m_playerName;
-    private string strPlayerName;
+    NetworkModule networkModule;
+    SocketIOComponent socket;
 
-    public void OnLoginButtonClick()
+
+    public GameObject popup;
+    // Start is called before the first frame update
+    void Start()
     {
-        strPlayerName = m_playerName.text;
+        networkModule = GameObject.Find("NetworkModule").GetComponent<NetworkModule>();
 
-        GameObject networkmodule = GameObject.Find("NetworkModule");
-        SocketIOComponent socket;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+       //Debug.Log(popup.transform.position);
+       //Debug.Log("Click");
+        showPopup();
+        socket = networkModule.get_socket();
         JSONObject userData = new JSONObject(JSONObject.Type.OBJECT);
+        string strPlayerName = "ABC";
 
         userData.AddField("userID", strPlayerName);
         userData.AddField("userPW", "");
 
-        socket = networkmodule.GetComponent<NetworkModule>().get_socket();
         socket.On("loginSuccess", loginSuccess);
         socket.On("loginFail", loginFail);
-        socket.Emit("login",userData);
-        Debug.Log(strPlayerName);
+        socket.Emit("login", userData);
     }
 
     public void loginSuccess(SocketIOEvent obj)
@@ -43,7 +58,7 @@ public class RegisterPlayerWithName : MonoBehaviour
             userNumber = -1;
             Debug.Log("Error : UserNumber = -1");
         };
-        
+
         Debug.Log("User number is : " + localPlayer.Num);
         GameObject.Find("LocalPlayer").GetComponent<LocalPlayer>().setLocalPlayer(localPlayer);
 
@@ -53,5 +68,10 @@ public class RegisterPlayerWithName : MonoBehaviour
     public void loginFail(SocketIOEvent obj)
     {
         Debug.Log("Login Fail" + obj);
+    }
+
+    public void showPopup()
+    {
+        popup.transform.position = new Vector2(300,173);
     }
 }
