@@ -50,10 +50,7 @@ public class GameManager : MonoBehaviour
         {
             GameObject player = new GameObject();
             Debug.Log(userData.Num);
-<<<<<<< HEAD
             //19.04.28 이제 playerPrefab2가 생성됨
-=======
->>>>>>> origin/develop_Test
             player = Instantiate(PlayerPrefab, new Vector3(1, -2, 0), Quaternion.identity);
             player.GetComponent<PlayerDetail>().Controller = userData;
             player.AddComponent<BasePlayer>();
@@ -62,7 +59,6 @@ public class GameManager : MonoBehaviour
             if (userData.Num == GameObject.Find("LocalPlayer").GetComponent<LocalPlayer>().getLocalPlayer().Num) //localPlayer의 index와 생성한 Player의 인덱스가 같으면
             {
                 Debug.Log(player.GetComponent<PlayerDetail>().Controller.Num);
-<<<<<<< HEAD
                 gamePlayerIndex = player.GetComponent<PlayerDetail>().Controller.Num;
                 player.AddComponent<Player>();
                 GameObject.Find("Main Camera").GetComponent<followCamera>().setTarget(player.transform);
@@ -70,27 +66,12 @@ public class GameManager : MonoBehaviour
 			{
 			//	player.GetComponent<BasePlayer>().Rb.gravityScale = 0;
 			}
-=======
-                
-                player.AddComponent<Player>();
-                GameObject.Find("Main Camera").GetComponent<followCamera>().setTarget(player.transform);
-            }
-            else
-            {
-               //player.GetComponent<BasePlayer>().Rb.gravityScale = 0;
-               //player.GetComponent<Rigidbody>().useGravity = false;
-            }
->>>>>>> origin/develop_Test
         }
 
         socketIO.On("userGameMove", OnUserMove);
         socketIO.On("userGameAction", OnUserAction);
         socketIO.On("userBlockDestroy", OnBlockDestroy);
-<<<<<<< HEAD
         socketIO.On("userGameHit", OnUserHit);
-=======
-
->>>>>>> origin/develop_Test
     }
 
     void Update()
@@ -100,7 +81,7 @@ public class GameManager : MonoBehaviour
 
     void OnUserMove(SocketIOEvent e)
     {
-        // Debug.Log(e.name + " / " + e.data);
+        //Debug.Log(e.name + " / " + e.data);
         JSONObject data = e.data;
         int userIndex = (int)data[0].n;
         JSONObject moveData = data[1];
@@ -113,30 +94,18 @@ public class GameManager : MonoBehaviour
         toward = moveData[3].n;
         velocityX = moveData[4].n;
         velocityY = moveData[5].n;
-<<<<<<< HEAD
         
-=======
->>>>>>> origin/develop_Test
         //GameObject.Find
         foreach (GameObject player in players)
         {
             if (player.GetComponent<PlayerDetail>().Controller.Num == userIndex)
             {
-
                 player.transform.SetPositionAndRotation(newPosition, Quaternion.identity);
-<<<<<<< HEAD
                 player.transform.localScale = new Vector3(toward, 1.5f);
 				player.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
 				player.GetComponent<BasePlayer>().Rb.AddForce(new Vector2(velocityX, velocityY));
 				//Debug.Log("other player moved");
 				break;
-=======
-                player.transform.localScale = new Vector3(toward, 1.5f);
-                player.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-                player.GetComponent<Rigidbody2D>().AddForce(new Vector2(velocityX, velocityY));
-
-                break;
->>>>>>> origin/develop_Test
                 //Debug.Log("other player moved");
             }
         }
@@ -175,7 +144,6 @@ public class GameManager : MonoBehaviour
                 //Debug.Log("called transform translate");
             }
         }
-<<<<<<< HEAD
         Debug.Log(e.name + " / " + e.data);
     }
 
@@ -219,36 +187,11 @@ public class GameManager : MonoBehaviour
     public void sendUserMove(JSONObject data)
     {
         data.AddField("gameRoomIndex", gameRoomIndex);
-=======
-        Debug.Log(e.name + " / " + e.data);
-    }
-
-    void OnBlockDestroy(SocketIOEvent e)
-    {
-        JSONObject data = e.data;
-        int destroyedBlock = (int)data[1].n;
-
-        GameObject targetBlock = (GameObject)mapHashtable[destroyedBlock];
-        Debug.Log(mapHashtable[destroyedBlock]);
-        Debug.Log(destroyedBlock);
-        targetBlock.GetComponent<DestroyBlock>().destroyBlock();
-    }
-
-    void OnUserHit(SocketIOEvent e)
-    {
-        Debug.Log(e.name + " / " + e.data);
-    }
-
-    public void sendUserMove(JSONObject data)
-    {
-        data.AddField("gameRoomIndex", gameRoomIndex);
->>>>>>> origin/develop_Test
         socketIO.Emit("userGameMove", data);
     }
 
     public void sendUserAction(JSONObject data)
     {
-<<<<<<< HEAD
         data.AddField("gameRoomIndex", gameRoomIndex);
         socketIO.Emit("userGameAction", data);
     }
@@ -257,25 +200,11 @@ public class GameManager : MonoBehaviour
     {
         data.AddField("gameRoomIndex", gameRoomIndex);
         socketIO.Emit("userBlockDestroy", data);
-=======
-        data.AddField("gameRoomIndex", gameRoomIndex);
-        socketIO.Emit("userGameAction", data);
-    }
-
-    public void sendBlockDestroy(JSONObject data)
-    {
-        data.AddField("gameRoomIndex", gameRoomIndex);
-        socketIO.Emit("userBlockDestroy", data);
->>>>>>> origin/develop_Test
     }
 
     public void sendUserHit(JSONObject data)
     {
-<<<<<<< HEAD
         data.AddField("gameRoomIndex", gameRoomIndex);
-=======
-        data.AddField("gameRoomIndex", gameRoomIndex);
->>>>>>> origin/develop_Test
         socketIO.Emit("userGameHit", data);
     }
 
