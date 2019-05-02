@@ -8,10 +8,11 @@ public class PopupButton : MonoBehaviour
     public GameObject policyUI;
     public GameObject nickNameUI;
     Vector2 centerPos;
+    Vector2 outsidePos;
     // Start is called before the first frame update
     void Start()
     {
-       
+        outsidePos = popup.transform.position;
     }
 
     // Update is called once per frame
@@ -23,12 +24,12 @@ public class PopupButton : MonoBehaviour
     public void policyButtonClick()
     {
         centerPos = popup.transform.position;
-        policyUI.transform.position = new Vector2(1000, 0);
+        policyUI.transform.position = outsidePos;
         nickNameUI.transform.position = centerPos;
     }
 
     public void nicknameButtonClick()
     {
-        popup.transform.position = new Vector2(1000, 0);
+        popup.transform.position = outsidePos;
     }
 }
