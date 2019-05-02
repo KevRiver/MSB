@@ -64,9 +64,10 @@ public class BasePlayer : MonoBehaviour
 
     public void showAttackMotion()
     {
+        //19.05.03 이제 PlayAttackMotion 이 불림
         //19.04.28 이제 히트박스 애니메이션이 실행됨
         //hitbox.SetActive(true);
-        gameObject.transform.GetChild(0).GetComponent<HitBox>().HitAnimStart();
+        //gameObject.transform.GetChild(0).GetComponent<HitBox>().HitAnimStart();
         //StartCoroutine(WaitForIt());
     }
 

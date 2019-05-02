@@ -8,28 +8,36 @@ public class Sword : MonoBehaviour
     GameObject weaponObj;
     Transform parentTransform;
     //public GameObject weaponPrefab;
+
     public Vector3 attachPosition;
     public Quaternion rotation = Quaternion.Euler(new Vector3(0, 0, 20));
+
+    //public Animation attackAnim;
+    //public Animation skillAnim;
     public float attackDmg;
     public float skillDmg;
-    public Animation attackAnim;
-    public Animation skillAnim;
 
     BoxCollider2D weaponCollider;
 
     public void PlayAttackAnim()
     {
-        attackAnim.Play();
+        Debug.Log("PlayAttackAnim called");
+        gameObject.GetComponent<Animation>().Play();
     }
 
     public void PlaySkillAnim()
     {
-        skillAnim.Play();
+        //skillAnim.Play();
+    }
+
+    IEnumerator WaitForIt()
+    {
+        yield return new WaitForSeconds(1.0f);
     }
 
     private void Start()
     {
-        /*
+        //weaponCollider = gameObject.GetComponent<BoxCollider2D>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         foreach (GameObject player in gameManager.players)
         {
@@ -38,7 +46,6 @@ public class Sword : MonoBehaviour
                 parentTransform = player.transform;
             }
         }
-        */
         //gameObject.transform.parent = parentTransform;
     }
 
@@ -60,7 +67,7 @@ public class Sword : MonoBehaviour
                 Debug.Log("HIT SENT TARGETX : " + other.transform.position.x + " CONTACTX : " + contactPoint.x);
                 Debug.Log("HIT SENT TARGETY : " + other.transform.position.y + " CONTACTY : " + contactPoint.y);
                 int targetUserIndex = other.gameObject.GetComponent<PlayerDetail>().Controller.Num;
-                //playerObject.GetComponent<Player>().sendUserHit(targetUserIndex, hitDirection, Player.ACTION_TYPE.TYPE_ATTACK); 0429주석처리함
+                playerObject.GetComponent<Player>().sendUserHit(targetUserIndex, hitDirection, Player.ACTION_TYPE.TYPE_ATTACK);
             }
         }
     }

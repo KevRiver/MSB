@@ -60,8 +60,8 @@ public class Player : MonoBehaviour {
         Rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         m_hp = 5;
-        m_moveSpeed = 100.0f;
-        m_jumpForce = 1050.0f; //git - pull test by Gon
+        m_moveSpeed = 50.0f;
+        m_jumpForce = 800.0f; //git - pull test by Gon
         m_maxSpeed = 10.0f;
         isMovable = true;
 
@@ -98,8 +98,6 @@ public class Player : MonoBehaviour {
                 return;
             Rb.AddForce(Vector3.right * m_moveSpeed);    //AddForce는 Time.deltaTime을 곱해줄 필요가 없다
             Tr.localScale = new Vector3(0.5f,0.5f,0f);   //localScale을 좌우로 바꾼다
-            gameObject.GetComponent<AttachWeapon>().swordPrefab.transform.localPosition = new Vector3(0f, 4.2f, 1f);
-            //gameObject.transform.GetChild(0).transform.localScale.Set(0, 0, 1);
         }
         else if (Input.GetKey(KeyCode.LeftArrow))
         {
@@ -107,14 +105,12 @@ public class Player : MonoBehaviour {
                 return;
             Rb.AddForce(Vector3.left * m_moveSpeed);
             Tr.localScale = new Vector3(-0.5f,0.5f,0f);
-            gameObject.GetComponent<AttachWeapon>().swordPrefab.transform.localPosition = new Vector3(0f, 4.2f, 1f);
-            //gameObject.transform.GetChild(0).transform.localScale.Set(0, 0, 1);
         }
         else {
             // stop condition
         }
     }
-/*
+
     IEnumerator syncUserMove()
     {
         while (true)
@@ -168,7 +164,7 @@ public class Player : MonoBehaviour {
         gameManager.sendUserHit(jsonData);
         Debug.Log("userGameHit SENT");
     }
-    */
+
     public void jump() {
         Debug.Log("Jump!");
         Rb.AddForce(Vector3.up * m_jumpForce);
@@ -188,23 +184,22 @@ public class Player : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.Space) && !isAttacking)
         {
             isAttacking = true;
-            gameObject.GetComponent<BasePlayer>().showAttackMotion();
+            //gameObject.GetComponent<BasePlayer>().showAttackMotion();
+            gameObject.transform.GetChild(0).GetComponent<Sword>().PlayAttackAnim();
             StartCoroutine(WaitForIt());
             StartCoroutine(CoolTime());
-            //sendUserAttack();
+            sendUserAttack();
         }
     }
 
     IEnumerator WaitForIt()
     {
         yield return new WaitForSeconds(0.1f);
-        //isAttacking = false;
     }
 
     IEnumerator CoolTime()
     {
         yield return new WaitForSeconds(0.5f);
-        //hitbox.SetActive(false);
         isAttacking = false;
     }
 
