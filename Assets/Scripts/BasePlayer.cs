@@ -66,7 +66,7 @@ public class BasePlayer : MonoBehaviour
     {
         //19.04.28 이제 히트박스 애니메이션이 실행됨
         //hitbox.SetActive(true);
-        //gameObject.transform.GetChild(0).GetComponent<HitBox>().HitAnimStart();
+        gameObject.transform.GetChild(0).GetComponent<HitBox>().HitAnimStart();
         //StartCoroutine(WaitForIt());
     }
 
