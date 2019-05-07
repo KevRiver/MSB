@@ -18,6 +18,7 @@ public class RegisterPlayerWithName : MonoBehaviour
         SocketIOComponent socket;
         JSONObject userData = new JSONObject(JSONObject.Type.OBJECT);
 
+        //userData.AddField("userKey", strPlayerName);
         userData.AddField("userID", strPlayerName);
         userData.AddField("userPW", "");
 
