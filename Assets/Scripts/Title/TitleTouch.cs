@@ -8,115 +8,154 @@ using System;
 
 public class TitleTouch : MonoBehaviour, IPointerClickHandler
 {
-    NetworkModule networkModule;
-    SocketIOComponent socket;
+	NetworkModule networkModule;
+	SocketIOComponent socket;
 
-    public GameObject popup;
-    public GameObject centerPos;
-    Vector2 centerV2;
+	public GameObject canvasObject;
+	ToastAlerter toastModule;
+	LoadSplash splashModule;
 
-    string strPlayerName = "namoo";
+	public GameObject popup;
+	public GameObject centerPos;
+	public PopupButton nicknameButton;
+	Vector2 centerV2;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        networkModule = GameObject.Find("NetworkModule").GetComponent<NetworkModule>();
+	string strPlayerName = "tiram3sue";
 
-        centerV2 = centerPos.transform.position;
+	// Start is called before the first frame update
+	void Start()
+	{
+		toastModule = canvasObject.GetComponent<ToastAlerter>();
+		splashModule = canvasObject.GetComponent<LoadSplash>();
 
-    }
+		networkModule = GameObject.Find("NetworkModule").GetComponent<NetworkModule>();
 
-    // Update is called once per frame
-    void Update()
-    {
+		centerV2 = centerPos.transform.position;
+		nicknameButton = GameObject.Find("NicknameButton").GetComponent<PopupButton>();
+	}
 
-    }
+	// Update is called once per frame
+	void Update()
+	{
 
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        //showPopup();
+	}
 
-        socket = networkModule.get_socket();
-        JSONObject userData = new JSONObject(JSONObject.Type.OBJECT);
+	public void OnPointerClick(PointerEventData eventData)
+	{
+		splashModule.showLoadSplash(3000, "로그인 중입니다", LoadSplash.SPLASH_TYPE.TYPE_SHORT);
+		Invoke("attemptLogin", (float)3000 / 1000);
+	}
 
-        userData.AddField("userID", strPlayerName);
-        userData.AddField("userPW", "");
+	public void attemptLogin()
+	{
+		socket = networkModule.get_socket();
+		JSONObject userData = new JSONObject(JSONObject.Type.OBJECT);
 
-        socket.Off("loginSuccess", null);
-        socket.Off("loginFail", null);
-        socket.On("loginSuccess", loginSuccess);
-        socket.On("loginFail", loginFail);
-        socket.Emit("login", userData);
-    }
+		userData.AddField("userID", strPlayerName);
+		userData.AddField("userPW", "");
 
-    public void loginSuccess(SocketIOEvent obj)
-    {
-        User localPlayer = new User();
-        Debug.Log("Login Success!" + obj);
-        JSONObject data = obj.data;
-        int userNumber = (int)data[0].n;
-        string userID = (string)data[1].str;
-        string userName = (string)data[2].str;
-        int userRank = (int)data[3].n;
-        int userBlocked = (int)data[4].n;
-        int userMoney = (int)data[5].n;
-        int userCash = (int)data[6].n;
+		socket.Off("loginSuccess", null);
+		socket.Off("loginFail", null);
+		socket.On("loginSuccess", loginSuccess);
+		socket.On("loginFail", loginFail);
+		socket.Emit("login", userData);
+	}
 
-        try
-        {
-            localPlayer.Num = userNumber;
-            localPlayer.Id = userID;
-            localPlayer.Name = userName;
-            localPlayer.Rank = userRank;
-            localPlayer.Blocked = userBlocked;
-            localPlayer.Money = userMoney;
-            localPlayer.Gold = userCash;
-        }
-        catch (Exception err)
-        {
-            userNumber = -1;
-            Debug.Log("Error : UserNumber = -1");
-        };
+	public void loginSuccess(SocketIOEvent obj)
+	{
+		User localPlayer = new User();
+		Debug.Log("Login Success!" + obj);
+		JSONObject data = obj.data;
+		int userNumber = (int)data[0].n;
+		string userID = (string)data[1].str;
+		string userName = (string)data[2].str;
+		int userRank = (int)data[3].n;
+		int userBlocked = (int)data[4].n;
+		int userMoney = (int)data[5].n;
+		int userCash = (int)data[6].n;
 
-        Debug.Log("User number is : " + localPlayer.Num);
-        GameObject.Find("LocalPlayer").GetComponent<LocalPlayer>().setLocalPlayer(localPlayer);
+		try
+		{
+			localPlayer.Num = userNumber;
+			localPlayer.Id = userID;
+			localPlayer.Name = userName;
+			localPlayer.Rank = userRank;
+			localPlayer.Blocked = userBlocked;
+			localPlayer.Money = userMoney;
+			localPlayer.Gold = userCash;
+		}
+		catch (Exception err)
+		{
+			userNumber = -1;
+			Debug.Log("Error : " + err);
+		}
 
-        //로그인 버튼 -> 로그 아웃 버튼, 큐 입장 버튼 생성
-    }
+		Debug.Log("User number is : " + localPlayer.Num);
+		toastModule.showToast(localPlayer.Name + "님 환영합니다!", ToastAlerter.MESSAGE_TYPE.TYPE_GREEN, 2);
+		GameObject.Find("LocalPlayer").GetComponent<LocalPlayer>().setLocalPlayer(localPlayer);
 
-    public void loginFail(SocketIOEvent obj)
-    {
-        Debug.Log("Login Fail" + obj);
-        JSONObject data = obj.data;
-        int result = (int)data[0].n;
-        int blocked = (int)data[1].n;
-        string error = (string)data[2].str;
-        switch (result)
-        {
-            case 0:
-                Debug.Log("No User Data : Register!");
-                showPopup();
-                break;
-            case 1:
-                Debug.Log("ID already Exists!");
-                break;
-            case 2:
-                Debug.Log("Name already Exists!");
-                break;
-            case 3:
-                Debug.Log("Unknown Error : " + error);
-                break;
+		//로그인 버튼 -> 로그 아웃 버튼, 큐 입장 버튼 생성
+	}
 
-        }
-    }
+	public void loginFail(SocketIOEvent obj)
+	{
+		Debug.Log("Login Fail" + obj);
+		JSONObject data = obj.data;
+		int result = (int)data[0].n;
+		int blocked = (int)data[1].n;
+		string error = (string)data[2].str;
+		switch (result)
+		{
+			case 0:
+				Debug.Log("No User Data : Register!");
+				showPopup();
+				break;
+			case 1:
+				Debug.Log("PASSWORD NOT MATCH");
+				toastModule.showToast("PASSWORD NOT MATCH", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 2);
+				break;
+			case 2:
+				Debug.Log("YOU ARE BANNED");
+				toastModule.showToast("YOU ARE BANNED", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 2);
+				break;
+			case 3:
+				Debug.Log("Unknown Error : " + error);
+				toastModule.showToast("ERROR: " + error, ToastAlerter.MESSAGE_TYPE.TYPE_RED, 2);
+				break;
 
-    public void showPopup()
-    {
-        popup.transform.position = centerV2;
-    }
+		}
+	}
 
-    public void reslutRegisterPopup()
-    {
+	public void showPopup()
+	{
+		popup.transform.position = centerV2;
+	}
 
-    }
+	public void attemptRegister(string nickname)
+	{
+		JSONObject userData = new JSONObject(JSONObject.Type.OBJECT);
+
+		userData.AddField("userID", strPlayerName);
+		userData.AddField("userPW", "");
+		userData.AddField("userName", nickname);
+
+		socket.Off("registerResult", null);
+		socket.On("registerResult", registerResult);
+		socket.Emit("register", userData);
+	}
+
+	public void registerResult(SocketIOEvent obj)
+	{
+		Debug.Log("Register Result" + obj);
+		JSONObject data = obj.data;
+		int resultCode = (int)data[0].n;
+		string resultMessage = (string)data[1].str;
+		nicknameButton.attemptRegisterResult(resultCode, resultMessage);
+		if (resultCode == 0)
+		{
+			Debug.Log("Register Finished!");
+			toastModule.showToast("REGISTER SUCCESS", ToastAlerter.MESSAGE_TYPE.TYPE_GREEN, 2);
+		}
+	}
+
 }
