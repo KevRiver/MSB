@@ -21,7 +21,6 @@ public class RegisterPlayerWithName : MonoBehaviour
         //userData.AddField("userKey", strPlayerName);
         userData.AddField("userID", strPlayerName);
         userData.AddField("userPW", "");
-        
 
         socket = networkmodule.GetComponent<NetworkModule>().get_socket();
         socket.On("loginSuccess", loginSuccess);
