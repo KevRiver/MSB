@@ -50,7 +50,6 @@ public class GameManager : MonoBehaviour
         {
             GameObject player = new GameObject();
             Debug.Log(userData.Num);
-            //19.04.28 이제 playerPrefab2가 생성됨
             player = Instantiate(PlayerPrefab, new Vector3(1, -2, 0), Quaternion.identity);
             player.GetComponent<PlayerDetail>().Controller = userData;
             player.AddComponent<BasePlayer>();
