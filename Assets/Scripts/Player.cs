@@ -4,113 +4,111 @@ using UnityEngine;
 using SocketIO;
 
 public class Player : MonoBehaviour {
-    private Transform m_tr;
-    private Rigidbody2D m_rb;
+    private GameManager gameManager;
+
+    private Transform tr;
+    private Rigidbody2D rb;
     private Animator animator;
 
     public int m_userIndex;
     public string m_userID;
-    public Animator m_animator;
-
-    public int m_hp;
-    public float m_moveSpeed;
-    public float m_jumpForce;
-    private float m_maxSpeed;
-    public bool isMovable;
-    public Vector3 m_velocity;
     
+    public int hp;
+    private float moveSpeed;
+    private float jumpForce;
+    private float maxSpeed;
+    private Vector3 moveVector;
+    
+    public Joystick moveController;
+    public Joystick attackController;
+    public Joystick skillController;
+
+    public bool isMovable = true;
     private bool isAttacking = false;
 
     public enum ACTION_TYPE
     {
         TYPE_ATTACK, TYPE_SKILL, TYPE_HIT
     }
-
-    private GameManager gameManager;
-
-    public Transform Tr
-    {
-        get
-        {
-            return m_tr;
-        }
-
-        set
-        {
-            m_tr = value;
-        }
-    }
-
-    public Rigidbody2D Rb
-    {
-        get
-        {
-            return m_rb;
-        }
-
-        set
-        {
-            m_rb = value;
-        }
-    }
     
     void Start () {
-        //Debug.Log("Hoo Ha");
-        Tr = GetComponent<Transform>();
-        Rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
-        m_hp = 5;
-        m_moveSpeed = 50.0f;
-        m_jumpForce = 800.0f; //git - pull test by Gon
-        m_maxSpeed = 10.0f;
-        isMovable = true;
+        //gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        tr = transform;
+        rb = gameObject.GetComponent<Rigidbody2D>();
+        animator = gameObject.GetComponent<Animator>();
 
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        hp = 5;
+        moveSpeed = 50.0f;
+        jumpForce = 800.0f;
+        maxSpeed = 10.0f;
+        moveVector = Vector3.zero;
+        isMovable = true;
 
         StartCoroutine("syncUserMove");
     }
 	
 	// Update is called once per frame
 	void Update () {
-        move();
-        m_velocity = Rb.velocity;
+        HandleInput();
         attack();
 	}
+
+    private void FixedUpdate()
+    {
+        Move();
+    }
+
+    public void HandleInput()
+    {
+        moveVector = PoolInput();
+    }
+
+    public Vector3 PoolInput()
+    {
+        float h = moveController.GetHorizontalValue();
+        float v = moveController.GetVerticalValue();
+        Vector3 moveVector = new Vector3(h, v).normalized;
+
+        return moveVector;
+    }
 
     public void die() {
         // 리스폰 장소에서 다시 리스폰
     }
 
-    public void move() {
+    public void Move() {
         if (!isMovable)
         {
             Debug.Log("return");
             return;
         }
+        Debug.Log(moveVector.x);
+        //m_animator.SetFloat("Speed", Mathf.Abs(rb.velocity.x));
 
-        //m_animator.SetFloat("Speed", Mathf.Abs(Rb.velocity.x));
-        animator.SetFloat("Speed", Mathf.Abs(Rb.velocity.x));
-
-        if (Input.GetKey(KeyCode.RightArrow))
+        if (moveVector.x > 0f) 
         {
-            //Debug.Log("Right Arrow input");
-            if (Rb.velocity.x > m_maxSpeed)
+            Debug.Log("Joystick input right");
+            if (rb.velocity.x > maxSpeed)
                 return;
-            Rb.AddForce(Vector3.right * m_moveSpeed);    //AddForce는 Time.deltaTime을 곱해줄 필요가 없다
-          
-            Tr.localScale = new Vector3(0.5f,0.5f,0f);   //localScale을 좌우로 바꾼다
+
+            rb.AddForce(Vector3.right * moveSpeed);    //AddForce는 Time.deltaTime을 곱해줄 필요가 없다         
+            tr.localScale = new Vector3(0.5f,0.5f,0f);   //localScale을 좌우로 바꾼다
         }
-        else if (Input.GetKey(KeyCode.LeftArrow))
+        else if (moveVector.x < 0f)
         {
-            if (Rb.velocity.x < -m_maxSpeed)
+            Debug.Log("Joystick input left");
+            if (rb.velocity.x < -maxSpeed)
                 return;
-            Rb.AddForce(Vector3.left * m_moveSpeed);
-          
-            Tr.localScale = new Vector3(-0.5f,0.5f,0f);
+
+            rb.AddForce(Vector3.left * moveSpeed);
+            tr.localScale = new Vector3(-0.5f,0.5f,0f);
         }
         else {
-            // stop condition
+            Debug.Log("Joystick input zero");
+            // 아무것도 하지 않음
         }
+
+        animator.SetFloat("Speed", Mathf.Abs(rb.velocity.x));
     }
 
     IEnumerator syncUserMove()
@@ -169,7 +167,7 @@ public class Player : MonoBehaviour {
 
     public void jump() {
         Debug.Log("Jump!");
-        Rb.AddForce(Vector3.up * m_jumpForce);
+        rb.AddForce(Vector3.up * jumpForce);
     }
 
     public float getDamage(float currentHp, float damage) {
