@@ -97,6 +97,7 @@ public class Player : MonoBehaviour {
             if (Rb.velocity.x > m_maxSpeed)
                 return;
             Rb.AddForce(Vector3.right * m_moveSpeed);    //AddForce는 Time.deltaTime을 곱해줄 필요가 없다
+          
             Tr.localScale = new Vector3(0.5f,0.5f,0f);   //localScale을 좌우로 바꾼다
         }
         else if (Input.GetKey(KeyCode.LeftArrow))
@@ -104,6 +105,7 @@ public class Player : MonoBehaviour {
             if (Rb.velocity.x < -m_maxSpeed)
                 return;
             Rb.AddForce(Vector3.left * m_moveSpeed);
+          
             Tr.localScale = new Vector3(-0.5f,0.5f,0f);
         }
         else {
