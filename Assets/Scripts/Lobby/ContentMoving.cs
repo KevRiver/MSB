@@ -3,9 +3,9 @@ using System.Collections;
 
 public class ContentMoving : MonoBehaviour
 {
-    public GameObject centerPos;
-    public GameObject[] skin = new GameObject [6];
-    GameObject t1;
+    public GameObject centerObj;
+    public GameObject[] skinArray = new GameObject [6];
+    GameObject skinPanel;
     int centerNum;
     int instantiateNum;
     float pos_x;
@@ -13,19 +13,20 @@ public class ContentMoving : MonoBehaviour
     float limitLeftPos_x;
     float limitRightPos_x;
 
-
     // Use this for initialization
     void Start()
     {
-
-        pos_x = centerPos.transform.position.x;
-        centerNum = skin.Length / 2;
+        // 스킨 패널 생성 준비 
+        pos_x = centerObj.transform.position.x;
+        centerNum = skinArray.Length / 2;
         instantiateNum = centerNum;
 
+        // 스킨 패널 생성
         skinInstantiat();
 
+        // 양쪽 스킨 패널의 한계 포지션 계산
         limitLeftPos_x = 90 * centerNum;
-        if(skin.Length % 2 == 1)
+        if(skinArray.Length % 2 == 1)
         {
             limitRightPos_x = -90 * centerNum;
         }
@@ -35,14 +36,9 @@ public class ContentMoving : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        Debug.Log("lp = " + transform.localPosition.x);
-    }
-
     private void FixedUpdate()
     {
+        // 컨텐츠 오브젝트의 포지션이 양쪽 마지막 스킨 패널의 포지션을 넘어가면 막음
         if(transform.localPosition.x > limitLeftPos_x)
         {
             transform.localPosition = new Vector2(limitLeftPos_x, transform.localPosition.y);
@@ -52,28 +48,29 @@ public class ContentMoving : MonoBehaviour
         }
     }
 
+    // 스킨 패널 생성 
     void skinInstantiat()
     {
-        for (int x = 0; x < skin.Length; x++)
+        for (int x = 0; x < skinArray.Length; x++)
         {
             if (x <= centerNum)
             {
-                t1 = Instantiate(skin[instantiateNum], new Vector3(pos_x, centerPos.transform.position.y, 0), Quaternion.identity);
+                skinPanel = Instantiate(skinArray[instantiateNum], new Vector3(pos_x, centerObj.transform.position.y, 0), Quaternion.identity);
                 instantiateNum--;
                 pos_x -= 90f;
-                t1.transform.parent = transform;
+                skinPanel.transform.parent = transform;
                 if (x == centerNum)
                 {
-                    pos_x = centerPos.transform.position.x + 90f;
+                    pos_x = centerObj.transform.position.x + 90f;
                     instantiateNum = centerNum + 1;
                 }
             }
             else
             {
-                t1 = Instantiate(skin[instantiateNum], new Vector3(pos_x, centerPos.transform.position.y, 0), Quaternion.identity);
+                skinPanel = Instantiate(skinArray[instantiateNum], new Vector3(pos_x, centerObj.transform.position.y, 0), Quaternion.identity);
                 instantiateNum++;
                 pos_x += 90f;
-                t1.transform.parent = transform;
+                skinPanel.transform.parent = transform;
             }
         }
     }

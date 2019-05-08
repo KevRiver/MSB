@@ -77,11 +77,5 @@ public class CharacterSelectUI : MonoBehaviour
         {
             panelTrans.localScale = new Vector3(1, 1, 1);
         }
-
-        //중심점과 거리가 얼마나 멀어졌는지 확인.
-        //pos = panelTrans.localPosition.x - .clipOffset.x;
-        //dist = Mathf.Clamp(Mathf.Abs(pos), 0f, cellWidth);
-        //width값을 조절하여 sprite의 size를 조정. 
-        //mWidget.width = System.Convert.ToInt32(((cellWidth - dist * downScale) / cellWidth) * cellWidth);
     }
 }
