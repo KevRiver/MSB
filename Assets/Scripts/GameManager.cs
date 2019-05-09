@@ -102,7 +102,7 @@ public class GameManager : MonoBehaviour
                 player.transform.SetPositionAndRotation(newPosition, Quaternion.identity);
                 player.transform.localScale = new Vector3(toward, 1.5f);
 				player.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-				player.GetComponent<BasePlayer>().Rb.AddForce(new Vector2(velocityX, velocityY));
+				player.GetComponent<BasePlayer>().rb.AddForce(new Vector2(velocityX, velocityY));
 				//Debug.Log("other player moved");
 				break;
                 //Debug.Log("other player moved");
@@ -176,7 +176,7 @@ public class GameManager : MonoBehaviour
         {
             if (p.GetComponent<Player>() != null)
             {
-                p.GetComponent<BasePlayer>().Rb.AddForce(new Vector2(hitDirX, hitDirY) * 1000);
+                p.GetComponent<BasePlayer>().rb.AddForce(new Vector2(hitDirX, hitDirY) * 1000);
                 Debug.Log("OnUserHit Test");
             }
         }

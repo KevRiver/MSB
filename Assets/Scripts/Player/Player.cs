@@ -18,10 +18,12 @@ public class Player : MonoBehaviour {
     private float jumpForce;
     private float maxSpeed;
     private Vector3 moveVector;
+    private Vector3 attackVector;
+    private Vector3 skillVector;
     
-    public Joystick moveController;
-    public Joystick attackController;
-    public Joystick skillController;
+    public MoveCtrlJoystick moveController;
+    public AtkCtrlJoystick attackController;
+    public SkillCtrlJoystick skillController;
 
     public bool isMovable = true;
     private bool isAttacking = false;
@@ -42,6 +44,8 @@ public class Player : MonoBehaviour {
         jumpForce = 800.0f;
         maxSpeed = 10.0f;
         moveVector = Vector3.zero;
+        attackVector = Vector3.zero;
+        skillVector = Vector3.zero;
         isMovable = true;
 
         StartCoroutine("syncUserMove");
@@ -50,7 +54,7 @@ public class Player : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         HandleInput();
-        attack();
+        Attack();
 	}
 
     private void FixedUpdate()
@@ -60,10 +64,12 @@ public class Player : MonoBehaviour {
 
     public void HandleInput()
     {
-        moveVector = PoolInput();
+        moveVector = MoveCtrlInput();
+        attackVector = AtkCtrlInput();
+        skillVector = SkillCtrlInput();
     }
 
-    public Vector3 PoolInput()
+    public Vector3 MoveCtrlInput()
     {
         float h = moveController.GetHorizontalValue();
         float v = moveController.GetVerticalValue();
@@ -72,7 +78,25 @@ public class Player : MonoBehaviour {
         return moveVector;
     }
 
-    public void die() {
+    public Vector3 AtkCtrlInput()
+    {
+        float h = moveController.GetHorizontalValue();
+        float v = moveController.GetVerticalValue();
+        Vector3 attackVector = new Vector3(h, v).normalized;
+
+        return attackVector;
+    }
+
+    public Vector3 SkillCtrlInput()
+    {
+        float h = moveController.GetHorizontalValue();
+        float v = moveController.GetVerticalValue();
+        Vector3 skillVector = new Vector3(h, v).normalized;
+
+        return skillVector;
+    }
+
+    public void Die() {
         // 리스폰 장소에서 다시 리스폰
     }
 
@@ -82,8 +106,6 @@ public class Player : MonoBehaviour {
             Debug.Log("return");
             return;
         }
-        Debug.Log(moveVector.x);
-        //m_animator.SetFloat("Speed", Mathf.Abs(rb.velocity.x));
 
         if (moveVector.x > 0f) 
         {
@@ -107,8 +129,50 @@ public class Player : MonoBehaviour {
             Debug.Log("Joystick input zero");
             // 아무것도 하지 않음
         }
-
         animator.SetFloat("Speed", Mathf.Abs(rb.velocity.x));
+       
+    }
+
+    public void Jump()
+    {
+        //Debug.Log("Jump!");
+        animator.SetBool("Grounded", false);
+        rb.AddForce(Vector3.up * jumpForce);
+    }
+
+    public void Aim()
+    {
+
+    }
+
+    public void Attack()
+    {
+        // Hit Box 를 0.2 초간 enabled = true 후 다시 enable = false 시킨다
+        // 추후 업그레이드
+        // Animation을 실행시키고 Animation 프레임마다 BoxCollider로 HitBox 넣어줌 << 이게 제일 괜찮아 보임 판정상
+        // +모든 공격은 조준을 해야되므로 플레이어가 조준한 곳으로 애니메이션, 히트박스가 생성되어야함
+        if (!isAttacking)
+        {
+            isAttacking = true;
+            //gameObject.GetComponent<BasePlayer>().showAttackMotion();
+            gameObject.transform.GetChild(0).GetComponent<Sword>().PlayAttackAnim();
+            StartCoroutine(WaitForIt());
+            StartCoroutine(CoolTime());
+            sendUserAttack();
+        }
+    }
+
+    public void useSkill()
+    {
+
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision) //캐릭터가 땅에 닿아있으면 Grounded true;
+    {
+        if (collision.gameObject.tag == "Ground")
+        {
+            animator.SetBool("Grounded", true);
+        }
     }
 
     IEnumerator syncUserMove()
@@ -165,32 +229,10 @@ public class Player : MonoBehaviour {
         Debug.Log("userGameHit SENT");
     }
 
-    public void jump() {
-        Debug.Log("Jump!");
-        rb.AddForce(Vector3.up * jumpForce);
-    }
-
     public float getDamage(float currentHp, float damage) {
         float updatedHp = currentHp - damage;
         return updatedHp;
-    }
-
-    public void attack()
-    {
-        // Hit Box 를 0.2 초간 enabled = true 후 다시 enable = false 시킨다
-        // 추후 업그레이드
-        // Animation을 실행시키고 Animation 프레임마다 BoxCollider로 HitBox 넣어줌 << 이게 제일 괜찮아 보임 판정상
-        // +모든 공격은 조준을 해야되므로 플레이어가 조준한 곳으로 애니메이션, 히트박스가 생성되어야함
-        if (Input.GetKeyDown(KeyCode.Space) && !isAttacking)
-        {
-            isAttacking = true;
-            //gameObject.GetComponent<BasePlayer>().showAttackMotion();
-            gameObject.transform.GetChild(0).GetComponent<Sword>().PlayAttackAnim();
-            StartCoroutine(WaitForIt());
-            StartCoroutine(CoolTime());
-            sendUserAttack();
-        }
-    }
+    } 
 
     IEnumerator WaitForIt()
     {
@@ -201,10 +243,5 @@ public class Player : MonoBehaviour {
     {
         yield return new WaitForSeconds(0.5f);
         isAttacking = false;
-    }
-
-    public void useSkill()
-    {
-         
     }
 }

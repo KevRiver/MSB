@@ -4,13 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class Joystick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
+public class MoveCtrlJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
 {
     private Image backGroundImg;
     private Image joystickImg;
     private Vector3 inputVector;
 
-    void Start()
+    protected void Start()
     {
         backGroundImg = GetComponent<Image>();
         joystickImg = transform.GetChild(0).GetComponent<Image>();
