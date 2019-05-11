@@ -9,22 +9,24 @@ public class AtkCtrlJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler, I
     //스킬 조이스틱을 드래그 하면 공격 범위가 나오고 손을 떼면 기본공격이 나감
     //스킬은 PlayerPrefab 의 자식 오브젝트 Weapon.Attack이 호출됨
     //조이스틱이 다시 중앙에 위치하면 공격 취소
+    private Controller controller;
 
     private Image backGroundImg;
     private Image joystickImg;
     private Vector3 inputVector;
-    //private Aim aim;
+
+    public bool pointerUp;
 
     void Start()
     {
         backGroundImg = GetComponent<Image>();
         joystickImg = transform.GetChild(0).GetComponent<Image>();
+        controller = GameObject.Find("Controller").GetComponent<Controller>();
     }
 
     public virtual void OnDrag(PointerEventData _pointEventData)
     {
         //드래그 하는 방향대로 플레이어 캐릭터를 중심으로 공격범위가 나타남
-        //gameObject.transform.GetChild(0).transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true; ;
         Vector2 pos;
         if (RectTransformUtility.ScreenPointToLocalPointInRectangle(backGroundImg.rectTransform, _pointEventData.position, _pointEventData.pressEventCamera, out pos))
         {
@@ -45,10 +47,11 @@ public class AtkCtrlJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler, I
 
     public virtual void OnPointerUp(PointerEventData _pointEventData)
     {
-        //inputVector로 공격을 함
-        //gameObject.transform.GetChild(0).localEulerAngles.Set(0f, 0f, 0f);
-        //gameObject.transform.GetChild(0).GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
-        //gameObject.transform.rotation = Vector3.zero;
+        //현재 inputVector가 zero가 아니라면 (Player가 조이스틱을 다시 가운데로 위치시키지 않았다면)inputVector로 공격을 함
+        if (inputVector != Vector3.zero)
+        {
+            controller.targetObj.GetComponent<Player>().Attack();
+        }
         inputVector = Vector3.zero;
         joystickImg.rectTransform.anchoredPosition = Vector3.zero;
     }
