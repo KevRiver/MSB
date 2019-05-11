@@ -18,12 +18,12 @@ public class Player : MonoBehaviour {
     private float jumpForce;
     private float maxSpeed;
     private Vector3 moveVector;
-    private Vector3 attackVector;
-    private Vector3 skillVector;
+    //private Vector3 attackVector;
+    //private Vector3 skillVector;
     
     public MoveCtrlJoystick moveController;
-    public AtkCtrlJoystick attackController;
-    public SkillCtrlJoystick skillController;
+    //public AtkCtrlJoystick atkController;
+    //public SkillCtrlJoystick skillController;
 
     public bool isMovable = true;
     private bool isAttacking = false;
@@ -44,8 +44,8 @@ public class Player : MonoBehaviour {
         jumpForce = 800.0f;
         maxSpeed = 10.0f;
         moveVector = Vector3.zero;
-        attackVector = Vector3.zero;
-        skillVector = Vector3.zero;
+        //attackVector = Vector3.zero;
+        //skillVector = Vector3.zero;
         isMovable = true;
 
         StartCoroutine("syncUserMove");
@@ -65,8 +65,10 @@ public class Player : MonoBehaviour {
     public void HandleInput()
     {
         moveVector = MoveCtrlInput();
-        attackVector = AtkCtrlInput();
-        skillVector = SkillCtrlInput();
+        //attackVector = AtkCtrlInput();
+        //Debug.Log("Attack Vector : " + attackVector);
+        //skillVector = SkillCtrlInput();
+        //Debug.Log("Skill Vector : " + skillVector);
     }
 
     public Vector3 MoveCtrlInput()
@@ -78,10 +80,10 @@ public class Player : MonoBehaviour {
         return moveVector;
     }
 
-    public Vector3 AtkCtrlInput()
+    /*public Vector3 AtkCtrlInput()
     {
-        float h = moveController.GetHorizontalValue();
-        float v = moveController.GetVerticalValue();
+        float h = atkController.GetHorizontalValue();
+        float v = atkController.GetVerticalValue();
         Vector3 attackVector = new Vector3(h, v).normalized;
 
         return attackVector;
@@ -89,12 +91,12 @@ public class Player : MonoBehaviour {
 
     public Vector3 SkillCtrlInput()
     {
-        float h = moveController.GetHorizontalValue();
-        float v = moveController.GetVerticalValue();
+        float h = skillController.GetHorizontalValue();
+        float v = skillController.GetVerticalValue();
         Vector3 skillVector = new Vector3(h, v).normalized;
 
         return skillVector;
-    }
+    }*/
 
     public void Die() {
         // 리스폰 장소에서 다시 리스폰
