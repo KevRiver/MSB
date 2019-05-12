@@ -15,6 +15,8 @@ public class AtkCtrlJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler, I
     private Image joystickImg;
     private Vector3 inputVector;
 
+    public bool isUsing;
+
     public bool pointerUp;
 
     void Start()
@@ -42,15 +44,17 @@ public class AtkCtrlJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler, I
 
     public virtual void OnPointerDown(PointerEventData _pointEventData)
     {
+        isUsing = true;
         OnDrag(_pointEventData);
     }
 
     public virtual void OnPointerUp(PointerEventData _pointEventData)
     {
+        isUsing = false;
         //현재 inputVector가 zero가 아니라면 (Player가 조이스틱을 다시 가운데로 위치시키지 않았다면)inputVector로 공격을 함
         if (inputVector != Vector3.zero)
         {
-            controller.targetObj.GetComponent<Player>().Attack();
+            controller.targetObj.GetComponent<Player>().Attack(inputVector);
         }
         inputVector = Vector3.zero;
         joystickImg.rectTransform.anchoredPosition = Vector3.zero;

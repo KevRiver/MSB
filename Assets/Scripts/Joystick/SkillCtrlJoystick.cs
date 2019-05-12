@@ -13,6 +13,8 @@ public class SkillCtrlJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler,
     private Image joystickImg;
     private Vector3 inputVector;
 
+    public bool isUsing;
+
     protected void Start()
     {
         backGroundImg = GetComponent<Image>();
@@ -36,11 +38,13 @@ public class SkillCtrlJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler,
 
     public virtual void OnPointerDown(PointerEventData _pointEventData)
     {
+        isUsing = true;
         OnDrag(_pointEventData);
     }
 
     public virtual void OnPointerUp(PointerEventData _pointEventData)
     {
+        isUsing = false;
         inputVector = Vector3.zero;
         joystickImg.rectTransform.anchoredPosition = Vector3.zero;
     }

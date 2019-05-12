@@ -32,7 +32,20 @@ public class Controller : MonoBehaviour
     private void Update()
     {
         HandleInput();
-        targetObj.GetComponent<Player>().Aim(atkVector);
+
+        if (atkCtrlJoystick.isUsing)
+            targetObj.GetComponent<Player>().Aim(atkVector, "BasicAtkRange");
+        else if (skillCtrlJoystick.isUsing)
+            targetObj.GetComponent<Player>().Aim(skillVector, "SkillRange");
+        else
+        {
+            aimAxis.transform.Find("BasicAtkRange").gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            aimAxis.transform.Find("SkillRange").gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            aimAxis.transform.localRotation = Quaternion.identity;
+        }
+
+
+        //targetObj.GetComponent<Player>().Aim(skillVector,"SkillRange");
     }
 
     private void FixedUpdate()

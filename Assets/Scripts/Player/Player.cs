@@ -9,10 +9,18 @@ public class Player : MonoBehaviour {
     private Transform tr;
     private Rigidbody2D rb;
     private Animator animator;
+    //Animation Parameter;
+    public float curSpeed;
+    public bool isGrounded;
+    public bool isDoingBasicAtk;
+    public bool isDoingSkill;
 
     public GameObject aimAxis;
+    public GameObject basicAtkRange;
+    public GameObject skillAtkRange;
     private float aimAngle;
     public GameObject weaponAxis;
+    public GameObject weapon;
 
     public int m_userIndex;
     public string m_userID;
@@ -37,7 +45,10 @@ public class Player : MonoBehaviour {
         animator = gameObject.GetComponent<Animator>();
 
         aimAxis = gameObject.transform.Find("AimAxis").gameObject;
+        //basicAtkRange 는 weaponAxis의 자식으로 추가될 오브젝트의 basicAtkRange를 가져온다
+        //skillRange 는 weaponAxis의 자식으로 추가될 오브젝트의 skillAtkRange를 가져온다
         weaponAxis = gameObject.transform.Find("WeaponAxis").gameObject;
+        weapon = weaponAxis.transform.Find("TestWeapon").gameObject;
 
         hp = 5;
         moveSpeed = 50.0f;
@@ -51,16 +62,17 @@ public class Player : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        SetAnimatorParam();
+        SetAnimatorParam(Mathf.Abs(rb.velocity.x), isGrounded);
     }
 
     private void FixedUpdate()
     {
     }
 
-    public void SetAnimatorParam()
+    public void SetAnimatorParam(float _speed,bool _isGrounded)
     {
-        animator.SetFloat("Speed", Mathf.Abs(rb.velocity.x));
+        this.animator.SetFloat("Speed", _speed);
+        this.animator.SetBool("Grounded", _isGrounded);
     }
 
     public void Die() {
@@ -100,44 +112,68 @@ public class Player : MonoBehaviour {
     public void Jump()
     {
         //Debug.Log("Jump!");
-        animator.SetBool("Grounded", false);
+        //animator.SetBool("Grounded", false);
         rb.AddForce(Vector3.up * jumpForce);
     }
 
-    public float Aim(Vector3 vector)
+    public float Vec32Angle(Vector3 vector)
     {
+        float _aimAngle;
         if (vector == Vector3.zero)
-        {
-            Debug.Log("No Attack Input!");
-            aimAxis.transform.Find("LongAttackRange").gameObject.GetComponent<SpriteRenderer>().enabled = false;
-            aimAxis.transform.localRotation = Quaternion.identity;
             return 0;
-        }
         else
         {
-            aimAxis.transform.Find("LongAttackRange").gameObject.GetComponent<SpriteRenderer>().enabled = true;
-            if (tr.localScale.x < 0) // 현재 Player가 왼쪽을 바라보고 있다면
-                aimAngle = Mathf.Rad2Deg * Mathf.Atan2(vector.x, vector.y) + 90;
-            else//플레이어가 오른쪽을 보고 있다면
-                aimAngle = -1 * Mathf.Rad2Deg * Mathf.Atan2(vector.x, vector.y) + 90;
+            if (tr.localScale.x < 0)
+                _aimAngle = Mathf.Rad2Deg * Mathf.Atan2(vector.x, vector.y) + 90;
+            else
+                _aimAngle = -Mathf.Rad2Deg * Mathf.Atan2(vector.x, vector.y) + 90;
 
-            //aimAxis를 회전
-            aimAxis.transform.localRotation = Quaternion.Euler(0, 0, aimAngle);
-            return aimAngle;
+            return _aimAngle;
         }
     }
 
-    public void Attack(float aimAngle)
+    //기본 공격을 조준하면서 멀티터치로 동시에 스킬조준을 할 수 없다
+    //이미 기본 공격을 하고 있거나, 스킬을 사용하고 있으면 조준선이 보이지 않는다
+    public void Aim(Vector3 vector,string curRange)
+    {
+        /*if (vector == Vector3.zero)
+        {
+            aimAxis.transform.Find("BasicAtkRange").gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            aimAxis.transform.Find("SkillRange").gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            aimAxis.transform.localRotation = Quaternion.identity;
+        }
+        else
+        {
+            Debug.Log(weapon.GetComponent<Weapon>().isInAction);
+            aimAngle = Vec32Angle(vector);
+            Debug.Log(curRange);
+            aimAxis.transform.Find(curRange).gameObject.GetComponent<SpriteRenderer>().enabled = true;
+            aimAxis.transform.localRotation = Quaternion.Euler(0, 0, aimAngle); //aimAxis를 회전 
+        }*/
+
+        Debug.Log(weapon.GetComponent<Weapon>().isInAction);
+        aimAngle = Vec32Angle(vector);
+        Debug.Log(curRange);
+        aimAxis.transform.Find(curRange).gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        aimAxis.transform.localRotation = Quaternion.Euler(0, 0, aimAngle); //aimAxis를 회전 
+    }
+
+    public void Attack(Vector3 vector)
     {
         // Hit Box 를 0.2 초간 enabled = true 후 다시 enable = false 시킨다
         // 추후 업그레이드
         // Animation을 실행시키고 Animation 프레임마다 BoxCollider로 HitBox 넣어줌 << 이게 제일 괜찮아 보임 판정상
         // +모든 공격은 조준을 해야되므로 플레이어가 조준한 곳으로 애니메이션, 히트박스가 생성되어야함
+        // 이미 공격을 하고 있거나 스킬을 사용중에는 다시 Attack 이 호출되지 않는다
         if (!isAttacking)
         {
             isAttacking = true;
-            //gameObject.GetComponent<BasePlayer>().showAttackMotion();
-            gameObject.transform.GetChild(0).GetComponent<Sword>().PlayAttackAnim();
+            aimAngle = Vec32Angle(vector);
+            weaponAxis.transform.localRotation = Quaternion.Euler(0, 0, aimAngle);
+            weapon.GetComponent<Weapon>().isDoingBasicAtk = true;
+
+            //weaponAxis 의 자식 오브젝트의 weapon.cs 컴포넌트를 가져와 basicAtkAnimation 을 실행한다
+            //gameObject.transform.GetChild(0).GetComponent<Sword>().PlayAttackAnim();
             StartCoroutine(WaitForIt());
             StartCoroutine(CoolTime());
             //sendUserAttack();
@@ -154,7 +190,7 @@ public class Player : MonoBehaviour {
         Debug.Log(collision.gameObject.tag);
         if (collision.gameObject.tag == "Ground")
         {
-            animator.SetBool("Grounded", true);
+            isGrounded = true;
         }
     }
 
@@ -162,7 +198,7 @@ public class Player : MonoBehaviour {
     {
         if (collision.gameObject.tag == "Ground")
         {
-            animator.SetBool("Grounded", false);
+            isGrounded = false;
         }
     }
 
@@ -229,6 +265,7 @@ public class Player : MonoBehaviour {
     IEnumerator WaitForIt()
     {
         yield return new WaitForSeconds(0.1f);
+        //weaponAxis.transform.localRotation = Quaternion.identity;
     }
 
     IEnumerator CoolTime()
