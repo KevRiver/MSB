@@ -43,22 +43,22 @@ public class PopupButton : MonoBehaviour
 		Debug.Log("nickname button click!");
 		registerResult.GetComponent<Text>().text = "";
 		string userNameInput = nickNameInput.GetComponent<InputField>().text;
-		if (userNameInput == null)
+		if (userNameInput == null || userNameInput.Length < 1)
 		{
 			registerResult.GetComponent<Text>().text = "닉네임을 입력하세요";
-			toastModule.showToast("닉네임을 입력하세요", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 2);
+			toastModule.showToast("닉네임을 입력하세요", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 1);
 			return;
 		}
 		if (userNameInput.Length < 4)
 		{
 			registerResult.GetComponent<Text>().text = "닉네임이 너무 짧습니다";
-			toastModule.showToast("닉네임이 너무 짧습니다", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 2);
+			toastModule.showToast("닉네임이 너무 짧습니다", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 1);
 			return;
 		}
 		if (userNameInput.Length > 8)
 		{
 			registerResult.GetComponent<Text>().text = "닉네임이 너무 깁니다";
-			toastModule.showToast("닉네임이 너무 깁니다", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 2);
+			toastModule.showToast("닉네임이 너무 깁니다", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 1);
 			return;
 		}
 		Debug.Log("nickname button click! register attempt");
@@ -72,18 +72,19 @@ public class PopupButton : MonoBehaviour
 		{
 			case 0:
 				popup.transform.position = outsidePos;
+				GameObject.Find("ClickText").GetComponent<Text>().color = new Color(0f, 0f, 0f, 1f);
 				break;
 			case 1:
 				registerResult.GetComponent<Text>().text = "ID가 이미 존재합니다";
-				toastModule.showToast("ID가 이미 존재합니다", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 2);
+				toastModule.showToast("ID가 이미 존재합니다", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 1);
 				break;
 			case 2:
 				registerResult.GetComponent<Text>().text = "닉네임이 이미 존재합니다";
-				toastModule.showToast("닉네임이 이미 존재합니다", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 2);
+				toastModule.showToast("닉네임이 이미 존재합니다", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 1);
 				break;
 			case 3:
 				registerResult.GetComponent<Text>().text = "에러 : " + error;
-				toastModule.showToast("ERROR: " + error, ToastAlerter.MESSAGE_TYPE.TYPE_RED, 2);
+				toastModule.showToast("ERROR: " + error, ToastAlerter.MESSAGE_TYPE.TYPE_RED, 1);
 				break;
 		}
 	}
