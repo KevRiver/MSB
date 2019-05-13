@@ -3,48 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CharacterSelectUI : MonoBehaviour
+public class CharacterSelectScrollView : MonoBehaviour
 {
-    string gName;
-    int panelID;
-    float vel = 50;
+    public int panelID;
+
     Transform panelTrans;
     GameObject centerPanel;
     GameObject contentView;
-
-    GameObject textobject;
-    Text t1;
-    string t2;
+    GameObject selectButton;
 
     float scaleNum;
     // Start is called before the first frame update    
     float contentViewPos_x;
     void Start()
     {
-
-
         panelTrans = transform;
-        gName = gameObject.name;
         centerPanel = GameObject.Find("CenterPos");
         contentView = GameObject.Find("Content");
-
-        textobject = GameObject.Find("CText");
-        t1 = textobject.GetComponent<Text>();
-       
+        selectButton = GameObject.Find("TransparentButton");
 
         // 처음 컨텐츠 오브젝트의 x 위치 
         contentViewPos_x = contentView.transform.position.x;
-
-        // 위치에 따라 패널 ID 부여
-        if (panelTrans.localPosition.x % 90 != 0) { 
-            panelID = 0; 
-        }
-        else
-        {
-            panelID = (int)panelTrans.localPosition.x / 90;
-        }
-
-        t2 = "Select ID : " + panelID;
     }
 
 
@@ -61,21 +40,32 @@ public class CharacterSelectUI : MonoBehaviour
 
         if (44 > distance_center && distance_center > 0)
         {
-
-            t1.text = t2;
-            //contentView.GetComponent<Rigidbody2D>().AddForce(Vector2.right * vel);
+            sendPanelID();
             panelTrans.localScale = new Vector3(scaleNum, scaleNum, 1.2f);
 
         }
         else if(-44 < distance_center && distance_center <= 0)
         {
-            t1.text = t2;
-            //contentView.GetComponent<Rigidbody2D>().AddForce(Vector2.left * vel);
+            sendPanelID();
             panelTrans.localScale = new Vector3(scaleNum, scaleNum, 1.2f);
         }
         else
         {
             panelTrans.localScale = new Vector3(1, 1, 1);
+        }
+    }
+
+    public void sendPanelID()
+    {
+        if (selectButton.GetComponent<SelectButton>().characterChoice == false)
+        {
+            // 캐릭터 스킨 선택
+            selectButton.GetComponent<SelectButton>().getSkinID(panelID);
+        }
+        else
+        {
+            // 무기 선택
+            selectButton.GetComponent<SelectButton>().getWeaponID(panelID);
         }
     }
 }
