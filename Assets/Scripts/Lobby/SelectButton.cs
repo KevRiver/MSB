@@ -63,7 +63,7 @@ public class SelectButton : MonoBehaviour, IPointerClickHandler
 
     public void sendSkinWeaponID()
     {
-        // SkinID and WeaponID send
+        // SkinID and WeaponID 전송
         Debug.Log("Skin ID : " + skinID);
         Debug.Log("Weapon ID : " + weaponID);
 
