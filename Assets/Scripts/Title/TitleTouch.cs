@@ -20,7 +20,7 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 	public PopupButton nicknameButton;
 	Vector2 centerV2;
 
-	string strPlayerName = "tiram3sue";
+	string strPlayerName = "tiram6sue";
 
 	// Start is called before the first frame update
 	void Start()
@@ -42,8 +42,8 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 
 	public void OnPointerClick(PointerEventData eventData)
 	{
-		splashModule.showLoadSplash(3000, "로그인 중입니다", LoadSplash.SPLASH_TYPE.TYPE_SHORT);
-		Invoke("attemptLogin", (float)3000 / 1000);
+		splashModule.showLoadSplash(100, "로그인 중입니다", LoadSplash.SPLASH_TYPE.TYPE_SHORT);
+		Invoke("attemptLogin", (float)100 / 1000);
 	}
 
 	public void attemptLogin()
@@ -91,7 +91,7 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 		}
 
 		Debug.Log("User number is : " + localPlayer.Num);
-		toastModule.showToast(localPlayer.Name + "님 환영합니다!", ToastAlerter.MESSAGE_TYPE.TYPE_GREEN, 2);
+		toastModule.showToast(localPlayer.Name + "님 환영합니다!", ToastAlerter.MESSAGE_TYPE.TYPE_GREEN, 1);
 		GameObject.Find("LocalPlayer").GetComponent<LocalPlayer>().setLocalPlayer(localPlayer);
 
 		//로그인 버튼 -> 로그 아웃 버튼, 큐 입장 버튼 생성
@@ -112,15 +112,15 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 				break;
 			case 1:
 				Debug.Log("PASSWORD NOT MATCH");
-				toastModule.showToast("PASSWORD NOT MATCH", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 2);
+				toastModule.showToast("PASSWORD NOT MATCH", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 1);
 				break;
 			case 2:
 				Debug.Log("YOU ARE BANNED");
-				toastModule.showToast("YOU ARE BANNED", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 2);
+				toastModule.showToast("YOU ARE BANNED", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 1);
 				break;
 			case 3:
 				Debug.Log("Unknown Error : " + error);
-				toastModule.showToast("ERROR: " + error, ToastAlerter.MESSAGE_TYPE.TYPE_RED, 2);
+				toastModule.showToast("ERROR: " + error, ToastAlerter.MESSAGE_TYPE.TYPE_RED, 1);
 				break;
 
 		}
@@ -128,6 +128,7 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 
 	public void showPopup()
 	{
+		GameObject.Find("ClickText").GetComponent<Text>().color = new Color(0f, 0f, 0f, 0f);
 		popup.transform.position = centerV2;
 	}
 
@@ -154,7 +155,7 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 		if (resultCode == 0)
 		{
 			Debug.Log("Register Finished!");
-			toastModule.showToast("REGISTER SUCCESS", ToastAlerter.MESSAGE_TYPE.TYPE_GREEN, 2);
+			toastModule.showToast("REGISTER SUCCESS", ToastAlerter.MESSAGE_TYPE.TYPE_GREEN, 1);
 		}
 	}
 

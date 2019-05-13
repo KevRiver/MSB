@@ -84,10 +84,8 @@ public class ToastAlerter : MonoBehaviour
 		}
 
 		textClass.text = text;
-		textClass.enabled = true;
-
-		//Fade in
-		yield return fadeInAndOut(textClass, true, 0.4f);
+		
+		yield return moveInAndOut(textClass, true, 0.4f);
 
 		//Wait for the duration
 		float counter = 0;
@@ -98,24 +96,22 @@ public class ToastAlerter : MonoBehaviour
 		}
 
 		//Fade out
-		yield return fadeInAndOut(textClass, false, 0.4f);
-
-		textClass.enabled = false;
+		yield return moveInAndOut(textClass, false, 0.4f);
 	}
 
-	IEnumerator fadeInAndOut(Text targetText, bool fadeIn, float duration)
+	IEnumerator moveInAndOut(Text targetText, bool dropdown, float duration)
 	{
 		//Set Values depending on if fadeIn or fadeOut
-		float a, b;
-		if (fadeIn)
+		float fromPos, targetPos;
+		if (dropdown)
 		{
-			a = 40;	
-			b = 0;
+			fromPos = 40;
+			targetPos = 0;
 		}
 		else
 		{
-			a = 0;
-			b = 40;
+			fromPos = 0;
+			targetPos = 40;
 		}
 
 		//Color currentColor = Color.clear;
@@ -124,7 +120,7 @@ public class ToastAlerter : MonoBehaviour
 		while (counter < duration)
 		{
 			counter += Time.deltaTime;
-			float scale = Mathf.Lerp(a, b, counter / duration);
+			float scale = Mathf.Lerp(fromPos, targetPos, counter / duration);
 
 			//targetText.color = new Color(currentColor.r, currentColor.g, currentColor.b, alpha);
 			toastObject.transform.localPosition = new Vector3(0, scale + canvasHeight/2, 0);
