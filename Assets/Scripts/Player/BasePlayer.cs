@@ -8,6 +8,12 @@ public class BasePlayer : MonoBehaviour
     public Transform tr;
     public Rigidbody2D rb;
 
+    public GameObject basicAtkRange;
+    public GameObject skillAtkRange;
+
+    public GameObject weaponAxis;
+    public GameObject weapon;
+
     public int userIndex;
     public string userID;
 
@@ -17,7 +23,15 @@ public class BasePlayer : MonoBehaviour
     {
         tr = transform;
         rb = GetComponent<Rigidbody2D>();
+
+        weaponAxis = gameObject.transform.Find("WeaponAxis").gameObject;
+        weapon = weaponAxis.transform.GetChild(0).gameObject;
         hp = 5;
+    }
+
+    private void Update()
+    {
+        
     }
 
     public void Die()
@@ -31,6 +45,8 @@ public class BasePlayer : MonoBehaviour
         return updatedHp;
     }
 
+
+    /*
     public void showAttackMotion()
     {
         //19.05.03 이제 PlayAttackMotion 이 불림
@@ -38,7 +54,7 @@ public class BasePlayer : MonoBehaviour
         //hitbox.SetActive(true);
         //gameObject.transform.GetChild(0).GetComponent<HitBox>().HitAnimStart();
         //StartCoroutine(WaitForIt());
-    }
+    }*/
 
     IEnumerator WaitForIt()
     {

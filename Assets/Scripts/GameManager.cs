@@ -132,12 +132,12 @@ public class GameManager : MonoBehaviour
             {
                 if (actionType == Player.ACTION_TYPE.TYPE_ATTACK)
                 {
-                    player.GetComponent<BasePlayer>().showAttackMotion();
+                    //player.GetComponent<BasePlayer>().showAttackMotion();
                     break;
                 }
                 if (actionType == Player.ACTION_TYPE.TYPE_SKILL)
                 {
-                    player.GetComponent<BasePlayer>().showSkillMotion();
+                    //player.GetComponent<BasePlayer>().showSkillMotion();
                     break;
                 }
                 //Debug.Log("called transform translate");
