@@ -17,10 +17,19 @@ public class Player : MonoBehaviour {
 
     public GameObject aimAxis;
     public GameObject basicAtkRange;
+    private Sprite basicAtkRangeSprite;
+    private Vector2 basicAtkRangePos;
+
     public GameObject skillAtkRange;
+    private Sprite skillRangeSprite;
+    private Vector2 skillRangePos;
+
     private float aimAngle;
+
     public GameObject weaponAxis;
-    public GameObject weapon;
+    private GameObject weapon;
+    private Sprite weaponSprite;
+    private Vector2 weaponPos;
 
     public int m_userIndex;
     public string m_userID;
@@ -48,7 +57,7 @@ public class Player : MonoBehaviour {
         //basicAtkRange 는 weaponAxis의 자식으로 추가될 오브젝트의 basicAtkRange를 가져온다
         //skillRange 는 weaponAxis의 자식으로 추가될 오브젝트의 skillAtkRange를 가져온다
         weaponAxis = gameObject.transform.Find("WeaponAxis").gameObject;
-        weapon = weaponAxis.transform.Find("TestWeapon").gameObject;
+        //weapon = weaponAxis.transform.Find("TestWeapon").gameObject;
 
         hp = 5;
         moveSpeed = 50.0f;
@@ -56,7 +65,7 @@ public class Player : MonoBehaviour {
         maxSpeed = 10.0f;
 
         isMovable = true;
-
+        AttachWeapon(1);
         StartCoroutine("syncUserMove");
     }
 	
@@ -73,6 +82,36 @@ public class Player : MonoBehaviour {
     {
         this.animator.SetFloat("Speed", _speed);
         this.animator.SetBool("Grounded", _isGrounded);
+    }
+
+    public void AttachWeapon(int index)    //플레이어 오브젝트에 달아줄 무기의 인덱스
+    {
+        
+        //float posX = 0;
+        //float posY = 0;
+        switch (index)
+        {
+            case 1:
+                //소드 프리팹을 붙혀준다
+                weapon = Instantiate(Resources.Load<GameObject>("Prefabs/Weapon/SwordPrefab/Sword"), weaponAxis.transform) as GameObject;
+                //weaponSprite = weapon.GetComponent<SpriteRenderer>().sprite;
+                //weaponPos = new Vector2((weaponSprite.rect.xMax - weaponSprite.rect.xMin) / 2, (weaponSprite.rect.yMax - weaponSprite.rect.yMin) / 2);
+                //weapon.transform.localPosition = new Vector3(0.5f, 1f, 0f);
+
+                basicAtkRange = Instantiate(Resources.Load<GameObject>("Prefabs/Weapon/SwordPrefab/BasicAtkRange"), aimAxis.transform) as GameObject;
+                //basicAtkRangeSprite = basicAtkRange.GetComponent<SpriteRenderer>().sprite;
+                //basicAtkRangePos = new Vector2((basicAtkRangeSprite.rect.xMax - basicAtkRangeSprite.rect.xMin) / 2, (basicAtkRangeSprite.rect.yMax - basicAtkRangeSprite.rect.yMin) / 2);
+                //basicAtkRange.transform.localPosition = new Vector3(0.5f, 0f, 0f);
+                break;
+            case 2:
+                //활 프리팹을 붙혀준다
+                Instantiate(Resources.Load<GameObject>("Prefabs/Weapon/BowPrefab/Bow"), weaponAxis.transform);
+                Instantiate(Resources.Load<GameObject>("Prefabs/Weapon/BowPrefab/BasicAtkRange"), aimAxis.transform);
+                Instantiate(Resources.Load<GameObject>("Prefabs/Weapon/BowPrefab/SkillRange"), aimAxis.transform);
+                break;
+            default:
+                break;
+        }
     }
 
     public void Die() {
@@ -264,11 +303,6 @@ public class Player : MonoBehaviour {
         gameManager.sendUserHit(jsonData);
         Debug.Log("userGameHit SENT");
     }
-
-    /*public float getDamage(float currentHp, float damage) {
-        float updatedHp = currentHp - damage;
-        return updatedHp;
-    } */
 
     IEnumerator WaitForIt()
     {

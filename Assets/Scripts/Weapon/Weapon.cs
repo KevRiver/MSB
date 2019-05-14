@@ -4,8 +4,14 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
-    private Animator animator;
-    public GameObject weaponAxis;
+    //private Animator animator;
+    private GameObject weaponAxis;
+    public Sprite weaponSprite;
+    public Sprite weaponBasicAtkRange;
+    public Sprite weaponSkillRange;
+
+    public BoxCollider2D basicAtkHitBox;
+    public BoxCollider2D skillHitBox;
 
     public float attackDmg;
     public float skillDmg;
@@ -23,7 +29,8 @@ public class Weapon : MonoBehaviour
     private void Start()
     {
         weaponAxis = gameObject.transform.parent.gameObject;
-        animator = gameObject.GetComponent<Animator>();
+        weaponBasicAtkRange = Resources.Load<Sprite>("Sprites/AttackRange/Sword/BasicAtkRange");
+        weaponSkillRange = Resources.Load<Sprite>("Sprites/AttackRange/Sword/SkillRange");
 
         isInAction = false;
         isDoingBasicAtk = false;
@@ -32,8 +39,8 @@ public class Weapon : MonoBehaviour
 
     private void Update()
     {
-        animator.SetBool("isDoingBasicAtk", isDoingBasicAtk);
-        animator.SetBool("isDoingSkill", isDoingSkill);
+        //animator.SetBool("isDoingBasicAtk", isDoingBasicAtk);
+        //animator.SetBool("isDoingSkill", isDoingSkill);
    
     }
 
@@ -41,7 +48,7 @@ public class Weapon : MonoBehaviour
     {
         if (collision.gameObject.tag == "Player")
         {
-
+            Debug.Log("Player Hit");
         }
     }
 

@@ -39,9 +39,9 @@ public class Controller : MonoBehaviour
             targetObj.GetComponent<Player>().Aim(skillVector, "SkillRange");
         else
         {
-            aimAxis.transform.Find("BasicAtkRange").gameObject.GetComponent<SpriteRenderer>().enabled = false;
-            aimAxis.transform.Find("SkillRange").gameObject.GetComponent<SpriteRenderer>().enabled = false;
-            aimAxis.transform.localRotation = Quaternion.identity;
+            //aimAxis.transform.Find("BasicAtkRange").gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            //aimAxis.transform.Find("SkillRange").gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            //aimAxis.transform.localRotation = Quaternion.identity;
         }
 
 
