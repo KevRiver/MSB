@@ -20,7 +20,7 @@ public class Player : MonoBehaviour {
     private Sprite basicAtkRangeSprite;
     private Vector2 basicAtkRangePos;
 
-    public GameObject skillAtkRange;
+    public GameObject skillRange;
     private Sprite skillRangeSprite;
     private Vector2 skillRangePos;
 
@@ -55,7 +55,7 @@ public class Player : MonoBehaviour {
 
         aimAxis = gameObject.transform.Find("AimAxis").gameObject;
         //basicAtkRange 는 weaponAxis의 자식으로 추가될 오브젝트의 basicAtkRange를 가져온다
-        //skillRange 는 weaponAxis의 자식으로 추가될 오브젝트의 skillAtkRange를 가져온다
+        //skillRange 는 weaponAxis의 자식으로 추가될 오브젝트의 skillRange를 가져온다
         weaponAxis = gameObject.transform.Find("WeaponAxis").gameObject;
         //weapon = weaponAxis.transform.Find("TestWeapon").gameObject;
 
@@ -92,16 +92,14 @@ public class Player : MonoBehaviour {
         switch (index)
         {
             case 1:
-                //소드 프리팹을 붙혀준다
+                //WeaponAxis의 자식으로 소드 프리팹을 붙혀준다
                 weapon = Instantiate(Resources.Load<GameObject>("Prefabs/Weapon/SwordPrefab/Sword"), weaponAxis.transform) as GameObject;
-                //weaponSprite = weapon.GetComponent<SpriteRenderer>().sprite;
-                //weaponPos = new Vector2((weaponSprite.rect.xMax - weaponSprite.rect.xMin) / 2, (weaponSprite.rect.yMax - weaponSprite.rect.yMin) / 2);
-                //weapon.transform.localPosition = new Vector3(0.5f, 1f, 0f);
 
+                //소드 프리팹의 기본공격 범위와 스킬영역 범위
                 basicAtkRange = Instantiate(Resources.Load<GameObject>("Prefabs/Weapon/SwordPrefab/BasicAtkRange"), aimAxis.transform) as GameObject;
-                //basicAtkRangeSprite = basicAtkRange.GetComponent<SpriteRenderer>().sprite;
-                //basicAtkRangePos = new Vector2((basicAtkRangeSprite.rect.xMax - basicAtkRangeSprite.rect.xMin) / 2, (basicAtkRangeSprite.rect.yMax - basicAtkRangeSprite.rect.yMin) / 2);
-                //basicAtkRange.transform.localPosition = new Vector3(0.5f, 0f, 0f);
+                basicAtkRange.GetComponent<SpriteRenderer>().enabled = false;
+                skillRange = Instantiate(Resources.Load<GameObject>("Prefabs/Weapon/SwordPrefab/SkillRange"), aimAxis.transform) as GameObject;
+                skillRange.GetComponent<SpriteRenderer>().enabled = false;                
                 break;
             case 2:
                 //활 프리팹을 붙혀준다
@@ -175,7 +173,7 @@ public class Player : MonoBehaviour {
     //이미 기본 공격을 하고 있거나, 스킬을 사용하고 있으면 조준선이 보이지 않는다
     public void Aim(Vector3 vector,string curRange)
     {
-        /*if (vector == Vector3.zero)
+        if (vector == Vector3.zero)
         {
             aimAxis.transform.Find("BasicAtkRange").gameObject.GetComponent<SpriteRenderer>().enabled = false;
             aimAxis.transform.Find("SkillRange").gameObject.GetComponent<SpriteRenderer>().enabled = false;
@@ -188,7 +186,7 @@ public class Player : MonoBehaviour {
             Debug.Log(curRange);
             aimAxis.transform.Find(curRange).gameObject.GetComponent<SpriteRenderer>().enabled = true;
             aimAxis.transform.localRotation = Quaternion.Euler(0, 0, aimAngle); //aimAxis를 회전 
-        }*/
+        }
 
         Debug.Log(weapon.GetComponent<Weapon>().isInAction);
         aimAngle = Vec32Angle(vector);
@@ -208,13 +206,26 @@ public class Player : MonoBehaviour {
         {
             isAttacking = true;
             aimAngle = Vec32Angle(vector);
-            weaponAxis.transform.localRotation = Quaternion.Euler(0, 0, aimAngle);
-            weapon.GetComponent<Weapon>().isDoingBasicAtk = true;
+            if (aimAngle >= -90 && aimAngle <= 90)
+            {
+                weaponAxis.transform.localScale = new Vector3(1, 1, 1);
+                weaponAxis.transform.localRotation = Quaternion.Euler(0, 0, aimAngle);
+            }
+            else
+            {
+                weaponAxis.transform.localScale = new Vector3(-1, 1, 1);
+                if(aimAngle>0)
+                    weaponAxis.transform.localRotation = Quaternion.Euler(0, 0, -(180-aimAngle));
+                else
+                    weaponAxis.transform.localRotation = Quaternion.Euler(0, 0, -(180 + aimAngle));
+            }
+            weapon.GetComponent<Weapon>().isAttacking = true;
 
             //weaponAxis 의 자식 오브젝트의 weapon.cs 컴포넌트를 가져와 basicAtkAnimation 을 실행한다
             //gameObject.transform.GetChild(0).GetComponent<Sword>().PlayAttackAnim();
             StartCoroutine(WaitForIt());
             StartCoroutine(CoolTime());
+            //weaponAxis.transform.localRotation = Quaternion.identity;
             //sendUserAttack();
         }
     }
@@ -313,6 +324,8 @@ public class Player : MonoBehaviour {
     IEnumerator CoolTime()
     {
         yield return new WaitForSeconds(0.5f);
+        weaponAxis.transform.localScale = new Vector3(1, 1, 1);
+        weaponAxis.transform.localRotation = Quaternion.identity;
         isAttacking = false;
     }
 }
