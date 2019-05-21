@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6628229956154131833
+--- !u!1 &2580367180280762085
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,24 +8,24 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6628229956154131832}
-  - component: {fileID: 6628229956154131834}
-  - component: {fileID: 6628229956154131835}
-  - component: {fileID: 5064963780296235185}
+  - component: {fileID: 2580367180280762084}
+  - component: {fileID: 2580367180280762086}
+  - component: {fileID: 2580367180280762087}
+  - component: {fileID: 4501673250859471661}
   m_Layer: 5
-  m_Name: TestSkin003
+  m_Name: Skin004
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &6628229956154131832
+--- !u!224 &2580367180280762084
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6628229956154131833}
+  m_GameObject: {fileID: 2580367180280762085}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -36,23 +36,23 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -16}
-  m_SizeDelta: {x: 70, y: 70}
+  m_SizeDelta: {x: 90, y: 90}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &6628229956154131834
+--- !u!222 &2580367180280762086
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6628229956154131833}
+  m_GameObject: {fileID: 2580367180280762085}
   m_CullTransparentMesh: 0
---- !u!114 &6628229956154131835
+--- !u!114 &2580367180280762087
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6628229956154131833}
+  m_GameObject: {fileID: 2580367180280762085}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
@@ -66,7 +66,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: f7be07887e08f4a92b7ddaed9a0d9fdc, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 9b0af97200b794290b9b16fb32aff958, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -75,16 +75,17 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
---- !u!114 &5064963780296235185
+--- !u!114 &4501673250859471661
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6628229956154131833}
+  m_GameObject: {fileID: 2580367180280762085}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 05cb15eb90ea5406d9513ac93d62e133, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panelID: 2
+  panelID: 1
+  panelSound: {fileID: 0}
