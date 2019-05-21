@@ -1,4 +1,13 @@
-﻿using System.Collections;
+﻿//
+//  SelectButton
+//  Created by 문주한 on 20/05/2019.
+//
+//  로비 화면에서 투명 버튼의 기능
+//  버튼 클릭시 카메라 이동
+//  스킨 ID와 무기 ID 값을 받아와 전달함 
+//  
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
