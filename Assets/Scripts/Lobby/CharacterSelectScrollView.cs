@@ -30,6 +30,7 @@ public class CharacterSelectScrollView : MonoBehaviour
 
     void Start()
     {
+<<<<<<< HEAD
         contentView = GameObject.Find("Content");
         selectButton = GameObject.Find("TransparentButton");
 
@@ -38,6 +39,16 @@ public class CharacterSelectScrollView : MonoBehaviour
         l_Player = GameObject.Find("LobbyPlayer");
 
     }
+=======
+        panelTrans = transform;
+        centerPanel = GameObject.Find("CenterPos");
+        contentView = GameObject.Find("Content");
+        selectButton = GameObject.Find("TransparentButton");
+
+        // 처음 컨텐츠 오브젝트의 x 위치 
+        contentViewPos_x = contentView.transform.position.x;
+    }
+>>>>>>> ft_Gone
 
 
     // Update is called once per frame
@@ -45,9 +56,14 @@ public class CharacterSelectScrollView : MonoBehaviour
     {
         float distance_center = contentView.GetComponent<ScrollViewContentsManage>().portraitPos_x - transform.position.x;
 
+<<<<<<< HEAD
 
         if (distance_center != 0)
         {
+=======
+        if(distance_center != 0)
+        {
+>>>>>>> ft_Gone
             scaleNum = (44f - Mathf.Abs(distance_center)) / 220f;
             scaleNum += 1;
         }
@@ -61,11 +77,19 @@ public class CharacterSelectScrollView : MonoBehaviour
         else if(-44 < distance_center && distance_center <= 0)
         {
             sendPanelID();
+<<<<<<< HEAD
             transform.localScale = new Vector3(scaleNum, scaleNum, 1.2f);
         }
         else
         {
             transform.localScale = new Vector3(1, 1, 1);
+=======
+            panelTrans.localScale = new Vector3(scaleNum, scaleNum, 1.2f);
+        }
+        else
+        {
+            panelTrans.localScale = new Vector3(1, 1, 1);
+>>>>>>> ft_Gone
         }
 
         // 초상화 확대시 사운드 재생

@@ -54,6 +54,7 @@ public class SelectButton : MonoBehaviour, IPointerClickHandler
         if (nextOn)
         {
             mainCamera.transform.position = Vector3.Lerp(mainCamera.transform.position, nextPos, Time.deltaTime * 2f);
+<<<<<<< HEAD
             mainCamera.GetComponent<Camera>().orthographicSize = cameraSize;
 
             if(mainCamera.GetComponent<Camera>().orthographicSize < 8)
@@ -70,6 +71,16 @@ public class SelectButton : MonoBehaviour, IPointerClickHandler
         }
     }
 
+=======
+            if (mainCamera.transform.position.x > 9.9f)
+            {
+                nextOn = false;
+                scrollView_Weapon.SetActive(true);
+            }
+        }
+    }
+
+>>>>>>> ft_Gone
     public void OnPointerClick(PointerEventData pointerEventData)
     {
         if(characterChoice == false)
@@ -78,20 +89,28 @@ public class SelectButton : MonoBehaviour, IPointerClickHandler
             nextOn = true;
             scrollView_Character.SetActive(false);
             characterChoice = true;
+<<<<<<< HEAD
 
             // 캐릭터 이동 시작
             character.GetComponent<LobbyPlayer>().start = true;
         }
         else
+=======
+        }
+        else
+>>>>>>> ft_Gone
         {
             // 무기 선택
             sendSkinWeaponID();
 
             // 큐 선택 팝업 
             //joinQueue.SetActive(true);
+<<<<<<< HEAD
 
             // 클라이언트 씬 전환 
             SceneManager.LoadScene("ClientTest");
+=======
+>>>>>>> ft_Gone
         }
 
     }
