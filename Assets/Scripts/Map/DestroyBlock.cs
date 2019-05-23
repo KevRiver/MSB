@@ -41,7 +41,16 @@ public class DestroyBlock : MonoBehaviour
         objectPosition.z--;
         Instantiate(particleEffect, objectPosition, Quaternion.identity);
 
+        sendDestroidBlock();
+
         breakSound.GetComponent<AudioSource>().Play();
         Destroy(gameObject);
+    }
+
+    void sendDestroidBlock()
+    {
+        JSONObject jsonData = new JSONObject();
+        jsonData.AddField("blockIndex", gameObject.GetComponent<BlockData>().blockID);
+        gameManager.sendBlockDestroy(jsonData);
     }
 }
