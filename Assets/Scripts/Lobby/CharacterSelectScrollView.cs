@@ -25,12 +25,17 @@ public class CharacterSelectScrollView : MonoBehaviour
 
     private bool firstCheck = true;
 
+    // 로비 플레이어
+    GameObject l_Player;
+
     void Start()
     {
         contentView = GameObject.Find("Content");
         selectButton = GameObject.Find("TransparentButton");
 
         panelSound = GameObject.Find("PanelSound");
+
+        l_Player = GameObject.Find("LobbyPlayer");
 
     }
 
@@ -68,6 +73,17 @@ public class CharacterSelectScrollView : MonoBehaviour
         {
             panelSound.GetComponent<AudioSource>().Play();
             soundCheck = false;
+
+            // 초상화 확대시 패널 ID 전송해서 애니메이션 교체하는 함수 실행
+            if (selectButton.GetComponent<SelectButton>().characterChoice == false)
+            {
+                // 캐릭터 스킨 애니메이션 교체하는 기능
+                l_Player.GetComponent<LobbyPlayer>().l_changeSkin(panelID);
+            }
+            else
+            {
+                // 무기 애니메이션 교체하는 기능
+            }
         }
         else if(transform.localScale.x == 1)
         {
