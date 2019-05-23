@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     int gamePlayerIndex;
     ArrayList userlist;
     Vector3[] spawnPoints = new Vector3[6];
+    Controller controller;
     //19.04.28 PlayerPrefab2가 적용됨
     public GameObject PlayerPrefab;
     public ArrayList players = new ArrayList();
@@ -24,6 +25,7 @@ public class GameManager : MonoBehaviour
         UserData userData = GameObject.Find("UserData").GetComponent<UserData>();
         userlist = userData.getUserlist();
         gameRoomIndex = userData.getRoomIndex();
+        controller = GameObject.Find("Controller").GetComponent<Controller>();
         //gamePlayerIndex = userData.getPlayerIndex();
 
 
@@ -57,6 +59,7 @@ public class GameManager : MonoBehaviour
 
             if (userData.Num == GameObject.Find("LocalPlayer").GetComponent<LocalPlayer>().getLocalPlayer().Num) //localPlayer의 index와 생성한 Player의 인덱스가 같으면
             {
+                controller.SetTargetObj(player);
                 Debug.Log(player.GetComponent<PlayerDetail>().Controller.Num);
                 gamePlayerIndex = player.GetComponent<PlayerDetail>().Controller.Num;
                 player.AddComponent<Player>();

@@ -18,7 +18,7 @@ public class followCamera : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        tr = GetComponent<Transform>();
+        tr = GetComponent<Transform>(); //카메라 트랜스폼
     }
 
     void LateUpdate()

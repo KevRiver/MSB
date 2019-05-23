@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 851694585242320428}
+  - component: {fileID: 6156626751269009042}
   - component: {fileID: 851694585242320431}
   - component: {fileID: 1427152802704670774}
   - component: {fileID: 851694585242320426}
@@ -17,7 +18,7 @@ GameObject:
   - component: {fileID: 7013686449154166786}
   - component: {fileID: 7565235756815499113}
   m_Layer: 0
-  m_Name: PlayerPrefab_00
+  m_Name: PlayerPrefab
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -39,6 +40,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6156626751269009042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 180030083299153915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42f0ebcb6f07fde498d5cde2b79e6ab9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tr: {fileID: 0}
+  rb: {fileID: 0}
+  basicAtkRange: {fileID: 0}
+  skillAtkRange: {fileID: 0}
+  weaponAxis: {fileID: 0}
+  weapon: {fileID: 0}
+  userIndex: 0
+  userID: 
+  hp: 0
 --- !u!114 &851694585242320431
 MonoBehaviour:
   m_ObjectHideFlags: 0

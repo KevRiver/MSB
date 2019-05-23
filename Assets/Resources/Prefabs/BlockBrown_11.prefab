@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 1056093116349323410}
   m_Layer: 0
   m_Name: BlockBrown_11
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -124,6 +124,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   breakSound: {fileID: 925641813247863394, guid: 0cc67e60df53841df91f9fa89efc47e8,
     type: 3}
+  gameManager: {fileID: 0}
   particleEffect: {fileID: 4141968403967226175, guid: 7a8cc2d25d2ba49f08f90eed5828c272,
     type: 3}
 --- !u!50 &5897944023832723757
@@ -196,3 +197,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blockID: 0
   objectID: 0
+  objectType: 0
+  gameManager: {fileID: 0}
