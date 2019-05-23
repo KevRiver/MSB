@@ -31,6 +31,9 @@ public class SelectButton : MonoBehaviour, IPointerClickHandler
     int skinID;
     int weaponID;
 
+    // 스크롤 뷰 관련 
+    GameObject centerSlot;
+
     // 배경 캐릭터
     GameObject character;
 
@@ -39,6 +42,8 @@ public class SelectButton : MonoBehaviour, IPointerClickHandler
     // Start is called before the first frame update
     void Start()
     {
+        centerSlot = GameObject.Find("CenterSlot");
+
         characterChoice = false;
         mainCamera = GameObject.Find("Main Camera");
         nextPos = new Vector3(10, 0, -10);
@@ -65,6 +70,7 @@ public class SelectButton : MonoBehaviour, IPointerClickHandler
             {
                 nextOn = false;
                 scrollView_Weapon.SetActive(true);
+                centerSlot.SetActive(true);
                 Debug.Log(mainCamera.GetComponent<Camera>().orthographicSize);
             }
         }
@@ -77,6 +83,7 @@ public class SelectButton : MonoBehaviour, IPointerClickHandler
             // 캐릭터 스킨 선택
             nextOn = true;
             scrollView_Character.SetActive(false);
+            centerSlot.SetActive(false);
             characterChoice = true;
 
             // 캐릭터 이동 시작
