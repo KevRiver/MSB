@@ -1,4 +1,11 @@
-﻿using System.Collections;
+﻿//
+//  CharacterSelectScrollView
+//  Created by 문주한 on 20/05/2019.
+//
+//  스크롤 뷰에서 캐릭터 초상화가 화면 중앙에 오면 크기를 키우며 강조하고, 초상화 패널의 아이디 값을 전송한다.
+//
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,32 +14,39 @@ public class CharacterSelectScrollView : MonoBehaviour
 {
     public int panelID;
 
-    Transform panelTrans;
-    GameObject centerPanel;
     GameObject contentView;
     GameObject selectButton;
 
-    float scaleNum;
-    // Start is called before the first frame update    
-    float contentViewPos_x;
+    // 사운드 관련 변수
+    private bool soundCheck = false;
+    public GameObject panelSound;
+
+    float scaleNum = 1;
+
+    private bool firstCheck = true;
+
+    // 로비 플레이어
+    GameObject l_Player;
+
     void Start()
     {
-        panelTrans = transform;
-        centerPanel = GameObject.Find("CenterPos");
         contentView = GameObject.Find("Content");
         selectButton = GameObject.Find("TransparentButton");
 
-        // 처음 컨텐츠 오브젝트의 x 위치 
-        contentViewPos_x = contentView.transform.position.x;
+        panelSound = GameObject.Find("PanelSound");
+
+        l_Player = GameObject.Find("LobbyPlayer");
+
     }
 
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        float distance_center = centerPanel.transform.localPosition.x + contentViewPos_x - panelTrans.position.x;
+        float distance_center = contentView.GetComponent<ScrollViewContentsManage>().portraitPos_x - transform.position.x;
 
-        if(distance_center != 0)
+
+        if (distance_center != 0)
         {
             scaleNum = (44f - Mathf.Abs(distance_center)) / 220f;
             scaleNum += 1;
@@ -41,17 +55,49 @@ public class CharacterSelectScrollView : MonoBehaviour
         if (44 > distance_center && distance_center > 0)
         {
             sendPanelID();
-            panelTrans.localScale = new Vector3(scaleNum, scaleNum, 1.2f);
+            transform.localScale = new Vector3(scaleNum, scaleNum, 1.2f);
 
         }
         else if(-44 < distance_center && distance_center <= 0)
         {
             sendPanelID();
-            panelTrans.localScale = new Vector3(scaleNum, scaleNum, 1.2f);
+            transform.localScale = new Vector3(scaleNum, scaleNum, 1.2f);
         }
         else
         {
-            panelTrans.localScale = new Vector3(1, 1, 1);
+            transform.localScale = new Vector3(1, 1, 1);
+        }
+
+        // 초상화 확대시 사운드 재생
+        if(transform.localScale.x > 1 && soundCheck == true)
+        {
+            panelSound.GetComponent<AudioSource>().Play();
+            soundCheck = false;
+
+            // 초상화 확대시 패널 ID 전송해서 애니메이션 교체하는 함수 실행
+            if (selectButton.GetComponent<SelectButton>().characterChoice == false)
+            {
+                // 캐릭터 스킨 애니메이션 교체하는 기능
+                l_Player.GetComponent<LobbyPlayer>().l_changeSkin(panelID);
+            }
+            else
+            {
+                // 무기 애니메이션 교체하는 기능
+            }
+        }
+        else if(transform.localScale.x == 1)
+        {
+            soundCheck = true;
+        }
+    }
+
+    private void LateUpdate()
+    {
+        // 중앙 초상화 x 위치 컨텐츠 메니저로 전송
+        if (panelID == 0 && firstCheck)
+        {
+            contentView.GetComponent<ScrollViewContentsManage>().portraitPos_x = transform.position.x;
+            firstCheck = false;
         }
     }
 
