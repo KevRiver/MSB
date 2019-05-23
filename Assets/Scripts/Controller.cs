@@ -51,6 +51,7 @@ public class Controller : MonoBehaviour
     private void FixedUpdate()
     {
         targetObj.GetComponent<Player>().Move(moveVector);
+        targetObj.GetComponent<Player>().Jump();
     }
 
     public void HandleInput()

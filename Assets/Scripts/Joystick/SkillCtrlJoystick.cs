@@ -9,6 +9,8 @@ public class SkillCtrlJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler,
     //스킬 조이스틱을 드래그 하면 공격 범위가 나오고 손을 떼면 스킬이 나감
     //스킬은 PlayerPrefab 의 자식 오브젝트 Weapon.UseSkill이 호출됨
     //조이스틱이 다시 중앙에 위치하면 스킬 사용을 취소
+    private Controller controller;
+
     private Image backGroundImg;
     private Image joystickImg;
     private Vector3 inputVector;
@@ -19,6 +21,7 @@ public class SkillCtrlJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler,
     {
         backGroundImg = GetComponent<Image>();
         joystickImg = transform.GetChild(0).GetComponent<Image>();
+        controller = GameObject.Find("Controller").GetComponent<Controller>();
     }
 
     public virtual void OnDrag(PointerEventData _pointEventData)
@@ -45,6 +48,10 @@ public class SkillCtrlJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler,
     public virtual void OnPointerUp(PointerEventData _pointEventData)
     {
         isUsing = false;
+        if (inputVector != Vector3.zero)
+        {
+            controller.targetObj.GetComponent<Player>().UseSkill(inputVector);
+        }
         inputVector = Vector3.zero;
         joystickImg.rectTransform.anchoredPosition = Vector3.zero;
     }

@@ -24,8 +24,8 @@ public class Weapon : MonoBehaviour
     public bool isAttacking;    //true가 되면 공격 애니메이션을 실행한다
     public bool isUsingSkill;       //true가 되면 스킬 애니메이션을 실행한다
 
-    protected virtual void ShowAttackAnim(Vector2 dir) { }
-    protected virtual void ShowSkillAnim(Vector2 dir) { }
+    //protected virtual void ShowAttackAnim(Vector2 dir) { }
+    //protected virtual void ShowSkillAnim(Vector2 dir) { }
 
     private void Awake()
     {
@@ -45,24 +45,35 @@ public class Weapon : MonoBehaviour
     private void Update()
     {
         weaponAnimator.SetBool("isAttacking", isAttacking);
+        weaponAnimator.SetBool("isUsingSkill", isUsingSkill);
         //weaponAnimator.SetBool("isUsingSkill", isUsingSkill);
    
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "Player")
+        if (collision.gameObject.CompareTag("Player"))
         {
+            Vector3 force;
             Debug.Log("Player Hit");
+            Debug.Log(weaponAxis.transform.localScale.x);
+            Debug.Log(weaponAxis.transform.localRotation.z);
+            float angle = weaponAxis.transform.localRotation.z;
+            if (gameObject.transform.parent.gameObject.transform.parent.transform.localScale.x < 0)
+            {
+                Debug.Log(Mathf.Cos(angle));
+                force = new Vector3(Mathf.Cos(angle) * -1f, Mathf.Sin(angle)).normalized;
+            }
+            else
+            {
+                force = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle)).normalized;
+            }
+            collision.gameObject.GetComponent<Rigidbody2D>().AddForce(force * 500);
+        }
+
+        if (collision.gameObject.GetComponent<DestroyBlock>() != null)
+        {
+            collision.gameObject.GetComponent<DestroyBlock>().destroyBlock();
         }
     }
-
-    public void SetAngleZero()
-    {
-           //gameObject.transform.parent.gameObject.transform.localRotation = Quaternion.identity;
-    }
-    /*public void SetAnimatorParam(bool _isDoingBasicAtk, bool _isDoingSkill)
-    {
-        
-    }*/
 }

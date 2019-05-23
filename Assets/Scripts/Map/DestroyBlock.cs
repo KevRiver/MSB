@@ -11,8 +11,7 @@ public class DestroyBlock : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        breakSound = GameObject.Find("WoodBreak001");
-
+        breakSound = GameObject.Find("BreakSound");
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
@@ -24,7 +23,7 @@ public class DestroyBlock : MonoBehaviour
 
     public GameObject particleEffect;
 
-    private void OnCollisionStay2D(Collision2D collision)
+    /*private void OnCollisionStay2D(Collision2D collision)
     {
         if (Input.GetKey(KeyCode.Space))
         {
@@ -34,7 +33,7 @@ public class DestroyBlock : MonoBehaviour
             jsonData.AddField("blockIndex", gameObject.GetComponent<BlockData>().blockID);
             gameManager.sendBlockDestroy(jsonData);
         }
-    }
+    }*/
 
     public void destroyBlock()
     { 

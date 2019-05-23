@@ -41,6 +41,7 @@ public class Player : MonoBehaviour {
 
     public bool isMovable = true;
     private bool isAttacking = false;
+    private bool isUsingSkill = false;
 
     public enum ACTION_TYPE
     {
@@ -61,11 +62,11 @@ public class Player : MonoBehaviour {
 
         hp = 5;
         moveSpeed = 50.0f;
-        jumpForce = 800.0f;
+        jumpForce = 300.0f;
         maxSpeed = 10.0f;
 
         isMovable = true;
-        AttachWeapon(2);
+        AttachWeapon(1);
         StartCoroutine("syncUserMove");
     }
 	
@@ -147,6 +148,25 @@ public class Player : MonoBehaviour {
         }
         else
         {
+            if (Input.GetKey(KeyCode.A))
+            {
+                //왼쪽으로 이동
+                if (rb.velocity.x < -maxSpeed)
+                    return;
+
+                rb.AddForce(Vector3.left * moveSpeed);
+                tr.localScale = new Vector3(-0.5f, 0.5f, 0f);
+            }
+            else if (Input.GetKey(KeyCode.D))
+            {
+                //오른쪽으로 이동
+                //Debug.Log("Joystick input right");
+                if (rb.velocity.x > maxSpeed)
+                    return;
+
+                rb.AddForce(Vector3.right * moveSpeed);    //AddForce는 Time.deltaTime을 곱해줄 필요가 없다         
+                tr.localScale = new Vector3(0.5f, 0.5f, 0f);   //localScale을 좌우로 바꾼다
+            }
         }
     }
 
@@ -154,7 +174,10 @@ public class Player : MonoBehaviour {
     {
         //Debug.Log("Jump!");
         //animator.SetBool("Grounded", false);
-        rb.AddForce(Vector3.up * jumpForce);
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded) 
+        {
+            rb.AddForce(Vector3.up * jumpForce);
+        }
     }
 
     public float Vec32Angle(Vector3 vector)
@@ -185,16 +208,12 @@ public class Player : MonoBehaviour {
         }
         else
         {
-            Debug.Log(weapon.GetComponent<Weapon>().isInAction);
             aimAngle = Vec32Angle(vector);
-            Debug.Log(curRange);
             aimAxis.transform.Find(curRange).gameObject.GetComponent<SpriteRenderer>().enabled = true;
             aimAxis.transform.localRotation = Quaternion.Euler(0, 0, aimAngle); //aimAxis를 회전 
         }
 
-        Debug.Log(weapon.GetComponent<Weapon>().isInAction);
         aimAngle = Vec32Angle(vector);
-        Debug.Log(curRange);
         aimAxis.transform.Find(curRange).gameObject.GetComponent<SpriteRenderer>().enabled = true;
         aimAxis.transform.localRotation = Quaternion.Euler(0, 0, aimAngle); //aimAxis를 회전 
     }
@@ -210,6 +229,7 @@ public class Player : MonoBehaviour {
         {
             isAttacking = true;
             aimAngle = Vec32Angle(vector);
+            weaponAxis.transform.localRotation = Quaternion.Euler(0, 0, aimAngle);
             if (aimAngle >= -90 && aimAngle <= 90)
             {
                 weaponAxis.transform.localScale = new Vector3(1, 1, 1);
@@ -218,8 +238,8 @@ public class Player : MonoBehaviour {
             else
             {
                 weaponAxis.transform.localScale = new Vector3(-1, 1, 1);
-                if(aimAngle>0)
-                    weaponAxis.transform.localRotation = Quaternion.Euler(0, 0, -(180-aimAngle));
+                if (aimAngle > 0)
+                    weaponAxis.transform.localRotation = Quaternion.Euler(0, 0, -(180 - aimAngle));
                 else
                     weaponAxis.transform.localRotation = Quaternion.Euler(0, 0, -(180 + aimAngle));
             }
@@ -232,14 +252,33 @@ public class Player : MonoBehaviour {
         }
     }
 
-    public void UseSkill()
+    public void UseSkill(Vector3 vector)
     {
+        isUsingSkill = true;
+        aimAngle = Vec32Angle(vector);
+        weaponAxis.transform.localRotation = Quaternion.Euler(0, 0, aimAngle);
+        if (aimAngle >= -90 && aimAngle <= 90)
+        {
+            weaponAxis.transform.localScale = new Vector3(1, 1, 1);
+            weaponAxis.transform.localRotation = Quaternion.Euler(0, 0, aimAngle);
+        }
+        else
+        {
+            weaponAxis.transform.localScale = new Vector3(-1, 1, 1);
+            if (aimAngle > 0)
+                weaponAxis.transform.localRotation = Quaternion.Euler(0, 0, -(180 - aimAngle));
+            else
+                weaponAxis.transform.localRotation = Quaternion.Euler(0, 0, -(180 + aimAngle));
+        }
+        weapon.GetComponent<Weapon>().isUsingSkill = true;
 
+        StartCoroutine(WaitForIt());
+        StartCoroutine(CoolTime());
     }
 
     private void OnTriggerEnter2D(Collider2D collision) //캐릭터가 땅에 닿아있으면 Grounded true;
     {
-        Debug.Log(collision.gameObject.tag);
+        //Debug.Log(collision.gameObject.tag);
         if (collision.gameObject.tag == "Ground")
         {
             isGrounded = true;
