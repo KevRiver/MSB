@@ -37,6 +37,7 @@ public class CharacterSelectScrollView : MonoBehaviour
 
         l_Player = GameObject.Find("LobbyPlayer");
 
+
     }
 
 
@@ -44,7 +45,6 @@ public class CharacterSelectScrollView : MonoBehaviour
     void FixedUpdate()
     {
         float distance_center = contentView.GetComponent<ScrollViewContentsManage>().portraitPos_x - transform.position.x;
-
 
         if (distance_center != 0)
         {
@@ -96,6 +96,7 @@ public class CharacterSelectScrollView : MonoBehaviour
         // 중앙 초상화 x 위치 컨텐츠 메니저로 전송
         if (panelID == 0 && firstCheck)
         {
+            scaleNum = 1.2f;
             contentView.GetComponent<ScrollViewContentsManage>().portraitPos_x = transform.position.x;
             firstCheck = false;
         }
