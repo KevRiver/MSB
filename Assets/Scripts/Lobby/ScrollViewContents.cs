@@ -1,5 +1,5 @@
 ﻿//
-//  CharacterSelectScrollView
+//  ScrollViewContents
 //  Created by 문주한 on 20/05/2019.
 //
 //  스크롤 뷰에서 캐릭터 초상화가 화면 중앙에 오면 크기를 키우며 강조하고, 초상화 패널의 아이디 값을 전송한다.
@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CharacterSelectScrollView : MonoBehaviour
+public class ScrollViewContents : MonoBehaviour
 {
     public int panelID;
 
