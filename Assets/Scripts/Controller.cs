@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Controller : MonoBehaviour
 {
-    private GameObject targetObj;
+    public GameObject targetObj;
     private GameObject aimAxis;
     private GameObject weaponAxis;
 

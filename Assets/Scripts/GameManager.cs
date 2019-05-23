@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
             Debug.Log(userData.Num);
             player = Instantiate(PlayerPrefab, new Vector3(1, -2, 0), Quaternion.identity);
             player.GetComponent<PlayerDetail>().Controller = userData;
-            player.AddComponent<BasePlayer>();
+            //player.AddComponent<BasePlayer>();
             players.Add(player);
 
             if (userData.Num == GameObject.Find("LocalPlayer").GetComponent<LocalPlayer>().getLocalPlayer().Num) //localPlayer의 index와 생성한 Player의 인덱스가 같으면
@@ -103,8 +103,9 @@ public class GameManager : MonoBehaviour
             if (player.GetComponent<PlayerDetail>().Controller.Num == userIndex)
             {
                 player.transform.SetPositionAndRotation(newPosition, Quaternion.identity);
-                player.transform.localScale = new Vector3(toward, 1.5f);
+                player.transform.localScale = new Vector3(toward, 0.5f);
 				player.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+                player.GetComponent<BasePlayer>().realSpeed = velocityX;
 				player.GetComponent<BasePlayer>().rb.AddForce(new Vector2(velocityX, velocityY));
 				//Debug.Log("other player moved");
 				break;
@@ -135,12 +136,12 @@ public class GameManager : MonoBehaviour
             {
                 if (actionType == Player.ACTION_TYPE.TYPE_ATTACK)
                 {
-                    //player.GetComponent<BasePlayer>().showAttackMotion();
+                    player.GetComponent<BasePlayer>().showAtkAnim();
                     break;
                 }
                 if (actionType == Player.ACTION_TYPE.TYPE_SKILL)
                 {
-                    //player.GetComponent<BasePlayer>().showSkillMotion();
+                    player.GetComponent<BasePlayer>().showSkillAnim();
                     break;
                 }
                 //Debug.Log("called transform translate");

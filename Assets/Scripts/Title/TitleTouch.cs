@@ -21,7 +21,7 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 	public PopupButton nicknameButton;
 	Vector2 centerV2;
 
-	string strPlayerName = "tiram6sue";
+	string strPlayerName = "Qon";
 
 	// Start is called before the first frame update
 	void Start()

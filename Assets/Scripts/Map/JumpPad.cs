@@ -50,6 +50,6 @@ public class JumpPad : MonoBehaviour {
     private void OnTriggerExit2D(Collider2D collision)
     {
         stayTime = 0;
-        Debug.Log("Exit");
+        //Debug.Log("Exit");
     }
 }

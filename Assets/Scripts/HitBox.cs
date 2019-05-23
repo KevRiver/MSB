@@ -11,7 +11,7 @@ public class HitBox : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.GetComponent("BasePlayer") != null)
+        /*if (other.gameObject.GetComponent("BasePlayer") != null)
         {
             // 공격한 사람이 자기자신 플레이어면
             GameObject playerObject = gameObject.transform.parent.gameObject;
@@ -27,8 +27,8 @@ public class HitBox : MonoBehaviour
                 Debug.Log("HIT SENT TARGETX : " + other.transform.position.x + " CONTACTX : " + contactPoint.x);
                 Debug.Log("HIT SENT TARGETY : " + other.transform.position.y + " CONTACTY : " + contactPoint.y);
                 int targetUserIndex = other.gameObject.GetComponent<PlayerDetail>().Controller.Num;
-                //playerObject.GetComponent<Player>().sendUserHit(targetUserIndex, hitDirection, Player.ACTION_TYPE.TYPE_ATTACK); 0429주석처리함
+                playerObject.GetComponent<Player>().sendUserHit(targetUserIndex, hitDirection, Player.ACTION_TYPE.TYPE_ATTACK); 0429주석처리함
             }
-        }
+        }*/
     }
 }
