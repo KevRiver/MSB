@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using SocketIO;
 using System;
 
@@ -94,7 +95,10 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 		toastModule.showToast(localPlayer.Name + "님 환영합니다!", ToastAlerter.MESSAGE_TYPE.TYPE_GREEN, 1);
 		GameObject.Find("LocalPlayer").GetComponent<LocalPlayer>().setLocalPlayer(localPlayer);
 
-		//로그인 버튼 -> 로그 아웃 버튼, 큐 입장 버튼 생성
+        //로그인 버튼 -> 로그 아웃 버튼, 큐 입장 버튼 생성
+
+        // 로비 씬 전환 
+        SceneManager.LoadScene("Lobby");
 	}
 
 	public void loginFail(SocketIOEvent obj)
