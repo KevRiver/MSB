@@ -65,7 +65,7 @@ public class Player : MonoBehaviour {
         maxSpeed = 10.0f;
 
         isMovable = true;
-        AttachWeapon(1);
+        AttachWeapon(2);
         StartCoroutine("syncUserMove");
     }
 	
@@ -103,9 +103,13 @@ public class Player : MonoBehaviour {
                 break;
             case 2:
                 //활 프리팹을 붙혀준다
-                Instantiate(Resources.Load<GameObject>("Prefabs/Weapon/BowPrefab/Bow"), weaponAxis.transform);
-                Instantiate(Resources.Load<GameObject>("Prefabs/Weapon/BowPrefab/BasicAtkRange"), aimAxis.transform);
-                Instantiate(Resources.Load<GameObject>("Prefabs/Weapon/BowPrefab/SkillRange"), aimAxis.transform);
+                weapon = Instantiate(Resources.Load<GameObject>("Prefabs/Weapon/BowPrefab/Bow"), weaponAxis.transform) as GameObject;
+
+                //활 프리팹의 기본공격 범위와 스킬영역 범위
+                basicAtkRange = Instantiate(Resources.Load<GameObject>("Prefabs/Weapon/BowPrefab/BasicAtkRange"), aimAxis.transform) as GameObject;
+                basicAtkRange.GetComponent<SpriteRenderer>().enabled = false;
+                skillRange = Instantiate(Resources.Load<GameObject>("Prefabs/Weapon/BowPrefab/SkillRange"), aimAxis.transform) as GameObject;
+                skillRange.GetComponent<SpriteRenderer>().enabled = false;
                 break;
             default:
                 break;
@@ -221,8 +225,6 @@ public class Player : MonoBehaviour {
             }
             weapon.GetComponent<Weapon>().isAttacking = true;
 
-            //weaponAxis 의 자식 오브젝트의 weapon.cs 컴포넌트를 가져와 basicAtkAnimation 을 실행한다
-            //gameObject.transform.GetChild(0).GetComponent<Sword>().PlayAttackAnim();
             StartCoroutine(WaitForIt());
             StartCoroutine(CoolTime());
             //weaponAxis.transform.localRotation = Quaternion.identity;

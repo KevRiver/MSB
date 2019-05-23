@@ -30,8 +30,8 @@ public class Weapon : MonoBehaviour
     private void Awake()
     {
         weaponAnimator = gameObject.GetComponent<Animator>();
-        weaponBasicAtkRange = Resources.Load<Sprite>("Sprites/AttackRange/Sword/BasicAtkRange");
-        weaponSkillRange = Resources.Load<Sprite>("Sprites/AttackRange/Sword/SkillRange");
+        //weaponBasicAtkRange = Resources.Load<Sprite>("Sprites/AttackRange/Sword/BasicAtkRange");
+        //weaponSkillRange = Resources.Load<Sprite>("Sprites/AttackRange/Sword/SkillRange");
     }
 
     private void Start()
