@@ -88,7 +88,10 @@ public class SelectButton : MonoBehaviour, IPointerClickHandler
             sendSkinWeaponID();
 
             // 큐 선택 팝업 
-            //joinQueue.SetActive(true);
+            //activeLoading();
+
+            // 큐 선택 팝업 
+            //inactiveLoading();
 
             // 클라이언트 씬 전환 
             SceneManager.LoadScene("ClientTest");
@@ -112,5 +115,17 @@ public class SelectButton : MonoBehaviour, IPointerClickHandler
     public void getWeaponID(int id)
     {
         weaponID = id;
+    }
+
+    // 큐 로딩 화면 띄워주기
+    void activeLoading()
+    {
+        joinQueue.SetActive(true);
+    }
+
+    // 큐 로딩 화면 끄기
+    void inactiveLoading()
+    {
+        joinQueue.SetActive(false);
     }
 }
