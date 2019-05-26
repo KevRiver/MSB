@@ -54,7 +54,7 @@ public class Weapon : MonoBehaviour
     {
         _block.GetComponent<DestroyBlock>().destroyBlock();
         JSONObject jsonData = new JSONObject();
-        jsonData.AddField("blockIndex", _block.GetComponent<BlockData>().blockID);
+        jsonData.AddField("blockIndex", gameObject.GetComponent<BlockData>().blockID);
         GetComponent<GameManager>().sendBlockDestroy(jsonData);
     }
 
@@ -72,14 +72,13 @@ public class Weapon : MonoBehaviour
             force = new Vector3(Mathf.Cos(_angleZ), Mathf.Sin(_angleZ)).normalized;
         }
         Vector2 hitDirection = new Vector2(force.x, force.y);
-        //Vector2 contactPoint = new Vector2(0, 0);
+        Vector2 contactPoint = new Vector2(0, 0);
         //contactPoint = gameObject.GetComponent<BoxCollider2D>().bounds.ClosestPoint(other.transform.position);
         //hitDirection.x = _player.transform.position.x - contactPoint.x;
         //hitDirection.y = _player.transform.position.y - contactPoint.y;
         //Debug.Log("HIT SENT TARGETX : " + other.transform.position.x + " CONTACTX : " + contactPoint.x);
         //Debug.Log("HIT SENT TARGETY : " + other.transform.position.y + " CONTACTY : " + contactPoint.y);
         int targetUserIndex = _player.gameObject.GetComponent<PlayerDetail>().Controller.Num;
-        Debug.Log(myPlayer.GetComponent<Player>());
         myPlayer.GetComponent<Player>().sendUserHit(targetUserIndex, hitDirection, Player.ACTION_TYPE.TYPE_ATTACK);
         //_player.gameObject.GetComponent<Rigidbody2D>().AddForce(force * 500);
     }
