@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 5124857888580164462}
   m_Layer: 0
   m_Name: BlockGray_11
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -178,3 +178,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockID: 0
+  objectID: 0
+  objectType: 0
+  gameManager: {fileID: 0}

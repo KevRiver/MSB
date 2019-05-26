@@ -20,7 +20,7 @@ public class Controller : MonoBehaviour
 
     private void Start()
     {
-        targetObj = GameObject.Find("PlayerPrefab_00").gameObject;
+        //targetObj = GameObject.Find("PlayerPrefab_00").gameObject;
         aimAxis = targetObj.transform.Find("AimAxis").gameObject;
         weaponAxis = targetObj.transform.Find("WeaponAxis").gameObject;
 
@@ -29,8 +29,16 @@ public class Controller : MonoBehaviour
         skillVector = Vector3.zero;
     }
 
+    public void SetTargetObj(GameObject _targetObj)
+    {
+        targetObj = _targetObj;
+    }
+
     private void Update()
     {
+        if (targetObj == null)
+            return;
+
         HandleInput();
 
         if (atkCtrlJoystick.isUsing)

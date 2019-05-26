@@ -9,15 +9,15 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 851694585242320428}
-  - component: {fileID: 851694585242320431}
-  - component: {fileID: 1427152802704670774}
+  - component: {fileID: 4821970612325004361}
   - component: {fileID: 851694585242320426}
+  - component: {fileID: 7618503888579972328}
   - component: {fileID: 180030083299153912}
   - component: {fileID: 6311450940277813252}
   - component: {fileID: 7013686449154166786}
   - component: {fileID: 7565235756815499113}
   m_Layer: 0
-  m_Name: PlayerPrefab_00
+  m_Name: PlayerPrefab
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -39,7 +39,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &851694585242320431
+--- !u!114 &4821970612325004361
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -48,33 +48,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 180030083299153915}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe02dd8ffccf0f54196920a74a07b751, type: 3}
+  m_Script: {fileID: 11500000, guid: 42f0ebcb6f07fde498d5cde2b79e6ab9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  curSpeed: 0
-  isGrounded: 0
-  isDoingBasicAtk: 0
-  isDoingSkill: 0
-  aimAxis: {fileID: 0}
+  tr: {fileID: 0}
+  rb: {fileID: 0}
   basicAtkRange: {fileID: 0}
   skillRange: {fileID: 0}
+  aimAxis: {fileID: 0}
   weaponAxis: {fileID: 0}
-  m_userIndex: 0
-  m_userID: 
-  hp: 0
+  weapon: {fileID: 0}
   isMovable: 0
---- !u!114 &1427152802704670774
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 180030083299153915}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97a0d4d54e86f354493210b1cf978f97, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  isGrounded: 0
+  hp: 0
 --- !u!50 &851694585242320426
 Rigidbody2D:
   serializedVersion: 4
@@ -96,6 +82,18 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &7618503888579972328
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 180030083299153915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97a0d4d54e86f354493210b1cf978f97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!61 &180030083299153912
 BoxCollider2D:
   m_ObjectHideFlags: 0

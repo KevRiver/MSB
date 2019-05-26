@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     int gamePlayerIndex;
     ArrayList userlist;
     Vector3[] spawnPoints = new Vector3[6];
+    Controller controller;
     //19.04.28 PlayerPrefab2가 적용됨
     public GameObject PlayerPrefab;
     public ArrayList players = new ArrayList();
@@ -24,6 +25,7 @@ public class GameManager : MonoBehaviour
         UserData userData = GameObject.Find("UserData").GetComponent<UserData>();
         userlist = userData.getUserlist();
         gameRoomIndex = userData.getRoomIndex();
+        controller = GameObject.Find("Controller").GetComponent<Controller>();
         //gamePlayerIndex = userData.getPlayerIndex();
 
 
@@ -52,11 +54,12 @@ public class GameManager : MonoBehaviour
             Debug.Log(userData.Num);
             player = Instantiate(PlayerPrefab, new Vector3(1, -2, 0), Quaternion.identity);
             player.GetComponent<PlayerDetail>().Controller = userData;
-            player.AddComponent<BasePlayer>();
+            //player.AddComponent<BasePlayer>();
             players.Add(player);
 
             if (userData.Num == GameObject.Find("LocalPlayer").GetComponent<LocalPlayer>().getLocalPlayer().Num) //localPlayer의 index와 생성한 Player의 인덱스가 같으면
             {
+                controller.SetTargetObj(player);
                 Debug.Log(player.GetComponent<PlayerDetail>().Controller.Num);
                 gamePlayerIndex = player.GetComponent<PlayerDetail>().Controller.Num;
                 player.AddComponent<Player>();
@@ -100,8 +103,9 @@ public class GameManager : MonoBehaviour
             if (player.GetComponent<PlayerDetail>().Controller.Num == userIndex)
             {
                 player.transform.SetPositionAndRotation(newPosition, Quaternion.identity);
-                player.transform.localScale = new Vector3(toward, 1.5f);
+                player.transform.localScale = new Vector3(toward, 0.5f);
 				player.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+                player.GetComponent<BasePlayer>().realSpeed = velocityX;
 				player.GetComponent<BasePlayer>().rb.AddForce(new Vector2(velocityX, velocityY));
 				//Debug.Log("other player moved");
 				break;
@@ -132,12 +136,12 @@ public class GameManager : MonoBehaviour
             {
                 if (actionType == Player.ACTION_TYPE.TYPE_ATTACK)
                 {
-                    //player.GetComponent<BasePlayer>().showAttackMotion();
+                    player.GetComponent<BasePlayer>().showAtkAnim();
                     break;
                 }
                 if (actionType == Player.ACTION_TYPE.TYPE_SKILL)
                 {
-                    //player.GetComponent<BasePlayer>().showSkillMotion();
+                    player.GetComponent<BasePlayer>().showSkillAnim();
                     break;
                 }
                 //Debug.Log("called transform translate");

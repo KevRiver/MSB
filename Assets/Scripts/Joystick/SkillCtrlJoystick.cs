@@ -50,7 +50,7 @@ public class SkillCtrlJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler,
         isUsing = false;
         if (inputVector != Vector3.zero)
         {
-            controller.targetObj.GetComponent<Player>().UseSkill(inputVector);
+            //controller.targetObj.GetComponent<Player>().UseSkill(inputVector);
         }
         inputVector = Vector3.zero;
         joystickImg.rectTransform.anchoredPosition = Vector3.zero;

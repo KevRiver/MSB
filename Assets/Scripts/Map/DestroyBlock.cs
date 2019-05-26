@@ -11,7 +11,7 @@ public class DestroyBlock : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        breakSound = GameObject.Find("BreakSound");
+        breakSound = GameObject.Find("WoodBreak001");
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
@@ -41,16 +41,7 @@ public class DestroyBlock : MonoBehaviour
         objectPosition.z--;
         Instantiate(particleEffect, objectPosition, Quaternion.identity);
 
-       //sendDestroidBlock();
-
         breakSound.GetComponent<AudioSource>().Play();
         Destroy(gameObject);
-    }
-
-    void sendDestroidBlock()
-    {
-        JSONObject jsonData = new JSONObject();
-        jsonData.AddField("blockIndex", gameObject.GetComponent<BlockData>().blockID);
-        gameManager.sendBlockDestroy(jsonData);
     }
 }

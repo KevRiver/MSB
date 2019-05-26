@@ -21,7 +21,7 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 	public PopupButton nicknameButton;
 	Vector2 centerV2;
 
-	string strPlayerName = "tiram6sue";
+	string strPlayerName = "LimeCake";
 
 	// Start is called before the first frame update
 	void Start()
@@ -54,6 +54,7 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 
 		userData.AddField("userID", strPlayerName);
 		userData.AddField("userPW", "");
+		userData.AddField("userName", strPlayerName);
 
 		socket.Off("loginSuccess", null);
 		socket.Off("loginFail", null);
@@ -95,10 +96,17 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 		toastModule.showToast(localPlayer.Name + "님 환영합니다!", ToastAlerter.MESSAGE_TYPE.TYPE_GREEN, 1);
 		GameObject.Find("LocalPlayer").GetComponent<LocalPlayer>().setLocalPlayer(localPlayer);
 
-        //로그인 버튼 -> 로그 아웃 버튼, 큐 입장 버튼 생성
+		//로그인 버튼 -> 로그 아웃 버튼, 큐 입장 버튼 생성
 
-        // 로비 씬 전환 
-        SceneManager.LoadScene("Lobby");
+
+		// 로비 씬 전환 
+		StartCoroutine(switchLobbyScene());
+	}
+
+	IEnumerator switchLobbyScene()
+	{
+		yield return new WaitForSeconds(2);
+		SceneManager.LoadScene("Lobby");
 	}
 
 	public void loginFail(SocketIOEvent obj)

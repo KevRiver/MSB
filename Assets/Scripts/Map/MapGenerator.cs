@@ -45,6 +45,7 @@ public class MapGenerator : MonoBehaviour
         printMap(map1);
         // 카메라에 맵 넓이 전달
         mainCamera = GameObject.Find("Main Camera");
+        Debug.Log(mainCamera);
         mainCamera.GetComponent<followCamera>().mapHeight = map1.mapHeight;
         mainCamera.GetComponent<followCamera>().mapWidth = map1.mapWidth;
 
