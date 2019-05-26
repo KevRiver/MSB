@@ -61,7 +61,7 @@ public class ScrollViewContentsManage : MonoBehaviour
 
             skinPanel = Instantiate(skinArray[x], new Vector3(pos_x, centerObj.transform.position.y, 0), Quaternion.identity);
             // 스킨 ID 부여
-            skinPanel.GetComponent<CharacterSelectScrollView>().panelID = x;
+            skinPanel.GetComponent<ScrollViewContents>().panelID = x;
 
             // 0번 스킨 패널과 1번 패널 사이의 거리 계산
             if (x == 0)

@@ -10,7 +10,7 @@ public class AttachWeapon : MonoBehaviour
 
     void Start()
     {
-        attachPosition = swordPrefab.GetComponent<Sword>().attachPosition;
+        /*attachPosition = swordPrefab.GetComponent<Sword>().attachPosition;
         rotation = swordPrefab.GetComponent<Sword>().rotation;
         swordPrefab = Instantiate(swordPrefab, new Vector3(0,0,0), rotation);
         swordPrefab.transform.parent = gameObject.transform;
@@ -18,6 +18,6 @@ public class AttachWeapon : MonoBehaviour
         swordPrefab.transform.localPosition = new Vector3(0f, 4.2f, 1f);
         //swordPrefab.transform.localPosition.Set(0, 0, 1);
         //Debug.Log(attachPosition);
-        //Debug.Log(quaternion);
+        //Debug.Log(quaternion);*/
     }
 }
