@@ -33,7 +33,7 @@ public class followCamera : MonoBehaviour
         followPosition = target.position - (rot * Vector3.forward * dist) + (Vector3.up * 0);
 
         // 카메라 한계 설정 화면 비율과 크기에 따라 변동 시켜야됨 
-        float bottomHeightLimit = 5.5f - mapHeight;
+        float bottomHeightLimit = 5.5f - mapHeight;//5.5f
         if(followPosition.y <= bottomHeightLimit)
         {
             followPosition.y = bottomHeightLimit;
@@ -42,7 +42,7 @@ public class followCamera : MonoBehaviour
             followPosition.y = -4.5f;
         }
 
-        float rightWidthLimit = mapWidth - 9.7f;
+        float rightWidthLimit = mapWidth - 9.7f;//9.7f
         if (followPosition.x >= rightWidthLimit)
         {
             followPosition.x = rightWidthLimit;
