@@ -54,7 +54,7 @@ public class Weapon : MonoBehaviour
     {
         _block.GetComponent<DestroyBlock>().destroyBlock();
         JSONObject jsonData = new JSONObject();
-        jsonData.AddField("blockIndex", gameObject.GetComponent<BlockData>().blockID);
+        jsonData.AddField("blockIndex", _block.GetComponent<BlockData>().blockID);
         GetComponent<GameManager>().sendBlockDestroy(jsonData);
     }
 
