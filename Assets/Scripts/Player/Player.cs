@@ -49,7 +49,7 @@ public class Player : MonoBehaviour {
         weaponAxis = gameObject.GetComponent<BasePlayer>().weaponAxis;
         weapon = gameObject.GetComponent<BasePlayer>().weapon;
 
-        moveSpeed = 50.0f;
+        moveSpeed = 25.0f;
         jumpForce = 300.0f;
         maxSpeed = 10.0f;
 

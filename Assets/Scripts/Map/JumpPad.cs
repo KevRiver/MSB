@@ -37,7 +37,8 @@ public class JumpPad : MonoBehaviour {
             {
                 stayTime = 0;
                 // Debug.Log("Player have stayed over 2secs");
-                collision.gameObject.GetComponent<Player>().Jump();
+                collision.gameObject.GetComponent<Rigidbody2D>().velocity = Vector3.zero;
+                collision.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector3.up * 700);
             }
             else
             {
