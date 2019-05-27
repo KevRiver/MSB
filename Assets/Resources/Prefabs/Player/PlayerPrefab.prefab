@@ -59,6 +59,7 @@ MonoBehaviour:
   weaponAxis: {fileID: 0}
   weapon: {fileID: 0}
   isMovable: 0
+  realSpeed: 0
   isGrounded: 0
   hp: 0
 --- !u!50 &851694585242320426
@@ -107,18 +108,18 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0, y: -2}
+  m_Offset: {x: 0, y: -1.8877277}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 5, y: 3.55}
-    newSize: {x: 5, y: 3.55}
+    oldSize: {x: 1.7, y: 3.8}
+    newSize: {x: 1.7, y: 3.8}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 0.2}
+  m_Size: {x: 1.2536886, y: 0.13166046}
   m_EdgeRadius: 0
 --- !u!61 &6311450940277813252
 BoxCollider2D:
@@ -133,18 +134,18 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.000000059604645, y: -0.34653115}
+  m_Offset: {x: -0.000000059604645, y: -0.2977171}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 5, y: 3.55}
-    newSize: {x: 5, y: 3.55}
+    oldSize: {x: 1.7, y: 3.8}
+    newSize: {x: 1.7, y: 3.8}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.28112, y: 3.106938}
+  m_Size: {x: 1.28112, y: 3.0093098}
   m_EdgeRadius: 0
 --- !u!95 &7013686449154166786
 Animator:
@@ -207,7 +208,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 5, y: 3.55}
+  m_Size: {x: 1.7, y: 3.8}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0
