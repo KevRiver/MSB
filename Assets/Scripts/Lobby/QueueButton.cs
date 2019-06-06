@@ -90,10 +90,38 @@ public class QueueButton : MonoBehaviour
         GameObject.Find("UserData").GetComponent<UserData>().setPlayerIndex(position);
     }
 
+
+    public void soloTestMatched()
+    {
+        Debug.Log("soloTestMatched");
+
+        int gameRoomIndex = -1;
+
+        int position = 0;
+
+        GameObject.Find("UserData").GetComponent<UserData>().clearUserData();
+
+        User player = new User();
+        player.Num = GameObject.Find("LocalPlayer").GetComponent<LocalPlayer>().getLocalPlayer().Num;
+        player.Id = GameObject.Find("LocalPlayer").GetComponent<LocalPlayer>().getLocalPlayer().Id;
+        GameObject.Find("UserData").GetComponent<UserData>().addUser(player);
+
+        // CREATE DUMMY PLAYER FOR TEST
+        User dummyPlayer = new User();
+        dummyPlayer.Num = -1;
+        dummyPlayer.Id = "TESTER";
+        GameObject.Find("UserData").GetComponent<UserData>().addUser(dummyPlayer);
+
+        SceneManager.LoadScene("GameScene");
+
+        GameObject.Find("UserData").GetComponent<UserData>().setRoomIndex(gameRoomIndex);
+        GameObject.Find("UserData").GetComponent<UserData>().setPlayerIndex(position);
+    }
+
     // 솔로 큐 버튼 선택
     public void selectSoloQueue()
     {
-        sendSkinWeaponID();
+        soloTestMatched();
     }
 
     // 멀티 큐 버튼 선택
