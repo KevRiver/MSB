@@ -42,8 +42,7 @@ public class ScrollViewContentsManage : MonoBehaviour
         limitLeftPos_x = transform.position.x;
         limitRightPos_x = limitLeftPos_x - (panelDistance * (skinArray.Length - 1));
 
-
-        scrollRect = scrollView.GetComponent<ScrollRect>();
+        //scrollRect = scrollView.GetComponent<ScrollRect>();
 
         //scrollRect.content.sizeDelta = new Vector2(limitRightPos_x, 20);
 
@@ -51,7 +50,7 @@ public class ScrollViewContentsManage : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(scrollRect.content.sizeDelta);
+        //Debug.Log(scrollRect.content.sizeDelta);
     }
 
     /*
