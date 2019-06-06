@@ -15,7 +15,7 @@ public class ScrollViewContents : MonoBehaviour
     public int panelID;
 
     GameObject contentView;
-    GameObject selectButton;
+    GameObject characterSelectButton;
 
     // 사운드 관련 변수
     private bool soundCheck = false;
@@ -31,11 +31,11 @@ public class ScrollViewContents : MonoBehaviour
     void Start()
     {
         contentView = GameObject.Find("Content");
-        selectButton = GameObject.Find("TransparentButton");
+        characterSelectButton = GameObject.Find("CharacterSelectButton");
 
         panelSound = GameObject.Find("PanelSound");
 
-        l_Player = GameObject.Find("LobbyPlayer");
+        l_Player = GameObject.Find("LobbyCharacter");
 
 
     }
@@ -75,10 +75,10 @@ public class ScrollViewContents : MonoBehaviour
             soundCheck = false;
 
             // 초상화 확대시 패널 ID 전송해서 애니메이션 교체하는 함수 실행
-            if (selectButton.GetComponent<SelectButton>().characterChoice == false)
+            if (characterSelectButton.GetComponent<CharacterSelectButton>().characterChoice == false)
             {
                 // 캐릭터 스킨 애니메이션 교체하는 기능
-                l_Player.GetComponent<LobbyPlayer>().l_changeSkin(panelID);
+                l_Player.GetComponent<LobbyCharacter>().l_changeSkin(panelID);
             }
             else
             {
@@ -104,15 +104,15 @@ public class ScrollViewContents : MonoBehaviour
 
     public void sendPanelID()
     {
-        if (selectButton.GetComponent<SelectButton>().characterChoice == false)
+        if (characterSelectButton.GetComponent<CharacterSelectButton>().characterChoice == false)
         {
             // 캐릭터 스킨 선택
-            selectButton.GetComponent<SelectButton>().getSkinID(panelID);
+            characterSelectButton.GetComponent<CharacterSelectButton>().getSkinID(panelID);
         }
         else
         {
             // 무기 선택
-            selectButton.GetComponent<SelectButton>().getWeaponID(panelID);
+            characterSelectButton.GetComponent<CharacterSelectButton>().getWeaponID(panelID);
         }
     }
 }
