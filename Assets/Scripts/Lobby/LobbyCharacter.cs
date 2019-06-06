@@ -1,5 +1,5 @@
 ﻿//
-//  LobbyPlayer
+//  LobbyCharacter
 //  Created by 문주한 on 20/05/2019.
 //
 //  로비에서 뒷 배경의 플레이어가 움직이는 기능
@@ -10,7 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LobbyPlayer : MonoBehaviour
+public class LobbyCharacter : MonoBehaviour
 {
     Animator animator;
 

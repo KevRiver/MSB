@@ -1,5 +1,5 @@
 ﻿//
-//  SelectButton
+//  CharacterSelectButton
 //  Created by 문주한 on 20/05/2019.
 //
 //  로비 화면에서 투명 버튼의 기능
@@ -15,7 +15,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using SocketIO;
 
-public class SelectButton : MonoBehaviour, IPointerClickHandler
+public class CharacterSelectButton : MonoBehaviour, IPointerClickHandler
 {
 	NetworkModule networkModule;
 	SocketIOComponent socket;
@@ -42,14 +42,15 @@ public class SelectButton : MonoBehaviour, IPointerClickHandler
     // 배경 캐릭터
     GameObject character;
 
-
+    // 큐 선택 버튼 
+    GameObject soloQueueButton;
+    GameObject multiQueueButton;
 
     // Start is called before the first frame update
     void Start()
     {
 
-		networkModule = GameObject.Find("NetworkModule").GetComponent<NetworkModule>();
-
+		
 		characterChoice = false;
 
         centerSlot = GameObject.Find("CenterSlot");
@@ -59,9 +60,10 @@ public class SelectButton : MonoBehaviour, IPointerClickHandler
         mainCamera = GameObject.Find("Main Camera");
         nextPos = new Vector3(10, 0, -10);
 
-        character = GameObject.Find("LobbyPlayer");
+        character = GameObject.Find("LobbyCharacter");
 
         cameraSize = mainCamera.GetComponent<Camera>().orthographicSize;
+
     }
 
     // Update is called once per frame
@@ -83,8 +85,6 @@ public class SelectButton : MonoBehaviour, IPointerClickHandler
                 scrollView_Weapon.SetActive(true);
 
                 centerSlot.SetActive(true);
-
-                Debug.Log(mainCamera.GetComponent<Camera>().orthographicSize);
             }
         }
     }
@@ -100,84 +100,18 @@ public class SelectButton : MonoBehaviour, IPointerClickHandler
             characterChoice = true;
 
             // 캐릭터 이동 시작
-            character.GetComponent<LobbyPlayer>().start = true;
+            character.GetComponent<LobbyCharacter>().start = true;
         }
         else
         {
-            // 무기 선택
-            sendSkinWeaponID();
+            // 큐 선택 팝업
+            activeLoading();
 
-            // 큐 선택 팝업 
-            //activeLoading();
-
-            // 큐 선택 팝업 
-            //inactiveLoading();
-
-            // 클라이언트 씬 전환 
-            //SceneManager.LoadScene("GameScene");
+            // 큐 버튼에 케릭터 정보 전달
+            sendCharacterInfo();
         }
 
     }
-
-    public void sendSkinWeaponID()
-    {
-		socket = networkModule.get_socket();
-		// SkinID and WeaponID 전송
-		Debug.Log("Skin ID : " + skinID);
-        Debug.Log("Weapon ID : " + weaponID);
-
-		socket.On("soloMatched", soloMatched);
-
-		JSONObject data = new JSONObject(JSONObject.Type.OBJECT);
-		data.AddField("skinIndex", skinID);
-		data.AddField("weaponIndex", weaponID);
-		socket.Emit("matchMakeSolo", data);
-    }
-
-	public void soloMatched(SocketIOEvent e)
-	{
-		Debug.Log("soloMatched : " + e);
-		JSONObject data = e.data;
-
-		int gameRoomIndex = -1;
-		try
-		{
-			gameRoomIndex = (int)data[0].n;
-		}
-		catch (Exception err) { };
-
-		int position = -1;
-		try
-		{
-			position = (int)data[1].n;
-		}
-		catch (Exception err) { };
-
-		JSONObject userListJSON;
-		try
-		{
-			userListJSON = data[2];
-
-			GameObject.Find("UserData").GetComponent<UserData>().clearUserData();
-			int i = 0;
-			foreach (JSONObject userData in userListJSON.list)
-			{
-				//Debug.Log("Queue Handler log" + ++i);
-				User player = new User();
-				player.Num = (int)userData[0].n;
-				player.Id = userData[1].str;
-				GameObject.Find("UserData").GetComponent<UserData>().addUser(player);
-			}
-
-			SceneManager.LoadScene("GameScene");
-		}
-		catch (Exception err) { }
-
-		GameObject.Find("UserData").GetComponent<UserData>().setRoomIndex(gameRoomIndex);
-		GameObject.Find("UserData").GetComponent<UserData>().setPlayerIndex(position);
-	}
-
-
 
 	public void getSkinID(int id)
     {
@@ -199,5 +133,15 @@ public class SelectButton : MonoBehaviour, IPointerClickHandler
     void inactiveLoading()
     {
         joinQueue.SetActive(false);
+    }
+
+    // 큐 버튼에 케릭터 정보 전달 
+    void sendCharacterInfo()
+    {
+        soloQueueButton = GameObject.Find("Button_Solo");
+        multiQueueButton = GameObject.Find("Button_Multi");
+
+        soloQueueButton.GetComponent<QueueButton>().getCharacterInfo(skinID, weaponID);
+        multiQueueButton.GetComponent<QueueButton>().getCharacterInfo(skinID, weaponID);
     }
 }
