@@ -18,24 +18,10 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 
 	public GameObject popup;
 	public GameObject centerPos;
-
-	public GameObject LoginButtonAccount;
-	public GameObject LoginButtonGoogle;
-
-	private PopupButton popupButton;
-
-
+	public PopupButton nicknameButton;
 	Vector2 centerV2;
 
-	public Boolean IS_LOGIN_AVAILABLE = true;
-
-	public enum LOGIN_TYPE
-	{
-		LOGIN_ACCOUNT, LOGIN_GOOGLE
-	}
-
-	public LOGIN_TYPE loginType;
-
+	string strPlayerName = "LimeCake";
 
 	// Start is called before the first frame update
 	void Start()
@@ -46,7 +32,7 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 		networkModule = GameObject.Find("NetworkModule").GetComponent<NetworkModule>();
 
 		centerV2 = centerPos.transform.position;
-		popupButton = GameObject.Find("Popup").GetComponent<PopupButton>();
+		nicknameButton = GameObject.Find("NicknameButton").GetComponent<PopupButton>();
 	}
 
 	// Update is called once per frame
@@ -57,46 +43,18 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 
 	public void OnPointerClick(PointerEventData eventData)
 	{
-		if (!IS_LOGIN_AVAILABLE) return;
-
-		if (loginType == LOGIN_TYPE.LOGIN_ACCOUNT)
-		{
-			showAccountHolder();
-		}
-		if (loginType == LOGIN_TYPE.LOGIN_GOOGLE)
-		{
-			// TODO
-		}
-		
+		splashModule.showLoadSplash(100, "로그인 중입니다", LoadSplash.SPLASH_TYPE.TYPE_SHORT);
+		Invoke("attemptLogin", (float)100 / 1000);
 	}
 
-	public void attemptLoginAccount()
+	public void attemptLogin()
 	{
-		string inputID = GameObject.Find("IDinput").GetComponent<InputField>().text;
-		if (inputID.Trim().Length == 0)
-		{
-			toastModule.showToast("ENTER ID", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 1);
-			return;
-		}
-		if (inputID.Trim().Length < 2)
-		{
-			toastModule.showToast("ID TOO SHORT", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 1);
-			return;
-		}
-		attemptLogin(inputID);
-	}
-
-	public void attemptLogin(string userID)
-	{
-		LoginButtonAccount.GetComponent<TitleTouch>().IS_LOGIN_AVAILABLE = false;
-		LoginButtonGoogle.GetComponent<TitleTouch>().IS_LOGIN_AVAILABLE = false;
-
 		socket = networkModule.get_socket();
 		JSONObject userData = new JSONObject(JSONObject.Type.OBJECT);
 
-		userData.AddField("userID", userID);
+		userData.AddField("userID", strPlayerName);
 		userData.AddField("userPW", "");
-		userData.AddField("userName", userID);
+		userData.AddField("userName", strPlayerName);
 
 		socket.Off("loginSuccess", null);
 		socket.Off("loginFail", null);
@@ -138,6 +96,10 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 		toastModule.showToast(localPlayer.Name + "님 환영합니다!", ToastAlerter.MESSAGE_TYPE.TYPE_GREEN, 1);
 		GameObject.Find("LocalPlayer").GetComponent<LocalPlayer>().setLocalPlayer(localPlayer);
 
+		//로그인 버튼 -> 로그 아웃 버튼, 큐 입장 버튼 생성
+
+
+		// 로비 씬 전환 
 		StartCoroutine(switchLobbyScene());
 	}
 
@@ -149,8 +111,6 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 
 	public void loginFail(SocketIOEvent obj)
 	{
-		LoginButtonAccount.GetComponent<TitleTouch>().IS_LOGIN_AVAILABLE = true;
-		LoginButtonGoogle.GetComponent<TitleTouch>().IS_LOGIN_AVAILABLE = true;
 		Debug.Log("Login Fail" + obj);
 		JSONObject data = obj.data;
 		int result = (int)data[0].n;
@@ -160,8 +120,7 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 		{
 			case 0:
 				Debug.Log("No User Data : Register!");
-				//showPopup();
-				toastModule.showToast("REGISTER FIRST!", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 1);
+				showPopup();
 				break;
 			case 1:
 				Debug.Log("PASSWORD NOT MATCH");
@@ -179,41 +138,19 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 		}
 	}
 
-	public void showAccountHolder()
-	{
-		LoginButtonAccount.transform.localScale = new Vector3(0,0,0);
-		LoginButtonGoogle.transform.localScale = new Vector3(0,0,0);
-		GameObject.Find("AccountHolder").transform.localScale = new Vector3(1,1,1);
-	}
-
-	public void hideAccountHolder()
-	{
-		LoginButtonAccount.transform.localScale = new Vector3(1, 1, 1);
-		LoginButtonGoogle.transform.localScale = new Vector3(1, 1, 1);
-		GameObject.Find("AccountHolder").transform.localScale = new Vector3(0, 0, 0);
-	}
-
 	public void showPopup()
 	{
-		GameObject.Find("AccountHolder").transform.localScale = new Vector3(0, 0, 0);
+		GameObject.Find("ClickText").GetComponent<Text>().color = new Color(0f, 0f, 0f, 0f);
 		popup.transform.position = centerV2;
 	}
 
-	public void hidePopup()
-	{
-		//GameObject.Find("AccountHolder").transform.localScale = new Vector3(1, 1, 1);
-		popup.GetComponent<PopupButton>().hidePopup();
-	}
-
-	public void attemptRegister(string userID, string userName)
+	public void attemptRegister(string nickname)
 	{
 		JSONObject userData = new JSONObject(JSONObject.Type.OBJECT);
 
-		userData.AddField("userID", userID);
+		userData.AddField("userID", strPlayerName);
 		userData.AddField("userPW", "");
-		userData.AddField("userName", userName);
-
-		socket = networkModule.get_socket();
+		userData.AddField("userName", nickname);
 
 		socket.Off("registerResult", null);
 		socket.On("registerResult", registerResult);
@@ -226,13 +163,11 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 		JSONObject data = obj.data;
 		int resultCode = (int)data[0].n;
 		string resultMessage = (string)data[1].str;
-		popupButton.attemptRegisterResult(resultCode, resultMessage);
+		nicknameButton.attemptRegisterResult(resultCode, resultMessage);
 		if (resultCode == 0)
 		{
-			string resultID = (string)data[2].str;
 			Debug.Log("Register Finished!");
 			toastModule.showToast("REGISTER SUCCESS", ToastAlerter.MESSAGE_TYPE.TYPE_GREEN, 1);
-			GameObject.Find("IDinput").GetComponent<InputField>().text = resultID;
 		}
 	}
 
