@@ -20,7 +20,6 @@ public class Controller : MonoBehaviour
 
     private void Start()
     {
-        //targetObj = GameObject.Find("PlayerPrefab_00").gameObject;
         aimAxis = targetObj.transform.Find("AimAxis").gameObject;
         weaponAxis = targetObj.transform.Find("WeaponAxis").gameObject;
 
@@ -42,24 +41,21 @@ public class Controller : MonoBehaviour
         HandleInput();
 
         if (atkCtrlJoystick.isUsing)
-            targetObj.GetComponent<Player>().Aim(atkVector, "BasicAtkRange(Clone)");
+            targetObj.GetComponent<PlayerAction>().Aim(atkVector, "BasicAtkRange(Clone)");
         else if (skillCtrlJoystick.isUsing)
-            targetObj.GetComponent<Player>().Aim(skillVector, "SkillRange(Clone)");
+            targetObj.GetComponent<PlayerAction>().Aim(skillVector, "SkillRange(Clone)");
         else
         {
             aimAxis.transform.Find("BasicAtkRange(Clone)").gameObject.GetComponent<SpriteRenderer>().enabled = false;
             aimAxis.transform.Find("SkillRange(Clone)").gameObject.GetComponent<SpriteRenderer>().enabled = false;
             aimAxis.transform.localRotation = Quaternion.identity;
         }
-
-
-        //targetObj.GetComponent<Player>().Aim(skillVector,"SkillRange");
     }
 
     private void FixedUpdate()
     {
-        targetObj.GetComponent<Player>().Move(moveVector);
-        targetObj.GetComponent<Player>().Jump();
+        targetObj.GetComponent<PlayerMovement>().Move(moveVector);
+        targetObj.GetComponent<PlayerMovement>().Jump();
     }
 
     public void HandleInput()

@@ -46,9 +46,6 @@ public class CharacterSelectButton : MonoBehaviour, IPointerClickHandler
     GameObject soloQueueButton;
     GameObject multiQueueButton;
 
-    // 오픈되지 않은 스킨 & 무기 관련
-    public GameObject rejectBackground;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -146,16 +143,5 @@ public class CharacterSelectButton : MonoBehaviour, IPointerClickHandler
 
         soloQueueButton.GetComponent<QueueButton>().getCharacterInfo(skinID, weaponID);
         multiQueueButton.GetComponent<QueueButton>().getCharacterInfo(skinID, weaponID);
-    }
-
-    // 선택 거부 배경 켜기
-    public void activeRejectBackground()
-    {
-        rejectBackground.SetActive(true);
-    }
-    // 선택 거부 배경 끄기 
-    public void disableRejectBackground()
-    {
-        rejectBackground.SetActive(false);
     }
 }

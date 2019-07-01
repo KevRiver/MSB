@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 9216536163680413359}
   - component: {fileID: 5854152021129367048}
   - component: {fileID: 5897944023832723757}
-  - component: {fileID: 387244424721237127}
   - component: {fileID: 1056093116349323410}
   m_Layer: 0
   m_Name: BlockBrown_11
@@ -97,7 +96,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 1
-  m_Offset: {x: -0.022542119, y: -0.004529953}
+  m_Offset: {x: -0.013666272, y: 0.022076368}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -108,7 +107,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 4.8841476, y: 4.9272823}
+  m_Size: {x: 4.972905, y: 4.980495}
   m_EdgeRadius: 0
 --- !u!114 &5854152021129367048
 MonoBehaviour:
@@ -148,41 +147,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!66 &387244424721237127
-CompositeCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9216536163680413356}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_GeometryType: 0
-  m_GenerationType: 0
-  m_EdgeRadius: 0
-  m_ColliderPaths:
-  - m_Collider: {fileID: 9216536163680413359}
-    m_ColliderPaths:
-    - - X: 4839063
-        Y: 4918222
-      - X: -4929231
-        Y: 4918222
-      - X: -4929231
-        Y: -4936342
-      - X: 4839063
-        Y: -4936342
-  m_CompositePaths:
-    m_Paths:
-    - - {x: 0.4839063, y: 0.4918222}
-      - {x: -0.4929231, y: 0.4918222}
-      - {x: -0.4929231, y: -0.4936342}
-      - {x: 0.4839063, y: -0.4936342}
-  m_VertexDistance: 0.0005
 --- !u!114 &1056093116349323410
 MonoBehaviour:
   m_ObjectHideFlags: 0

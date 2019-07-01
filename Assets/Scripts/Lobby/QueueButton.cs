@@ -82,7 +82,7 @@ public class QueueButton : MonoBehaviour
                 GameObject.Find("UserData").GetComponent<UserData>().addUser(player);
             }
 
-            SceneManager.LoadScene("GameScene");
+            SceneManager.LoadScene("Map_01");
         }
         catch (Exception err) { }
 
@@ -112,7 +112,8 @@ public class QueueButton : MonoBehaviour
         dummyPlayer.Id = "TESTER";
         GameObject.Find("UserData").GetComponent<UserData>().addUser(dummyPlayer);
 
-        SceneManager.LoadScene("GameScene");
+        //SceneManager.LoadScene("GameScene");
+        SceneManager.LoadScene("Map_01");
 
         GameObject.Find("UserData").GetComponent<UserData>().setRoomIndex(gameRoomIndex);
         GameObject.Find("UserData").GetComponent<UserData>().setPlayerIndex(position);

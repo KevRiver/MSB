@@ -27,8 +27,8 @@ public class BlockData : MonoBehaviour
         if (objectType < 10)
         {
             // 게임메니저에서 해시테이블 받아옴
-            gameManager = GameObject.Find("GameManager");
-            gameManager.GetComponent<GameManager>().mapHashtable.Add(blockID, gameObject);
+            //gameManager = GameObject.Find("GameManager");
+            //gameManager.GetComponent<GameManager>().mapHashtable.Add(blockID, gameObject);
             //Debug.Log(gameManager.GetComponent<GameManager>().mapHashtable[blockID]);
         }
     }

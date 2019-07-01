@@ -30,7 +30,7 @@ public class JumpPad : MonoBehaviour {
     private void OnTriggerStay2D(Collider2D collision)
     {
         // 플레이어와 접촉 중 일때만 실행
-        if (collision.gameObject.GetComponent("Player") != null)
+        if (collision.gameObject.tag == "LocalPlayer")
         {
             //접촉을 유지하고 있을 동안 stayTime 변수의 값을 증가시켜 maxTime 까지 증가되면 Player.jump() 를 실행
             if (stayTime > maxTime)
@@ -51,6 +51,5 @@ public class JumpPad : MonoBehaviour {
     private void OnTriggerExit2D(Collider2D collision)
     {
         stayTime = 0;
-        //Debug.Log("Exit");
     }
 }

@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 7854902288729704345}
   - component: {fileID: 7854902288729704347}
   - component: {fileID: 5219016080262926392}
-  - component: {fileID: 6804912338115053531}
   - component: {fileID: 5124857888580164462}
   m_Layer: 0
   m_Name: BlockGray_11
@@ -130,41 +129,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!66 &6804912338115053531
-CompositeCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7854902288729704344}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_GeometryType: 0
-  m_GenerationType: 0
-  m_EdgeRadius: 0
-  m_ColliderPaths:
-  - m_Collider: {fileID: 7854902288729704347}
-    m_ColliderPaths:
-    - - X: 4968692
-        Y: 4893899
-      - X: -4937827
-        Y: 4893899
-      - X: -4937827
-        Y: -4969206
-      - X: 4968692
-        Y: -4969206
-  m_CompositePaths:
-    m_Paths:
-    - - {x: 0.4968692, y: 0.4893899}
-      - {x: -0.4937827, y: 0.4893899}
-      - {x: -0.4937827, y: -0.49692062}
-      - {x: 0.4968692, y: -0.49692062}
-  m_VertexDistance: 0.0005
 --- !u!114 &5124857888580164462
 MonoBehaviour:
   m_ObjectHideFlags: 0

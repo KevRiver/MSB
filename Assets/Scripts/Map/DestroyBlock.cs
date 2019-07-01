@@ -5,7 +5,6 @@ using UnityEngine;
 public class DestroyBlock : MonoBehaviour
 {
     public GameObject breakSound;
-
     public GameManager gameManager;
 
     // Start is called before the first frame update

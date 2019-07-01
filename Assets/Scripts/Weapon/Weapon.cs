@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
+    private float speedMultiplier;
+    private float jumpForceMultiplier;
+
     //private Animator animator;
     private GameObject weaponAxis;
     private Animator weaponAnimator;
@@ -49,6 +52,18 @@ public class Weapon : MonoBehaviour
    
     }
 
+    public void OnBasicAtkStart()
+    {
+        Debug.Log("Sword Collider Enabled");
+        gameObject.GetComponent<BoxCollider2D>().enabled = true;
+    }
+
+    public void OnBasicAtkExit()
+    {
+        Debug.Log("Sword Collider Disabled");
+        gameObject.GetComponent<BoxCollider2D>().enabled = false;
+    }
+
     private void OnTriggerBlock(GameObject _block)
     {
         _block.GetComponent<DestroyBlock>().destroyBlock();
@@ -72,14 +87,15 @@ public class Weapon : MonoBehaviour
         }
         Vector2 hitDirection = new Vector2(force.x, force.y);
         Vector2 contactPoint = new Vector2(0, 0);
-        
+
+        _player.gameObject.GetComponent<PlayerHP>().TakeDamage(10);
         int targetUserIndex = _player.gameObject.GetComponent<PlayerDetail>().Controller.Num;
-        myPlayer.GetComponent<Player>().sendUserHit(targetUserIndex, hitDirection, Player.ACTION_TYPE.TYPE_ATTACK);
+        myPlayer.GetComponent<PlayerNetwork>().sendUserHit(targetUserIndex, 10, hitDirection, PlayerNetwork.ACTION_TYPE.TYPE_ATTACK);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.GetComponent<BasePlayer>() != null)
+        if (collision.gameObject.tag=="Player")
         {
             OnTriggerPlayer(collision.gameObject, weaponAxis.transform.localRotation.z);
         }
