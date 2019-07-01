@@ -54,7 +54,7 @@ public class AtkCtrlJoystick : MonoBehaviour, IDragHandler, IPointerUpHandler, I
         //현재 inputVector가 zero가 아니라면 (Player가 조이스틱을 다시 가운데로 위치시키지 않았다면)inputVector로 공격을 함
         if (inputVector != Vector3.zero)
         {
-            controller.targetObj.GetComponent<Player>().Attack(inputVector);
+            controller.targetObj.GetComponent<PlayerAction>().Attack(inputVector);
         }
         inputVector = Vector3.zero;
         joystickImg.rectTransform.anchoredPosition = Vector3.zero;

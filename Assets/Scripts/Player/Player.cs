@@ -53,7 +53,7 @@ public class Player : MonoBehaviour {
         jumpForce = 300.0f;
         maxSpeed = 10.0f;
 
-        StartCoroutine("syncUserMove");
+        //StartCoroutine("syncUserMove");
     }
 	
 	// Update is called once per frame
@@ -178,7 +178,7 @@ public class Player : MonoBehaviour {
         {
             isAttacking = true;
             aimAngle = Vec32Angle(vector);
-            sendUserAttack(aimAngle);
+            //sendUserAttack(aimAngle);
             weaponAxis.transform.localRotation = Quaternion.Euler(0, 0, aimAngle);
             if (aimAngle >= -90 && aimAngle <= 90)
             {
@@ -226,7 +226,7 @@ public class Player : MonoBehaviour {
         StartCoroutine(CoolTime());
     }
 
-    IEnumerator syncUserMove()
+    /*IEnumerator syncUserMove()
     {
         while (true)
         {
@@ -278,7 +278,7 @@ public class Player : MonoBehaviour {
         // 상대방이 어떻게 제어되는지까지 각 무기마다 다 다르기 때문에 Weapon을 가져오고
         gameManager.sendUserHit(jsonData);
         Debug.Log("userGameHit SENT");
-    }
+    }*/
 
     IEnumerator WaitForIt()
     {
