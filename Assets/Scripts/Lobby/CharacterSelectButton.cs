@@ -17,11 +17,11 @@ using SocketIO;
 
 public class CharacterSelectButton : MonoBehaviour, IPointerClickHandler
 {
-	NetworkModule networkModule;
-	SocketIOComponent socket;
+    NetworkModule networkModule;
+    SocketIOComponent socket;
 
-	// 카메라 관련
-	GameObject mainCamera;
+    // 카메라 관련
+    GameObject mainCamera;
     float cameraSize;
 
     public GameObject scrollView_Character;
@@ -46,12 +46,15 @@ public class CharacterSelectButton : MonoBehaviour, IPointerClickHandler
     GameObject soloQueueButton;
     GameObject multiQueueButton;
 
+    // 오픈되지 않은 스킨 & 무기 관련
+    public GameObject rejectBackground;
+
     // Start is called before the first frame update
     void Start()
     {
 
-		
-		characterChoice = false;
+
+        characterChoice = false;
 
         centerSlot = GameObject.Find("CenterSlot");
 
@@ -74,7 +77,7 @@ public class CharacterSelectButton : MonoBehaviour, IPointerClickHandler
             mainCamera.transform.position = Vector3.Lerp(mainCamera.transform.position, nextPos, Time.deltaTime * 2f);
             mainCamera.GetComponent<Camera>().orthographicSize = cameraSize;
 
-            if(mainCamera.GetComponent<Camera>().orthographicSize < 8)
+            if (mainCamera.GetComponent<Camera>().orthographicSize < 8)
             {
                 cameraSize += 0.1f;
             }
@@ -91,8 +94,8 @@ public class CharacterSelectButton : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData pointerEventData)
     {
-        if(characterChoice == false)
-        { 
+        if (characterChoice == false)
+        {
             // 캐릭터 스킨 선택
             nextOn = true;
             scrollView_Character.SetActive(false);
@@ -113,7 +116,7 @@ public class CharacterSelectButton : MonoBehaviour, IPointerClickHandler
 
     }
 
-	public void getSkinID(int id)
+    public void getSkinID(int id)
     {
         skinID = id;
     }
@@ -143,5 +146,16 @@ public class CharacterSelectButton : MonoBehaviour, IPointerClickHandler
 
         soloQueueButton.GetComponent<QueueButton>().getCharacterInfo(skinID, weaponID);
         multiQueueButton.GetComponent<QueueButton>().getCharacterInfo(skinID, weaponID);
+    }
+
+    // 선택 거부 배경 켜기
+    public void activeRejectBackground()
+    {
+        rejectBackground.SetActive(true);
+    }
+    // 선택 거부 배경 끄기 
+    public void disableRejectBackground()
+    {
+        rejectBackground.SetActive(false);
     }
 }

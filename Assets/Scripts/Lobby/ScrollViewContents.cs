@@ -74,6 +74,16 @@ public class ScrollViewContents : MonoBehaviour
             panelSound.GetComponent<AudioSource>().Play();
             soundCheck = false;
 
+            // 개발되지 않은 부분
+            if (panelID != 0)
+            {
+                characterSelectButton.GetComponent<CharacterSelectButton>().activeRejectBackground();
+            }
+            else
+            {
+                characterSelectButton.GetComponent<CharacterSelectButton>().disableRejectBackground();
+            }
+
             // 초상화 확대시 패널 ID 전송해서 애니메이션 교체하는 함수 실행
             if (characterSelectButton.GetComponent<CharacterSelectButton>().characterChoice == false)
             {

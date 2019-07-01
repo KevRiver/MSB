@@ -13,7 +13,7 @@ public class PopupButton : MonoBehaviour
 	public GameObject nickNameUI;
 	public GameObject nickNameInput;
 	public GameObject registerResult;
-	public TitleTouch titleTouchHandler;
+	private TitleTouch titleTouchHandler;
 	Vector2 centerPos;
 	Vector2 outsidePos;
 	// Start is called before the first frame update
@@ -22,7 +22,7 @@ public class PopupButton : MonoBehaviour
 		toastModule = canvasObject.GetComponent<ToastAlerter>();
 		splashModule = canvasObject.GetComponent<LoadSplash>();
 		outsidePos = popup.transform.position;
-		titleTouchHandler = GameObject.Find("TransparentButton").GetComponent<TitleTouch>();
+		titleTouchHandler = GameObject.Find("LoginAccount").GetComponent<TitleTouch>();
 	}
 
 	// Update is called once per frame
@@ -62,7 +62,7 @@ public class PopupButton : MonoBehaviour
 			return;
 		}
 		Debug.Log("nickname button click! register attempt");
-		titleTouchHandler.attemptRegister(userNameInput);
+		titleTouchHandler.attemptRegister(userNameInput, userNameInput);
 	}
 
 	public void attemptRegisterResult(int resultCode, string error)
@@ -71,8 +71,7 @@ public class PopupButton : MonoBehaviour
 		switch (resultCode)
 		{
 			case 0:
-				popup.transform.position = outsidePos;
-				GameObject.Find("ClickText").GetComponent<Text>().color = new Color(0f, 0f, 0f, 1f);
+				hidePopup();
 				break;
 			case 1:
 				registerResult.GetComponent<Text>().text = "ID가 이미 존재합니다";
@@ -87,5 +86,11 @@ public class PopupButton : MonoBehaviour
 				toastModule.showToast("ERROR: " + error, ToastAlerter.MESSAGE_TYPE.TYPE_RED, 1);
 				break;
 		}
+	}
+
+	public void hidePopup()
+	{
+		popup.transform.position = outsidePos;
+		GameObject.Find("AccountHolder").transform.localScale = new Vector3(1, 1, 1);
 	}
 }
