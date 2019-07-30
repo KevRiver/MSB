@@ -15,7 +15,7 @@ public class ScrollViewContents : MonoBehaviour
     public int panelID;
 
     GameObject contentView;
-    GameObject characterSelectButton;
+    GameObject canvas;
 
     // 사운드 관련 변수
     private bool soundCheck = false;
@@ -31,7 +31,7 @@ public class ScrollViewContents : MonoBehaviour
     void Start()
     {
         contentView = GameObject.Find("Content");
-        characterSelectButton = GameObject.Find("CharacterSelectButton");
+        canvas = GameObject.Find("Canvas");
 
         panelSound = GameObject.Find("PanelSound");
 
@@ -51,7 +51,8 @@ public class ScrollViewContents : MonoBehaviour
             scaleNum = (44f - Mathf.Abs(distance_center)) / 220f;
             scaleNum += 1;
         }
-        /*
+
+
         if (44 > distance_center && distance_center > 0)
         {
             sendPanelID();
@@ -67,7 +68,8 @@ public class ScrollViewContents : MonoBehaviour
         {
             transform.localScale = new Vector3(1, 1, 1);
         }
-        */
+
+
         // 초상화 확대시 사운드 재생
         if(transform.localScale.x > 1 && soundCheck == true)
         {
@@ -83,18 +85,18 @@ public class ScrollViewContents : MonoBehaviour
             {
                 characterSelectButton.GetComponent<CharacterSelectButton>().disableRejectBackground();
             }
-
+            */
             // 초상화 확대시 패널 ID 전송해서 애니메이션 교체하는 함수 실행
-            if (characterSelectButton.GetComponent<CharacterSelectButton>().characterChoice == false)
+            if (canvas.GetComponent<ManageLobbyObject>().sv_Weapon.activeSelf == true)
+            {
+                // 무기 애니메이션 교체하는 기능
+            }
+            else
             {
                 // 캐릭터 스킨 애니메이션 교체하는 기능
                 l_Player.GetComponent<LobbyCharacter>().l_changeSkin(panelID);
             }
-            else
-            {
-                // 무기 애니메이션 교체하는 기능
-            }
-            */
+
         }
         else if(transform.localScale.x == 1)
         {
@@ -112,19 +114,20 @@ public class ScrollViewContents : MonoBehaviour
             firstCheck = false;
         }
     }
-    /*
+    
     public void sendPanelID()
     {
-        if (characterSelectButton.GetComponent<CharacterSelectButton>().characterChoice == false)
+        if (canvas.GetComponent<ManageLobbyObject>().sv_Weapon.activeSelf == true)
         {
-            // 캐릭터 스킨 선택
-            characterSelectButton.GetComponent<CharacterSelectButton>().getSkinID(panelID);
+            // 무기 선택
+            canvas.GetComponent<ManageLobbyObject>().getWeaponID(panelID);
         }
         else
         {
-            // 무기 선택
-            characterSelectButton.GetComponent<CharacterSelectButton>().getWeaponID(panelID);
+            // 캐릭터 스킨 선택
+            canvas.GetComponent<ManageLobbyObject>().getSkinID(panelID);
         }
+
     }
-    */
+    
 }

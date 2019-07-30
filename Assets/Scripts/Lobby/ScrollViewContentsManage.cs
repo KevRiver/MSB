@@ -45,11 +45,6 @@ public class ScrollViewContentsManage : MonoBehaviour
 
     }
 
-    private void Update()
-    {
-        //Debug.Log(scrollRect.content.sizeDelta);
-    }
-
     
     //  스크롤 뷰에서 컨텐츠가 화면 밖으로 넘어가지 않게 한계 설정
     private void FixedUpdate()

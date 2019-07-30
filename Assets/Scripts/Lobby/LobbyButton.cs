@@ -31,8 +31,6 @@ public class LobbyButton : MonoBehaviour
 
     public bool characterChoice;
 
-    int skinID;
-    int weaponID;
 
     // 스크롤 뷰 관련 
     GameObject centerSlot;
@@ -69,16 +67,6 @@ public class LobbyButton : MonoBehaviour
 
     }
 
-    public void getSkinID(int id)
-    {
-        skinID = id;
-    }
-
-    public void getWeaponID(int id)
-    {
-        weaponID = id;
-    }
-
     // 큐 로딩 화면 띄워주기
     void activeLoading()
     {
@@ -97,10 +85,11 @@ public class LobbyButton : MonoBehaviour
         soloQueueButton = GameObject.Find("Button_Solo");
         multiQueueButton = GameObject.Find("Button_Multi");
 
-        soloQueueButton.GetComponent<QueueButton>().getCharacterInfo(skinID, weaponID);
-        multiQueueButton.GetComponent<QueueButton>().getCharacterInfo(skinID, weaponID);
+        soloQueueButton.GetComponent<QueueButton>().getCharacterInfo(canvas.GetComponent<ManageLobbyObject>().skinID, canvas.GetComponent<ManageLobbyObject>().weaponID);
+        multiQueueButton.GetComponent<QueueButton>().getCharacterInfo(canvas.GetComponent<ManageLobbyObject>().skinID, canvas.GetComponent<ManageLobbyObject>().weaponID);
     }
 
+    // 스킨 선택 버튼
     public void skinSelectButton()
     {
         // Need Animation
@@ -111,9 +100,11 @@ public class LobbyButton : MonoBehaviour
         // Active Select Skin
         canvas.GetComponent<ManageLobbyObject>().sv_Skin.SetActive(true);
         canvas.GetComponent<ManageLobbyObject>().homeButton.SetActive(true);
+        canvas.GetComponent<ManageLobbyObject>().centerSlot.SetActive(true);
         // weapon select button
     }
 
+    // 무기 선택 버튼
     public void weaponSelectButton()
     {
         // Need Animation
@@ -124,11 +115,13 @@ public class LobbyButton : MonoBehaviour
         // Active Select Weapon
         canvas.GetComponent<ManageLobbyObject>().sv_Weapon.SetActive(true);
         canvas.GetComponent<ManageLobbyObject>().homeButton.SetActive(true);
+        canvas.GetComponent<ManageLobbyObject>().centerSlot.SetActive(true);
         // MAKE! skin select button
         // MAKE! game start button
 
     }
 
+    // 캐릭터 선택시 뒤로가기 버튼
     public void backLobbyButton()
     {
         // Deactive Select UI
@@ -141,6 +134,7 @@ public class LobbyButton : MonoBehaviour
             canvas.GetComponent<ManageLobbyObject>().sv_Skin.SetActive(false);
         }
         canvas.GetComponent<ManageLobbyObject>().homeButton.SetActive(false);
+        canvas.GetComponent<ManageLobbyObject>().centerSlot.SetActive(false);
         // MAKE! select button
         // MAKE! game start button
 
