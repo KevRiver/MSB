@@ -51,7 +51,7 @@ public class ScrollViewContents : MonoBehaviour
             scaleNum = (44f - Mathf.Abs(distance_center)) / 220f;
             scaleNum += 1;
         }
-
+        /*
         if (44 > distance_center && distance_center > 0)
         {
             sendPanelID();
@@ -67,13 +67,13 @@ public class ScrollViewContents : MonoBehaviour
         {
             transform.localScale = new Vector3(1, 1, 1);
         }
-
+        */
         // 초상화 확대시 사운드 재생
         if(transform.localScale.x > 1 && soundCheck == true)
         {
             panelSound.GetComponent<AudioSource>().Play();
             soundCheck = false;
-
+            /*
             // 개발되지 않은 부분
             if (panelID != 0)
             {
@@ -94,6 +94,7 @@ public class ScrollViewContents : MonoBehaviour
             {
                 // 무기 애니메이션 교체하는 기능
             }
+            */
         }
         else if(transform.localScale.x == 1)
         {
@@ -111,7 +112,7 @@ public class ScrollViewContents : MonoBehaviour
             firstCheck = false;
         }
     }
-
+    /*
     public void sendPanelID()
     {
         if (characterSelectButton.GetComponent<CharacterSelectButton>().characterChoice == false)
@@ -125,4 +126,5 @@ public class ScrollViewContents : MonoBehaviour
             characterSelectButton.GetComponent<CharacterSelectButton>().getWeaponID(panelID);
         }
     }
+    */
 }
