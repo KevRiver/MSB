@@ -14,26 +14,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
-using SocketIO;
 
 public class LobbyButton : MonoBehaviour
 {
-    NetworkModule networkModule;
-    SocketIOComponent socket;
-
     // 카메라 관련
     GameObject mainCamera;
     float cameraSize;
-    public GameObject joinQueue;
 
     Vector3 nextPos;
     bool nextOn = false;
 
     public bool characterChoice;
-
-
-    // 스크롤 뷰 관련 
-    GameObject centerSlot;
 
     // 배경 캐릭터
     GameObject character;
@@ -52,7 +43,6 @@ public class LobbyButton : MonoBehaviour
 
         characterChoice = false;
 
-        centerSlot = GameObject.Find("CenterSlot");
 
         characterChoice = false;
 
@@ -70,21 +60,16 @@ public class LobbyButton : MonoBehaviour
     // 큐 로딩 화면 띄워주기
     void activeLoading()
     {
-        joinQueue.SetActive(true);
     }
 
     // 큐 로딩 화면 끄기
     void deactiveLoading()
     {
-        joinQueue.SetActive(false);
     }
 
     // 큐 버튼에 케릭터 정보 전달 
     void sendCharacterInfo()
     {
-        soloQueueButton = GameObject.Find("Button_Solo");
-        multiQueueButton = GameObject.Find("Button_Multi");
-
     }
 
     // 스킨 스크롤뷰 선택 버튼
