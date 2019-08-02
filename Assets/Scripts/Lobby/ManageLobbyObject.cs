@@ -27,9 +27,25 @@ public class ManageLobbyObject : MonoBehaviour
     public GameObject sv_Skin;
     Transform t_HomeButton;
     public GameObject homeButton;
+    Transform t_CenterSlot;
+    public GameObject centerSlot;
 
-	// Start is called before the first frame update
-	void Start()
+    // Play UI
+    Transform middle;
+    Transform t_Single_Button;
+    public GameObject single_Button;
+    Transform t_Multi_Button;
+    public GameObject multi_Button;
+
+    // Character
+    public GameObject lobbyCharacter;
+
+    // CharacterID
+    public int skinID;
+    public int weaponID;
+
+    // Start is called before the first frame update
+    void Start()
     {
         // Lobby UI
         top_Coin = GameObject.Find("Coin");
@@ -43,16 +59,34 @@ public class ManageLobbyObject : MonoBehaviour
         // Scroll View UI
         t_Sv_Weapon = transform.Find("Scroll View_Weapon");
         t_Sv_Skin = transform.Find("Scroll View_Skin");
+        t_CenterSlot = transform.Find("CenterSlot");
         sv_Weapon = t_Sv_Weapon.gameObject;
         sv_Skin = t_Sv_Skin.gameObject;
+        centerSlot = t_CenterSlot.gameObject;
+
 
         t_HomeButton = transform.Find("HomeButton");
         homeButton = t_HomeButton.gameObject;
-	}
 
-    // Update is called once per frame
-    void Update()
+        // Play UI
+        middle = transform.Find("Middle");
+        t_Single_Button = middle.Find("SinglePlayButton");
+        single_Button = t_Single_Button.gameObject;
+        t_Multi_Button = middle.Find("MultiPlayButton");
+        multi_Button = t_Multi_Button.gameObject;
+
+        // Character
+        lobbyCharacter = GameObject.Find("LobbyCharacter");
+    }
+
+
+    public void getSkinID(int id)
     {
-        
+        skinID = id;
+    }
+
+    public void getWeaponID(int id)
+    {
+        weaponID = id;
     }
 }
