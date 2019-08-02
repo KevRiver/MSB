@@ -30,6 +30,16 @@ public class ManageLobbyObject : MonoBehaviour
     Transform t_CenterSlot;
     public GameObject centerSlot;
 
+    // Play UI
+    Transform middle;
+    Transform t_Single_Button;
+    public GameObject single_Button;
+    Transform t_Multi_Button;
+    public GameObject multi_Button;
+
+    // Character
+    public GameObject lobbyCharacter;
+
     // CharacterID
     public int skinID;
     public int weaponID;
@@ -57,7 +67,17 @@ public class ManageLobbyObject : MonoBehaviour
 
         t_HomeButton = transform.Find("HomeButton");
         homeButton = t_HomeButton.gameObject;
-	}
+
+        // Play UI
+        middle = transform.Find("Middle");
+        t_Single_Button = middle.Find("SinglePlayButton");
+        single_Button = t_Single_Button.gameObject;
+        t_Multi_Button = middle.Find("MultiPlayButton");
+        multi_Button = t_Multi_Button.gameObject;
+
+        // Character
+        lobbyCharacter = GameObject.Find("LobbyCharacter");
+    }
 
 
     public void getSkinID(int id)

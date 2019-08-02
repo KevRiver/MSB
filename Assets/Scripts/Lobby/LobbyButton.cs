@@ -85,11 +85,9 @@ public class LobbyButton : MonoBehaviour
         soloQueueButton = GameObject.Find("Button_Solo");
         multiQueueButton = GameObject.Find("Button_Multi");
 
-        soloQueueButton.GetComponent<QueueButton>().getCharacterInfo(canvas.GetComponent<ManageLobbyObject>().skinID, canvas.GetComponent<ManageLobbyObject>().weaponID);
-        multiQueueButton.GetComponent<QueueButton>().getCharacterInfo(canvas.GetComponent<ManageLobbyObject>().skinID, canvas.GetComponent<ManageLobbyObject>().weaponID);
     }
 
-    // 스킨 선택 버튼
+    // 스킨 스크롤뷰 선택 버튼
     public void skinSelectButton()
     {
         // Need Animation
@@ -104,7 +102,7 @@ public class LobbyButton : MonoBehaviour
         // weapon select button
     }
 
-    // 무기 선택 버튼
+    // 무기 스크롤뷰 선택 버튼
     public void weaponSelectButton()
     {
         // Need Animation
@@ -124,17 +122,25 @@ public class LobbyButton : MonoBehaviour
     // 캐릭터 선택시 뒤로가기 버튼
     public void backLobbyButton()
     {
-        // Deactive Select UI
+        // Deactive Select UI or Play UI
         if(canvas.GetComponent<ManageLobbyObject>().sv_Weapon.activeSelf == true)
         {
             canvas.GetComponent<ManageLobbyObject>().sv_Weapon.SetActive(false);
+            canvas.GetComponent<ManageLobbyObject>().centerSlot.SetActive(false);
         }
-        else
+        else if(canvas.GetComponent<ManageLobbyObject>().sv_Skin.activeSelf == true)
         {
             canvas.GetComponent<ManageLobbyObject>().sv_Skin.SetActive(false);
+            canvas.GetComponent<ManageLobbyObject>().centerSlot.SetActive(false);
+        }
+        else if (canvas.GetComponent<ManageLobbyObject>().single_Button.activeSelf == true)
+        {
+            canvas.GetComponent<ManageLobbyObject>().single_Button.SetActive(false);
+            canvas.GetComponent<ManageLobbyObject>().multi_Button.SetActive(false);
+
+            canvas.GetComponent<ManageLobbyObject>().lobbyCharacter.GetComponent<SpriteRenderer>().enabled = true;
         }
         canvas.GetComponent<ManageLobbyObject>().homeButton.SetActive(false);
-        canvas.GetComponent<ManageLobbyObject>().centerSlot.SetActive(false);
         // MAKE! select button
         // MAKE! game start button
 
@@ -165,6 +171,19 @@ public class LobbyButton : MonoBehaviour
         canvas.GetComponent<ManageLobbyObject>().bot_Store.SetActive(true);
         canvas.GetComponent<ManageLobbyObject>().bot_Setting.SetActive(true);
     }
+    
+    public void gamePlayButton()
+    {
+        deactiveLobbyUI();
 
+        // Deactive Character
+        canvas.GetComponent<ManageLobbyObject>().lobbyCharacter.GetComponent<SpriteRenderer>().enabled = false;
 
+        // Active Play Button UI
+        canvas.GetComponent<ManageLobbyObject>().single_Button.SetActive(true);
+        canvas.GetComponent<ManageLobbyObject>().multi_Button.SetActive(true);
+
+        canvas.GetComponent<ManageLobbyObject>().homeButton.SetActive(true);
+    }
+    
 }
