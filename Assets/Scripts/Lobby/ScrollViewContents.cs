@@ -15,7 +15,7 @@ public class ScrollViewContents : MonoBehaviour
     public int panelID;
 
     GameObject contentView;
-    GameObject selectButton;
+    GameObject canvas;
 
     // 사운드 관련 변수
     private bool soundCheck = false;
@@ -31,11 +31,11 @@ public class ScrollViewContents : MonoBehaviour
     void Start()
     {
         contentView = GameObject.Find("Content");
-        selectButton = GameObject.Find("TransparentButton");
+        canvas = GameObject.Find("Canvas");
 
         panelSound = GameObject.Find("PanelSound");
 
-        l_Player = GameObject.Find("LobbyPlayer");
+        l_Player = GameObject.Find("LobbyCharacter");
 
 
     }
@@ -51,6 +51,7 @@ public class ScrollViewContents : MonoBehaviour
             scaleNum = (44f - Mathf.Abs(distance_center)) / 220f;
             scaleNum += 1;
         }
+
 
         if (44 > distance_center && distance_center > 0)
         {
@@ -68,22 +69,34 @@ public class ScrollViewContents : MonoBehaviour
             transform.localScale = new Vector3(1, 1, 1);
         }
 
+
         // 초상화 확대시 사운드 재생
         if(transform.localScale.x > 1 && soundCheck == true)
         {
             panelSound.GetComponent<AudioSource>().Play();
             soundCheck = false;
-
-            // 초상화 확대시 패널 ID 전송해서 애니메이션 교체하는 함수 실행
-            if (selectButton.GetComponent<SelectButton>().characterChoice == false)
+            /*
+            // 개발되지 않은 부분
+            if (panelID != 0)
             {
-                // 캐릭터 스킨 애니메이션 교체하는 기능
-                l_Player.GetComponent<LobbyPlayer>().l_changeSkin(panelID);
+                characterSelectButton.GetComponent<CharacterSelectButton>().activeRejectBackground();
             }
             else
             {
+                characterSelectButton.GetComponent<CharacterSelectButton>().disableRejectBackground();
+            }
+            */
+            // 초상화 확대시 패널 ID 전송해서 애니메이션 교체하는 함수 실행
+            if (canvas.GetComponent<ManageLobbyObject>().sv_Weapon.activeSelf == true)
+            {
                 // 무기 애니메이션 교체하는 기능
             }
+            else
+            {
+                // 캐릭터 스킨 애니메이션 교체하는 기능
+                l_Player.GetComponent<LobbyCharacter>().l_changeSkin(panelID);
+            }
+
         }
         else if(transform.localScale.x == 1)
         {
@@ -101,18 +114,20 @@ public class ScrollViewContents : MonoBehaviour
             firstCheck = false;
         }
     }
-
+    
     public void sendPanelID()
     {
-        if (selectButton.GetComponent<SelectButton>().characterChoice == false)
+        if (canvas.GetComponent<ManageLobbyObject>().sv_Weapon.activeSelf == true)
         {
-            // 캐릭터 스킨 선택
-            selectButton.GetComponent<SelectButton>().getSkinID(panelID);
+            // 무기 선택
+            canvas.GetComponent<ManageLobbyObject>().getWeaponID(panelID);
         }
         else
         {
-            // 무기 선택
-            selectButton.GetComponent<SelectButton>().getWeaponID(panelID);
+            // 캐릭터 스킨 선택
+            canvas.GetComponent<ManageLobbyObject>().getSkinID(panelID);
         }
+
     }
+    
 }

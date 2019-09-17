@@ -6,7 +6,8 @@ using UnityEngine.UI;
 public class TitleImageLodaer : MonoBehaviour
 {
 	public GameObject logoObject;
-	public GameObject textObject;
+	public GameObject loginObjectAccount;
+	public GameObject loginObjectGoogle;
 	public GameObject backgroundObject;
 	public GameObject titleBackground;
 	public Sprite[] sprites = new Sprite[10];
@@ -40,7 +41,7 @@ public class TitleImageLodaer : MonoBehaviour
 		StartCoroutine(handleBackgroundSprite(8, 0.40f));
 		StartCoroutine(handleBackgroundSprite(9, 0.45f));
 		StartCoroutine(showMainLogo(0.70f));
-		StartCoroutine(showMainText(1.00f));
+		StartCoroutine(showMainButtons(1.00f));
 	}
 
 	IEnumerator showMainLogo(float delayTime)
@@ -50,10 +51,11 @@ public class TitleImageLodaer : MonoBehaviour
 		yield return scaleInSprite(logoObject, true, true, 0.40f);
 	}
 
-	IEnumerator showMainText(float delayTime)
+	IEnumerator showMainButtons(float delayTime)
 	{
 		yield return new WaitForSeconds(delayTime);
-		textObject.GetComponent<Text>().color = new Color(0f, 0f, 0f, 1f);
+		loginObjectAccount.transform.localScale = new Vector3(1, 1, 1);
+		loginObjectGoogle.transform.localScale = new Vector3(1, 1, 1);
 		//yield return scaleInSprite(logoObject, true, true, 2.00f);
 	}
 
