@@ -4,7 +4,7 @@
 [Bb]uild/
 [Bb]uilds/
 Assets/AssetStoreTools*
-Assets/Scenes
+
 # Visual Studio cache directory
 .vs/
 
@@ -34,6 +34,10 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
-ProjectSettings/UnityConnectSettings.asset
-ProjectSettings/ProjectSettings.asset
-ProjectSettings/GraphicsSettings.asset
+
+#Ignore CorgiEngine Demos
+Assets/CorgiEngine/Demos/
+
+#Ignore Scene Folder
+Assets/Scenes/
+Assets/MSB/Scenes/
