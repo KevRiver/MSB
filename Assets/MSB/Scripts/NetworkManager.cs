@@ -501,7 +501,7 @@ public class NetworkManager : MonoBehaviour
         //Make NetworkManager don't destroyed on load
         DontDestroyOnLoad(gameObject);
 
-        portData = FindObjectOfType<PortData>();
+        /*portData = FindObjectOfType<PortData>();
         if (portData == null)
         {
             Debug.LogWarning("PortData not found");
@@ -512,7 +512,7 @@ public class NetworkManager : MonoBehaviour
         
         Debug.Log("LobbyScene PortData : " + portData.port);
         Port = portData.port;
-        Destroy(portData.gameObject);
+        Destroy(portData.gameObject);*/
         
     }
 
