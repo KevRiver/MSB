@@ -2,29 +2,11 @@
 using System.Collections.Generic;
 using MoreMountains.Tools;
 using UnityEngine;
+using MSBNetwork;
 
-public class LocalUser : MonoBehaviour
+public class LocalUser : PersistentSingleton<LocalUser>
 {
-    private static LocalUser _instance;
-    public static LocalUser Instance
-    {
-        get
-        {
-            if (_instance == null)
-            {
-                _instance = FindObjectOfType<LocalUser>();
-                if (_instance == null)
-                {
-                    GameObject obj = new GameObject();
-                    obj.name = "LocalUser";
-                    _instance = obj.AddComponent<LocalUser>();
-                }
-            }
-            return _instance;         
-        }
-    }
-
-    public ClientUserData localUserData;
+    public UserData _UserData { get; set; }
 
     void Awake()
     {       
