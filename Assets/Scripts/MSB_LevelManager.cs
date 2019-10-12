@@ -56,6 +56,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
     /// </summary>
     protected override void Awake()
     {
+        Debug.Log("MSB_LevelManager Awake");
         base.Awake();
 
         gameInfo = GameInfo.Instance;
@@ -125,7 +126,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
     {
         MMCameraEvent.Trigger(MMCameraEventTypes.SetConfiner, null, BoundsCollider);
         MSB_Character target = GameObject.Find("Purp").GetComponent<MSB_Character>();
-        Debug.Log(target.gameObject);
+        //Debug.Log(target.gameObject);
         MMCameraEvent.Trigger(MMCameraEventTypes.SetTargetCharacter, GameObject.Find("Purp").GetComponent<MSB_Character>());
         MMCameraEvent.Trigger(MMCameraEventTypes.StartFollowing);
 
