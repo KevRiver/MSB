@@ -44,6 +44,8 @@ namespace MoreMountains.Tools
 				knob.transform.localScale = transform.localScale;
 
 				Image knobImage = knob.AddComponent<Image>();
+                // MSB Custom : knobImage의 rectTransform 사이즈와 조이스틱 이미지의 사이즈가 같다
+                knobImage.rectTransform.sizeDelta = new Vector2(JoystickKnobImage.rect.width, JoystickKnobImage.rect.height);
 				knobImage.sprite = JoystickKnobImage;
 
 				_knobCanvasGroup = knob.AddComponent<CanvasGroup>();
