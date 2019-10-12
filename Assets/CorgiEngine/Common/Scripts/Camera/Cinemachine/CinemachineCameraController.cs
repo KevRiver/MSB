@@ -120,7 +120,8 @@ namespace MoreMountains.CorgiEngine
         {
             if ((_confiner != null) && ConfineCameraToLevelBounds)
             {
-                _confiner.m_BoundingVolume = LevelManager.Instance.BoundsCollider;
+                //MSB custom : LevelManger -> MSB_LevelManager
+                _confiner.m_BoundingVolume = MSB_LevelManager.Instance.BoundsCollider;
             }
             if (UseOrthographicZoom)
             {
