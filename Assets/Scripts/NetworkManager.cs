@@ -31,15 +31,25 @@ public class NetworkManager : MonoBehaviour
             UnityMainThreadDispatcher.Instance().Enqueue(LoadPlayScene(_room, _users));
         }
 
-        public IEnumerator LoadUserInfo(LinkedList<UserData> _users)
+        public IEnumerator LoadScene(int _mode, int _room, LinkedList<UserData> _users)
         {
+            // make gameinfo object
+            GameInfo gameInfo = GameInfo.Instance;
+            foreach (UserData user in _users)
+            {
+                PlayerInfo player = new PlayerInfo(user.userNumber, user.userID, user.userNick, user.userWeapon, user.userSkin);
+                gameInfo.players.Add(player);
+            }
+
+            // load play scene
+            SceneManager.LoadScene("PlayScene");
             yield return null;
         }
 
         public IEnumerator LoadPlayScene(int _room, LinkedList<UserData> _users)
         {
             Debug.LogWarning("LoadPlayScene Called");
-            MSB_GameManager.Instance.roomIndex = _room;
+            /*MSB_GameManager.Instance.roomIndex = _room;
             MSB_GameManager.Instance.c_userData = new List<ClientUserData>();
             foreach (UserData user in _users)
             {
@@ -55,7 +65,7 @@ public class NetworkManager : MonoBehaviour
                 c_user.userCash = user.userCash;
 
                 MSB_GameManager.Instance.c_userData.Add(c_user);
-            }
+            }*/
             SceneManager.LoadScene("PlayScene");
 
             yield return null;
