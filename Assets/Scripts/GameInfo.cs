@@ -29,5 +29,6 @@ public class GameInfo : PersistentSingleton<GameInfo>
     protected override void Awake()
     {
         base.Awake();
+        Debug.Log("GameInfo Awake");
     }
 }
