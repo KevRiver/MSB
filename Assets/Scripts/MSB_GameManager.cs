@@ -6,7 +6,7 @@ using MoreMountains.CorgiEngine;
 using MoreMountains.InventoryEngine;
 using MoreMountains.Feedbacks;
 
-public class MSB_GameManager : Singleton<GameManager>,
+public class MSB_GameManager : Singleton<MSB_GameManager>,
     MMEventListener<MMGameEvent>,
     MMEventListener<CorgiEngineEvent>,
     MMEventListener<CorgiEnginePointsEvent>
@@ -44,6 +44,7 @@ public class MSB_GameManager : Singleton<GameManager>,
 
     protected override void Awake()
     {
+        Debug.Log("MSB_GameManager Awake");
         base.Awake();
         PointsOfEntry = new List<PointsOfEntryStorage>();
     }
@@ -66,7 +67,7 @@ public class MSB_GameManager : Singleton<GameManager>,
         Points = 0;
         MMTimeScaleEvent.Trigger(MMTimeScaleMethods.Set, 1f, 0f, false, 0f, false);
         Paused = false;
-        GUIManager.Instance.RefreshPoints();
+        //GUIManager.Instance.RefreshPoints();
         PointsOfEntry.Clear();
     }
 
@@ -120,8 +121,9 @@ public class MSB_GameManager : Singleton<GameManager>,
     /// <param name="pointsToAdd">Points to add.</param>
     public virtual void AddPoints(int pointsToAdd)
     {
+        Debug.Log("AddPoints called");
         Points += pointsToAdd;
-        GUIManager.Instance.RefreshPoints();
+        //GUIManager.Instance.RefreshPoints();
     }
 
     /// <summary>
@@ -130,8 +132,9 @@ public class MSB_GameManager : Singleton<GameManager>,
     /// <param name="points">Points.</param>
     public virtual void SetPoints(int points)
     {
+        Debug.Log("SetPoints called");
         Points = points;
-        GUIManager.Instance.RefreshPoints();
+        //GUIManager.Instance.RefreshPoints();
     }
 
     protected virtual void SetActiveInventoryInputManager(bool status)
@@ -148,12 +151,14 @@ public class MSB_GameManager : Singleton<GameManager>,
     /// </summary>
     public virtual void Pause(PauseMethods pauseMethod = PauseMethods.PauseMenu)
     {
+        Debug.Log("Pause called");
         if ((pauseMethod == PauseMethods.PauseMenu) && _inventoryOpen)
         {
             return;
         }
 
         // if time is not already stopped		
+        /*
         if (Time.timeScale > 0.0f)
         {
             MMTimeScaleEvent.Trigger(MMTimeScaleMethods.For, 0f, 0f, false, 0f, true);
@@ -175,6 +180,7 @@ public class MSB_GameManager : Singleton<GameManager>,
             CorgiEngineEvent.Trigger(CorgiEngineEventTypes.UnPause);
         }
         LevelManager.Instance.ToggleCharacterPause();
+        */
     }
 
     /// <summary>
@@ -182,6 +188,7 @@ public class MSB_GameManager : Singleton<GameManager>,
     /// </summary>
     public virtual void UnPause(PauseMethods pauseMethod = PauseMethods.PauseMenu)
     {
+        Debug.Log("UnPause called");
         MMTimeScaleEvent.Trigger(MMTimeScaleMethods.Unfreeze, 1f, 0f, false, 0f, false);
         Instance.Paused = false;
         if ((GUIManager.Instance != null) && (pauseMethod == PauseMethods.PauseMenu))
