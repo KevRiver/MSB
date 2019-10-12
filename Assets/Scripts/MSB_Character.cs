@@ -62,6 +62,14 @@ public class MSB_Character : Character
         ForceSpawnDirection();
     }
 
+    public override void AssignAnimator()
+    {
+        if (CharacterAnimator == null)
+            return;
+
+        base.AssignAnimator();
+    }
+
     protected override void OnEnable()
     {
         base.OnEnable();
