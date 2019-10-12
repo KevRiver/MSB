@@ -6,12 +6,11 @@ using MSBNetwork;
 
 public class LocalUser : PersistentSingleton<LocalUser>
 {
-    public UserData _UserData { get; set; }
+    public ClientUserData localUserData;
 
-    void Awake()
+    protected override void Awake()
     {       
         localUserData = new ClientUserData();
-        DontDestroyOnLoad(gameObject);
     }
    
     public void DebugLocalUserData()
