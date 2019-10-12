@@ -441,7 +441,8 @@ namespace MoreMountains.CorgiEngine
 			CastRaysAbove();
 
 			// we move our transform to its next position
-			_transform.Translate(_newPosition,Space.Self);			
+            // MSB Custom : Space.Self -> Space.World
+			_transform.Translate(_newPosition,Space.World);			
 
 			SetRaysParameters();	
 			ComputeNewSpeed ();            
