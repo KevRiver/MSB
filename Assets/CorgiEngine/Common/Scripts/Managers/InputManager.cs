@@ -125,6 +125,12 @@ namespace MoreMountains.CorgiEngine
         protected string _axisShoot;
         protected string _axisShootSecondary;
 
+        protected override void Awake()
+        {
+            Debug.Log("InputManager Awake");
+            base.Awake();
+        }
+
         /// <summary>
         /// On Start we look for what mode to use, and initialize our axis and buttons
         /// </summary>
