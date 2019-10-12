@@ -11,6 +11,7 @@ namespace MoreMountains.CorgiEngine
     /// If instead you'd like to change the prefab entirely, look at the CharacterSwitchManager class.
     /// If you want to swap characters between a bunch of characters within a scene, look at the CharacterSwap ability and CharacterSwapManager
     /// </summary>
+    [HiddenProperties("AbilityStopFeedbacks")]
     [AddComponentMenu("Corgi Engine/Character/Abilities/Character Switch Model")] 
 	public class CharacterSwitchModel : CharacterAbility
     {
@@ -30,11 +31,6 @@ namespace MoreMountains.CorgiEngine
         /// you can look at the MinimalModelSwitch scene for examples of that
         public bool AutoBindAnimator = true;
 
-        [Header("Visual Effects")]
-        /// a particle system to play when a character gets changed
-        public ParticleSystem CharacterSwitchVFX;
-
-        protected ParticleSystem _instantiatedVFX;
         protected string _bindAnimatorMessage = "BindAnimator";
         protected bool[] _characterModelsFlipped;
 
@@ -56,20 +52,6 @@ namespace MoreMountains.CorgiEngine
 
             CharacterModels[CurrentIndex].SetActive(true);
             _characterModelsFlipped = new bool[CharacterModels.Length];
-            InstantiateVFX();
-        }
-
-        /// <summary>
-        /// Instantiates and disables the particle system if needed
-        /// </summary>
-        protected virtual void InstantiateVFX()
-        {
-            if (CharacterSwitchVFX != null)
-            {
-                _instantiatedVFX = Instantiate(CharacterSwitchVFX);
-                _instantiatedVFX.Stop();
-                _instantiatedVFX.gameObject.SetActive(false);
-            }
         }
 
         /// <summary>
@@ -144,7 +126,7 @@ namespace MoreMountains.CorgiEngine
             // we bind our animator
             if (AutoBindAnimator)
             {
-                _character.CharacterAnimator = CharacterModels[CurrentIndex].gameObject.GetComponentNoAlloc<Animator>();
+                _character.CharacterAnimator = CharacterModels[CurrentIndex].gameObject.MMGetComponentNoAlloc<Animator>();
                 _character.AssignAnimator();
                 SendMessage(_bindAnimatorMessage);                
             } 
@@ -156,13 +138,8 @@ namespace MoreMountains.CorgiEngine
                 _characterModelsFlipped[CurrentIndex] = !_character.IsFacingRight;
             }
 
-            // we play our vfx
-            if (_instantiatedVFX != null)
-            {
-                _instantiatedVFX.gameObject.SetActive(true);
-                _instantiatedVFX.transform.position = this.transform.position;
-                _instantiatedVFX.Play();
-            }
+            // we play our feedback
+            PlayAbilityStartFeedbacks();
         }
 	}
 }

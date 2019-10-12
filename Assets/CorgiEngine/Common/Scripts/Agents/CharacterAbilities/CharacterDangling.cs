@@ -22,10 +22,14 @@ namespace MoreMountains.CorgiEngine
 
 		protected Vector3 _leftOne = new Vector3(-1,1,1);
 
-		/// <summary>
-		/// Every frame, we check to see if there's a hole in front of us
-		/// </summary>
-		public override void ProcessAbility()
+        // animation parameters
+        protected const string _danglingAnimationParameterName = "Dangling";
+        protected int _danglingAnimationParameter;
+
+        /// <summary>
+        /// Every frame, we check to see if there's a hole in front of us
+        /// </summary>
+        public override void ProcessAbility()
 		{
 			base.ProcessAbility();
 			Dangling();
@@ -37,18 +41,28 @@ namespace MoreMountains.CorgiEngine
 		protected virtual void Dangling()
 		{
 			// if we're dangling and not grounded, we change our state to Falling
-			if (!_controller.State.IsGrounded && (_movement.CurrentState == CharacterStates.MovementStates.Dangling))
+			if (!_controller.State.IsGrounded 
+                && (_movement.CurrentState == CharacterStates.MovementStates.Dangling))
 			{
-				_movement.ChangeState(CharacterStates.MovementStates.Falling);
+                _movement.ChangeState(CharacterStates.MovementStates.Falling);
 			}
 
+            if (_movement.CurrentState != CharacterStates.MovementStates.Dangling && _startFeedbackIsPlaying)
+            {
+                StopStartFeedbacks();
+                PlayAbilityStopFeedbacks();
+            }
+
 			// if dangling is disabled or if we're not grounded, we do nothing and exit
-			if (!AbilityPermitted 
-			|| (_movement.CurrentState == CharacterStates.MovementStates.Crawling)
-			|| (_movement.CurrentState == CharacterStates.MovementStates.Crouching)
+			if (!AbilityPermitted
+            || (_movement.CurrentState == CharacterStates.MovementStates.Walking)
+            || (_movement.CurrentState == CharacterStates.MovementStates.Running)
+            || (_movement.CurrentState == CharacterStates.MovementStates.Crawling)
+            || (_movement.CurrentState == CharacterStates.MovementStates.Crouching)
 			|| (_movement.CurrentState == CharacterStates.MovementStates.LookingUp)
-			|| (_movement.CurrentState == CharacterStates.MovementStates.Jumping)
-			|| !_controller.State.IsGrounded)
+            || (_movement.CurrentState == CharacterStates.MovementStates.Jumping)
+            || (_movement.CurrentState == CharacterStates.MovementStates.Dashing)
+            || !_controller.State.IsGrounded)
 			{
 				return;
 			}
@@ -70,13 +84,21 @@ namespace MoreMountains.CorgiEngine
 			// if the ray didn't hit something, we're dangling
 			if (!hit)
 			{
-				_movement.ChangeState(CharacterStates.MovementStates.Dangling) ; 			
+                // if this is the first time we dangle, we start our feedback
+                if (_movement.CurrentState != CharacterStates.MovementStates.Dangling)
+                {
+                    if (!_startFeedbackIsPlaying)
+                    {
+                        PlayAbilityStartFeedbacks();
+                    }                    
+                }
+                _movement.ChangeState(CharacterStates.MovementStates.Dangling) ; 			
 			}
 
 			// if the ray hit something and we were dangling previously, we go back to Idle
 			if (hit && (_movement.CurrentState == CharacterStates.MovementStates.Dangling) )
-			{
-				_movement.ChangeState(CharacterStates.MovementStates.Idle);
+            {
+                _movement.ChangeState(CharacterStates.MovementStates.Idle);
 			}
 		}
 
@@ -85,7 +107,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected override void InitializeAnimatorParameters()
 		{
-			RegisterAnimatorParameter ("Dangling", AnimatorControllerParameterType.Bool);
+			RegisterAnimatorParameter (_danglingAnimationParameterName, AnimatorControllerParameterType.Bool, out _danglingAnimationParameter);
 		}
 
 		/// <summary>
@@ -93,7 +115,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public override void UpdateAnimator()
 		{
-			MMAnimator.UpdateAnimatorBool(_animator,"Dangling",(_movement.CurrentState == CharacterStates.MovementStates.Dangling), _character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _danglingAnimationParameter, (_movement.CurrentState == CharacterStates.MovementStates.Dangling), _character._animatorParameters);
 		}
 	}
 }

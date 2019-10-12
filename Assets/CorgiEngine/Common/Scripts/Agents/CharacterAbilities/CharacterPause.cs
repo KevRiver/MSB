@@ -3,11 +3,12 @@ using System.Collections;
 using MoreMountains.Tools;
 
 namespace MoreMountains.CorgiEngine
-{	
-	/// <summary>
-	/// Add this component to a character and it'll be able to activate/desactivate the pause
-	/// </summary>
-	[AddComponentMenu("Corgi Engine/Character/Abilities/Character Pause")] 
+{
+    /// <summary>
+    /// Add this component to a character and it'll be able to activate/desactivate the pause
+    /// </summary>
+    [HiddenProperties("AbilityStopFeedbacks")]
+    [AddComponentMenu("Corgi Engine/Character/Abilities/Character Pause")] 
 	public class CharacterPause : CharacterAbility 
 	{
 		/// This method is only used to display a helpbox text at the beginning of the ability's inspector
@@ -34,7 +35,8 @@ namespace MoreMountains.CorgiEngine
 			{
 				return;
 			}
-			// we trigger a Pause event for the GameManager and other classes that could be listening to it too
+            // we trigger a Pause event for the GameManager and other classes that could be listening to it too
+            PlayAbilityStartFeedbacks();
 			CorgiEngineEvent.Trigger(CorgiEngineEventTypes.Pause);
 		}
 

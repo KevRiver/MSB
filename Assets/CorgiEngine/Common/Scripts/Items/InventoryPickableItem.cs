@@ -2,17 +2,17 @@
 using System.Collections;
 using MoreMountains.Tools;
 using MoreMountains.InventoryEngine;
+using MoreMountains.Feedbacks;
 
 namespace MoreMountains.CorgiEngine
 {
 	public class InventoryPickableItem : ItemPicker 
 	{
-		/// The effect to instantiate when the coin is hit
-		public GameObject Effect;
-		/// The sound effect to play when the object gets picked
-		public AudioClip PickSfx;
+		[Header("Inventory Pickable Item")]
+        /// the MMFeedback to play when the object gets picked
+        public MMFeedbacks PickFeedbacks;
 
-		protected override void PickSuccess()
+        protected override void PickSuccess()
 		{
 			base.PickSuccess ();
 			Effects ();
@@ -29,16 +29,7 @@ namespace MoreMountains.CorgiEngine
 			}				
 			else
 			{
-				if (PickSfx!=null) 
-				{	
-					SoundManager.Instance.PlaySound(PickSfx,transform.position);	
-				}
-
-				if (Effect != null)
-				{
-					// adds an instance of the effect at the coin's position
-					Instantiate(Effect,transform.position,transform.rotation);				
-				}	
+                PickFeedbacks?.PlayFeedbacks();
 			}
 		}
 	}

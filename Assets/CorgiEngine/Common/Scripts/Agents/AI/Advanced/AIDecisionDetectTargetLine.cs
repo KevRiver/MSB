@@ -89,14 +89,14 @@ namespace MoreMountains.CorgiEngine
             {
                 if (DetectMethod == DetectMethods.Ray)
                 {
-                    raycast = MMDebug.RayCast(_raycastOrigin, Vector2.left, DetectionDistance, TargetLayer, MoreMountains.Tools.Colors.Gold, true);
+                    raycast = MMDebug.RayCast(_raycastOrigin, Vector2.left, DetectionDistance, TargetLayer, MMColors.Gold, true);
                 }
                 else
                 {
                     raycast = Physics2D.BoxCast(_raycastOrigin + Vector2.right * _boxcastSize.x / 2f, _boxcastSize, 0f, Vector2.left, DetectionDistance, TargetLayer);
-                    MMDebug.RayCast(_raycastOrigin + Vector2.up * RayWidth/2f, Vector2.left, DetectionDistance, TargetLayer, MoreMountains.Tools.Colors.Gold, true);
-                    MMDebug.RayCast(_raycastOrigin - Vector2.up * RayWidth / 2f, Vector2.left, DetectionDistance, TargetLayer, MoreMountains.Tools.Colors.Gold, true);
-                    MMDebug.RayCast(_raycastOrigin - Vector2.up * RayWidth / 2f + Vector2.left * DetectionDistance, Vector2.up, RayWidth, TargetLayer, MoreMountains.Tools.Colors.Gold, true);
+                    MMDebug.RayCast(_raycastOrigin + Vector2.up * RayWidth/2f, Vector2.left, DetectionDistance, TargetLayer, MMColors.Gold, true);
+                    MMDebug.RayCast(_raycastOrigin - Vector2.up * RayWidth / 2f, Vector2.left, DetectionDistance, TargetLayer, MMColors.Gold, true);
+                    MMDebug.RayCast(_raycastOrigin - Vector2.up * RayWidth / 2f + Vector2.left * DetectionDistance, Vector2.up, RayWidth, TargetLayer, MMColors.Gold, true);
                     _drawLeftGizmo = true;
                 }
                 
@@ -117,14 +117,14 @@ namespace MoreMountains.CorgiEngine
             {
                 if (DetectMethod == DetectMethods.Ray)
                 {
-                    raycast = MMDebug.RayCast(_raycastOrigin, Vector2.right, DetectionDistance, TargetLayer, Colors.DarkOrange, true);
+                    raycast = MMDebug.RayCast(_raycastOrigin, Vector2.right, DetectionDistance, TargetLayer, MMColors.DarkOrange, true);
                 }
                 else
                 {
                     raycast = Physics2D.BoxCast(_raycastOrigin - Vector2.right * _boxcastSize.x / 2f, _boxcastSize, 0f, Vector2.right, DetectionDistance, TargetLayer);
-                    MMDebug.RayCast(_raycastOrigin + Vector2.up * RayWidth / 2f, Vector2.right, DetectionDistance, TargetLayer, MoreMountains.Tools.Colors.DarkOrange, true);
-                    MMDebug.RayCast(_raycastOrigin - Vector2.up * RayWidth / 2f, Vector2.right, DetectionDistance, TargetLayer, MoreMountains.Tools.Colors.DarkOrange, true);
-                    MMDebug.RayCast(_raycastOrigin - Vector2.up * RayWidth / 2f + Vector2.right * DetectionDistance, Vector2.up, RayWidth, TargetLayer, MoreMountains.Tools.Colors.DarkOrange, true);
+                    MMDebug.RayCast(_raycastOrigin + Vector2.up * RayWidth / 2f, Vector2.right, DetectionDistance, TargetLayer, MMColors.DarkOrange, true);
+                    MMDebug.RayCast(_raycastOrigin - Vector2.up * RayWidth / 2f, Vector2.right, DetectionDistance, TargetLayer, MMColors.DarkOrange, true);
+                    MMDebug.RayCast(_raycastOrigin - Vector2.up * RayWidth / 2f + Vector2.right * DetectionDistance, Vector2.up, RayWidth, TargetLayer, MMColors.DarkOrange, true);
                     _drawLeftGizmo = true;
                 }
                 

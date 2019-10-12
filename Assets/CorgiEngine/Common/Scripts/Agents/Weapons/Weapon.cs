@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using MoreMountains.Tools;
-using MSBNetwork;
+using MoreMountains.Feedbacks;
 
 namespace MoreMountains.CorgiEngine
 {	
@@ -53,30 +53,26 @@ namespace MoreMountains.CorgiEngine
 		public Vector3 WeaponAttachmentOffset = Vector3.zero;
 		/// should that weapon be flipped when the character flips ?
 		public bool FlipWeaponOnCharacterFlip = true;
-        /// the FlipValue will be used to multiply the model's transform's localscale on flip. Usually it's -1,1,1, but feel free to change it to suit your model's specs        
-		public Vector3 FlipValue = new Vector3(-1,1,1);       
-        /// MSB Custom 무기를 Flip 할때 로컬스케일을 FlipValue 만큼 Flip 한다        
-        public bool FlipScale = true;
-
+		/// the FlipValue will be used to multiply the model's transform's localscale on flip. Usually it's -1,1,1, but feel free to change it to suit your model's specs
+		public Vector3 FlipValue = new Vector3(-1,1,1);
+        
         [Header("Hands Position")]
 		/// the transform to which the character's left hand should be attached to
 		public Transform LeftHandHandle;
 		/// the transform to which the character's right hand should be attached to
 		public Transform RightHandHandle;
-
-		[Header("Effects")]
-		/// a list of effects to trigger when the weapon is used
-		public List<ParticleSystem> ParticleEffects;
-
+        
 		[Header("Movement")]
         /// if this is true, a multiplier will be applied to movement while the weapon is equipped
         public bool ModifyMovementWhileEquipped = false;
         /// the multiplier to apply to movement while equipped
-		public float PermanentMovementMultiplier = 0f;
+        [Condition("ModifyMovementWhileEquipped", true)]
+        public float PermanentMovementMultiplier = 0f;
         /// if this is true, a multiplier will be applied to movement while the weapon is active
 		public bool ModifyMovementWhileAttacking = false;
-		/// the multiplier to apply to movement while attacking
-		public float MovementMultiplier = 0f;
+        /// the multiplier to apply to movement while attacking
+        [Condition("ModifyMovementWhileAttacking", true)]
+        public float MovementMultiplier = 0f;
         /// if this is true all movement will be prevented (even flip) while the weapon is active
         public bool PreventAllMovementWhileInUse = false;        
 
@@ -112,27 +108,19 @@ namespace MoreMountains.CorgiEngine
 		public string WeaponAngleAnimationParameter;
 		/// the name of the weapon's angle animation parameter, adjusted so it's always relative to the direction the character is currently facing
 		public string WeaponAngleRelativeAnimationParameter;
-
-		[Header("Sounds")]
-		/// the sound to play when the weapon starts being used
-		public AudioClip WeaponStartSfx;
-		/// the sound to play while the weapon is in use
-		public AudioClip WeaponUsedSfx;
-		/// the sound to play when the weapon stops being used
-		public AudioClip WeaponStopSfx;
-		/// the sound to play when the weapon gets reloaded
-		public AudioClip WeaponReloadSfx; 
-		/// the sound to play when the weapon gets reloaded
-		public AudioClip WeaponReloadNeededSfx;
-
-        [Header("Feedback")]
-        /// whether or not the screen should shake when shooting
-        public bool ScreenShake = false;
-        /// Shake parameters : intensity, duration (in seconds) and decay
-        public Vector3 ShakeParameters = new Vector3(1.5f, 0.5f, 1f);
-        /// whether or not the screen should flash when shooting
-        public bool ScreenFlash = false;
-
+        
+        [Header("Feedbacks")]
+        /// the feedback to play when the weapon starts being used
+        public MMFeedbacks WeaponStartMMFeedback;
+        /// the feedback to play while the weapon is in use
+        public MMFeedbacks WeaponUsedMMFeedback;
+        /// the feedback to play when the weapon stops being used
+        public MMFeedbacks WeaponStopMMFeedback;
+        /// the feedback to play when the weapon gets reloaded
+        public MMFeedbacks WeaponReloadMMFeedback;
+        /// the feedback to play when the weapon gets reloaded
+        public MMFeedbacks WeaponReloadNeededMMFeedback;
+        
         [Header("Settings")]
         /// If this is true, the weapon will initialize itself on start, otherwise it'll have to be init manually, usually by the CharacterHandleWeapon class
 		public bool InitializeOnStart = false;
@@ -170,11 +158,27 @@ namespace MoreMountains.CorgiEngine
 	    protected Vector3 _weaponOffset;
 		protected Vector3 _weaponAttachmentOffset;
         protected Transform _weaponAttachment;
-        protected List<List<string>> _animatorParameters;
-        protected List<string> _ownerAnimatorParameters;
+        protected List<List<int>> _animatorParameters;
+        protected List<int> _ownerAnimatorParameters;
         protected bool _initialized = false;
-        public bool isBelongToLocalUser;
-        public bool collideOnce;
+
+        // animation parameter
+        protected const string _aliveAnimationParameterName = "Alive";
+        protected int _equippedAnimationParameter;
+        protected int _idleAnimationParameter;
+        protected int _startAnimationParameter;
+        protected int _delayBeforeUseAnimationParameter;
+        protected int _singleUseAnimationParameter;
+        protected int _useAnimationParameter;
+        protected int _delayBetweenUsesAnimationParameter;
+        protected int _stopAnimationParameter;
+        protected int _reloadStartAnimationParameter;
+        protected int _reloadAnimationParameter;
+        protected int _reloadStopAnimationParameter;
+        protected int _weaponAngleAnimationParameter;
+        protected int _weaponAngleRelativeAnimationParameter;
+        protected int _aliveAnimationParameter;
+        protected int _comboInProgressAnimationParameter;
 
         /// <summary>
         /// Initialize this weapon.
@@ -189,19 +193,18 @@ namespace MoreMountains.CorgiEngine
                 WeaponState = new MMStateMachine<WeaponStates>(gameObject, true);
                 _aimableWeapon = GetComponent<WeaponAim>();
                 WeaponAmmo = GetComponent<WeaponAmmo>();
-                _animatorParameters = new List<List<string>>();
+                _animatorParameters = new List<List<int>>();
                 InitializeAnimatorParameters();
+                InitializeFeedbacks();
                 _initialized = true;
-                //CharacterHandleWeapon의 CurrentWeapon.Initialization 이 끝나고 현재 캐릭터가 isLocalUser 이면 true 값이된다
-                isBelongToLocalUser = CharacterHandleWeapon.isLocalUser;
             }			
 
-            SetParticleEffects (false);
 			WeaponState.ChangeState(WeaponStates.WeaponIdle);
             if (WeaponAmmo == null)
 			{
 				CurrentAmmoLoaded = MagazineSize;
 			}
+
             if (_characterHorizontalMovement != null)
             {
                 if (_characterHorizontalMovement.MovementSpeedMultiplier == 0f)
@@ -210,7 +213,16 @@ namespace MoreMountains.CorgiEngine
                 }
                 _permanentMovementMultiplierStorage = _characterHorizontalMovement.MovementSpeedMultiplier;
             }
-		}
+        }
+
+        protected virtual void InitializeFeedbacks()
+        {
+            WeaponStartMMFeedback?.Initialization(this.gameObject);
+            WeaponUsedMMFeedback?.Initialization(this.gameObject);
+            WeaponStopMMFeedback?.Initialization(this.gameObject);
+            WeaponReloadNeededMMFeedback?.Initialization(this.gameObject);
+            WeaponReloadMMFeedback?.Initialization(this.gameObject);
+        }
 
         public virtual void InitializeComboWeapons()
         {
@@ -244,30 +256,10 @@ namespace MoreMountains.CorgiEngine
             }			
         }
 
-        public virtual void SetOwner(MSB_Character newOwner, CharacterHandleWeapon handleWeapon)
-        {
-            Owner = newOwner;
-            if (Owner != null)
-            {
-                CharacterHandleWeapon = handleWeapon;
-                _characterGravity = Owner.GetComponent<CharacterGravity>();
-                _characterHorizontalMovement = Owner.GetComponent<CharacterHorizontalMovement>();
-                _controller = Owner.GetComponent<CorgiController>();
-
-                if (CharacterHandleWeapon.AutomaticallyBindAnimator)
-                {
-                    if (CharacterHandleWeapon.CharacterAnimator != null)
-                    {
-                        _ownerAnimator = CharacterHandleWeapon.CharacterAnimator;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Called by input, turns the weapon on
-        /// </summary>
-        public virtual void WeaponInputStart()
+		/// <summary>
+		/// Called by input, turns the weapon on
+		/// </summary>
+		public virtual void WeaponInputStart()
 		{
 			if (_reloading)
 			{
@@ -275,22 +267,22 @@ namespace MoreMountains.CorgiEngine
 			}
 			if (WeaponState.CurrentState == WeaponStates.WeaponIdle)
 			{
-				_triggerReleased = false;                
+				_triggerReleased = false;
 				TurnWeaponOn ();
 			}
 		}
 
-        /// <summary>
-        /// Describes what happens when the weapon starts
-        /// </summary>
-        
-		public virtual void TurnWeaponOn()
-		{
-			SfxPlayWeaponStartSound();
-			WeaponState.ChangeState(WeaponStates.WeaponStart);
+		/// <summary>
+		/// Describes what happens when the weapon starts
+		/// </summary>
+		protected virtual void TurnWeaponOn()
+        {
+            TriggerWeaponStartFeedback();
+            
+            WeaponState.ChangeState(WeaponStates.WeaponStart);
 			if ((_characterHorizontalMovement != null) && (ModifyMovementWhileAttacking))
 			{
-				_movementMultiplierStorage = _characterHorizontalMovement.MovementSpeedMultiplier;
+				_movementMultiplierStorage = _characterHorizontalMovement.MovementSpeedMultiplier;                
                 _characterHorizontalMovement.MovementSpeedMultiplier = MovementMultiplier;
             }
             if (_comboWeapon != null)
@@ -406,8 +398,7 @@ namespace MoreMountains.CorgiEngine
 
         protected virtual void CaseWeaponUse()
         {
-            //Debug.LogWarning("CaseWeaponUse");
-            WeaponUse();           
+            WeaponUse();
             _delayBetweenUsesCounter = TimeBetweenUses;
             WeaponState.ChangeState(WeaponStates.WeaponDelayBetweenUses);
         }
@@ -417,13 +408,8 @@ namespace MoreMountains.CorgiEngine
             _delayBetweenUsesCounter -= Time.deltaTime;
             if (_delayBetweenUsesCounter <= 0)
             {
-                if (!Owner.isLocalUser)
+                if ((TriggerMode == TriggerModes.Auto) && !_triggerReleased)
                 {
-                    TurnWeaponOff();
-                }
-                else if ((TriggerMode == TriggerModes.Auto) && !_triggerReleased)
-                {
-                    Debug.LogWarning("Case_WDBU : 2nd Condition Enter");
                     ShootRequest();
                 }
                 else
@@ -556,53 +542,18 @@ namespace MoreMountains.CorgiEngine
 				}
 				else
 				{
-					WeaponState.ChangeState(WeaponStates.WeaponUse);
-                    if (((MSB_Character)Owner).isLocalUser)
-                    {
-                        RequestBasicAttackActionSync();
-                    }
-                }					
+					WeaponState.ChangeState(WeaponStates.WeaponUse);						
+				}					
 			}
 		}
-
-        public virtual void RequestBasicAttackActionSync()
-        {
-            bool isAimable = (_aimableWeapon != null) ? true : false;
-            Debug.LogWarning("isAimable : " + isAimable);
-            float aimDirX = isAimable ? _aimableWeapon._currentAim.x : 0f;
-            float aimDirY = isAimable ? _aimableWeapon._currentAim.y : 0f;
-            string data =
-                           ((MSB_Character)Owner).c_userData.userNumber.ToString() +
-                           "," + ((int)(CharacterAbility.ActionType.BasicAttack)).ToString() +
-                           "," + isAimable.ToString() +
-                           "," + aimDirX.ToString() +
-                           "," + aimDirY.ToString();
-            NetworkModule.GetInstance().RequestGameUserSync(MSB_GameManager.Instance.roomIndex, data);
-        }
 
 		/// <summary>
 		/// When the weapon is used, plays the corresponding sound
 		/// </summary>
-		public virtual void WeaponUse()
-		{            
-			SetParticleEffects (true);	
-            if (ScreenShake)
-            {
-                if (Owner != null)
-                {
-                    if (Owner.SceneCamera != null)
-                    {
-                        Owner.SceneCamera.Shake(ShakeParameters);
-                    }
-                }                
-            }
-
-            if (ScreenFlash)
-            {
-                MMFlashEvent.Trigger(Color.white, 0.2f, 1f, 1);
-            }
-            
-			SfxPlayWeaponUsedSound();
+		protected virtual void WeaponUse()
+		{
+            Owner.GetComponent<CharacterSpin>().speedMultiplier = 0.1f;
+			TriggerWeaponUsedFeedback();
 		}
 
 		/// <summary>
@@ -622,6 +573,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public virtual void TurnWeaponOff()
         {
+            Owner.GetComponent<CharacterSpin>().speedMultiplier = 1.0f;
             if (_characterHorizontalMovement != null)
             {
                 _characterHorizontalMovement.MovementSpeedMultiplier = _permanentMovementMultiplierStorage;
@@ -632,7 +584,7 @@ namespace MoreMountains.CorgiEngine
                 return;
             }
 			_triggerReleased = true;
-			SfxPlayWeaponStopSound();           
+			TriggerWeaponStopFeedback();
 			WeaponState.ChangeState(WeaponStates.WeaponStop);
             if (_comboWeapon != null)
             {
@@ -665,32 +617,11 @@ namespace MoreMountains.CorgiEngine
         }
 
 		/// <summary>
-		/// Sets the particle effects on or off
-		/// </summary>
-		/// <param name="status">If set to <c>true</c> status.</param>
-		protected virtual void SetParticleEffects(bool status)
-		{
-			foreach (ParticleSystem system in ParticleEffects)
-			{
-				if (system == null) { return; }
-
-				if (status)
-				{
-                    system.Play();
-				}
-				else
-				{
-					system.Stop();
-				}
-			}
-		}	
-
-		/// <summary>
 		/// Describes what happens when the weapon needs a reload
 		/// </summary>
 		protected virtual void ReloadNeeded()
 		{
-			SfxPlayWeaponReloadNeededSound ();
+			TriggerWeaponReloadNeededFeedback ();
 		}
 
 		public virtual void InitiateReloadWeapon()
@@ -712,7 +643,7 @@ namespace MoreMountains.CorgiEngine
 		{
 			if (MagazineBased)
 			{
-				SfxPlayWeaponReloadSound();	
+				TriggerWeaponReloadFeedback();	
 			}
 		}
 
@@ -733,17 +664,16 @@ namespace MoreMountains.CorgiEngine
 		/// Flips the weapon model.
 		/// </summary>
 		public virtual void FlipWeaponModel()
-		{
-            ///MSB Custom
-            if (FlipScale || !_spriteRenderer)
-            {
-                transform.localScale = Vector3.Scale(transform.localScale, FlipValue);
-            }
-            else
-            {
-                _spriteRenderer.flipX = !_spriteRenderer.flipX;
-            }           
-        }
+		{	
+			if (_spriteRenderer != null)
+			{
+				_spriteRenderer.flipX = !_spriteRenderer.flipX;
+			} 
+			else
+			{
+				transform.localScale = Vector3.Scale (transform.localScale, FlipValue);		
+			}	
+		}
 
 		/// <summary>
 		/// Destroys the weapon
@@ -751,17 +681,18 @@ namespace MoreMountains.CorgiEngine
 		/// <returns>The destruction.</returns>
 		public virtual IEnumerator WeaponDestruction()
 		{
-			yield return new WaitForSeconds (AutoDestroyWhenEmptyDelay);
-			// if we don't have ammo anymore, and need to destroy our weapon, we do it
-			Destroy (this.gameObject);
-
-			if (WeaponID != null)
+            yield return new WaitForSeconds (AutoDestroyWhenEmptyDelay);
+            // if we don't have ammo anymore, and need to destroy our weapon, we do it
+            TurnWeaponOff();
+            Destroy (this.gameObject);
+            
+            if (WeaponID != null)
 			{
 				// we remove it from the inventory
-				List<int> weaponList = Owner.gameObject.GetComponentNoAlloc<CharacterInventory> ().WeaponInventory.InventoryContains(WeaponID);
+				List<int> weaponList = Owner.gameObject.MMGetComponentNoAlloc<CharacterInventory> ().WeaponInventory.InventoryContains(WeaponID);
 				if (weaponList.Count > 0)
 				{
-					Owner.gameObject.GetComponentNoAlloc<CharacterInventory> ().WeaponInventory.DestroyItem (weaponList [0]);
+					Owner.gameObject.MMGetComponentNoAlloc<CharacterInventory> ().WeaponInventory.DestroyItem (weaponList [0]);
 				}	
 			}
 		}
@@ -793,42 +724,42 @@ namespace MoreMountains.CorgiEngine
 		/// <summary>
 		/// Plays the weapon's start sound
 		/// </summary>
-		protected virtual void SfxPlayWeaponStartSound()
+		protected virtual void TriggerWeaponStartFeedback()
 		{
-			if (WeaponStartSfx!=null) {	SoundManager.Instance.PlaySound(WeaponStartSfx,transform.position);	}
-		}	
+            WeaponStartMMFeedback?.PlayFeedbacks(this.transform.position);
+        }	
 
 		/// <summary>
 		/// Plays the weapon's used sound
 		/// </summary>
-		protected virtual void SfxPlayWeaponUsedSound()
+		protected virtual void TriggerWeaponUsedFeedback()
 		{
-			if (WeaponUsedSfx!=null) {	SoundManager.Instance.PlaySound(WeaponUsedSfx,transform.position);	}
-		}	
+            WeaponUsedMMFeedback?.PlayFeedbacks(this.transform.position);
+        }	
 
 		/// <summary>
 		/// Plays the weapon's stop sound
 		/// </summary>
-		protected virtual void SfxPlayWeaponStopSound()
+		protected virtual void TriggerWeaponStopFeedback()
 		{
-			if (WeaponStopSfx!=null) {	SoundManager.Instance.PlaySound(WeaponStopSfx,transform.position);	}
-		}	
+            WeaponStopMMFeedback?.PlayFeedbacks(this.transform.position);
+        }	
 
 		/// <summary>
 		/// Plays the weapon's reload needed sound
 		/// </summary>
-		protected virtual void SfxPlayWeaponReloadNeededSound()
-		{
-			if (WeaponReloadNeededSfx!=null) {	SoundManager.Instance.PlaySound(WeaponReloadNeededSfx,transform.position); }
-		}	
+		protected virtual void TriggerWeaponReloadNeededFeedback()
+        {
+            WeaponReloadNeededMMFeedback?.PlayFeedbacks(this.transform.position);
+        }	
 
 		/// <summary>
 		/// Plays the weapon's reload sound
 		/// </summary>
-		protected virtual void SfxPlayWeaponReloadSound()
-		{
-			if (WeaponReloadSfx!=null) {	SoundManager.Instance.PlaySound(WeaponReloadSfx,transform.position); }
-		}
+		protected virtual void TriggerWeaponReloadFeedback()
+        {
+            WeaponReloadMMFeedback?.PlayFeedbacks(this.transform.position);
+        }
 
         /// <summary>
         /// Adds required animator parameters to the animator parameters list if they exist
@@ -837,41 +768,38 @@ namespace MoreMountains.CorgiEngine
         {
             for (int i = 0; i < Animators.Count; i++)
             {
-                _animatorParameters.Add(new List<string>());
-            }
-
-            for (int i = 0; i < Animators.Count; i++)
-            {
-                MMAnimator.AddAnimatorParamaterIfExists(Animators[i], WeaponAngleAnimationParameter, AnimatorControllerParameterType.Float, _animatorParameters[i]);
-                MMAnimator.AddAnimatorParamaterIfExists(Animators[i], WeaponAngleRelativeAnimationParameter, AnimatorControllerParameterType.Float, _animatorParameters[i]);
-                MMAnimator.AddAnimatorParamaterIfExists(Animators[i], IdleAnimationParameter, AnimatorControllerParameterType.Bool, _animatorParameters[i]);
-                MMAnimator.AddAnimatorParamaterIfExists(Animators[i], StartAnimationParameter, AnimatorControllerParameterType.Bool, _animatorParameters[i]);
-                MMAnimator.AddAnimatorParamaterIfExists(Animators[i], DelayBeforeUseAnimationParameter, AnimatorControllerParameterType.Bool, _animatorParameters[i]);
-                MMAnimator.AddAnimatorParamaterIfExists(Animators[i], DelayBetweenUsesAnimationParameter, AnimatorControllerParameterType.Bool, _animatorParameters[i]);
-                MMAnimator.AddAnimatorParamaterIfExists(Animators[i], StopAnimationParameter, AnimatorControllerParameterType.Bool, _animatorParameters[i]);
-                MMAnimator.AddAnimatorParamaterIfExists(Animators[i], ReloadStartAnimationParameter, AnimatorControllerParameterType.Bool, _animatorParameters[i]);
-                MMAnimator.AddAnimatorParamaterIfExists(Animators[i], ReloadStopAnimationParameter, AnimatorControllerParameterType.Bool, _animatorParameters[i]);
-                MMAnimator.AddAnimatorParamaterIfExists(Animators[i], ReloadAnimationParameter, AnimatorControllerParameterType.Bool, _animatorParameters[i]);
-                MMAnimator.AddAnimatorParamaterIfExists(Animators[i], SingleUseAnimationParameter, AnimatorControllerParameterType.Bool, _animatorParameters[i]);
-                MMAnimator.AddAnimatorParamaterIfExists(Animators[i], UseAnimationParameter, AnimatorControllerParameterType.Bool, _animatorParameters[i]);
+                _animatorParameters.Add(new List<int>());
+                AddParametersToAnimator(Animators[i], _animatorParameters[i]);
             }
 
             if (_ownerAnimator != null)
             {
-                _ownerAnimatorParameters = new List<string>();
-                MMAnimator.AddAnimatorParamaterIfExists(_ownerAnimator, WeaponAngleAnimationParameter, AnimatorControllerParameterType.Float, _ownerAnimatorParameters);
-                MMAnimator.AddAnimatorParamaterIfExists(_ownerAnimator, WeaponAngleRelativeAnimationParameter, AnimatorControllerParameterType.Float, _ownerAnimatorParameters);
-                MMAnimator.AddAnimatorParamaterIfExists(_ownerAnimator, IdleAnimationParameter, AnimatorControllerParameterType.Bool, _ownerAnimatorParameters);
-                MMAnimator.AddAnimatorParamaterIfExists(_ownerAnimator, StartAnimationParameter, AnimatorControllerParameterType.Bool, _ownerAnimatorParameters);
-                MMAnimator.AddAnimatorParamaterIfExists(_ownerAnimator, DelayBeforeUseAnimationParameter, AnimatorControllerParameterType.Bool, _ownerAnimatorParameters);
-                MMAnimator.AddAnimatorParamaterIfExists(_ownerAnimator, DelayBetweenUsesAnimationParameter, AnimatorControllerParameterType.Bool, _ownerAnimatorParameters);
-                MMAnimator.AddAnimatorParamaterIfExists(_ownerAnimator, StopAnimationParameter, AnimatorControllerParameterType.Bool, _ownerAnimatorParameters);
-                MMAnimator.AddAnimatorParamaterIfExists(_ownerAnimator, ReloadStartAnimationParameter, AnimatorControllerParameterType.Bool, _ownerAnimatorParameters);
-                MMAnimator.AddAnimatorParamaterIfExists(_ownerAnimator, ReloadStopAnimationParameter, AnimatorControllerParameterType.Bool, _ownerAnimatorParameters);
-                MMAnimator.AddAnimatorParamaterIfExists(_ownerAnimator, ReloadAnimationParameter, AnimatorControllerParameterType.Bool, _ownerAnimatorParameters);
-                MMAnimator.AddAnimatorParamaterIfExists(_ownerAnimator, SingleUseAnimationParameter, AnimatorControllerParameterType.Bool, _ownerAnimatorParameters);
-                MMAnimator.AddAnimatorParamaterIfExists(_ownerAnimator, UseAnimationParameter, AnimatorControllerParameterType.Bool, _ownerAnimatorParameters);
+                _ownerAnimatorParameters = new List<int>();
+                AddParametersToAnimator(_ownerAnimator, _ownerAnimatorParameters);
             }            
+        }
+
+        protected virtual void AddParametersToAnimator(Animator animator, List<int> list)
+        {
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(animator, EquippedAnimationParameter, out _equippedAnimationParameter, AnimatorControllerParameterType.Bool, list);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(animator, WeaponAngleAnimationParameter, out _weaponAngleAnimationParameter, AnimatorControllerParameterType.Float, list);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(animator, WeaponAngleRelativeAnimationParameter, out _weaponAngleRelativeAnimationParameter, AnimatorControllerParameterType.Float, list);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(animator, IdleAnimationParameter, out _idleAnimationParameter, AnimatorControllerParameterType.Bool, list);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(animator, StartAnimationParameter, out _startAnimationParameter, AnimatorControllerParameterType.Bool, list);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(animator, DelayBeforeUseAnimationParameter, out _delayBeforeUseAnimationParameter, AnimatorControllerParameterType.Bool, list);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(animator, DelayBetweenUsesAnimationParameter, out _delayBetweenUsesAnimationParameter, AnimatorControllerParameterType.Bool, list);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(animator, StopAnimationParameter, out _stopAnimationParameter, AnimatorControllerParameterType.Bool, list);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(animator, ReloadStartAnimationParameter, out _reloadStartAnimationParameter, AnimatorControllerParameterType.Bool, list);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(animator, ReloadStopAnimationParameter, out _reloadStopAnimationParameter, AnimatorControllerParameterType.Bool, list);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(animator, ReloadAnimationParameter, out _reloadAnimationParameter, AnimatorControllerParameterType.Bool, list);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(animator, SingleUseAnimationParameter, out _singleUseAnimationParameter, AnimatorControllerParameterType.Bool, list);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(animator, UseAnimationParameter, out _useAnimationParameter, AnimatorControllerParameterType.Bool, list);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(animator, _aliveAnimationParameterName, out _aliveAnimationParameter, AnimatorControllerParameterType.Bool, list);
+
+            if (_comboWeapon != null)
+            {
+                MMAnimatorExtensions.AddAnimatorParameterIfExists(animator, _comboWeapon.ComboInProgressAnimationParameter, out _comboInProgressAnimationParameter, AnimatorControllerParameterType.Bool, list);
+            }
         }
 
         /// <summary>
@@ -882,52 +810,48 @@ namespace MoreMountains.CorgiEngine
         {
             for (int i = 0; i < Animators.Count; i++)
             {
-                MMAnimator.UpdateAnimatorBool(Animators[i], IdleAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponIdle), _animatorParameters[i]);
-                MMAnimator.UpdateAnimatorBool(Animators[i], StartAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponStart), _animatorParameters[i]);
-                MMAnimator.UpdateAnimatorBool(Animators[i], DelayBeforeUseAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponDelayBeforeUse), _animatorParameters[i]);
-                MMAnimator.UpdateAnimatorBool(Animators[i], UseAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponDelayBeforeUse || WeaponState.CurrentState == Weapon.WeaponStates.WeaponUse || WeaponState.CurrentState == Weapon.WeaponStates.WeaponDelayBetweenUses), _animatorParameters[i]);
-                MMAnimator.UpdateAnimatorBool(Animators[i], SingleUseAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponUse), _animatorParameters[i]);
-                MMAnimator.UpdateAnimatorBool(Animators[i], DelayBetweenUsesAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponDelayBetweenUses), _animatorParameters[i]);
-                MMAnimator.UpdateAnimatorBool(Animators[i], StopAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponStop), _animatorParameters[i]);
-                MMAnimator.UpdateAnimatorBool(Animators[i], ReloadStartAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponReloadStart), _animatorParameters[i]);
-                MMAnimator.UpdateAnimatorBool(Animators[i], ReloadAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponReload), _animatorParameters[i]);
-                MMAnimator.UpdateAnimatorBool(Animators[i], ReloadStopAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponReloadStop), _animatorParameters[i]);
-
-                if (_aimableWeapon != null)
-                {
-                    MMAnimator.UpdateAnimatorFloat(Animators[i], WeaponAngleAnimationParameter, _aimableWeapon.CurrentAngle, _animatorParameters[i]);
-                    MMAnimator.UpdateAnimatorFloat(Animators[i], WeaponAngleRelativeAnimationParameter, _aimableWeapon.CurrentAngleRelative, _animatorParameters[i]);
-                }
-                else
-                {
-                    MMAnimator.UpdateAnimatorFloat(Animators[i], WeaponAngleAnimationParameter, 0f, _animatorParameters[i]);
-                    MMAnimator.UpdateAnimatorFloat(Animators[i], WeaponAngleRelativeAnimationParameter, 0f, _animatorParameters[i]);
-                }
+                UpdateAnimator(Animators[i], _animatorParameters[i]);
             }
 
             if ((_ownerAnimator != null) && (WeaponState != null) && (_ownerAnimatorParameters != null))
             {
-                MMAnimator.UpdateAnimatorBool(_ownerAnimator, IdleAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponIdle), _ownerAnimatorParameters);
-                MMAnimator.UpdateAnimatorBool(_ownerAnimator, StartAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponStart), _ownerAnimatorParameters);
-                MMAnimator.UpdateAnimatorBool(_ownerAnimator, DelayBeforeUseAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponDelayBeforeUse), _ownerAnimatorParameters);
-                MMAnimator.UpdateAnimatorBool(_ownerAnimator, UseAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponDelayBeforeUse || WeaponState.CurrentState == Weapon.WeaponStates.WeaponUse || WeaponState.CurrentState == Weapon.WeaponStates.WeaponDelayBetweenUses), _ownerAnimatorParameters);
-                MMAnimator.UpdateAnimatorBool(_ownerAnimator, SingleUseAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponUse), _ownerAnimatorParameters);
-                MMAnimator.UpdateAnimatorBool(_ownerAnimator, DelayBetweenUsesAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponDelayBetweenUses), _ownerAnimatorParameters);
-                MMAnimator.UpdateAnimatorBool(_ownerAnimator, StopAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponStop), _ownerAnimatorParameters);
-                MMAnimator.UpdateAnimatorBool(_ownerAnimator, ReloadStartAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponReloadStart), _ownerAnimatorParameters);
-                MMAnimator.UpdateAnimatorBool(_ownerAnimator, ReloadAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponReload), _ownerAnimatorParameters);
-                MMAnimator.UpdateAnimatorBool(_ownerAnimator, ReloadStopAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponReloadStop), _ownerAnimatorParameters);
+                UpdateAnimator(_ownerAnimator, _ownerAnimatorParameters);
+            }
+        }
 
-                if (_aimableWeapon != null)
-                {
-                    MMAnimator.UpdateAnimatorFloat(_ownerAnimator, WeaponAngleAnimationParameter, _aimableWeapon.CurrentAngle, _ownerAnimatorParameters);
-                    MMAnimator.UpdateAnimatorFloat(_ownerAnimator, WeaponAngleRelativeAnimationParameter, _aimableWeapon.CurrentAngleRelative, _ownerAnimatorParameters);
-                }
-                else
-                {
-                    MMAnimator.UpdateAnimatorFloat(_ownerAnimator, WeaponAngleAnimationParameter, 0f, _ownerAnimatorParameters);
-                    MMAnimator.UpdateAnimatorFloat(_ownerAnimator, WeaponAngleRelativeAnimationParameter, 0f, _ownerAnimatorParameters);
-                }
+        protected virtual void UpdateAnimator(Animator animator, List<int> list)
+        {
+            MMAnimatorExtensions.UpdateAnimatorBool(animator, _equippedAnimationParameter, true, list);
+            MMAnimatorExtensions.UpdateAnimatorBool(animator, _idleAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponIdle), list);
+            MMAnimatorExtensions.UpdateAnimatorBool(animator, _startAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponStart), list);
+            MMAnimatorExtensions.UpdateAnimatorBool(animator, _delayBeforeUseAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponDelayBeforeUse), list);
+            MMAnimatorExtensions.UpdateAnimatorBool(animator, _useAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponDelayBeforeUse || WeaponState.CurrentState == Weapon.WeaponStates.WeaponUse || WeaponState.CurrentState == Weapon.WeaponStates.WeaponDelayBetweenUses), list);
+            MMAnimatorExtensions.UpdateAnimatorBool(animator, _singleUseAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponUse), list);
+            MMAnimatorExtensions.UpdateAnimatorBool(animator, _delayBetweenUsesAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponDelayBetweenUses), list);
+            MMAnimatorExtensions.UpdateAnimatorBool(animator, _stopAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponStop), list);
+            MMAnimatorExtensions.UpdateAnimatorBool(animator, _reloadStartAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponReloadStart), list);
+            MMAnimatorExtensions.UpdateAnimatorBool(animator, _reloadAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponReload), list);
+            MMAnimatorExtensions.UpdateAnimatorBool(animator, _reloadStopAnimationParameter, (WeaponState.CurrentState == Weapon.WeaponStates.WeaponReloadStop), list);
+
+            if (Owner != null)
+            {
+                MMAnimatorExtensions.UpdateAnimatorBool(animator, _aliveAnimationParameter, (Owner.ConditionState.CurrentState != CharacterStates.CharacterConditions.Dead), list);
+            }
+
+            if (_aimableWeapon != null)
+            {
+                MMAnimatorExtensions.UpdateAnimatorFloat(animator, _weaponAngleAnimationParameter, _aimableWeapon.CurrentAngle, list);
+                MMAnimatorExtensions.UpdateAnimatorFloat(animator, _weaponAngleRelativeAnimationParameter, _aimableWeapon.CurrentAngleRelative, list);
+            }
+            else
+            {
+                MMAnimatorExtensions.UpdateAnimatorFloat(animator, _weaponAngleAnimationParameter, 0f, list);
+                MMAnimatorExtensions.UpdateAnimatorFloat(animator, _weaponAngleRelativeAnimationParameter, 0f, list);
+            }
+
+            if (_comboWeapon != null)
+            {
+                MMAnimatorExtensions.UpdateAnimatorBool(animator, _comboInProgressAnimationParameter, _comboWeapon.ComboInProgress, list);
             }
         }
     }

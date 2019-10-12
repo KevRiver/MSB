@@ -21,6 +21,12 @@ namespace MoreMountains.CorgiEngine
         protected MMPathMovement _mmPathMovement;
         protected bool _followingPath;
 
+        // animation parameters
+        protected const string _followingPathAnimationParameterName = "FollowingPath";
+        protected const string _followingPathSpeedParameterName = "FollowingPathSpeed";
+        protected int _followingPathAnimationParameter;
+        protected int _followingPathSpeedAnimationParameter;
+
         /// <summary>
         /// On Start, we initialize our path follow if needed
         /// </summary>
@@ -54,8 +60,7 @@ namespace MoreMountains.CorgiEngine
             if (_movement.CurrentState != CharacterStates.MovementStates.FollowingPath)
             {
                 // we play the jetpack start sound 
-                PlayAbilityStartSfx();
-                PlayAbilityUsedSfx();
+                PlayAbilityStartFeedbacks();
                 _followingPath = true;
             }
 
@@ -74,8 +79,8 @@ namespace MoreMountains.CorgiEngine
         {
             if (_movement.CurrentState == CharacterStates.MovementStates.FollowingPath)
             {
-                StopAbilityUsedSfx();
-                PlayAbilityStopSfx();
+                StopStartFeedbacks();
+                PlayAbilityStopFeedbacks();
             }
             _mmPathMovement.enabled = false;
             _controller.GravityActive(true);
@@ -104,9 +109,9 @@ namespace MoreMountains.CorgiEngine
             HandleMovement();
 
             // if we're not following the path anymore, we stop our following sound
-            if (_movement.CurrentState != CharacterStates.MovementStates.FollowingPath && _abilityInProgressSfx != null)
+            if (_movement.CurrentState != CharacterStates.MovementStates.FollowingPath && _startFeedbackIsPlaying)
             {
-                StopAbilityUsedSfx();
+                StopStartFeedbacks();
             }
 
             if (_movement.CurrentState != CharacterStates.MovementStates.FollowingPath && _followingPath)
@@ -127,16 +132,11 @@ namespace MoreMountains.CorgiEngine
         protected virtual void HandleMovement()
         {
             // if we're not following anymore, we stop our following sound
-            if (_movement.CurrentState != CharacterStates.MovementStates.FollowingPath && _abilityInProgressSfx != null)
+            if (_movement.CurrentState != CharacterStates.MovementStates.FollowingPath && _startFeedbackIsPlaying)
             {
-                StopAbilityUsedSfx();
+                StopStartFeedbacks();
             }
-
-            if (_movement.CurrentState == CharacterStates.MovementStates.FollowingPath && _abilityInProgressSfx == null)
-            {
-                PlayAbilityUsedSfx();
-            }
-
+            
             // if movement is prevented, or if the character is dead/frozen/can't move, we exit and do nothing
             if (!AbilityPermitted
                 || (_condition.CurrentState != CharacterStates.CharacterConditions.Normal)
@@ -175,9 +175,9 @@ namespace MoreMountains.CorgiEngine
         protected override void OnEnable()
         {
             base.OnEnable();
-            if (gameObject.GetComponentNoAlloc<Health>() != null)
+            if (gameObject.MMGetComponentNoAlloc<Health>() != null)
             {
-                gameObject.GetComponentNoAlloc<Health>().OnRevive += OnRevive;
+                gameObject.MMGetComponentNoAlloc<Health>().OnRevive += OnRevive;
             }
         }
 
@@ -192,14 +192,14 @@ namespace MoreMountains.CorgiEngine
                 _health.OnRevive -= OnRevive;
             }
         }
-
+        
         /// <summary>
 		/// Adds required animator parameters to the animator parameters list if they exist
 		/// </summary>
 		protected override void InitializeAnimatorParameters()
         {
-            RegisterAnimatorParameter("FollowingPath", AnimatorControllerParameterType.Bool);
-            RegisterAnimatorParameter("FollowingPathSpeed", AnimatorControllerParameterType.Float);
+            RegisterAnimatorParameter(_followingPathAnimationParameterName, AnimatorControllerParameterType.Bool, out _followingPathAnimationParameter);
+            RegisterAnimatorParameter(_followingPathSpeedParameterName, AnimatorControllerParameterType.Float, out _followingPathSpeedAnimationParameter);
         }
 
         /// <summary>
@@ -207,8 +207,8 @@ namespace MoreMountains.CorgiEngine
         /// </summary>
         public override void UpdateAnimator()
         {
-            MMAnimator.UpdateAnimatorBool(_animator, "FollowingPath", (_movement.CurrentState == CharacterStates.MovementStates.FollowingPath), _character._animatorParameters);
-            MMAnimator.UpdateAnimatorFloat(_animator, "FollowingPathSpeed", Mathf.Abs(_mmPathMovement.CurrentSpeed.magnitude), _character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _followingPathAnimationParameter, (_movement.CurrentState == CharacterStates.MovementStates.FollowingPath), _character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorFloat(_animator, _followingPathSpeedAnimationParameter, Mathf.Abs(_mmPathMovement.CurrentSpeed.magnitude), _character._animatorParameters);
         }
 
     }

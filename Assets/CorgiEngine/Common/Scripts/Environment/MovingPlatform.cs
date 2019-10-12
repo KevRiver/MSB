@@ -11,17 +11,26 @@ namespace MoreMountains.CorgiEngine
 	{
 		[Header("Activation")]
 		[Information("Check the <b>Only Moves When Player Is Colliding</b> checkbox to have the object wait for a collision with your player to start moving.",MoreMountains.Tools.InformationAttribute.InformationType.Info,false)]
-		/// If true, the object will only move when colliding with the player
+        /// If true, the object will only move when colliding with the player
 		public bool OnlyMovesWhenPlayerIsColliding = false;
 		/// If true, this moving platform will reset position and behaviour when the player respawns
 		public bool ResetPositionWhenPlayerRespawns = false;
 		/// If true, this platform will only moved when commanded to by another script
 		public bool ScriptActivated = false;
+        /// If true, the object will start moving when a player collides with it. This requires that ScriptActivated be set to true (and it will set it to true on init otherwise)
+        public bool StartMovingWhenPlayerIsColliding = false;
 
-		protected Collider2D _collider2D;
+        [InspectorButton("ToggleMovementAuthorization")]
+        public bool ToggleButton;
+        [InspectorButton("ChangeDirection")]
+        public bool ChangeDirectionButton;
+        [InspectorButton("ResetEndReached")]
+        public bool ResetEndReachedButton;
+
+        protected Collider2D _collider2D;
 		protected float _platformTopY;
 		protected const float _toleranceY = 0.05f;
-		protected bool _scriptActivatedAuthorization = false;
+        protected bool _scriptActivatedAuthorization = false;
 
 		/// <summary>
 		/// Flag inits, initial movement determination, and object positioning
@@ -31,6 +40,10 @@ namespace MoreMountains.CorgiEngine
 			base.Initialization ();
 			_collider2D = GetComponent<Collider2D> ();
 			SetMovementAuthorization (false);
+            if (StartMovingWhenPlayerIsColliding)
+            {
+                ScriptActivated = true;
+            }
 		}
 
 		/// <summary>
@@ -73,25 +86,46 @@ namespace MoreMountains.CorgiEngine
 		protected CorgiController _collidingController = null;
 		protected bool _collidingWithPlayer;
 
+        /// <summary>
+        /// Sets the movement authorization to true or false based on the status set in parameter
+        /// </summary>
+        /// <param name="status"></param>
 		public virtual void SetMovementAuthorization(bool status)
 		{
 			_scriptActivatedAuthorization = status;
 		}
 
+        /// <summary>
+        /// Sets the script authorization to true
+        /// </summary>
 		public virtual void AuthorizeMovement()
 		{
 			_scriptActivatedAuthorization = true;
 		}
 
+        /// <summary>
+        /// Sets the script authorization to false
+        /// </summary>
 		public virtual void ForbidMovement()
 		{
 			_scriptActivatedAuthorization = false;
 		}
 
+        /// <summary>
+        /// Sets the script authorization to true if it was false, false if it was true
+        /// </summary>
 		public virtual void ToggleMovementAuthorization()
-		{
-			_scriptActivatedAuthorization = !_scriptActivatedAuthorization;
+        {
+            _scriptActivatedAuthorization = !_scriptActivatedAuthorization;
 		}
+
+        /// <summary>
+        /// Resets the end reached status, allowing you to move in the opposite direction if CycleOption is set to StopAtBounds
+        /// </summary>
+        public virtual void ResetEndReached()
+        {
+            _endReached = false;
+        }
 
 		/// <summary>
 		/// When entering collision with something, we check if it's a player, and in that case we set our flag accordingly
@@ -101,10 +135,17 @@ namespace MoreMountains.CorgiEngine
 		{
 			CorgiController controller=collider.GetComponent<CorgiController>();
 			if (controller==null)
-				return;
+            {
+                return;
+            }				
 
 			_collidingWithPlayer = true;	
 			_collidingController = controller;
+
+            if (StartMovingWhenPlayerIsColliding)
+            {
+                AuthorizeMovement();
+            }
 		}
 
 		/// <summary>

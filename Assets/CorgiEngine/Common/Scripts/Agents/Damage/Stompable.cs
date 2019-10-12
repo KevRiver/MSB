@@ -28,12 +28,14 @@ namespace MoreMountains.CorgiEngine
 		/// the duration of the invincibility after a stomp
 		public float InvincibilityDuration = 0.5f;
         [Header("Stomp detection raycasts")]
-        /// The number of vertical rays cast to detect stomping
-		public int NumberOfRays = 5;
-        /// the length of the rays
-        public float RaycastLength = 0.5f;
         /// The layer the player is on
         public LayerMask PlayerMask;
+        /// The number of vertical rays cast to detect stomping
+		public int NumberOfRays = 5;        
+        /// the length of the rays
+        public float RaycastLength = 0.5f;
+        /// the offset to apply to the ray's origin point vertically (0.01f should work in most situations but you might want to adapt that based on your objects' scale).
+        public float RaycastVerticalOffset = 0.01f;
 
         // private stuff
         protected BoxCollider2D _boxCollider;
@@ -78,9 +80,9 @@ namespace MoreMountains.CorgiEngine
 	        int hitConnectedIndex = 0;
 
 			_verticalRayCastStart.x = _boxCollider.bounds.min.x;
-			_verticalRayCastStart.y = _boxCollider.bounds.max.y;
+			_verticalRayCastStart.y = _boxCollider.bounds.max.y + RaycastVerticalOffset;
 			_verticalRayCastEnd.x = _boxCollider.bounds.max.x;
-			_verticalRayCastEnd.y = _boxCollider.bounds.max.y;
+			_verticalRayCastEnd.y = _boxCollider.bounds.max.y + RaycastVerticalOffset;
 
 
 			// we cast rays above our object to check for anything trying to stomp it
@@ -105,7 +107,7 @@ namespace MoreMountains.CorgiEngine
 				{
 					return;
 				}
-				CorgiController corgiController = _hitsStorage[hitConnectedIndex].collider.gameObject.GetComponentNoAlloc<CorgiController>();
+				CorgiController corgiController = _hitsStorage[hitConnectedIndex].collider.gameObject.MMGetComponentNoAlloc<CorgiController>();
 				if (corgiController!=null)
 	            {
 	            	// if the player is not going down, we do nothing and exit
@@ -140,7 +142,7 @@ namespace MoreMountains.CorgiEngine
 			}
 
 			// if what's colliding with us has a CharacterJump component, we reset its JumpButtonReleased flag so that the knockback effect is applied correctly.
-			CharacterJump _collidingCharacterJump = corgiController.gameObject.GetComponentNoAlloc<CharacterJump>();
+			CharacterJump _collidingCharacterJump = corgiController.gameObject.MMGetComponentNoAlloc<CharacterJump>();
 			if (_collidingCharacterJump != null) 
 			{
 				_collidingCharacterJump.ResetJumpButtonReleased ();

@@ -1,0 +1,20 @@
+
+HOW TO INSTALL THE CORGI ENGINE?
+-----------------------------------
+
+The engine relies on a few Unity packages to work, these are not installed by default by Unity, and will cause errors on install, that's completely normal.
+
+To install the Corgi Engine, please follow these steps :
+
+1. Create a new project from Unity Hub, pick Unity 2019.2 as your Unity version, and 3D as the Template
+2. Go to the Asset Store window and import the project (it has to be in an empty project, not an existing one)
+3. On import you'll get errors referencing Cinemachine and PostProcessing, that's normal, don't panic :)
+4. At the root of the Corgi Engine folder in your Project window, there's a file called "manifest". 
+You'll want to copy it into your project's Packages folder (at the "top" of your level, same level as Assets, Library, etc), replacing the one that is already there.
+
+And that's all there is to it!
+Have fun with the engine!
+
+You can learn more about the install process at https://corgi-engine-docs.moremountains.com/how-to-install.html
+
+PS : If you're not on a version of Unity yet supported by the Corgi Engine, you can install the missing packages manually, via the Package Manager. You'll want Cinemachine, PostProcessing and Pixel Perfect.

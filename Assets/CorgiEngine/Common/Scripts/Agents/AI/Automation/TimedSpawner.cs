@@ -80,10 +80,10 @@ namespace MoreMountains.CorgiEngine
 
 			// we activate the object
 			nextGameObject.gameObject.SetActive(true);
-			nextGameObject.gameObject.GetComponentNoAlloc<MMPoolableObject>().TriggerOnSpawnComplete();
+			nextGameObject.gameObject.MMGetComponentNoAlloc<MMPoolableObject>().TriggerOnSpawnComplete();
 
 			// we check if our object has an Health component, and if yes, we revive our character
-			Health objectHealth = nextGameObject.gameObject.GetComponentNoAlloc<Health> ();
+			Health objectHealth = nextGameObject.gameObject.MMGetComponentNoAlloc<Health> ();
 			if (objectHealth != null) 
 			{
 				objectHealth.Revive ();

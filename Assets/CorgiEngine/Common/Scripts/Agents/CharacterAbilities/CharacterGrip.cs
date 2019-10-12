@@ -20,12 +20,17 @@ namespace MoreMountains.CorgiEngine
 
 		protected CharacterJump _characterJump;
 		protected float _lastGripTimestamp = 0f;
-		protected Grip _gripTarget; 
+		protected Grip _gripTarget;
+        protected bool _attached = false;
 
-		/// <summary>
-		/// On Start() we grab our character jump component
-		/// </summary>
-		protected override void Initialization()
+        // animation parameters
+        protected const string _grippingAnimationParameterName = "Gripping";
+        protected int _grippingAnimationParameter;
+
+        /// <summary>
+        /// On Start() we grab our character jump component
+        /// </summary>
+        protected override void Initialization()
 		{
 			base.Initialization();
 			_characterJump = GetComponent<CharacterJump>();
@@ -47,9 +52,14 @@ namespace MoreMountains.CorgiEngine
 		/// <param name="gripTarget">Grip target.</param>
 		public virtual void StartGripping(Grip gripTarget)
 		{
-			if (!CanGrip) { return;	}
+			if (!CanGrip)
+            {
+                return;
+            }
 
-			_gripTarget = gripTarget;
+            PlayAbilityStartFeedbacks();
+            _attached = true;
+            _gripTarget = gripTarget;
 			_movement.ChangeState (CharacterStates.MovementStates.Gripping);
 		}
 
@@ -66,8 +76,8 @@ namespace MoreMountains.CorgiEngine
 				if (_characterJump != null)
 				{
 					_characterJump.ResetNumberOfJumps();
-				}
-				_controller.transform.position = _gripTarget.transform.position + _gripTarget.GripOffset;
+                }
+                _controller.SetTransformPosition(_gripTarget.transform.position + _gripTarget.GripOffset);
 			}
 		}	
 
@@ -76,10 +86,15 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected virtual void Detach()
 		{
-			if ((_movement.CurrentState != CharacterStates.MovementStates.Gripping) && (_movement.PreviousState == CharacterStates.MovementStates.Gripping))
+			if ((_movement.CurrentState != CharacterStates.MovementStates.Gripping) 
+                && (_movement.PreviousState == CharacterStates.MovementStates.Gripping)
+                && _attached)
 			{
 				_lastGripTimestamp = Time.time;
-			}
+                _attached = false;
+                StopStartFeedbacks();
+                PlayAbilityStopFeedbacks();
+            }
 		}
 
 		/// <summary>
@@ -87,7 +102,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected override void InitializeAnimatorParameters()
 		{
-			RegisterAnimatorParameter ("Gripping", AnimatorControllerParameterType.Bool);
+			RegisterAnimatorParameter (_grippingAnimationParameterName, AnimatorControllerParameterType.Bool, out _grippingAnimationParameter);
 		}
 
 		/// <summary>
@@ -95,7 +110,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public override void UpdateAnimator()
 		{
-			MMAnimator.UpdateAnimatorBool(_animator,"Gripping",(_movement.CurrentState == CharacterStates.MovementStates.Gripping),_character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _grippingAnimationParameter, (_movement.CurrentState == CharacterStates.MovementStates.Gripping), _character._animatorParameters);
 		}	
 	}
 }

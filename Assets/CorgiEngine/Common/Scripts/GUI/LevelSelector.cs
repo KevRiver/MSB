@@ -25,11 +25,11 @@ namespace MoreMountains.CorgiEngine
 		/// Restarts the current level
 		/// </summary>
 	    public virtual void RestartLevel()
-		{
-			// we trigger an unPause event for the GameManager (and potentially other classes)
-			CorgiEngineEvent.Trigger(CorgiEngineEventTypes.UnPause);
-			LoadingSceneManager.LoadScene(SceneManager.GetActiveScene().name);
-	    }
-		
+        {
+            LevelManager.Instance.GotoLevel(SceneManager.GetActiveScene().name);
+            // we trigger an unPause event for the GameManager (and potentially other classes)
+            //CorgiEngineEvent.Trigger(CorgiEngineEventTypes.UnPause);
+			//LoadingSceneManager.LoadScene(SceneManager.GetActiveScene().name);
+	    }		
 	}
 }

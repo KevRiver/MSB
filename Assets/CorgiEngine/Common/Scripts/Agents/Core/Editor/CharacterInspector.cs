@@ -110,7 +110,7 @@ namespace MoreMountains.CorgiEngine
 			rigidbody2D.angularDrag = 0.05f;
 			rigidbody2D.gravityScale = 1;
 			rigidbody2D.interpolation = RigidbodyInterpolation2D.None;
-			rigidbody2D.sleepMode = RigidbodySleepMode2D.StartAwake;
+			rigidbody2D.sleepMode = RigidbodySleepMode2D.NeverSleep;
 			rigidbody2D.collisionDetectionMode = CollisionDetectionMode2D.Discrete;
 			rigidbody2D.isKinematic = true;
 

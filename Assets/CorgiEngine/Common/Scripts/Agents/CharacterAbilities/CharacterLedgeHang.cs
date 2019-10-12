@@ -110,6 +110,7 @@ namespace MoreMountains.CorgiEngine
             _ledgeHangingStartedTimestamp = Time.time;
             _ledge = ledge;
             _controller.CollisionsOff();
+            PlayAbilityStartFeedbacks();
             _movement.ChangeState(CharacterStates.MovementStates.LedgeHanging);
 
         }
@@ -141,7 +142,7 @@ namespace MoreMountains.CorgiEngine
         {
             // we start to climb
             _movement.ChangeState(CharacterStates.MovementStates.LedgeClimbing);
-            MMAnimator.UpdateAnimatorBool(_animator, "LedgeClimbing", true, _character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _ledgeClimbingAnimationParameter, true, _character._animatorParameters);
             // we prevent all other input
             _inputManager.InputDetectionActive = false;
 
@@ -150,8 +151,8 @@ namespace MoreMountains.CorgiEngine
 
             // we restore input and go to idle
             _inputManager.InputDetectionActive = true;
-            MMAnimator.UpdateAnimatorBool(_animator, "LedgeClimbing", false, _character._animatorParameters);
-            MMAnimator.UpdateAnimatorBool(_animator, "Idle", true, _character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _ledgeClimbingAnimationParameter, false, _character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _idleAnimationParameter, true, _character._animatorParameters);
             _animator.Play(IdleAnimationName);
             
             // we teleport our character to its new position (this offset is specified on the Ledge object)
@@ -172,15 +173,29 @@ namespace MoreMountains.CorgiEngine
             _character.CanFlip = true;
             _characterHorizontalMovement.AbilityPermitted = true;
             _controller.CollisionsOn();
+            if (_startFeedbackIsPlaying)
+            {
+                StopStartFeedbacks();
+                PlayAbilityStopFeedbacks();
+            }            
         }
+
+
+        // animation parameters
+        protected const string _ledgeHangingAnimationParameterName = "LedgeHanging";
+        protected const string _ledgeClimbingAnimationParameterName = "LedgeClimbing";
+        protected int _ledgeHangingAnimationParameter;
+        protected int _ledgeClimbingAnimationParameter;
+        protected int _idleAnimationParameter;
 
         /// <summary>
         /// Initializes the LedgeHanging and LedgeClimbing animator parameters
         /// </summary>
         protected override void InitializeAnimatorParameters()
         {
-            RegisterAnimatorParameter("LedgeHanging", AnimatorControllerParameterType.Bool);
-            RegisterAnimatorParameter("LedgeClimbing", AnimatorControllerParameterType.Bool);
+            _idleAnimationParameter = Animator.StringToHash(IdleAnimationName);
+            RegisterAnimatorParameter(_ledgeHangingAnimationParameterName, AnimatorControllerParameterType.Bool, out _ledgeHangingAnimationParameter);
+            RegisterAnimatorParameter(_ledgeClimbingAnimationParameterName, AnimatorControllerParameterType.Bool, out _ledgeClimbingAnimationParameter);
         }
 
         /// <summary>
@@ -188,7 +203,7 @@ namespace MoreMountains.CorgiEngine
         /// </summary>
         public override void UpdateAnimator()
         {
-            MMAnimator.UpdateAnimatorBool(_animator, "LedgeHanging", (_movement.CurrentState == CharacterStates.MovementStates.LedgeHanging), _character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _ledgeHangingAnimationParameter, (_movement.CurrentState == CharacterStates.MovementStates.LedgeHanging), _character._animatorParameters);
         }
 
         /// <summary>

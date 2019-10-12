@@ -115,9 +115,9 @@ namespace MoreMountains.CorgiEngine
             {
                 EstablishBounds();
             }
-            Gizmos.color = MoreMountains.Tools.Colors.IndianRed;
+            Gizmos.color = MMColors.IndianRed;
             Gizmos.DrawLine(_boundsLeft + Vector3.down * 1f, _boundsLeft + Vector3.up * 1f);
-            Gizmos.color = MoreMountains.Tools.Colors.Salmon;
+            Gizmos.color = MMColors.Salmon;
             Gizmos.DrawLine(_boundsRight + Vector3.down * 1f, _boundsRight + Vector3.up * 1f);
             Gizmos.color = Color.gray;
             Gizmos.DrawLine(_boundsLeft + Vector3.up * 1f, _boundsRight + Vector3.up * 1f);

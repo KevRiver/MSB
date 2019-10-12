@@ -65,7 +65,7 @@ namespace MoreMountains.CorgiEngine
         {
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(this.transform.position + HangOffset, 0.1f);
-            Gizmos.color = MoreMountains.Tools.Colors.Orange;
+            Gizmos.color = MMColors.Orange;
             Gizmos.DrawWireSphere(this.transform.position + ClimbOffset, 0.1f);
         }
 	}

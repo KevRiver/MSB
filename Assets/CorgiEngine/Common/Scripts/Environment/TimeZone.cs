@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using MoreMountains.Tools;
+using MoreMountains.Feedbacks;
 
 namespace MoreMountains.CorgiEngine
 {
@@ -40,19 +41,12 @@ namespace MoreMountains.CorgiEngine
             ActivateZone();
         }
 
-        /// <summary>
-        /// When exiting, and if needed, we reset the time scale
-        /// </summary>
-        /// <param name="collider"></param>
-        protected override void TriggerExit(GameObject collider)
+        public override void TriggerExitAction(GameObject collider)
         {
-            base.TriggerExit(collider);
+            base.TriggerExitAction(collider);
             if (Mode == Modes.ExitBased)
             {
-                Character character = collider.gameObject.GetComponentNoAlloc<Character>();
-                CharacterButtonActivation characterButtonActivation = collider.gameObject.GetComponentNoAlloc<CharacterButtonActivation>();
-
-                if (!CheckConditions(character, characterButtonActivation))
+                if (!CheckConditions(collider))
                 {
                     return;
                 }

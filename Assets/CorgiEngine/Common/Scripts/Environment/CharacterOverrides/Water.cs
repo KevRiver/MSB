@@ -21,7 +21,7 @@ namespace MoreMountains.CorgiEngine
 		{
             // we check that the object colliding with the water is actually a corgi controller and a character
           
-            _characterSwim = collider.gameObject.GetComponentNoAlloc<CharacterSwim>();
+            _characterSwim = collider.gameObject.MMGetComponentNoAlloc<CharacterSwim>();
             if (_characterSwim != null)
             {
                 _characterSwim.EnterWater();
@@ -35,7 +35,7 @@ namespace MoreMountains.CorgiEngine
 	    protected virtual void OnTriggerExit2D(Collider2D collider)
 		{
             // we check that the object colliding with the water is actually a corgi controller and a character
-            _characterSwim = collider.gameObject.GetComponentNoAlloc<CharacterSwim>();
+            _characterSwim = collider.gameObject.MMGetComponentNoAlloc<CharacterSwim>();
             if (_characterSwim != null)
             {
                 _characterSwim.ExitWater();

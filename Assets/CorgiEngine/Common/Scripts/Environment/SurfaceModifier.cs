@@ -29,8 +29,8 @@ namespace MoreMountains.CorgiEngine
 		/// <param name="collider">Collider.</param>
 		public virtual void OnTriggerStay2D(Collider2D collider)
 		{
-            _controller = collider.gameObject.GetComponentNoAlloc<CorgiController>();
-            _character = collider.gameObject.GetComponentNoAlloc<Character>();
+            _controller = collider.gameObject.MMGetComponentNoAlloc<CorgiController>();
+            _character = collider.gameObject.MMGetComponentNoAlloc<Character>();
         }
 
         /// <summary>

@@ -3,8 +3,9 @@ using System.Collections;
 using MoreMountains.Tools;
 
 namespace MoreMountains.CorgiEngine
-{	
-	[AddComponentMenu("Corgi Engine/Character/Abilities/Character Particles")] 
+{
+    [HiddenProperties("AbilityStartFeedbacks", "AbilityStopFeedbacks")]
+    [AddComponentMenu("Corgi Engine/Character/Abilities/Character Particles")] 
 	/// <summary>
 	/// Add this component to a Character and bind ParticleSystems to it to have it emit particles when certain states are active.
 	/// You can have a look at the RetroCorgi demo character for examples of how to use it.

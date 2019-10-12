@@ -3,12 +3,13 @@ using System.Collections;
 using MoreMountains.Tools;
 
 namespace MoreMountains.CorgiEngine
-{	
-	/// <summary>
-	/// Add this component to a Character and it'll rotate according to the current slope angle.
-	/// Animator parameters : none
-	/// </summary>
-	[AddComponentMenu("Corgi Engine/Character/Abilities/Character Slope Orientation")] 
+{
+    /// <summary>
+    /// Add this component to a Character and it'll rotate according to the current slope angle.
+    /// Animator parameters : none
+    /// </summary>
+    [HiddenProperties("AbilityStartFeedbacks", "AbilityStopFeedbacks")]
+    [AddComponentMenu("Corgi Engine/Character/Abilities/Character Slope Orientation")] 
 	public class CharacterSlopeOrientation : CharacterAbility 
 	{
 		/// This method is only used to display a helpbox text at the beginning of the ability's inspector

@@ -2,6 +2,7 @@
 using System.Collections;
 using MoreMountains.Tools;
 using MoreMountains.InventoryEngine;
+using MoreMountains.Feedbacks;
 
 namespace MoreMountains.CorgiEngine
 {
@@ -32,23 +33,31 @@ namespace MoreMountains.CorgiEngine
 	/// Coin manager
 	/// </summary>
 	public class PickableItem : MonoBehaviour
-	{
-		/// The effect to instantiate when the coin is hit
-		public GameObject Effect;
-		/// The sound effect to play when the object gets picked
-		public AudioClip PickSfx;
+    {
+        [Header("Pickable Item")]
+        /// the MMFeedback to play when the item gets picked
+        public MMFeedbacks PickFeedbacks;
 		/// if this is set to true, the object will be disabled when picked
 		public bool DisableObjectOnPick = true;
+        /// if this is true, disable the object's renderer on pick
+        public bool DisableRendererOnPick = false;
+        /// if this is true, disable the object's collider on pick
+        public bool DisableColliderOnPick = false;
 
-		protected Collider2D _collider;
+        protected Collider2D _collider;
+        protected Collider2D _pickingCollider;
+        protected Renderer _renderer;
 		protected Character _character = null;
 		protected bool _pickable = false;
 		protected ItemPicker _itemPicker = null;
 
 		protected virtual void Start()
 		{
-			_itemPicker = gameObject.GetComponent<ItemPicker> ();
-		}
+			_itemPicker = this.gameObject.GetComponent<ItemPicker> ();
+            _renderer = this.gameObject.GetComponent<Renderer>();
+            _collider = this.gameObject.GetComponent<Collider2D>();
+
+        }
 
 		/// <summary>
 		/// Triggered when something collides with the coin
@@ -56,8 +65,7 @@ namespace MoreMountains.CorgiEngine
 		/// <param name="collider">Other.</param>
 		public virtual void OnTriggerEnter2D (Collider2D collider) 
 		{
-            Debug.Log("HealPack OnTriggerEnter called");
-            _collider = collider;           
+			_pickingCollider = collider;
 			PickItem ();
 		}
 
@@ -74,8 +82,19 @@ namespace MoreMountains.CorgiEngine
 				if (DisableObjectOnPick)
 				{
 					// we desactivate the gameobject
-					gameObject.SetActive (false);
+					gameObject.SetActive (false);	
 				}
+                else
+                {
+                    if (DisableColliderOnPick)
+                    {
+                        _collider.enabled = false;
+                    }
+                    if (DisableRendererOnPick && (_renderer != null))
+                    {
+                        _renderer.enabled = false;
+                    }
+                }
 			} 
 		}
 
@@ -86,7 +105,7 @@ namespace MoreMountains.CorgiEngine
 		protected virtual bool CheckIfPickable()
 		{
 			// if what's colliding with the coin ain't a characterBehavior, we do nothing and exit
-			_character = _collider.GetComponent<Character>();
+			_character = _pickingCollider.GetComponent<Character>();
 			if (_character == null)
 			{
 				return false;
@@ -111,7 +130,10 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected virtual void Effects()
 		{
-			if (PickSfx!=null) 
+            PickFeedbacks?.PlayFeedbacks();
+
+            /*
+            if (PickSfx!=null) 
 			{	
 				SoundManager.Instance.PlaySound(PickSfx,transform.position);	
 			}
@@ -120,7 +142,7 @@ namespace MoreMountains.CorgiEngine
 			{
 				// adds an instance of the effect at the coin's position
 				Instantiate(Effect,transform.position,transform.rotation);				
-			}
+			}*/
 		}
 
 		/// <summary>

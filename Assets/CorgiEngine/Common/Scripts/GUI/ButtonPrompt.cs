@@ -10,17 +10,27 @@ namespace MoreMountains.CorgiEngine
     public class ButtonPrompt : MonoBehaviour
     {
         [Header("Bindings")]
-        public SpriteRenderer Border;
-        public SpriteRenderer Background;
-        public CanvasGroup TextCanvasGroup;
+        public Image Border;
+        public Image Background;
+        public CanvasGroup ContainerCanvasGroup;
         public Text PromptText;
 
         [Header("Durations")]
         public float FadeInDuration = 0.2f;
         public float FadeOutDuration = 0.2f;
 
+        
+
         protected Color _alphaZero = new Color(1f, 1f, 1f, 0f);
         protected Color _alphaOne = new Color(1f, 1f, 1f, 1f);
+        protected Coroutine _hideCoroutine;
+
+        protected Color _tempColor;
+
+        public virtual void Initialization()
+        {
+            ContainerCanvasGroup.alpha = 0f;
+        }
 
         public virtual void SetText(string newText)
         {
@@ -39,21 +49,22 @@ namespace MoreMountains.CorgiEngine
 
         public virtual void Show()
         {
-            StartCoroutine(MMFade.FadeSprite(Border, FadeInDuration, _alphaOne));
-            StartCoroutine(MMFade.FadeSprite(Background, FadeInDuration, _alphaOne));
-            StartCoroutine(MMFade.FadeCanvasGroup(TextCanvasGroup, FadeInDuration, 1f, true));
+            if (_hideCoroutine != null)
+            {
+                StopCoroutine(_hideCoroutine);
+            }
+            
+            StartCoroutine(MMFade.FadeCanvasGroup(ContainerCanvasGroup, FadeInDuration, 1f, true));
         }
 
         public virtual void Hide()
         {
-            StartCoroutine(HideCo());
+            _hideCoroutine = StartCoroutine(HideCo());
         }
 
         protected virtual IEnumerator HideCo()
         {
-            StartCoroutine(MMFade.FadeSprite(Border, FadeOutDuration, _alphaZero));
-            StartCoroutine(MMFade.FadeSprite(Background, FadeOutDuration, _alphaZero));
-            StartCoroutine(MMFade.FadeCanvasGroup(TextCanvasGroup, FadeOutDuration, 0f, true));
+            StartCoroutine(MMFade.FadeCanvasGroup(ContainerCanvasGroup, FadeOutDuration, 0f, true));
             yield return new WaitForSeconds(0.3f);
             this.gameObject.SetActive(false);
         }

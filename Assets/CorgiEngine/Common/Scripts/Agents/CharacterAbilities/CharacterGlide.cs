@@ -22,6 +22,10 @@ namespace MoreMountains.CorgiEngine
         protected CharacterJump _characterJump;
         protected CharacterWalljump _characterWallJump;
         protected CharacterSwim _characterSwim;
+        
+        // animation parameters
+        protected const string _glidingAnimationParameterName = "Gliding";
+        protected int _glidingAnimationParameter;
 
         /// <summary>
         /// On Start we grab our components
@@ -29,9 +33,9 @@ namespace MoreMountains.CorgiEngine
         protected override void Initialization()
         {
             base.Initialization();
-            _characterJump = this.gameObject.GetComponentNoAlloc<CharacterJump>();
-            _characterWallJump = this.gameObject.GetComponentNoAlloc<CharacterWalljump>();
-            _characterSwim = this.gameObject.GetComponentNoAlloc<CharacterSwim>();
+            _characterJump = this.gameObject.MMGetComponentNoAlloc<CharacterJump>();
+            _characterWallJump = this.gameObject.MMGetComponentNoAlloc<CharacterWalljump>();
+            _characterSwim = this.gameObject.MMGetComponentNoAlloc<CharacterSwim>();
         }
 
         /// <summary>
@@ -97,8 +101,7 @@ namespace MoreMountains.CorgiEngine
             if (_movement.CurrentState != CharacterStates.MovementStates.Gliding)
             {
                 // we play the gliding start sound 
-                PlayAbilityStartSfx();
-                PlayAbilityUsedSfx();
+                PlayAbilityStartFeedbacks();
                 _gliding = true;
             }
 
@@ -113,8 +116,8 @@ namespace MoreMountains.CorgiEngine
             // we play our stop sound
             if (_movement.CurrentState == CharacterStates.MovementStates.Gliding)
             {
-                StopAbilityUsedSfx();
-                PlayAbilityStopSfx();
+                StopStartFeedbacks();
+                PlayAbilityStopFeedbacks();
             }
             _movement.ChangeState(CharacterStates.MovementStates.Idle);
             _gliding = false;
@@ -128,9 +131,9 @@ namespace MoreMountains.CorgiEngine
             base.ProcessAbility();
 
             // if we're not gliding anymore, we stop our walking sound
-            if (_movement.CurrentState != CharacterStates.MovementStates.Gliding && _abilityInProgressSfx != null)
+            if (_movement.CurrentState != CharacterStates.MovementStates.Gliding && _startFeedbackIsPlaying)
             {
-                StopAbilityUsedSfx();
+                StopStartFeedbacks();
             }
 
             // if we're not in the gliding state anymore
@@ -163,7 +166,7 @@ namespace MoreMountains.CorgiEngine
         /// </summary>
         protected override void InitializeAnimatorParameters()
         {
-            RegisterAnimatorParameter("Gliding", AnimatorControllerParameterType.Bool);
+            RegisterAnimatorParameter(_glidingAnimationParameterName, AnimatorControllerParameterType.Bool, out _glidingAnimationParameter);
         }
 
         /// <summary>
@@ -171,7 +174,7 @@ namespace MoreMountains.CorgiEngine
         /// </summary>
         public override void UpdateAnimator()
         {
-            MMAnimator.UpdateAnimatorBool(_animator, "Gliding", (_movement.CurrentState == CharacterStates.MovementStates.Gliding), _character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _glidingAnimationParameter, (_movement.CurrentState == CharacterStates.MovementStates.Gliding), _character._animatorParameters);
         }
     }
 }

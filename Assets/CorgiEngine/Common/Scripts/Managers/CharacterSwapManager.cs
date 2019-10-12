@@ -113,7 +113,7 @@ namespace MoreMountains.CorgiEngine
             }
             _characterSwapList[newIndex].SwapToThisCharacter();
 
-            LevelManager.Instance.Players[0] = _characterSwapList[newIndex].gameObject.GetComponentNoAlloc<Character>();
+            LevelManager.Instance.Players[0] = _characterSwapList[newIndex].gameObject.MMGetComponentNoAlloc<Character>();
             MMEventManager.TriggerEvent(_swapEvent);
         }
     }

@@ -24,12 +24,19 @@ namespace MoreMountains.CorgiEngine
 
 		const float _climbingDownInitialYTranslation = 0.1f;
 		const float _ladderTopSkinHeight = 0.01f;
+        
+        // animation parameters
+        protected const string _ladderClimbingUpAnimationParameterName = "LadderClimbing";
+        protected const string _ladderClimbingSpeedXAnimationParameterName = "LadderClimbingSpeedX";
+        protected const string _ladderClimbingSpeedYpAnimationParameterName = "LadderClimbingSpeedY";
+        protected int _ladderClimbingUpAnimationParameter;
+        protected int _ladderClimbingSpeedXAnimationParameter;
+        protected int _ladderClimbingSpeedYAnimationParameter;
 
-
-		/// <summary>
-		/// On Start(), we initialize our various flags
-		/// </summary>
-		protected override void Initialization()
+        /// <summary>
+        /// On Start(), we initialize our various flags
+        /// </summary>
+        protected override void Initialization()
 		{
 			base.Initialization();
 			CurrentLadderClimbingSpeed = Vector2.zero;
@@ -119,14 +126,32 @@ namespace MoreMountains.CorgiEngine
 				}
 			}
 
-			// we stop our sounds if needed
-			if (_movement.CurrentState != CharacterStates.MovementStates.LadderClimbing && _abilityInProgressSfx != null)
-			{
-				// we play our exit sound
-				StopAbilityUsedSfx();
-				PlayAbilityStopSfx();
-			}
+            HandleFeedbacks();
 		}
+
+        protected virtual void HandleFeedbacks()
+        {
+            if (_movement.CurrentState == CharacterStates.MovementStates.LadderClimbing)
+            {
+                if ((CurrentLadderClimbingSpeed == Vector2.zero) && _startFeedbackIsPlaying)
+                {
+                    StopStartFeedbacks();
+                    PlayAbilityStopFeedbacks();
+                }
+                if ((CurrentLadderClimbingSpeed != Vector2.zero) && !_startFeedbackIsPlaying)
+                {
+                    PlayAbilityStartFeedbacks();
+                }
+            }
+            else
+            {
+                if (_startFeedbackIsPlaying)
+                {
+                    StopStartFeedbacks();
+                    PlayAbilityStopFeedbacks();
+                }                
+            }
+        }
 
 		/// <summary>
 		/// Puts the character on the ladder
@@ -205,12 +230,6 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected virtual void SetClimbingState()
 		{
-			if (_movement.CurrentState != CharacterStates.MovementStates.LadderClimbing)
-			{
-				// we start our sounds
-				PlayAbilityStartSfx();
-				PlayAbilityUsedSfx();
-			}
 
 			// we set its state to LadderClimbing
 			_movement.ChangeState(CharacterStates.MovementStates.LadderClimbing);			
@@ -261,15 +280,6 @@ namespace MoreMountains.CorgiEngine
 				CurrentLadderClimbingSpeed += Mathf.Abs(_verticalInput ) * (Vector2)transform.up;	
 			}
 
-			if ((CurrentLadderClimbingSpeed != Vector2.zero) && (_abilityInProgressSfx == null))
-			{
-				PlayAbilityUsedSfx ();
-			}
-			if ((CurrentLadderClimbingSpeed == Vector2.zero) && (_abilityInProgressSfx != null))
-			{
-				StopAbilityUsedSfx ();
-			}
-
 		}
 
 		/// <summary>
@@ -284,6 +294,7 @@ namespace MoreMountains.CorgiEngine
 			CurrentLadderClimbingSpeed = Vector2.zero;	
 			_controller.GravityActive(true);	
 			_controller.CollisionsOn();
+            PlayAbilityStopFeedbacks();
             if (_characterHorizontalMovement != null)
             {
                 _characterHorizontalMovement.ResetHorizontalSpeed();
@@ -357,15 +368,15 @@ namespace MoreMountains.CorgiEngine
             base.OnDeath();
             GetOffTheLadder();
         }
-
+        
         /// <summary>
         /// Adds required animator parameters to the animator parameters list if they exist
         /// </summary>
         protected override void InitializeAnimatorParameters()
 		{
-			RegisterAnimatorParameter ("LadderClimbing", AnimatorControllerParameterType.Bool);
-			RegisterAnimatorParameter ("LadderClimbingSpeedX", AnimatorControllerParameterType.Float);
-			RegisterAnimatorParameter ("LadderClimbingSpeedY", AnimatorControllerParameterType.Float);
+			RegisterAnimatorParameter (_ladderClimbingUpAnimationParameterName, AnimatorControllerParameterType.Bool, out _ladderClimbingUpAnimationParameter);
+			RegisterAnimatorParameter (_ladderClimbingSpeedXAnimationParameterName, AnimatorControllerParameterType.Float, out _ladderClimbingSpeedXAnimationParameter);
+			RegisterAnimatorParameter (_ladderClimbingSpeedYpAnimationParameterName, AnimatorControllerParameterType.Float, out _ladderClimbingSpeedYAnimationParameter);
 		}
 
 		/// <summary>
@@ -373,9 +384,9 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public override void UpdateAnimator()
 		{
-			MMAnimator.UpdateAnimatorBool(_animator,"LadderClimbing",(_movement.CurrentState == CharacterStates.MovementStates.LadderClimbing),_character._animatorParameters);
-			MMAnimator.UpdateAnimatorFloat(_animator,"LadderClimbingSpeedX",CurrentLadderClimbingSpeed.x,_character._animatorParameters);
-			MMAnimator.UpdateAnimatorFloat(_animator,"LadderClimbingSpeedY",CurrentLadderClimbingSpeed.y,_character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _ladderClimbingUpAnimationParameter, (_movement.CurrentState == CharacterStates.MovementStates.LadderClimbing), _character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorFloat(_animator, _ladderClimbingSpeedXAnimationParameter, CurrentLadderClimbingSpeed.x,_character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorFloat(_animator, _ladderClimbingSpeedYAnimationParameter, CurrentLadderClimbingSpeed.y,_character._animatorParameters);
 		}
 	}
 }

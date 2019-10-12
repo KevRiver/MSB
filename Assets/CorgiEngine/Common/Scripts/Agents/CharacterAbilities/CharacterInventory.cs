@@ -5,38 +5,51 @@ using MoreMountains.InventoryEngine;
 using System.Collections.Generic;
 
 namespace MoreMountains.CorgiEngine
-{	
-	/// <summary>
-	/// Add this component to a character and it'll be able to control an inventory
-	/// Animator parameters : none
-	/// </summary>
+{
+    /// <summary>
+    /// Add this component to a character and it'll be able to control an inventory
+    /// Animator parameters : none
+    /// Note that its start feedback will play on weapon change
+    /// </summary>
 
-	[AddComponentMenu("Corgi Engine/Character/Abilities/Character Inventory")] 
-	public class CharacterInventory : CharacterAbility, MMEventListener<MMInventoryEvent>
-	{
+    [HiddenProperties("AbilityStopFeedbacks")]
+    [AddComponentMenu("Corgi Engine/Character/Abilities/Character Inventory")] 
+	public class CharacterInventory : CharacterAbility, MMEventListener<MMInventoryEvent>, MMEventListener<CorgiEngineEvent>
+    {
+        /// the name of the main inventory
 		public string MainInventoryName;
+        /// the name of the weapon inventory
 		public string WeaponInventoryName;
+        /// the name of the hotbar inventory
 		public string HotbarInventoryName;
-
+        /// the reference to the main inventory
 		public Inventory MainInventory { get; set; }
+        /// the reference to the weapon inventory
 		public Inventory WeaponInventory { get; set; }
+        /// the reference to the hotbar inventory
 		public Inventory HotbarInventory { get; set; }
+        /// if this is true, when switching to this character, if there's a main weapon equipped, it'll be equipped
+        public bool AutoEquipWeaponOnCharacterSwitch;
 
 		protected List<int> _availableWeapons;
 		protected List<string> _availableWeaponsIDs;
-
 		protected CharacterHandleWeapon _characterHandleWeapon;
 		protected string _nextWeaponID;
-
         protected bool _nextFrameWeapon = false;
         protected string _nextFrameWeaponName;
 
+        /// <summary>
+        /// On init, we trigger our setup
+        /// </summary>
 		protected override void Initialization () 
 		{
 			base.Initialization();
 			Setup ();
 		}
 
+        /// <summary>
+        /// On process ability, we equip our next weapon if needed
+        /// </summary>
         public override void ProcessAbility()
         {
             base.ProcessAbility();
@@ -47,6 +60,9 @@ namespace MoreMountains.CorgiEngine
             }
         }
 
+        /// <summary>
+        /// Setup grabs inventories, component, and fills the weapon lists
+        /// </summary>
         protected virtual void Setup()
 		{
 			GrabInventories ();
@@ -54,6 +70,9 @@ namespace MoreMountains.CorgiEngine
 			FillAvailableWeaponsLists ();
 		}
 
+        /// <summary>
+        /// Grabs references to all inventories
+        /// </summary>
 		protected virtual void GrabInventories()
 		{
 			if (MainInventory == null)
@@ -76,6 +95,9 @@ namespace MoreMountains.CorgiEngine
 			if (HotbarInventory != null) { HotbarInventory.SetOwner (this.gameObject); HotbarInventory.TargetTransform = this.transform;}
 		}
 
+        /// <summary>
+        /// We watch for a switch weapon input
+        /// </summary>
 		protected override void HandleInput()
 		{
 			if (_inputManager.SwitchWeaponButton.State.CurrentState == MMInput.ButtonStates.ButtonDown)
@@ -84,6 +106,9 @@ namespace MoreMountains.CorgiEngine
 			}
 		}
 
+        /// <summary>
+        /// Fills a list with all available weapons in the inventories
+        /// </summary>
 		protected virtual void FillAvailableWeaponsLists()
 		{
 			_availableWeaponsIDs = new List<string> ();
@@ -104,6 +129,9 @@ namespace MoreMountains.CorgiEngine
 			_availableWeaponsIDs.Sort ();
 		}
 
+        /// <summary>
+        /// Determines the name of the next weapon
+        /// </summary>
 		protected virtual void DetermineNextWeaponName ()
 		{
 			if (InventoryItem.IsNull(WeaponInventory.Content[0]))
@@ -128,6 +156,10 @@ namespace MoreMountains.CorgiEngine
 			}
 		}
 
+        /// <summary>
+        /// Equips a weapon specified in parameters
+        /// </summary>
+        /// <param name="weaponID"></param>
 		protected virtual void EquipWeapon(string weaponID)
 		{
 			for (int i = 0; i < MainInventory.Content.Length ; i++)
@@ -143,6 +175,9 @@ namespace MoreMountains.CorgiEngine
 			}
 		}
 
+        /// <summary>
+        /// Switches to the next weapon in line
+        /// </summary>
 		protected virtual void SwitchWeapon()
 		{
 			// if there's no character handle weapon component, we can't switch weapon, we do nothing and exit
@@ -161,7 +196,7 @@ namespace MoreMountains.CorgiEngine
 
 			DetermineNextWeaponName ();
 			EquipWeapon (_nextWeaponID);
-            PlayAbilityStartSfx();
+            PlayAbilityStartFeedbacks();
 		}
 
 		/// <summary>
@@ -214,13 +249,38 @@ namespace MoreMountains.CorgiEngine
             }
         }
 
-		/// <summary>
-		/// On enable, we start listening for MMGameEvents. You may want to extend that to listen to other types of events.
-		/// </summary>
-		protected override void OnEnable()
+        /// <summary>
+        /// When we detect a character switch, we equip the current weapon if AutoEquipWeaponOnCharacterSwitch is true
+        /// </summary>
+        /// <param name="corgiEngineEvent"></param>
+        public virtual void OnMMEvent(CorgiEngineEvent corgiEngineEvent)
+        {
+            if (corgiEngineEvent.EventType == CorgiEngineEventTypes.CharacterSwitch)
+            {
+                if (!AutoEquipWeaponOnCharacterSwitch)
+                {
+                    return;
+                }
+                this.Setup();
+                if (WeaponInventory != null)
+                {
+                    if (!InventoryItem.IsNull(WeaponInventory.Content[0]))
+                    {
+                        _characterHandleWeapon.Setup();
+                        WeaponInventory.Content[0].Equip();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// On enable, we start listening for MMGameEvents. You may want to extend that to listen to other types of events.
+        /// </summary>
+        protected override void OnEnable()
 		{
 			this.MMEventStartListening<MMInventoryEvent>();
-		}
+            this.MMEventStartListening<CorgiEngineEvent>();
+        }
 
 		/// <summary>
 		/// On disable, we stop listening for MMGameEvents. You may want to extend that to stop listening to other types of events.
@@ -229,6 +289,7 @@ namespace MoreMountains.CorgiEngine
 		{
 			base.OnDisable ();
 			this.MMEventStopListening<MMInventoryEvent>();
-		}
+            this.MMEventStopListening<CorgiEngineEvent>();
+        }
 	}
 }

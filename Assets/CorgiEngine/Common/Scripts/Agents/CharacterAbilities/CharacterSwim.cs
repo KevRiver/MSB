@@ -76,6 +76,7 @@ namespace MoreMountains.CorgiEngine
         public virtual void EnterWater()
         {
             InWater = true;
+            PlayAbilityStartFeedbacks();
             _movement.ChangeState(CharacterStates.MovementStates.SwimmingIdle);
             if (WaterEntryEffect != null)
             {
@@ -89,6 +90,8 @@ namespace MoreMountains.CorgiEngine
         public virtual void ExitWater()
         {
             InWater = false;
+            StopStartFeedbacks();
+            PlayAbilityStopFeedbacks();
             _movement.ChangeState(CharacterStates.MovementStates.Idle);
             _controller.SetForce(WaterExitForce);
 
@@ -98,13 +101,19 @@ namespace MoreMountains.CorgiEngine
             }            
         }
 
+        // animation parameters
+        protected const string _swimmingAnimationParameterName = "Swimming";
+        protected const string _swimmingIdleAnimationParameterName = "SwimmingIdle";
+        protected int _swimmingAnimationParameter;
+        protected int _swimmingIdleAnimationParameter;
+
         /// <summary>
         /// Adds required animator parameters to the animator parameters list if they exist
         /// </summary>
         protected override void InitializeAnimatorParameters()
         {
-            RegisterAnimatorParameter("Swimming", AnimatorControllerParameterType.Bool);
-            RegisterAnimatorParameter("SwimmingIdle", AnimatorControllerParameterType.Bool);
+            RegisterAnimatorParameter(_swimmingAnimationParameterName, AnimatorControllerParameterType.Bool, out _swimmingAnimationParameter);
+            RegisterAnimatorParameter(_swimmingIdleAnimationParameterName, AnimatorControllerParameterType.Bool, out _swimmingIdleAnimationParameter);
         }
 
         /// <summary>
@@ -112,8 +121,8 @@ namespace MoreMountains.CorgiEngine
         /// </summary>
         public override void UpdateAnimator()
         {
-            MMAnimator.UpdateAnimatorBool(_animator, "Swimming", (_swimDurationLeft > 0f), _character._animatorParameters);
-            MMAnimator.UpdateAnimatorBool(_animator, "SwimmingIdle", (_movement.CurrentState == CharacterStates.MovementStates.SwimmingIdle), _character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _swimmingAnimationParameter, (_swimDurationLeft > 0f), _character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _swimmingIdleAnimationParameter, (_movement.CurrentState == CharacterStates.MovementStates.SwimmingIdle), _character._animatorParameters);
         }
 
         protected override void OnDeath()

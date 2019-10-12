@@ -21,6 +21,12 @@ namespace MoreMountains.CorgiEngine
         protected float _horizontalMovement;
         protected float _verticalMovement;
         protected bool _flying;
+        
+        // animation parameters
+        protected const string _flyingAnimationParameterName = "Flying";
+        protected const string _flySpeedAnimationParameterName = "FlySpeed";
+        protected int _flyingAnimationParameter;
+        protected int _flySpeedAnimationParameter;
 
         /// <summary>
         /// On Start, we initialize our flight if needed
@@ -94,8 +100,7 @@ namespace MoreMountains.CorgiEngine
             if (_movement.CurrentState != CharacterStates.MovementStates.Flying)
             {
                 // we play the jetpack start sound 
-                PlayAbilityStartSfx();
-                PlayAbilityUsedSfx();
+                PlayAbilityStartFeedbacks();
                 _flying = true;
             }
 
@@ -113,8 +118,8 @@ namespace MoreMountains.CorgiEngine
         {
             if (_movement.CurrentState == CharacterStates.MovementStates.Flying)
             {
-                StopAbilityUsedSfx();
-                PlayAbilityStopSfx();
+                StopStartFeedbacks();
+                PlayAbilityStopFeedbacks();
             }
             _controller.GravityActive(true);
             _flying = false;
@@ -140,9 +145,9 @@ namespace MoreMountains.CorgiEngine
             HandleMovement();
             
             // if we're not walking anymore, we stop our walking sound
-            if (_movement.CurrentState != CharacterStates.MovementStates.Flying && _abilityInProgressSfx != null)
+            if (_movement.CurrentState != CharacterStates.MovementStates.Flying && _startFeedbackIsPlaying)
             {
-                StopAbilityUsedSfx();
+                StopStartFeedbacks();
             }
 
             if (_movement.CurrentState != CharacterStates.MovementStates.Flying && _flying)
@@ -163,14 +168,9 @@ namespace MoreMountains.CorgiEngine
         protected virtual void HandleMovement()
         {
             // if we're not walking anymore, we stop our walking sound
-            if (_movement.CurrentState != CharacterStates.MovementStates.Flying && _abilityInProgressSfx != null)
+            if (_movement.CurrentState != CharacterStates.MovementStates.Flying && _startFeedbackIsPlaying)
             {
-                StopAbilityUsedSfx();
-            }
-
-            if (_movement.CurrentState == CharacterStates.MovementStates.Flying && _abilityInProgressSfx == null)
-            {
-                PlayAbilityUsedSfx();
+                StopStartFeedbacks();
             }
 
             // if movement is prevented, or if the character is dead/frozen/can't move, we exit and do nothing
@@ -222,9 +222,9 @@ namespace MoreMountains.CorgiEngine
         protected override void OnEnable()
         {
             base.OnEnable();
-            if (gameObject.GetComponentNoAlloc<Health>() != null)
+            if (gameObject.MMGetComponentNoAlloc<Health>() != null)
             {
-                gameObject.GetComponentNoAlloc<Health>().OnRevive += OnRevive;
+                gameObject.MMGetComponentNoAlloc<Health>().OnRevive += OnRevive;
             }
         }
 
@@ -245,8 +245,8 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected override void InitializeAnimatorParameters()
         {
-            RegisterAnimatorParameter("Flying", AnimatorControllerParameterType.Bool);
-            RegisterAnimatorParameter("FlySpeed", AnimatorControllerParameterType.Float);
+            RegisterAnimatorParameter(_flyingAnimationParameterName, AnimatorControllerParameterType.Bool, out _flyingAnimationParameter);
+            RegisterAnimatorParameter(_flySpeedAnimationParameterName, AnimatorControllerParameterType.Float, out _flySpeedAnimationParameter);
         }
 
         /// <summary>
@@ -254,8 +254,8 @@ namespace MoreMountains.CorgiEngine
         /// </summary>
         public override void UpdateAnimator()
         {
-            MMAnimator.UpdateAnimatorBool(_animator, "Flying", (_movement.CurrentState == CharacterStates.MovementStates.Flying), _character._animatorParameters);
-            MMAnimator.UpdateAnimatorFloat(_animator, "FlySpeed", Mathf.Abs(_controller.Speed.magnitude), _character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _flyingAnimationParameter, (_movement.CurrentState == CharacterStates.MovementStates.Flying), _character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorFloat(_animator, _flySpeedAnimationParameter, Mathf.Abs(_controller.Speed.magnitude), _character._animatorParameters);
         }
     }
 }

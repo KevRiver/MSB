@@ -93,7 +93,7 @@ namespace MoreMountains.CorgiEngine
             {
                 return;
             }
-            Gizmos.color = MoreMountains.Tools.Colors.IndianRed;
+            Gizmos.color = MoreMountains.Tools.MMColors.IndianRed;
             Gizmos.DrawLine(this.transform.position, _mmPath.CurrentPoint());
         }
 

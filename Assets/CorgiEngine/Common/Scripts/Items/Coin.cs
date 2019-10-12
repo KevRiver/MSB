@@ -9,9 +9,10 @@ namespace MoreMountains.CorgiEngine
 	/// </summary>
 	[AddComponentMenu("Corgi Engine/Items/Coin")]
 	public class Coin : PickableItem
-	{
-		/// The amount of points to add when collected
-		public int PointsToAdd = 10;
+    {
+        [Header("Coin")]
+        /// The amount of points to add when collected
+        public int PointsToAdd = 10;
 
 		/// <summary>
 		/// Triggered when something collides with the coin

@@ -9,7 +9,7 @@ namespace MoreMountains.CorgiEngine
     /// It requires a little bit of setup, as you'll need two poles, a line renderer, a grip, and all that bound together.
     /// You'll find an example of that in situation in the RetroForest demo scene.
     /// </summary>
-    [ExecuteInEditMode]
+    [ExecuteAlways]
     [AddComponentMenu("Corgi Engine/Environment/Zipline")]
     public class Zipline : MonoBehaviour
     {

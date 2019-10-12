@@ -70,7 +70,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public virtual void ButtonPressed()
 		{
-			MMFadeInEvent.Trigger(FadeOutDuration);
+			MMFadeInEvent.Trigger(FadeOutDuration, MMTween.MMTweenCurve.EaseInCubic, 0, true);
 			// if the user presses the "Jump" button, we start the first level.
 			StartCoroutine (LoadFirstLevel ());
 		}

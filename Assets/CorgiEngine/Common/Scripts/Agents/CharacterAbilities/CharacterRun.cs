@@ -18,10 +18,14 @@ namespace MoreMountains.CorgiEngine
 		/// the speed of the character when it's running
 		public float RunSpeed = 16f;
 
-		/// <summary>
-		/// At the beginning of each cycle, we check if we've pressed or released the run button
-		/// </summary>
-		protected override void HandleInput()
+        // animation parameters
+        protected const string _runningAnimationParameterName = "Running";
+        protected int _runningAnimationParameter;
+
+        /// <summary>
+        /// At the beginning of each cycle, we check if we've pressed or released the run button
+        /// </summary>
+        protected override void HandleInput()
 		{
 			if (_inputManager.RunButton.State.CurrentState == MMInput.ButtonStates.ButtonDown || _inputManager.RunButton.State.CurrentState == MMInput.ButtonStates.ButtonPressed)
 			{
@@ -45,22 +49,22 @@ namespace MoreMountains.CorgiEngine
 			if (!_controller.State.IsGrounded && (_movement.CurrentState == CharacterStates.MovementStates.Running))
 			{
 				_movement.ChangeState(CharacterStates.MovementStates.Falling);
-				StopSfx ();
+                StopFeedbacks ();
 			}
 			// if we're not moving fast enough, we go back to idle
 			if ((Mathf.Abs(_controller.Speed.x) < RunSpeed / 10) && (_movement.CurrentState == CharacterStates.MovementStates.Running))
 			{
 				_movement.ChangeState (CharacterStates.MovementStates.Idle);
-				StopSfx ();
+                StopFeedbacks ();
 			}
-			if (!_controller.State.IsGrounded && _abilityInProgressSfx != null)
-			{
-				StopSfx ();
+			if (!_controller.State.IsGrounded)
+            {
+                StopFeedbacks ();
 			}
 
-            if ((_abilityInProgressSfx != null) && (_movement.CurrentState != CharacterStates.MovementStates.Running))
+            if (_movement.CurrentState != CharacterStates.MovementStates.Running)
             {
-                StopSfx();
+                StopFeedbacks();
             }
 		}
 
@@ -87,9 +91,8 @@ namespace MoreMountains.CorgiEngine
 
 			// if we're not already running, we trigger our sounds
 			if (_movement.CurrentState != CharacterStates.MovementStates.Running)
-			{
-				PlayAbilityStartSfx();
-				PlayAbilityUsedSfx();
+            {
+                PlayAbilityStartFeedbacks();
 			}
 
 			_movement.ChangeState(CharacterStates.MovementStates.Running);
@@ -108,25 +111,28 @@ namespace MoreMountains.CorgiEngine
 			if (_movement.CurrentState == CharacterStates.MovementStates.Running)
 			{
 				_movement.ChangeState(CharacterStates.MovementStates.Idle);
-			}
-			StopSfx ();
+            }
+            StopFeedbacks ();
 		}
 
 		/// <summary>
-		/// Stops all run sounds
+		/// Stops all run feedbacks
 		/// </summary>
-		protected virtual void StopSfx()
+		protected virtual void StopFeedbacks()
+        {
+            if (_startFeedbackIsPlaying)
+            {
+                StopStartFeedbacks();
+                PlayAbilityStopFeedbacks();
+            }            
+        }
+        
+        /// <summary>
+        /// Adds required animator parameters to the animator parameters list if they exist
+        /// </summary>
+        protected override void InitializeAnimatorParameters()
 		{
-			StopAbilityUsedSfx();
-			PlayAbilityStopSfx();
-		}
-
-		/// <summary>
-		/// Adds required animator parameters to the animator parameters list if they exist
-		/// </summary>
-		protected override void InitializeAnimatorParameters()
-		{
-			RegisterAnimatorParameter ("Running", AnimatorControllerParameterType.Bool);
+			RegisterAnimatorParameter (_runningAnimationParameterName, AnimatorControllerParameterType.Bool, out _runningAnimationParameter);
 		}
 
 		/// <summary>
@@ -134,7 +140,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public override void UpdateAnimator()
 		{
-			MMAnimator.UpdateAnimatorBool(_animator,"Running",(_movement.CurrentState == CharacterStates.MovementStates.Running),_character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _runningAnimationParameter, (_movement.CurrentState == CharacterStates.MovementStates.Running), _character._animatorParameters);
 		}
 	}
 }

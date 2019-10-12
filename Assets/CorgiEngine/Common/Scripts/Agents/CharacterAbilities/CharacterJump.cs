@@ -1,14 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 using MoreMountains.Tools;
+using MoreMountains.Feedbacks;
 
 namespace MoreMountains.CorgiEngine
-{	
-	/// <summary>
-	/// Add this class to a character and it'll be able to jump
-	/// Animator parameters : Jumping (bool), DoubleJumping (bool), HitTheGround (bool)
-	/// </summary>
-	[AddComponentMenu("Corgi Engine/Character/Abilities/Character Jump")] 
+{
+    /// <summary>
+    /// Add this class to a character and it'll be able to jump
+    /// Animator parameters : Jumping (bool), DoubleJumping (bool), HitTheGround (bool)
+    /// </summary>
+    [HiddenProperties("AbilityStopFeedbacks")]
+    [AddComponentMenu("Corgi Engine/Character/Abilities/Character Jump")] 
 	public class CharacterJump : CharacterAbility
 	{	
 		/// This method is only used to display a helpbox text at the beginning of the ability's inspector
@@ -25,10 +27,10 @@ namespace MoreMountains.CorgiEngine
 		}
 
 		[Header("Jump Behaviour")]
-		/// defines how high the character can jump
-		public float JumpHeight = 3.025f;
-		/// the maximum number of jumps allowed (0 : no jump, 1 : normal jump, 2 : double jump, etc...)
-		public int NumberOfJumps=3;
+        /// the maximum number of jumps allowed (0 : no jump, 1 : normal jump, 2 : double jump, etc...)
+        public int NumberOfJumps = 2;
+        /// defines how high the character can jump
+        public float JumpHeight = 3.025f;
 		/// basic rules for jumps : where can the player jump ?
 		public JumpBehavior JumpRestrictions = JumpBehavior.CanJumpAnywhere;
 		/// a timeframe during which, after leaving the ground, the character can still trigger a jump
@@ -45,10 +47,14 @@ namespace MoreMountains.CorgiEngine
 		public float JumpReleaseForceFactor = 2f;
 
 		[Header("Collisions")]
-		// duration (in seconds) we need to disable collisions when jumping down a 1 way platform
+		/// duration (in seconds) we need to disable collisions when jumping down a 1 way platform
 		public float OneWayPlatformsJumpCollisionOffDuration=0.3f;
-		// duration (in seconds) we need to disable collisions when jumping off a moving platform
+		/// duration (in seconds) we need to disable collisions when jumping off a moving platform
 		public float MovingPlatformsJumpCollisionOffDuration=0.05f;
+
+        [Header("Air Jump")]
+        /// the MMFeedbacks to play when jumping in the air
+        public MMFeedbacks AirJumpFeedbacks;
 
         /// the number of jumps left to the character
         [ReadOnly]
@@ -67,11 +73,18 @@ namespace MoreMountains.CorgiEngine
 		protected CharacterButtonActivation _characterButtonActivation = null;
         protected CharacterLadder _characterLadder = null;
         protected int _initialNumberOfJumps;
-
 		protected float _lastTimeGrounded = 0f;
+                
+        // animation parameters
+        protected const string _jumpingAnimationParameterName = "Jumping";
+        protected const string _doubleJumpingAnimationParameterName = "DoubleJumping";
+        protected const string _hitTheGroundAnimationParameterName = "HitTheGround";
+        protected int _jumpingAnimationParameter;
+        protected int _doubleJumpingAnimationParameter;
+        protected int _hitTheGroundAnimationParameter;
 
-		/// Evaluates the jump restrictions
-		public bool JumpAuthorized 
+        /// Evaluates the jump restrictions
+        public bool JumpAuthorized 
 		{ 
 			get 
 			{ 
@@ -151,14 +164,8 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected override void HandleInput()
 		{
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                JumpStart();
-            }
-
 			if (_inputManager.JumpButton.State.CurrentState == MMInput.ButtonStates.ButtonDown)
 			{
-               // Debug.Log("Jump Button Down");
 				JumpStart();
 			}
 			if (_inputManager.JumpButton.State.CurrentState == MMInput.ButtonStates.ButtonUp)
@@ -191,7 +198,7 @@ namespace MoreMountains.CorgiEngine
 			}
 
             // If the user releases the jump button and the character is jumping up and enough time since the initial jump has passed, then we make it stop jumping by applying a force down.
-            if ( (_jumpButtonPressTime!=0) 
+            if ( (_jumpButtonPressTime != 0) 
 			    && (Time.time - _jumpButtonPressTime >= JumpMinimumAirTime) 
 			    && (_controller.Speed.y > Mathf.Sqrt(Mathf.Abs(_controller.Parameters.Gravity))) 
 			    && (_jumpButtonReleased)
@@ -212,7 +219,7 @@ namespace MoreMountains.CorgiEngine
 					}
 				}
 			}
-            //Debug.Log("Jump Ability Processed");
+
             UpdateController();
 	    }
 
@@ -245,9 +252,8 @@ namespace MoreMountains.CorgiEngine
 		/// <returns><c>true</c>, if jump conditions was evaluated, <c>false</c> otherwise.</returns>
 		protected virtual bool EvaluateJumpConditions()
 		{
-            Debug.Log(_controller.StandingOn.gameObject);
-            bool onAOneWayPlatform = (_controller.OneWayPlatformMask.Contains(_controller.StandingOn.layer)
-                || _controller.MovingOneWayPlatformMask.Contains(_controller.StandingOn.layer));
+            bool onAOneWayPlatform = (_controller.OneWayPlatformMask.MMContains(_controller.StandingOn.layer)
+                || _controller.MovingOneWayPlatformMask.MMContains(_controller.StandingOn.layer));
 
 
             if ( !AbilityPermitted  // if the ability is not permitted
@@ -356,8 +362,15 @@ namespace MoreMountains.CorgiEngine
 			// we trigger a character event
 			MMCharacterEvent.Trigger(_character, MMCharacterEventTypes.Jump);
 
-			// we start our sounds
-			PlayAbilityStartSfx();
+            // we start our feedbacks
+            if (_controller.State.IsGrounded)
+            {
+                PlayAbilityStartFeedbacks();
+            }
+            else
+            {
+                AirJumpFeedbacks?.PlayFeedbacks();
+            }
 
             if (ResetCameraOffsetOnJump)
             {
@@ -382,7 +395,6 @@ namespace MoreMountains.CorgiEngine
             CanJumpStop = true;
 
             // we make the character jump
-            //Debug.Log("Jump!");
             _controller.SetVerticalForce(Mathf.Sqrt( 2f * JumpHeight * Mathf.Abs(_controller.Parameters.Gravity) ));
             JumpHappenedThisFrame = true;
 
@@ -393,8 +405,8 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected virtual bool JumpDownFromOneWayPlatform()
 		{
-			if (_controller.OneWayPlatformMask.Contains(_controller.StandingOn.layer)
-				|| _controller.MovingOneWayPlatformMask.Contains(_controller.StandingOn.layer))
+			if (_controller.OneWayPlatformMask.MMContains(_controller.StandingOn.layer)
+				|| _controller.MovingOneWayPlatformMask.MMContains(_controller.StandingOn.layer))
 			{
 				// we make it fall down below the platform by moving it just below the platform
 				_controller.transform.position=new Vector2(transform.position.x,transform.position.y-0.1f);
@@ -414,8 +426,8 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected virtual void JumpFromMovingPlatform()
 		{
-			if ( _controller.MovingPlatformMask.Contains(_controller.StandingOn.layer)
-				|| _controller.MovingOneWayPlatformMask.Contains(_controller.StandingOn.layer) )
+			if ( _controller.MovingPlatformMask.MMContains(_controller.StandingOn.layer)
+				|| _controller.MovingOneWayPlatformMask.MMContains(_controller.StandingOn.layer) )
 			{
 				// we turn the boxcollider off for a few milliseconds, so the character doesn't get stuck mid air
 				StartCoroutine(_controller.DisableCollisionsWithMovingPlatforms(MovingPlatformsJumpCollisionOffDuration));
@@ -481,14 +493,14 @@ namespace MoreMountains.CorgiEngine
 			_jumpButtonReleased=false;	
 		}
 
-		/// <summary>
-		/// Adds required animator parameters to the animator parameters list if they exist
-		/// </summary>
-		protected override void InitializeAnimatorParameters()
+        /// <summary>
+        /// Adds required animator parameters to the animator parameters list if they exist
+        /// </summary>
+        protected override void InitializeAnimatorParameters()
 		{
-			RegisterAnimatorParameter ("Jumping", AnimatorControllerParameterType.Bool);
-			RegisterAnimatorParameter ("DoubleJumping", AnimatorControllerParameterType.Bool);
-			RegisterAnimatorParameter ("HitTheGround", AnimatorControllerParameterType.Bool);
+			RegisterAnimatorParameter (_jumpingAnimationParameterName, AnimatorControllerParameterType.Bool, out _jumpingAnimationParameter);
+			RegisterAnimatorParameter (_doubleJumpingAnimationParameterName, AnimatorControllerParameterType.Bool, out _doubleJumpingAnimationParameter);
+			RegisterAnimatorParameter (_hitTheGroundAnimationParameterName, AnimatorControllerParameterType.Bool, out _hitTheGroundAnimationParameter);
 		}
 
 		/// <summary>
@@ -496,20 +508,17 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public override void UpdateAnimator()
 		{
-            if (isLocalUser)
-                MMAnimator.UpdateAnimatorBool(_animator, "Jumping", (_movement.CurrentState == CharacterStates.MovementStates.Jumping), _character._animatorParameters);
-            else
-                MMAnimator.UpdateAnimatorBool(_animator, "Jumping", (_MSB_character.RecievedGroundCheck == false), _character._animatorParameters);
-            MMAnimator.UpdateAnimatorBool(_animator,"DoubleJumping",_doubleJumping,_character._animatorParameters);
-			MMAnimator.UpdateAnimatorBool (_animator, "HitTheGround", _controller.State.JustGotGrounded, _character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _jumpingAnimationParameter, (_movement.CurrentState == CharacterStates.MovementStates.Jumping),_character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _doubleJumpingAnimationParameter, _doubleJumping,_character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool (_animator, _hitTheGroundAnimationParameter, _controller.State.JustGotGrounded, _character._animatorParameters);
 		}
 
 		/// <summary>
 		/// Resets parameters in anticipation for the Character's respawn.
 		/// </summary>
-		public override void Reset()
+		public override void ResetAbility()
 		{
-			base.Reset ();
+			base.ResetAbility ();
             NumberOfJumps = _initialNumberOfJumps;
 			NumberOfJumpsLeft = _initialNumberOfJumps;
 		}

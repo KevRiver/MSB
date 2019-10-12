@@ -73,9 +73,7 @@ namespace MoreMountains.CorgiEngine
 		/// <returns>A <see cref="System.String"/> that represents the current collision states.</returns>
 		public override string ToString ()
 		{
-            //Format IsCollidingRight,IsCollidingLeft,IsCollidingAbove,IsCollidingBelow,LateralSlopeAngle,BelowSlopeAngle,IsGrounded
-
-            return string.Format("({0},{1},{2},{3},{4},{5},{6}",
+			return string.Format("(controller: collidingRight:{0} collidingLeft:{1} collidingAbove:{2} collidingBelow:{3} lateralSlopeAngle:{4} belowSlopeAngle:{5} isGrounded: {6}",
 			IsCollidingRight,
 			IsCollidingLeft,
 			IsCollidingAbove,

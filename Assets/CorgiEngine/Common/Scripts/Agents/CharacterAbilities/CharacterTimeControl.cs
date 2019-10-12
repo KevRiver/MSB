@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using MoreMountains.Tools;
+using MoreMountains.Feedbacks;
 
 namespace MoreMountains.CorgiEngine
 {	
@@ -55,6 +56,7 @@ namespace MoreMountains.CorgiEngine
         {
             if (Cooldown.Ready())
             {
+                PlayAbilityStartFeedbacks();
                 MMTimeScaleEvent.Trigger(MMTimeScaleMethods.For, TimeScale, Duration, LerpTimeScale, LerpSpeed, true);
                 Cooldown.Start();
                 _timeControlled = true;
@@ -66,6 +68,8 @@ namespace MoreMountains.CorgiEngine
         /// </summary>
         public virtual void TimeControlStop()
         {
+            StopStartFeedbacks();
+            PlayAbilityStopFeedbacks();
             Cooldown.Stop();
         }
 

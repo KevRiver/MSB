@@ -31,7 +31,7 @@ namespace MoreMountains.CorgiEngine
 		/// <param name="collider">Collider.</param>
 	    protected virtual void OnTriggerEnter2D(Collider2D collider)
         {
-            CharacterGrip characterGrip = collider.gameObject.GetComponentNoAlloc<CharacterGrip>();
+            CharacterGrip characterGrip = collider.gameObject.MMGetComponentNoAlloc<CharacterGrip>();
 			if (characterGrip == null)	{	return;	}
 
 			characterGrip.StartGripping (this);

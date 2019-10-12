@@ -98,7 +98,7 @@ namespace MoreMountains.CorgiEngine
             _damageOnTouch = _damageArea.AddComponent<DamageOnTouch>();
 			_damageOnTouch.TargetLayerMask = TargetLayerMask;
 			_damageOnTouch.DamageCaused = DamageCaused;
-			//_damageOnTouch.DamageCausedKnockbackType = Knockback;
+			_damageOnTouch.DamageCausedKnockbackType = Knockback;
 			_damageOnTouch.DamageCausedKnockbackForce = KnockbackForce;
 			_damageOnTouch.InvincibilityDuration = InvincibilityDuration;
 		}
@@ -106,7 +106,7 @@ namespace MoreMountains.CorgiEngine
 		/// <summary>
 		/// When the weapon is used, we trigger our attack routine
 		/// </summary>
-		public override void WeaponUse()
+		protected override void WeaponUse()
 		{
 			base.WeaponUse ();
 			StartCoroutine(MeleeWeaponAttack());
@@ -144,16 +144,11 @@ namespace MoreMountains.CorgiEngine
             _damageAreaCollider.enabled = false;
         }
 
-        protected virtual void OnDrawGizmos()
+        protected virtual void DrawGizmos()
         {
-            if (_damageAreaCollider == null) { return; }
-            if (Owner == null) { return; }
-
-            float flipped = Owner.IsFacingRight ? 1f : -1f;
             _gizmoOffset = AreaOffset;
-            _gizmoOffset.x *= flipped;
 
-            Gizmos.color = Color.white;
+            Gizmos.color = Color.red;
             if (DamageAreaShape == MeleeDamageAreaShapes.Circle)
             {
                 Gizmos.DrawWireSphere(this.transform.position + _gizmoOffset, AreaSize.x / 2);
@@ -166,21 +161,9 @@ namespace MoreMountains.CorgiEngine
 
         protected virtual void OnDrawGizmosSelected()
         {
-            if (_damageAreaCollider == null) { return; }
-            if (Owner == null) { return; }
-
-            float flipped = Owner.IsFacingRight ? 1f : -1f;
-            _gizmoOffset = AreaOffset;
-            _gizmoOffset.x *= flipped;
-
-            Gizmos.color = Color.white;
-            if (DamageAreaShape == MeleeDamageAreaShapes.Circle)
+            if (!Application.isPlaying)
             {
-                Gizmos.DrawWireSphere(this.transform.position + _gizmoOffset, AreaSize.x / 2);
-            }
-            if (DamageAreaShape == MeleeDamageAreaShapes.Rectangle)
-            {
-                MMDebug.DrawGizmoRectangle(this.transform.position + _gizmoOffset, AreaSize, Color.red);
+                DrawGizmos();
             }
         }
     }

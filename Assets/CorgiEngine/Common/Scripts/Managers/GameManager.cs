@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using MoreMountains.Tools;
-using Anima2D;
 using System.Collections.Generic;
 using MoreMountains.InventoryEngine;
+using MoreMountains.Feedbacks;
 
 namespace MoreMountains.CorgiEngine
 {	
@@ -163,13 +163,12 @@ namespace MoreMountains.CorgiEngine
 		protected InventoryInputManager _inventoryInputManager;
 		protected int _initialMaximumLives;
 		protected int _initialCurrentLives;
-        
 
-        protected override void Awake()
+		protected override void Awake()
 		{
 			base.Awake ();
-			PointsOfEntry = new List<PointsOfEntryStorage> ();            
-        }
+			PointsOfEntry = new List<PointsOfEntryStorage> ();
+		}
 
 	    /// <summary>
 	    /// On Start(), sets the target framerate to whatever's been specified
@@ -180,11 +179,11 @@ namespace MoreMountains.CorgiEngine
 			_initialCurrentLives = CurrentLives;
 			_initialMaximumLives = MaximumLives;            
 	    }
-
-        /// <summary>
-        /// this method resets the whole game manager
-        /// </summary>
-        public virtual void Reset()
+					
+		/// <summary>
+		/// this method resets the whole game manager
+		/// </summary>
+		public virtual void Reset()
 		{
 			Points = 0;
             MMTimeScaleEvent.Trigger(MMTimeScaleMethods.Set, 1f, 0f, false, 0f, false);
@@ -295,7 +294,8 @@ namespace MoreMountains.CorgiEngine
 			else
 			{
 				UnPause(pauseMethod);
-			}		
+                CorgiEngineEvent.Trigger(CorgiEngineEventTypes.UnPause);
+            }		
 			LevelManager.Instance.ToggleCharacterPause();
 		}
 

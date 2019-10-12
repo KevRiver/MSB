@@ -17,10 +17,14 @@ namespace MoreMountains.CorgiEngine
 		/// the vertical acceleration applied when diving
 		public float DiveAcceleration = 2f;
 
-		/// <summary>
-		/// Every frame, we check input to see if we should dive
-		/// </summary>
-		protected override void HandleInput()
+        // animation parameters
+        protected const string _divingAnimationParameterName = "Diving";
+        protected int _divingAnimationParameter;
+
+        /// <summary>
+        /// Every frame, we check input to see if we should dive
+        /// </summary>
+        protected override void HandleInput()
 		{
 			if ((_inputManager.DashButton.State.CurrentState == MMInput.ButtonStates.ButtonDown)
 				&& (_verticalInput < -_inputManager.Threshold.y))
@@ -48,10 +52,9 @@ namespace MoreMountains.CorgiEngine
 	    /// Coroutine used to make the player dive vertically
 	    /// </summary>
 	    protected virtual IEnumerator Dive()
-		{	
-			// we start our sounds
-			PlayAbilityStartSfx();
-			PlayAbilityUsedSfx();
+		{
+            // we start our sounds
+            PlayAbilityStartFeedbacks();
 
 			// we make sure collisions are on
 			_controller.CollisionsOn();
@@ -71,9 +74,9 @@ namespace MoreMountains.CorgiEngine
 				_sceneCamera.Shake(ShakeParameters);	
 			}
 
-			// we play our exit sound
-			StopAbilityUsedSfx();
-			PlayAbilityStopSfx();
+            // we play our exit sound
+            StopStartFeedbacks();
+			PlayAbilityStopFeedbacks();
 
 			_movement.ChangeState(CharacterStates.MovementStates.Idle);
 		}
@@ -83,7 +86,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected override void InitializeAnimatorParameters()
 		{
-			RegisterAnimatorParameter ("Diving", AnimatorControllerParameterType.Bool);
+			RegisterAnimatorParameter (_divingAnimationParameterName, AnimatorControllerParameterType.Bool, out _divingAnimationParameter);
 		}
 
 		/// <summary>
@@ -91,7 +94,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public override void UpdateAnimator()
 		{
-			MMAnimator.UpdateAnimatorBool(_animator,"Diving",(_movement.CurrentState == CharacterStates.MovementStates.Diving),_character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _divingAnimationParameter, (_movement.CurrentState == CharacterStates.MovementStates.Diving),_character._animatorParameters);
 		}
 	}
 }

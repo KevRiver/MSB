@@ -79,21 +79,7 @@ namespace MoreMountains.CorgiEngine
 		protected WaitForSeconds _transitionTimeWFS;
 		protected WaitForSeconds _messageDurationWFS;
 		protected WaitForSeconds _inactiveTimeWFS;
-
-		/// <summary>
-	    /// Determines whether this instance can show button prompt.
-	    /// </summary>
-	    /// <returns><c>true</c> if this instance can show prompt; otherwise, <c>false</c>.</returns>
-	    /*public override bool CanShowPrompt()
-	    {
-			if ( (_buttonA==null) && _activable && !_playing )
-	    	{
-	    		return true;
-	    	}
-	    	return false;
-	    }*/
-	
-
+        
 	    /// <summary>
 	    /// Initializes the dialogue zone
 	    /// </summary>
@@ -289,6 +275,7 @@ namespace MoreMountains.CorgiEngine
 			_activable=true;
 			_playing=false;
 			_currentIndex=0;
+            _promptHiddenForever = false;
 
 			if (AlwaysShowPrompt)
 			{

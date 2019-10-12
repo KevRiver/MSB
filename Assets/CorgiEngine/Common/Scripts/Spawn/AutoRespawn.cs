@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using MoreMountains.Tools;
+using MoreMountains.Feedbacks;
 
 namespace MoreMountains.CorgiEngine
 {	
@@ -19,18 +20,17 @@ namespace MoreMountains.CorgiEngine
 		[Header("Auto respawn after X seconds")]
 		/// if this has a value superior to 0, this object will respawn at its last position X seconds after its death
 		public float AutoRespawnDuration = 0f;
-		/// the effect to instantiate when the player respawns
-		public GameObject RespawnEffect;
-		/// the sfx to play when the player respawns
-		public AudioClip RespawnSfx;
+        /// the MMFeedbacks to play when the player respawns
+        public MMFeedbacks RespawnFeedback;
 
-		// respawn
-		public delegate void OnReviveDelegate();
+        // respawn
+        public delegate void OnReviveDelegate();
 		public OnReviveDelegate OnRevive;
 
 		protected MonoBehaviour[] _otherComponents;
 		protected Collider2D _collider2D;
 		protected Renderer _renderer;
+        protected Health _health;
 
 		protected bool _reviving = false;
 		protected float _timeOfDeath = 0f;
@@ -45,7 +45,8 @@ namespace MoreMountains.CorgiEngine
 			_otherComponents = GetComponents<MonoBehaviour>() ;
 			_collider2D = GetComponent<Collider2D> ();
 			_renderer = GetComponent<Renderer> ();
-			_initialPosition = this.transform.position;
+            _health = GetComponent<Health>();
+            _initialPosition = this.transform.position;
 		}
 
 		/// <summary>
@@ -116,11 +117,10 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public virtual void Revive()
 		{
-			/*if (_firstRespawn)
-			{
-				_firstRespawn = false;
-				return;
-			}*/
+            if (_health != null)
+            {
+                _health.Revive();
+            }
 
 			if (AutoRespawnDuration <= 0f)
 			{
@@ -135,36 +135,12 @@ namespace MoreMountains.CorgiEngine
 				}
 				if (_collider2D != null) { _collider2D.enabled = true;	}
 				if (_renderer != null)	{ _renderer.enabled = true; }
-				InstantiateRespawnEffect ();
-				PlayRespawnSound ();
-			}
+
+                RespawnFeedback?.PlayFeedbacks();
+            }
 			if (OnRevive != null)
 			{
 				OnRevive ();
-			}
-		}
-
-		/// <summary>
-		/// Instantiates the respawn effect at the object's position
-		/// </summary>
-		protected virtual void InstantiateRespawnEffect()
-		{
-			// instantiates the destroy effect
-			if (RespawnEffect != null)
-			{
-				GameObject instantiatedEffect=(GameObject)Instantiate(RespawnEffect,transform.position,transform.rotation);
-				instantiatedEffect.transform.localScale = transform.localScale;
-			}
-		}
-
-		/// <summary>
-		/// Plays the respawn sound.
-		/// </summary>
-		protected virtual void PlayRespawnSound()
-		{
-			if (RespawnSfx != null)
-			{
-				SoundManager.Instance.PlaySound(RespawnSfx,transform.position);
 			}
 		}
 	}

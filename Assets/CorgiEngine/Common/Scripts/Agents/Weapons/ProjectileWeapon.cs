@@ -11,7 +11,9 @@ namespace MoreMountains.CorgiEngine
 	/// </summary>
 	public class ProjectileWeapon : Weapon 
 	{
-		[Header("Spawn")]
+        [Header("Spawn")]
+        /// the transform to use as the center reference point of the spawn
+        public Transform ProjectileSpawnTransform;
 		/// the offset position at which the projectile will spawn
 		public Vector3 ProjectileSpawnOffset = Vector3.zero;
         /// the number of projectiles to spawn per shot
@@ -29,6 +31,7 @@ namespace MoreMountains.CorgiEngine
         public MMObjectPooler ObjectPooler { get; set; }		
         protected Vector3 _flippedProjectileSpawnOffset;
         protected Vector3 _randomSpreadDirection;
+        protected Vector3 _spawnPositionCenter;
         protected bool _poolInitialized = false;
 
         /// <summary>
@@ -54,11 +57,9 @@ namespace MoreMountains.CorgiEngine
                     Debug.LogWarning(this.name + " : no object pooler (simple or multiple) is attached to this Projectile Weapon, it won't be able to shoot anything.");
                     return;
                 }
-                if (FlipWeaponOnCharacterFlip)
-                {
-                    _flippedProjectileSpawnOffset = ProjectileSpawnOffset;
-                    _flippedProjectileSpawnOffset.y = -_flippedProjectileSpawnOffset.y;
-                }
+
+                _flippedProjectileSpawnOffset = ProjectileSpawnOffset;
+                _flippedProjectileSpawnOffset.y = -_flippedProjectileSpawnOffset.y;
                 _poolInitialized = true;
             }            
 		}
@@ -66,7 +67,7 @@ namespace MoreMountains.CorgiEngine
 		/// <summary>
 		/// Called everytime the weapon is used
 		/// </summary>
-		public override void WeaponUse()
+		protected override void WeaponUse()
 		{
 			base.WeaponUse ();
 
@@ -75,9 +76,7 @@ namespace MoreMountains.CorgiEngine
             for (int i = 0; i < ProjectilesPerShot; i++)
             {
                 SpawnProjectile(SpawnPosition, i, ProjectilesPerShot, true);
-            }
-            Vector3 init = (Owner.IsFacingRight) ? Vector3.right : Vector3.left;
-            _aimableWeapon.SetCurrentAim(init);
+            }			
 		}
 
 		/// <summary>
@@ -105,7 +104,6 @@ namespace MoreMountains.CorgiEngine
                 if (Owner != null)
                 {
                     projectile.SetOwner(Owner.gameObject);
-                    projectile.isBelongsToLocalUser = Owner.isLocalUser;
                 }				
 			}
 			// we activate the object
@@ -134,8 +132,8 @@ namespace MoreMountains.CorgiEngine
                     }
                 }               
 
-                Quaternion spread = Quaternion.Euler(_randomSpreadDirection);                
-                projectile.SetDirection(spread * transform.right , transform.rotation, Owner.IsFacingRight);
+                Quaternion spread = Quaternion.Euler(_randomSpreadDirection);
+                projectile.SetDirection(spread * transform.right * (Flipped ? -1 : 1), transform.rotation, Owner.IsFacingRight);
                 if (RotateWeaponOnSpread)
                 {
                     this.transform.rotation = this.transform.rotation * spread;
@@ -158,20 +156,15 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public virtual void DetermineSpawnPosition()
 		{
-            if (Flipped)
+            _spawnPositionCenter = (ProjectileSpawnTransform == null) ? this.transform.position : ProjectileSpawnTransform.transform.position;
+
+            if (Flipped && FlipWeaponOnCharacterFlip)
             {
-                if (FlipWeaponOnCharacterFlip)
-                {
-                    SpawnPosition = this.transform.position - this.transform.rotation * _flippedProjectileSpawnOffset;
-                }
-                else
-                {
-                    SpawnPosition = this.transform.position - this.transform.rotation * ProjectileSpawnOffset;
-                }
+                SpawnPosition = _spawnPositionCenter - this.transform.rotation * _flippedProjectileSpawnOffset;
             }
             else
             {
-                SpawnPosition = this.transform.position + this.transform.rotation * ProjectileSpawnOffset;
+                SpawnPosition = _spawnPositionCenter + this.transform.rotation * ProjectileSpawnOffset;
             }
 		}
 

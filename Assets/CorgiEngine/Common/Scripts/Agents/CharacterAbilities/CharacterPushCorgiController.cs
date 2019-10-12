@@ -6,7 +6,7 @@ namespace MoreMountains.CorgiEngine
 {	
 	/// Add this class to a Character and it'll be able to push and/or pull CorgiController equipped objects around. 
     /// Animator parameters : Pushing (bool), Pulling (bool)
-	[AddComponentMenu("Corgi Engine/Character/Abilities/Character Push")] 
+	[AddComponentMenu("Corgi Engine/Character/Abilities/Character Push Corgi Controller")] 
 	public class CharacterPushCorgiController : CharacterAbility 
 	{
 		public override string HelpBoxText() { return "This component allows your character to push blocks. This is not a mandatory component, it will just override CorgiController push settings, and allow you to have a dedicated push animation."; }
@@ -30,6 +30,12 @@ namespace MoreMountains.CorgiEngine
         protected float _movementMultiplierStorage;
         protected bool _pulling = false;
         protected CharacterRun _characterRun;
+        
+        // animation parameters
+        protected const string _pushingAnimationParameterName = "Pushing";
+        protected const string _pullingAnimationParameterName = "Pulling";
+        protected int _pushingAnimationParameter;
+        protected int _pullingAnimationParameter;
 
         /// <summary>
         /// On Start(), we initialize our various flags
@@ -70,7 +76,7 @@ namespace MoreMountains.CorgiEngine
 			RaycastHit2D hit = MMDebug.RayCast (_raycastOrigin,_raycastDirection,DetectionRaycastLength,_controller.PlatformMask,Color.green,_controller.Parameters.DrawRaycastsGizmos);			
 			if (hit)
 			{
-				if (hit.collider.gameObject.GetComponentNoAlloc<Pushable>() != null)
+				if (hit.collider.gameObject.MMGetComponentNoAlloc<Pushable>() != null)
                 {
                     _collidingWithPushable = true;
 				}
@@ -89,14 +95,13 @@ namespace MoreMountains.CorgiEngine
                         _characterRun.RunStop();
                     }
                 }
-                PlayAbilityStartSfx ();
-				PlayAbilityUsedSfx ();
+                PlayAbilityStartFeedbacks ();
                 _movement.ChangeState (CharacterStates.MovementStates.Pushing);
             }
 
             if (hit && (_movement.CurrentState == CharacterStates.MovementStates.Pushing) && (_pushedObject == null))
             {
-                _pushedObject = hit.collider.gameObject.GetComponentNoAlloc<Pushable>();
+                _pushedObject = hit.collider.gameObject.MMGetComponentNoAlloc<Pushable>();
                 _pushedObject.Attach(_controller);
                 _character.CanFlip = false;
                 _movementMultiplierStorage = _characterHorizontalMovement.PushSpeedMultiplier;
@@ -147,14 +152,14 @@ namespace MoreMountains.CorgiEngine
                 // we reset the state
                 _movement.ChangeState(CharacterStates.MovementStates.Idle);
 
-                PlayAbilityStopSfx();
-                StopAbilityUsedSfx();
+                PlayAbilityStopFeedbacks();
+                StopStartFeedbacks();
             }
 
-            if (_movement.CurrentState != CharacterStates.MovementStates.Pushing && _abilityInProgressSfx != null)
+            if ((_movement.CurrentState != CharacterStates.MovementStates.Pushing) && _startFeedbackIsPlaying)
             {
-                PlayAbilityStopSfx();
-                StopAbilityUsedSfx();
+                PlayAbilityStopFeedbacks();
+                StopStartFeedbacks();
             }
         }
 
@@ -173,14 +178,14 @@ namespace MoreMountains.CorgiEngine
             _characterHorizontalMovement.PushSpeedMultiplier = _movementMultiplierStorage;
             _pulling = false;
         }
-
-		/// <summary>
-		/// Adds required animator parameters to the animator parameters list if they exist
-		/// </summary>
-		protected override void InitializeAnimatorParameters()
+        
+        /// <summary>
+        /// Adds required animator parameters to the animator parameters list if they exist
+        /// </summary>
+        protected override void InitializeAnimatorParameters()
         {
-            RegisterAnimatorParameter("Pushing", AnimatorControllerParameterType.Bool);
-            RegisterAnimatorParameter("Pulling", AnimatorControllerParameterType.Bool);
+            RegisterAnimatorParameter(_pushingAnimationParameterName, AnimatorControllerParameterType.Bool, out _pushingAnimationParameter);
+            RegisterAnimatorParameter(_pullingAnimationParameterName, AnimatorControllerParameterType.Bool, out _pullingAnimationParameter);
         }
 
 		/// <summary>
@@ -188,8 +193,8 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public override void UpdateAnimator()
         {
-            MMAnimator.UpdateAnimatorBool(_animator, "Pushing", (_movement.CurrentState == CharacterStates.MovementStates.Pushing), _character._animatorParameters);
-            MMAnimator.UpdateAnimatorBool(_animator, "Pulling", _pulling, _character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _pushingAnimationParameter, (_movement.CurrentState == CharacterStates.MovementStates.Pushing), _character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _pullingAnimationParameter, _pulling, _character._animatorParameters);
         }
 	}
 }

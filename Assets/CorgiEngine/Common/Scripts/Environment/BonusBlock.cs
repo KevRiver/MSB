@@ -22,9 +22,11 @@ namespace MoreMountains.CorgiEngine
 	    public Vector3 SpawnDestination;
 	    /// if true, should animate the object's spawn
 	    public bool AnimateSpawn = true;
+        /// the block's movement Animation Curve
+        public AnimationCurve MovementCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(1f, 1));
 
-	    // private stuff
-	    protected Animator _animator;
+        // private stuff
+        protected Animator _animator;
 	    protected bool _hit=false;
 	    protected Vector2 _newPosition;
 	    protected int _numberOfHitsLeft;
@@ -47,11 +49,11 @@ namespace MoreMountains.CorgiEngine
 			_numberOfHitsLeft=NumberOfAllowedHits;
 			if (_numberOfHitsLeft>0)	
 			{
-				MMAnimator.UpdateAnimatorBool(_animator,"Off",false);
+				_animator.SetBool("Off", false);
 			}
 			else			
 			{
-				MMAnimator.UpdateAnimatorBool(_animator,"Off",true);
+				_animator.SetBool("Off", true);
 			}
 		}
 		
@@ -71,7 +73,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 	    protected virtual void UpdateAnimator()
 		{				
-			MMAnimator.UpdateAnimatorBool(_animator,"Hit",_hit);	
+			_animator.SetBool("Hit", _hit);	
 		}
 		
 		/// <summary>
@@ -99,7 +101,7 @@ namespace MoreMountains.CorgiEngine
 				spawned.transform.rotation=Quaternion.identity;
 				if (AnimateSpawn)
 				{
-					StartCoroutine(MMMovement.MoveFromTo(spawned,transform.position, new Vector2(transform.position.x+ SpawnDestination.x, transform.position.y+GetComponent<BoxCollider2D>().size.y+SpawnDestination.y),SpawnSpeed,0.05f));
+					StartCoroutine(MMMovement.MoveFromTo(spawned,transform.position, new Vector2(transform.position.x+ SpawnDestination.x, transform.position.y+GetComponent<BoxCollider2D>().size.y+SpawnDestination.y),SpawnSpeed, MovementCurve));
 				}
 				else
 				{
@@ -109,7 +111,7 @@ namespace MoreMountains.CorgiEngine
 			
 			if (_numberOfHitsLeft==0)
 			{			
-				MMAnimator.UpdateAnimatorBool(_animator,"Off",true);
+				_animator.SetBool("Off", true);
 			}
 		}		
 		

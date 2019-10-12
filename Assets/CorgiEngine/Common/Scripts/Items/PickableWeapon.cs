@@ -17,7 +17,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected override void Pick()
 		{
-			CharacterHandleWeapon characterShoot = _collider.GetComponent<CharacterHandleWeapon>();
+			CharacterHandleWeapon characterShoot = _pickingCollider.GetComponent<CharacterHandleWeapon>();
 			characterShoot.ChangeWeapon(WeaponToGive, null);
 			if (characterShoot != null)
 			{
@@ -34,10 +34,10 @@ namespace MoreMountains.CorgiEngine
 		/// <c>false</c>
 		protected override bool CheckIfPickable()
 		{
-			_character = _collider.GetComponent<Character>();
+			_character = _pickingCollider.GetComponent<Character>();
 
 			// if what's colliding with the coin ain't a characterBehavior, we do nothing and exit
-			if ((_character == null) || (_collider.GetComponent<CharacterHandleWeapon>() == null))
+			if ((_character == null) || (_pickingCollider.GetComponent<CharacterHandleWeapon>() == null))
 			{
 				return false;
 			}

@@ -62,6 +62,8 @@ namespace MoreMountains.CorgiEngine
 		public bool HideMobileControlsInEditor = false;
 		/// use this to specify whether you want to use the default joystick or arrows to move your character
 		public MovementControls MovementControl = MovementControls.Joystick;
+        /// if this is true, button state changes are offset by one frame (usually useful on Android)
+        public bool DelayedButtonPresses = false;
 		/// if this is true, we're currently in mobile mode
 		public bool IsMobile { get; protected set; }
 
@@ -72,8 +74,6 @@ namespace MoreMountains.CorgiEngine
 		/// the minimum horizontal and vertical value you need to reach to trigger movement on an analog controller (joystick for example)
 		public Vector2 Threshold = new Vector2(0.1f, 0.4f);
         
-        
-
         /// the jump button, used for jumps
         public MMInput.IMButton JumpButton { get; protected set; }
         /// the swim button, used to swim
@@ -114,31 +114,22 @@ namespace MoreMountains.CorgiEngine
         public Vector2 PrimaryMovement {get { return _primaryMovement; } }
 		/// the secondary movement (usually the right stick on a gamepad), used to aim
 		public Vector2 SecondaryMovement {get { return _secondaryMovement; } }
-        //19 07 26 강승곤이 추가함 세번째 조이스틱의 Vector 를 받기 위한 변수
-        public Vector2 ThirdMovement { get { return _thirdMovement; } }
-
-        //MSB Custom
-        public MMInput.IMButton ActiveSkillButton { get; protected set; }
-        public MMInput.IMButton BasicAttackButton { get; protected set; }
 
 		protected List<MMInput.IMButton> ButtonList;
 		protected Vector2 _primaryMovement = Vector2.zero;
 		protected Vector2 _secondaryMovement = Vector2.zero;
-        protected Vector2 _thirdMovement = Vector2.zero;
-        protected string _axisHorizontal;
+		protected string _axisHorizontal;
 		protected string _axisVertical;
 		protected string _axisSecondaryHorizontal;
 		protected string _axisSecondaryVertical;
-        // 세번째 조이스틱 19.07.26 추가
-        protected string _axisThirdHorizontal;
-        protected string _axisThirdVertical;
         protected string _axisShoot;
         protected string _axisShootSecondary;
 
-        //MSB Custom
-        public bool inputPermitted;
-        
-        
+        protected override void Awake()
+        {
+            Debug.Log("InputManager Awake");
+            base.Awake();
+        }
 
         /// <summary>
         /// On Start we look for what mode to use, and initialize our axis and buttons
@@ -148,8 +139,6 @@ namespace MoreMountains.CorgiEngine
 			ControlsModeDetection();
 			InitializeButtons ();
 			InitializeAxis();
-            inputPermitted = false;
-            Debug.LogWarning("InputPermitted : " + inputPermitted);
 		}
 
         /// <summary>
@@ -207,9 +196,6 @@ namespace MoreMountains.CorgiEngine
             ButtonList.Add(PushButton = new MMInput.IMButton(PlayerID, "Push", PushButtonDown, PushButtonPressed, PushButtonUp));
             ButtonList.Add(SwitchCharacterButton = new MMInput.IMButton(PlayerID, "SwitchCharacter", SwitchCharacterButtonDown, SwitchCharacterButtonPressed, SwitchCharacterButtonUp));
             ButtonList.Add(TimeControlButton = new MMInput.IMButton(PlayerID, "TimeControl", TimeControlButtonDown, TimeControlButtonPressed, TimeControlButtonUp));
-            //MSB Custom
-            ButtonList.Add(ActiveSkillButton = new MMInput.IMButton(PlayerID, "ActiveSkill", ActiveSkillButtonDown, ActiveSkillButtonPressed, ActiveSkillButtonUp));
-            ButtonList.Add(BasicAttackButton = new MMInput.IMButton(PlayerID, "BasicAttack", BasicAttackButtonDown, BasicAttackButtonPressed, BasicAttackButtonUp));
         }
 
 		/// <summary>
@@ -237,17 +223,14 @@ namespace MoreMountains.CorgiEngine
 	    /// At update, we check the various commands and update our values and states accordingly.
 	    /// </summary>
 	    protected virtual void Update()
-        {
-            if (!inputPermitted)
-                return;
-        
+		{		
 			if (!IsMobile && InputDetectionActive)
-			{
-                SetMovement();
-                SetSecondaryMovement();
+			{	
+				SetMovement();	
+				SetSecondaryMovement ();
                 SetShootAxis();
-                GetInputButtons();
-            }									
+                GetInputButtons ();
+			}									
 		}
 
 		/// <summary>
@@ -282,14 +265,29 @@ namespace MoreMountains.CorgiEngine
 			{
 				if (button.State.CurrentState == MMInput.ButtonStates.ButtonDown)
 				{
-                    StartCoroutine(DelayButtonPress(button));
+                    if (DelayedButtonPresses)
+                    {
+                        StartCoroutine(DelayButtonPress(button));
+                    }
+                    else
+                    {
+                        button.State.ChangeState(MMInput.ButtonStates.ButtonPressed);
+                    }
+
                 }	
 				if (button.State.CurrentState == MMInput.ButtonStates.ButtonUp)
-				{
-					button.State.ChangeState(MMInput.ButtonStates.Off);				
-				}	
+                {
+                    if (DelayedButtonPresses)
+                    {
+                        StartCoroutine(DelayButtonRelease(button));
+                    }
+                    else
+                    {
+                        button.State.ChangeState(MMInput.ButtonStates.Off);
+                    }
+                }	
 			}
-		}
+        }
 
         /// <summary>
         /// A coroutine that changes the pressed state one frame later
@@ -303,10 +301,21 @@ namespace MoreMountains.CorgiEngine
         }
 
         /// <summary>
+        /// A coroutine that changes the pressed state one frame later
+        /// </summary>
+        /// <param name="button"></param>
+        /// <returns></returns>
+        IEnumerator DelayButtonRelease(MMInput.IMButton button)
+        {
+            yield return null;
+            button.State.ChangeState(MMInput.ButtonStates.Off);
+        }
+
+        /// <summary>
         /// Called every frame, if not on mobile, gets primary movement values from input
         /// </summary>
         public virtual void SetMovement()
-		{           
+		{
 			if (!IsMobile && InputDetectionActive)
 			{
 				if (SmoothMovement)
@@ -316,36 +325,36 @@ namespace MoreMountains.CorgiEngine
 				}
 				else
 				{
-                    _primaryMovement.x = Input.GetAxisRaw(_axisHorizontal);
+					_primaryMovement.x = Input.GetAxisRaw(_axisHorizontal);
 					_primaryMovement.y = Input.GetAxisRaw(_axisVertical);		
 				}
-			}                    
-        }
+			}
+		}
 
-        /// <summary>
-        /// Called every frame, if not on mobile, gets secondary movement values from input
-        /// </summary>
-        public virtual void SetSecondaryMovement()
-        {
-            if (!IsMobile && InputDetectionActive)
-            {
-                if (SmoothMovement)
-                {
-                    _secondaryMovement.x = Input.GetAxis(_axisSecondaryHorizontal);
-                    _secondaryMovement.y = Input.GetAxis(_axisSecondaryVertical);
-                }
-                else
-                {
-                    _secondaryMovement.x = Input.GetAxisRaw(_axisSecondaryHorizontal);
-                    _secondaryMovement.y = Input.GetAxisRaw(_axisSecondaryVertical);
-                }
-            }
-        }
+		/// <summary>
+		/// Called every frame, if not on mobile, gets secondary movement values from input
+		/// </summary>
+		public virtual void SetSecondaryMovement()
+		{
+			if (!IsMobile && InputDetectionActive)
+			{
+				if (SmoothMovement)
+				{
+					_secondaryMovement.x = Input.GetAxis(_axisSecondaryHorizontal);
+					_secondaryMovement.y = Input.GetAxis(_axisSecondaryVertical);		
+				}
+				else
+				{
+					_secondaryMovement.x = Input.GetAxisRaw(_axisSecondaryHorizontal);
+					_secondaryMovement.y = Input.GetAxisRaw(_axisSecondaryVertical);		
+				}
+			}
+		}
 
-        /// <summary>
-        /// Called every frame, if not on mobile, gets shoot axis values from input
-        /// </summary>
-        protected virtual void SetShootAxis()
+		/// <summary>
+		/// Called every frame, if not on mobile, gets shoot axis values from input
+		/// </summary>
+		protected virtual void SetShootAxis()
 		{
 			if (!IsMobile && InputDetectionActive)
             {
@@ -379,19 +388,6 @@ namespace MoreMountains.CorgiEngine
 				_secondaryMovement.y = movement.y;	
 			}
 		}
-
-        /// <summary>
-        /// 터치 조이스틱을 사용할 때, 세번째 조이스틱에 연결 19.07.26 Added
-        /// </summary>
-        /// <param name="movement"></param>
-        public virtual void SetThirdMovement(Vector2 movement)
-        {
-            if (IsMobile && InputDetectionActive)
-            {
-                _thirdMovement.x = movement.x;
-                _thirdMovement.y = movement.y;
-            }
-        }
 
 		/// <summary>
 		/// If you're using touch arrows, bind your left/right arrows to this method
@@ -440,14 +436,6 @@ namespace MoreMountains.CorgiEngine
 				_secondaryMovement.y = verticalInput;
 			}
         }
-
-        public virtual void ActiveSkillButtonDown() { ActiveSkillButton.State.ChangeState(MMInput.ButtonStates.ButtonDown); }
-        public virtual void ActiveSkillButtonPressed() { ActiveSkillButton.State.ChangeState(MMInput.ButtonStates.ButtonPressed); }
-        public virtual void ActiveSkillButtonUp() { ActiveSkillButton.State.ChangeState(MMInput.ButtonStates.ButtonUp); }
-
-        public virtual void BasicAttackButtonDown() { BasicAttackButton.State.ChangeState(MMInput.ButtonStates.ButtonDown); }
-        public virtual void BasicAttackButtonPressed() { BasicAttackButton.State.ChangeState(MMInput.ButtonStates.ButtonPressed); }
-        public virtual void BasicAttackButtonUp() { BasicAttackButton.State.ChangeState(MMInput.ButtonStates.ButtonUp); }
 
         public virtual void JumpButtonDown()                { JumpButton.State.ChangeState(MMInput.ButtonStates.ButtonDown); }
         public virtual void JumpButtonPressed()             { JumpButton.State.ChangeState(MMInput.ButtonStates.ButtonPressed); }

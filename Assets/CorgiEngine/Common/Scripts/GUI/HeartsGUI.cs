@@ -62,8 +62,8 @@ namespace MoreMountains.CorgiEngine
 				Image heartImage = heart.AddComponent<Image> ();
 				heartImage.sprite = HeartFull;
 
-				heart.GetComponentNoAlloc<RectTransform> ().localScale = Vector3.one;
-				heart.GetComponentNoAlloc<RectTransform> ().sizeDelta = HeartSize;
+				heart.MMGetComponentNoAlloc<RectTransform> ().localScale = Vector3.one;
+				heart.MMGetComponentNoAlloc<RectTransform> ().sizeDelta = HeartSize;
 
 				Hearts.Add (heartImage);
 			}

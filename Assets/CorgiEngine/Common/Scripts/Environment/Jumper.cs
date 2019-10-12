@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using MoreMountains.Tools;
+using MoreMountains.Feedbacks;
 
 namespace MoreMountains.CorgiEngine
 {	
@@ -13,6 +14,10 @@ namespace MoreMountains.CorgiEngine
 	{
 		/// the force of the jump induced by the platform
 		public float JumpPlatformBoost = 40;
+        
+        [Header("Feedbacks")]
+        /// a feedback to play when the zone gets activated
+        public MMFeedbacks ActivationFeedback;
 
         protected CorgiController _controller;
         protected CharacterJump _characterJump;
@@ -53,11 +58,12 @@ namespace MoreMountains.CorgiEngine
             if (_controller != null)
             {
                 _controller.SetVerticalForce(Mathf.Sqrt(2f * JumpPlatformBoost * -_controller.Parameters.Gravity));
-                _characterJump = _controller.gameObject.GetComponentNoAlloc<CharacterJump>();
+                _characterJump = _controller.gameObject.MMGetComponentNoAlloc<CharacterJump>();
                 if (_characterJump != null)
                 {
                     _characterJump.CanJumpStop = false;
                 }
+                ActivationFeedback?.PlayFeedbacks();
             }            
         }
 	}

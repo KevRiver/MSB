@@ -14,6 +14,8 @@ namespace MoreMountains.CorgiEngine
         public bool FaceTarget = true;
         /// if true the Character will aim at the target when shooting
         public bool AimAtTarget = false;
+        /// a constant offset to apply to the target's position when aiming : 0,1,0 would aim more towards the head, for example
+        public Vector3 TargetOffset = Vector3.zero;
 
         protected Character _character;
         protected CharacterHandleWeapon _characterHandleWeapon;
@@ -104,7 +106,7 @@ namespace MoreMountains.CorgiEngine
             {
                 if (_weaponAim == null)
                 {
-                    _weaponAim = _characterHandleWeapon.CurrentWeapon.gameObject.GetComponentNoAlloc<WeaponAim>();
+                    _weaponAim = _characterHandleWeapon.CurrentWeapon.gameObject.MMGetComponentNoAlloc<WeaponAim>();
                 }
 
                 if (_weaponAim != null)
@@ -112,11 +114,11 @@ namespace MoreMountains.CorgiEngine
                     if (_projectileWeapon != null)
                     {
                         _projectileWeapon.DetermineSpawnPosition();
-                        _weaponAimDirection = _brain.Target.position - (_projectileWeapon.SpawnPosition);
+                        _weaponAimDirection = (_brain.Target.position + TargetOffset) - (_projectileWeapon.SpawnPosition);
                     }
                     else
                     {
-                        _weaponAimDirection = _brain.Target.position - _characterHandleWeapon.CurrentWeapon.transform.position;
+                        _weaponAimDirection = (_brain.Target.position + TargetOffset) - _characterHandleWeapon.CurrentWeapon.transform.position;
                     }                    
                 }                
             }
@@ -142,8 +144,8 @@ namespace MoreMountains.CorgiEngine
             base.OnEnterState();
             _numberOfShoots = 0;
             _shooting = true;
-            _weaponAim = _characterHandleWeapon.CurrentWeapon.gameObject.GetComponentNoAlloc<WeaponAim>();
-            _projectileWeapon = _characterHandleWeapon.CurrentWeapon.gameObject.GetComponentNoAlloc<ProjectileWeapon>();
+            _weaponAim = _characterHandleWeapon.CurrentWeapon.gameObject.MMGetComponentNoAlloc<WeaponAim>();
+            _projectileWeapon = _characterHandleWeapon.CurrentWeapon.gameObject.MMGetComponentNoAlloc<ProjectileWeapon>();
         }
 
         /// <summary>

@@ -97,7 +97,7 @@ namespace MoreMountains.CorgiEngine
 		{				
 			if (_animator!=null)
 			{
-				MMAnimator.UpdateAnimatorBool(_animator,"Shaking",_shaking);	
+				_animator.SetBool("Shaking", _shaking);	
 			}
 		}
 		
@@ -153,9 +153,9 @@ namespace MoreMountains.CorgiEngine
 		/// <param name="player">Player.</param>
 		protected virtual void OnEnable ()
 		{
-			if (gameObject.GetComponentNoAlloc<AutoRespawn>() != null)
+			if (gameObject.MMGetComponentNoAlloc<AutoRespawn>() != null)
 			{
-				gameObject.GetComponentNoAlloc<AutoRespawn>().OnRevive += OnRevive;
+				gameObject.MMGetComponentNoAlloc<AutoRespawn>().OnRevive += OnRevive;
 			}
 		}
 

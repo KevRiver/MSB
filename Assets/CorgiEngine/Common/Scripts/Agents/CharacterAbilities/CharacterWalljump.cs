@@ -3,12 +3,13 @@ using System.Collections;
 using MoreMountains.Tools;
 
 namespace MoreMountains.CorgiEngine
-{	
-	/// <summary>
-	/// Add this component to a Character and it'll be able to walljump
-	/// Animator parameters : WallJumping (bool)
-	/// </summary>
-	[AddComponentMenu("Corgi Engine/Character/Abilities/Character Walljump")] 
+{
+    /// <summary>
+    /// Add this component to a Character and it'll be able to walljump
+    /// Animator parameters : WallJumping (bool)
+    /// </summary>
+    [HiddenProperties("AbilityStopFeedbacks")]
+    [AddComponentMenu("Corgi Engine/Character/Abilities/Character Walljump")] 
 	public class CharacterWalljump : CharacterAbility 
 	{
 		/// This method is only used to display a helpbox text at the beginning of the ability's inspector
@@ -17,15 +18,19 @@ namespace MoreMountains.CorgiEngine
 		[Header("Walljump")]
 		/// the force of a walljump
 		public Vector2 WallJumpForce = new Vector2(10,4);
-
+        /// returns true if a walljump happened this frame
         public bool WallJumpHappenedThisFrame { get; set; }
 
 		protected CharacterJump _characterJump;
 
-		/// <summary>
-		/// On start, we store our characterJump component
-		/// </summary>
-		protected override void Initialization()
+        // animation parameters
+        protected const string _wallJumpingAnimationParameterName = "WallJumping";
+        protected int _wallJumpingAnimationParameter;
+
+        /// <summary>
+        /// On start, we store our characterJump component
+        /// </summary>
+        protected override void Initialization()
 		{
 			base.Initialization();
 			_characterJump = GetComponent<CharacterJump>();
@@ -69,7 +74,7 @@ namespace MoreMountains.CorgiEngine
 					_characterJump.SetNumberOfJumpsLeft(_characterJump.NumberOfJumpsLeft-1);
 					_characterJump.SetJumpFlags();
 					// we start our sounds
-					PlayAbilityStartSfx();
+					PlayAbilityStartFeedbacks();
 				}
 
 				_condition.ChangeState(CharacterStates.CharacterConditions.Normal);
@@ -77,7 +82,7 @@ namespace MoreMountains.CorgiEngine
 				_controller.SlowFall (0f);	
 
 				// If the character is colliding to the right with something (probably the wall)
-				if (_controller.State.IsCollidingRight)
+				if (_character.IsFacingRight)
 				{
 					wallJumpDirection=-1f;
 				}
@@ -91,18 +96,19 @@ namespace MoreMountains.CorgiEngine
 										Mathf.Sqrt( 2f * WallJumpForce.y * Mathf.Abs(_controller.Parameters.Gravity))
 				);
 				_controller.AddForce(walljumpVector);
+                PlayAbilityStartFeedbacks();
                 WallJumpHappenedThisFrame = true;
 
                 return;
 			}
 		}
-
-		/// <summary>
-		/// Adds required animator parameters to the animator parameters list if they exist
-		/// </summary>
-		protected override void InitializeAnimatorParameters()
+        
+        /// <summary>
+        /// Adds required animator parameters to the animator parameters list if they exist
+        /// </summary>
+        protected override void InitializeAnimatorParameters()
 		{
-			RegisterAnimatorParameter ("WallJumping", AnimatorControllerParameterType.Bool);
+			RegisterAnimatorParameter (_wallJumpingAnimationParameterName, AnimatorControllerParameterType.Bool, out _wallJumpingAnimationParameter);
 		}
 
 		/// <summary>
@@ -110,7 +116,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public override void UpdateAnimator()
 		{
-			MMAnimator.UpdateAnimatorBool(_animator,"WallJumping",(_movement.CurrentState == CharacterStates.MovementStates.WallJumping),_character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _wallJumpingAnimationParameter, (_movement.CurrentState == CharacterStates.MovementStates.WallJumping), _character._animatorParameters);
 		}
 	}
 }

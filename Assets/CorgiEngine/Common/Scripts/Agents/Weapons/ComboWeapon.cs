@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using MoreMountains.Tools;
+using System.Collections.Generic;
 
 namespace MoreMountains.CorgiEngine
 {
@@ -10,11 +11,16 @@ namespace MoreMountains.CorgiEngine
     [AddComponentMenu("Corgi Engine/Weapons/Combo Weapon")]
     public class ComboWeapon : MonoBehaviour
     {
+        [Header("Combo")]
         /// whether or not the combo can be dropped if enough time passes between two consecutive attacks
         public bool DroppableCombo = true;
         /// the delay after which the combo drops
         public float DropComboDelay = 0.5f;
 
+        [Header("Animation")]
+        public string ComboInProgressAnimationParameter = "ComboInProgress";
+
+        [Header("Debug")]
         [ReadOnly]
         /// the list of weapons, set automatically by the class
         public Weapon[] Weapons;
@@ -24,10 +30,30 @@ namespace MoreMountains.CorgiEngine
         [ReadOnly]
         /// the time spent since the last weapon stopped
         public float TimeSinceLastWeaponStopped;
+        
+        /// <summary>
+        /// True if a combo is in progress, false otherwise
+        /// </summary>
+        /// <returns></returns>
+        public bool ComboInProgress
+        {
+            get
+            {
+                bool comboInProgress = false;
+                foreach (Weapon weapon in Weapons)
+                {
+                    if (weapon.WeaponState.CurrentState != Weapon.WeaponStates.WeaponIdle)
+                    {
+                        comboInProgress = true;
+                    }
+                }
+                return comboInProgress;
+            }
+        }
 
         protected int _currentWeaponIndex = 0;
         protected bool _countdownActive = false;
-        
+
         /// <summary>
         /// On start we initialize our Combo Weapon
         /// </summary>
@@ -56,7 +82,7 @@ namespace MoreMountains.CorgiEngine
         /// <summary>
         /// Resets the combo if enough time has passed since the last attack
         /// </summary>
-        protected virtual void ResetCombo()
+        public virtual void ResetCombo()
         {
             if (Weapons.Length > 1)
             {

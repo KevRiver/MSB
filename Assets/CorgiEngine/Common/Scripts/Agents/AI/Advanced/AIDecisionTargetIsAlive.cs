@@ -32,7 +32,7 @@ namespace MoreMountains.CorgiEngine
                 return false;
             }
 
-            _character = _brain.Target.gameObject.GetComponentNoAlloc<Character>();
+            _character = _brain.Target.gameObject.MMGetComponentNoAlloc<Character>();
             if (_character != null)
             {
                 if (_character.ConditionState.CurrentState == CharacterStates.CharacterConditions.Dead)

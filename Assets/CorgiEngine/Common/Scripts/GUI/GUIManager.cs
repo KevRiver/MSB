@@ -158,8 +158,8 @@ namespace MoreMountains.CorgiEngine
 	        if (PauseScreen!= null)
 	        { 
 	    		PauseScreen.SetActive(state);
-				EventSystem.current.sendNavigationEvents=true;
-	        }
+                EventSystem.current.sendNavigationEvents = state;
+            }
 	    }
 
 		/// <summary>

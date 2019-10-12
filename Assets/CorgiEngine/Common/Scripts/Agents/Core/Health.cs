@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using MoreMountains.Tools;
-using MSBNetwork;
+using MoreMountains.Feedbacks;
 
 namespace MoreMountains.CorgiEngine
 {
@@ -15,9 +15,9 @@ namespace MoreMountains.CorgiEngine
 		/// the current health of the character
 		[ReadOnly]
 		public int CurrentHealth ;
-		/// If this is true, this object can't take damage
-		[ReadOnly]
-		public bool Invulnerable = false;	
+        /// If this is true, this object can't take damage at the moment
+        [ReadOnly]
+        public bool TemporaryInvulnerable = false;	
 
 		[Header("Health")]
 		[Information("Add this component to an object and it'll have health, will be able to get damaged and potentially die.",MoreMountains.Tools.InformationAttribute.InformationType.Info,false)]
@@ -25,13 +25,13 @@ namespace MoreMountains.CorgiEngine
 	    public int InitialHealth = 10;
 	    /// the maximum amount of health of the object
 	    public int MaximumHealth = 10;
+        /// if this is true, this object can't take damage
+        public bool Invulnerable = false;
 
 		[Header("Damage")]
 		[Information("Here you can specify an effect and a sound FX to instantiate when the object gets damaged, and also how long the object should flicker when hit (only works for sprites).",MoreMountains.Tools.InformationAttribute.InformationType.Info,false)]
-		/// the effect that will be instantiated everytime the character touches the ground
-		public GameObject DamageEffect;
-		// the sound to play when the player gets hit
-		public AudioClip DamageSfx;
+		/// the MMFeedbacks to play when the character gets hit
+        public MMFeedbacks DamageFeedbacks;
 		// should the sprite (if there's one) flicker when getting damage ?
 		public bool FlickerSpriteOnHit = true;
         // whether or not this object can get knockback
@@ -39,8 +39,8 @@ namespace MoreMountains.CorgiEngine
 
 		[Header("Death")]
 		[Information("Here you can set an effect to instantiate when the object dies, a force to apply to it (corgi controller required), how many points to add to the game score, if the device should vibrate (only works on iOS and Android), and where the character should respawn (for non-player characters only).",MoreMountains.Tools.InformationAttribute.InformationType.Info,false)]
-		/// the effect to instantiate when the object gets destroyed
-		public GameObject DeathEffect;
+		/// the MMFeedbacks to play when the character dies
+        public MMFeedbacks DeathFeedbacks;
 		/// if this is not true, the object will remain there after its death
 		public bool DestroyOnDeath = true;
 		/// the time (in seconds) before the character is destroyed or disabled
@@ -63,8 +63,11 @@ namespace MoreMountains.CorgiEngine
         // respawn
         public delegate void OnHitDelegate();
         public OnHitDelegate OnHit;
+        
+        public delegate void OnHitZeroDelegate();
+        public OnHitZeroDelegate OnHitZero;
 
-		public delegate void OnReviveDelegate();
+        public delegate void OnReviveDelegate();
 		public OnReviveDelegate OnRevive;
 
 		public delegate void OnDeathDelegate();
@@ -75,23 +78,12 @@ namespace MoreMountains.CorgiEngine
 		protected Color _flickerColor = new Color32(255, 20, 20, 255); 
 		protected Renderer _renderer;
 		protected Character _character;
-        
-        [Header("MSB Custom")]
-        //MSB Custom
-        public MSB_Character _MSB_Character;
-        public bool isLocalUser;       
-        
-
 		protected CorgiController _controller;
 	    protected MMHealthBar _healthBar;
 	    protected Collider2D _collider2D;
 		protected bool _initialized = false;
 		protected AutoRespawn _autoRespawn;
 		protected Animator _animator;
-
-        //MSB Custom
-        //public DamageOnTouch.KnockbackStyles knockBackStyle;
-        //public Vector2 knockBackForce;
 
 	    /// <summary>
 	    /// On Start, we initialize our health
@@ -108,12 +100,7 @@ namespace MoreMountains.CorgiEngine
 		protected virtual void Initialization()
 		{
 			_character = GetComponent<Character>();
-            _MSB_Character = GetComponent<MSB_Character>();
-            isLocalUser = _MSB_Character.isLocalUser ? true : false;
-            //knockBackStyle = DamageOnTouch.KnockbackStyles.NoKnockback;
-            //knockBackForce = Vector2.zero;
-
-			if (gameObject.GetComponentNoAlloc<SpriteRenderer>() != null)
+			if (gameObject.MMGetComponentNoAlloc<SpriteRenderer>() != null)
 			{
 				_renderer = GetComponent<SpriteRenderer>();				
 			}
@@ -193,58 +180,93 @@ namespace MoreMountains.CorgiEngine
 				}
 			}
 		}
-            
-        public void ChangeHealth(int _health)
-        {
-            int previousHealth = CurrentHealth;
-            CurrentHealth = _health;
 
-            UpdateHealthBar(true);
-            if (CurrentHealth <= 0)
+		/// <summary>
+		/// Called when the object takes damage
+		/// </summary>
+		/// <param name="damage">The amount of health points that will get lost.</param>
+		/// <param name="instigator">The object that caused the damage.</param>
+		/// <param name="flickerDuration">The time (in seconds) the object should flicker after taking the damage.</param>
+		/// <param name="invincibilityDuration">The duration of the short invincibility following the hit.</param>
+		public virtual void Damage(int damage,GameObject instigator, float flickerDuration, float invincibilityDuration)
+		{
+            if (damage <= 0)
             {
-                if (_MSB_Character != null)
-                {
-                    
-                }
-            }
-
-        }
-
-        public void Damage(int _damage)
-        {
-            //Debug.LogWarning(_MSB_Character.c_userData.userNick + " 's" + " Health.Damage Called");           
-        }
-
-        public void TakeMSBCC(DamageOnTouch.MSBCCStyles _CCStyle ,float _MovementMultiplier,float _CCDuration, CharacterStates.CharacterConditions _causedCondition)
-        {
-            //마찬가지로 로컬일때만 적용한다
-            if (_CCStyle == DamageOnTouch.MSBCCStyles.NoCC)
-            {
+                OnHitZero?.Invoke();
                 return;
             }
 
-            if (_causedCondition == CharacterStates.CharacterConditions.Stun)
+			// if the object is invulnerable, we do nothing and exit
+			if (TemporaryInvulnerable || Invulnerable)
             {
+                OnHitZero?.Invoke();
+                return;
+			}
 
-            }
+			// if we're already below zero, we do nothing and exit
+			if ((CurrentHealth <= 0) && (InitialHealth != 0))
+			{
+				return;
+			}
 
-            if (_causedCondition == CharacterStates.CharacterConditions.Slow)
-            {
+			// we decrease the character's health by the damage
+			float previousHealth = CurrentHealth;
+			CurrentHealth -= damage;
 
-            }
-        }
+            OnHit?.Invoke();
 
+            if (CurrentHealth < 0)
+			{
+				CurrentHealth = 0;
+			}
 
-        /// <summary>
-        /// Called when the object takes damage
-        /// </summary>
-        /// <param name="damage">The amount of health points that will get lost.</param>
-        /// <param name="instigator">The object that caused the damage.</param>
-        /// <param name="flickerDuration">The time (in seconds) the object should flicker after taking the damage.</param>
-        /// <param name="invincibilityDuration">The duration of the short invincibility following the hit.</param>
-        public virtual void Damage(int damage,GameObject instigator, float flickerDuration, float invincibilityDuration)
-		{            
-        }
+			// we prevent the character from colliding with Projectiles, Player and Enemies
+			if (invincibilityDuration > 0)
+			{
+				DamageDisabled();
+				StartCoroutine(DamageEnabled(invincibilityDuration));	
+			}
+
+			// we trigger a damage taken event
+			MMDamageTakenEvent.Trigger(_character, instigator, CurrentHealth, damage, previousHealth);
+
+			if (_animator != null)
+			{
+				_animator.SetTrigger ("Damage");	
+			}
+
+            // we play the damage feedback
+            DamageFeedbacks?.PlayFeedbacks();
+
+            if (FlickerSpriteOnHit)
+			{
+				// We make the character's sprite flicker
+				if (_renderer != null)
+				{
+					StartCoroutine(MMImage.Flicker(_renderer,_initialColor,_flickerColor,0.05f,flickerDuration));	
+				}	
+			}
+
+			// we update the health bar
+			UpdateHealthBar(true);
+
+			// if health has reached zero
+			if (CurrentHealth <= 0)
+			{
+				// we set its health to zero (useful for the healthbar)
+				CurrentHealth = 0;
+				if (_character != null)
+				{
+					if (_character.CharacterType == Character.CharacterTypes.Player)
+					{
+						LevelManager.Instance.KillPlayer(_character);
+						return;
+					}
+				}
+
+				Kill();
+			}
+		}
 
 		/// <summary>
 		/// Kills the character, vibrates the device, instantiates death effects, handles points, etc
@@ -262,15 +284,11 @@ namespace MoreMountains.CorgiEngine
 			// we prevent further damage
 			DamageDisabled();
 
-			// instantiates the destroy effect
-			if (DeathEffect!=null)
-			{
-				GameObject instantiatedEffect=(GameObject)Instantiate(DeathEffect,transform.position,transform.rotation);
-	            instantiatedEffect.transform.localScale = transform.localScale;
-			}
+            // instantiates the destroy effect
+            DeathFeedbacks?.PlayFeedbacks();
 
-			// Adds points if needed.
-			if(PointsWhenDestroyed != 0)
+            // Adds points if needed.
+            if (PointsWhenDestroyed != 0)
 			{
 				// we send a new points event for the GameManager to catch (and other classes that may listen to it too)
 				CorgiEnginePointsEvent.Trigger(PointsMethods.Add, PointsWhenDestroyed);
@@ -278,7 +296,7 @@ namespace MoreMountains.CorgiEngine
 
 			if (_animator != null)
 			{
-				//_animator.SetTrigger ("Death");
+				_animator.SetTrigger ("Death");
             }
 
             if (OnDeath != null)
@@ -320,18 +338,15 @@ namespace MoreMountains.CorgiEngine
 			// if we have a character, we want to change its state
 			if (_character != null)
 			{
-                // we set its dead state to true
-                //Debug.LogWarning("CharacterCondition Change to Dead");
+				// we set its dead state to true
 				_character.ConditionState.ChangeState(CharacterStates.CharacterConditions.Dead);
 				_character.Reset ();
 
 				// if this is a player, we quit here
 				if (_character.CharacterType == Character.CharacterTypes.Player)
 				{
-                    gameObject.SetActive(false);                    
-                    return;
+					return;
 				}
-
 			}
 
 			if (DelayBeforeDestruction > 0f)
@@ -344,11 +359,6 @@ namespace MoreMountains.CorgiEngine
 				DestroyObject();	
 			}
 		}
-
-        public IEnumerator test1()
-        {
-            yield return new WaitForSeconds(3.0f);
-        }
 
 		/// <summary>
 		/// Revive this object.
@@ -404,13 +414,11 @@ namespace MoreMountains.CorgiEngine
 			
 			if (_autoRespawn == null)
 			{
-                // object is turned inactive to be able to reinstate it at respawn
-                Debug.LogWarning("Destroy Object gameObject.SetActive false");
-                gameObject.SetActive(false);	
+				// object is turned inactive to be able to reinstate it at respawn
+				gameObject.SetActive(false);	
 			}
 			else
 			{
-                Debug.LogWarning("AutoRespawn.Kill Called");
 				_autoRespawn.Kill ();
 			}
 
@@ -427,18 +435,7 @@ namespace MoreMountains.CorgiEngine
 			CurrentHealth = Mathf.Min (CurrentHealth + health,MaximumHealth);
 			UpdateHealthBar(true);
 		}
-
-		/// <summary>
-		/// Plays a sound when the character is hit
-		/// </summary>
-		protected virtual void PlayHitSfx()
-	    {
-			if (DamageSfx!=null)
-			{
-				SoundManager.Instance.PlaySound(DamageSfx,transform.position);
-			}
-	    }
-
+        
 	    /// <summary>
 	    /// Resets the character's health to its max value
 	    /// </summary>
@@ -476,7 +473,7 @@ namespace MoreMountains.CorgiEngine
 	    /// </summary>
 	    public virtual void DamageDisabled()
 	    {
-			Invulnerable = true;
+			TemporaryInvulnerable = true;
 	    }
 
 	    /// <summary>
@@ -484,7 +481,7 @@ namespace MoreMountains.CorgiEngine
 	    /// </summary>
 	    public virtual void DamageEnabled()
 	    {
-	    	Invulnerable = false;
+	    	TemporaryInvulnerable = false;
 	    }
 
 		/// <summary>
@@ -494,7 +491,7 @@ namespace MoreMountains.CorgiEngine
 	    public virtual IEnumerator DamageEnabled(float delay)
 		{
 			yield return new WaitForSeconds (delay);
-			Invulnerable = false;
+			TemporaryInvulnerable = false;
 		}
 
 		/// <summary>
@@ -506,5 +503,13 @@ namespace MoreMountains.CorgiEngine
 			DamageEnabled();
 			UpdateHealthBar (false);
 		}
+
+        /// <summary>
+        /// Cancels all running invokes on disable
+        /// </summary>
+        protected virtual void OnDisable()
+        {
+            CancelInvoke();
+        }
 	}
 }

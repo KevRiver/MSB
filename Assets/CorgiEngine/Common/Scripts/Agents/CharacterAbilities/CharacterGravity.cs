@@ -4,12 +4,13 @@ using MoreMountains.Tools;
 using System.Collections.Generic;
 
 namespace MoreMountains.CorgiEngine
-{	
-	/// <summary>
-	/// Add this class to a character and it'll be able to have a different gravity than the default one, and will be able to change it via Gravity Zones and Gravity Points
-	/// Animator parameters : none
-	/// </summary>
-	[AddComponentMenu("Corgi Engine/Character/Abilities/Character Gravity")] 
+{
+    /// <summary>
+    /// Add this class to a character and it'll be able to have a different gravity than the default one, and will be able to change it via Gravity Zones and Gravity Points
+    /// Animator parameters : none
+    /// </summary>
+    [HiddenProperties("AbilityStartFeedbacks", "AbilityStopFeedbacks")]
+    [AddComponentMenu("Corgi Engine/Character/Abilities/Character Gravity")] 
 	public class CharacterGravity : CharacterAbility 
 	{
 		/// the various ways you can modify the existing character forces when entering or exiting a gravity zone. Reset will set them at 0, Nothing will do nothing (use at your own risk), and Adapt will rotate the force to match the new gravity
@@ -317,7 +318,7 @@ namespace MoreMountains.CorgiEngine
 		protected virtual void OnTriggerEnter2D(Collider2D collider)
 		{			
 			// if this is not a gravity zone, we do nothing and exit
-			GravityZone gravityZone = collider.gameObject.GetComponentNoAlloc<GravityZone> ();
+			GravityZone gravityZone = collider.gameObject.MMGetComponentNoAlloc<GravityZone> ();
 			if ((gravityZone == null) || !SubjectToGravityZones) { return; }
 
 			// if we've entered another zone before exiting the one we are in, we cache the previous one to prevent glitches later
@@ -343,7 +344,7 @@ namespace MoreMountains.CorgiEngine
 		protected virtual void OnTriggerExit2D(Collider2D collider)
 		{
 			// if this is not a gravity zone, we do nothing and exit
-			GravityZone gravityZone = collider.gameObject.GetComponentNoAlloc<GravityZone> ();
+			GravityZone gravityZone = collider.gameObject.MMGetComponentNoAlloc<GravityZone> ();
 			if ((gravityZone == null) || !SubjectToGravityZones) { return; }
 
 			// if the zone we are leaving is the one we had cached, we reset our stored grav zone
@@ -453,7 +454,7 @@ namespace MoreMountains.CorgiEngine
             {
                 if (_movement.CurrentState == CharacterStates.MovementStates.Dashing)
                 {
-                    _character.gameObject.GetComponentNoAlloc<CharacterDash>().StopDash();
+                    _character.gameObject.MMGetComponentNoAlloc<CharacterDash>().StopDash();
                 }
                 _movement.ChangeState(CharacterStates.MovementStates.Idle);
             }
@@ -518,7 +519,7 @@ namespace MoreMountains.CorgiEngine
 			{
 				return;
 			}
-			MMDebug.DebugDrawArrow(_controller.ColliderCenterPosition, GravityDirectionVector, MoreMountains.Tools.Colors.Cyan, _controller.Height() * 1.5f, 0.2f, 35f);
+			MMDebug.DebugDrawArrow(_controller.ColliderCenterPosition, GravityDirectionVector, MMColors.Cyan, _controller.Height() * 1.5f, 0.2f, 35f);
 		}
 	}
 }

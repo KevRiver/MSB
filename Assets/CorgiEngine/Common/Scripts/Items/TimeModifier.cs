@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using MoreMountains.Tools;
+using MoreMountains.Feedbacks;
 
 namespace MoreMountains.CorgiEngine
 {
@@ -8,10 +9,9 @@ namespace MoreMountains.CorgiEngine
 	/// Add this to an item to make it modify time when it gets picked up by a Character
 	/// </summary>
 	[AddComponentMenu("Corgi Engine/Items/Time Modifier")]
-	public class TimeModifier : MonoBehaviour
-	{
-		/// the effect to instantiate when picked up
-		public GameObject Effect;
+	public class TimeModifier : PickableItem
+    {
+        [Header("Time Modifier")]
 		/// the time speed to apply while the effect lasts
 		public float TimeSpeed = 0.5f;
 		/// how long the duration will last , in seconds
@@ -19,28 +19,18 @@ namespace MoreMountains.CorgiEngine
 
 		protected WaitForSeconds _changeTimeWFS;
 
-	    /// <summary>
-	    /// Triggered when something collides with the TimeModifier
-	    /// </summary>
-	    /// <param name="collider">The object that collide with the TimeModifier</param>
-	    protected virtual void OnTriggerEnter2D (Collider2D collider) 
-		{
-			// if the other collider isn't a CharacterBehavior, we exit and do nothing
-			if (collider.GetComponent<Character>() == null)
-				return;
+        /// <summary>
+        /// Triggered when something collides with the TimeModifier
+        /// </summary>
+        /// <param name="collider">The object that collide with the TimeModifier</param>
+        protected override void Pick()
+        {
+            _changeTimeWFS = new WaitForSeconds(Duration * TimeSpeed);
 
-			_changeTimeWFS = new WaitForSeconds (Duration * TimeSpeed);
-
-			// we start the ChangeTime coroutine
-			StartCoroutine (ChangeTime ());
-
-			// adds an instance of the effect at the TimeModifier's position
-			Instantiate(Effect,transform.position,transform.rotation);
-			// we disable the sprite and the collider
-			gameObject.GetComponent<SpriteRenderer> ().enabled = false;
-			gameObject.GetComponent<CircleCollider2D> ().enabled = false;
-		}
-
+            // we start the ChangeTime coroutine
+            StartCoroutine(ChangeTime());
+        }
+        
 	    /// <summary>
 	    /// Asks the Game Manager to change the time scale for a specified duration.
 	    /// </summary>
@@ -53,9 +43,6 @@ namespace MoreMountains.CorgiEngine
 			// we multiply the duration by the timespeed to get the real duration in seconds
 			yield return _changeTimeWFS;
 			GUIManager.Instance.SetTimeSplash (false);
-			// we re enable the sprite and collider, and desactivate the object
-			gameObject.GetComponent<SpriteRenderer> ().enabled = true;
-			gameObject.GetComponent<CircleCollider2D> ().enabled = true;
 			gameObject.SetActive(false);
 		}
 	}

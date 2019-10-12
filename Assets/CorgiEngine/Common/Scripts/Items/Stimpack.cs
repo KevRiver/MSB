@@ -17,15 +17,9 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected override void Pick()
 		{
-            //MSBNetwork.NetworkModule.GetInstance().RequestGameUserActionItem(MSB_GameManager.Instance.roomIndex, GetComponent<ItemInfo>().itemID);
-			Health characterHealth = _collider.GetComponent<Health>();
+			Health characterHealth = _pickingCollider.GetComponent<Health>();
 			// else, we give health to the player
 			characterHealth.GetHealth(HealthToGive,gameObject);
 		}
-
-        public override void OnTriggerEnter2D(Collider2D collider)
-        {
-            
-        }
-    }
+	}
 }

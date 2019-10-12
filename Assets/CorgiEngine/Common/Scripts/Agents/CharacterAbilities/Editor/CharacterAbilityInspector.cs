@@ -15,18 +15,34 @@ namespace MoreMountains.CorgiEngine
 	/// </summary>
 
 	public class CharacterAbilityInspector : Editor 
-	{		
-		SerializedProperty AbilityStartSfx, AbilityInProgressSfx, AbilityStopSfx;
+	{
+        protected SerializedProperty _abilityStartFeedbacks;
+        protected SerializedProperty _abilityStopFeedbacks;
 
-		protected bool _foldout;
+        protected List<String> _propertiesToHide;
+        protected bool _hasHiddenProperties = false;
 
-		protected virtual void OnEnable()
-		{
-			AbilityStartSfx = this.serializedObject.FindProperty("AbilityStartSfx");
-			AbilityInProgressSfx = this.serializedObject.FindProperty("AbilityInProgressSfx");
-			AbilityStopSfx = this.serializedObject.FindProperty("AbilityStopSfx");
-		}
+        private void OnEnable()
+        {
+            _propertiesToHide = new List<string>();
 
+            _abilityStartFeedbacks = this.serializedObject.FindProperty("AbilityStartFeedbacks");
+            _abilityStopFeedbacks = this.serializedObject.FindProperty("AbilityStopFeedbacks");
+
+            HiddenPropertiesAttribute[] attributes = (HiddenPropertiesAttribute[])target.GetType().GetCustomAttributes(typeof(HiddenPropertiesAttribute), false);
+            if (attributes != null)
+            {
+                if (attributes.Length != 0)
+                {
+                    if (attributes[0].PropertiesNames != null)
+                    {
+                        _propertiesToHide = new List<String>(attributes[0].PropertiesNames);                        
+                        _hasHiddenProperties = true;
+                    }
+                }                
+            }
+        }
+        
 		/// <summary>
 		/// When inspecting a Character, adds to the regular inspector some labels, useful for debugging
 		/// </summary>
@@ -35,37 +51,43 @@ namespace MoreMountains.CorgiEngine
 			CharacterAbility t = (target as CharacterAbility);
 
 			serializedObject.Update();
+            EditorGUI.BeginChangeCheck();
 
-			if (t.HelpBoxText() != "")
+            if (t.HelpBoxText() != "")
 			{
 				EditorGUILayout.HelpBox(t.HelpBoxText(),MessageType.Info);
 			}
 
-			Editor.DrawPropertiesExcluding(serializedObject, new string[] { "AbilityStartSfx","AbilityInProgressSfx","AbilityStopSfx" });
+			Editor.DrawPropertiesExcluding(serializedObject, new string[] { "AbilityStartFeedbacks", "AbilityStopFeedbacks" });
 
 			EditorGUILayout.Space();
+                        
+            if (_propertiesToHide.Count > 0)
+            {
+                if (_propertiesToHide.Count < 2)
+                {
+                    EditorGUILayout.LabelField("Feedbacks", EditorStyles.boldLabel);
+                }                
+                if (!_propertiesToHide.Contains("AbilityStartFeedbacks"))
+                {
+                    EditorGUILayout.PropertyField(_abilityStartFeedbacks);
+                }
+                if (!_propertiesToHide.Contains("AbilityStopFeedbacks"))
+                {
+                    EditorGUILayout.PropertyField(_abilityStopFeedbacks);
+                }
+            }
+            else
+            {
+                EditorGUILayout.LabelField("Feedbacks", EditorStyles.boldLabel);
+                EditorGUILayout.PropertyField(_abilityStartFeedbacks);
+                EditorGUILayout.PropertyField(_abilityStopFeedbacks);
+            }
 
-			EditorGUI.BeginChangeCheck ();
-	        EditorGUILayout.GetControlRect (true, 16f, EditorStyles.foldout);
-	        Rect foldRect = GUILayoutUtility.GetLastRect ();
-	        if (Event.current.type == EventType.MouseUp && foldRect.Contains (Event.current.mousePosition)) 
-	        {
-	            _foldout = !_foldout;
-	            GUI.changed = true;
-	            Event.current.Use ();
-	        }
-	        _foldout = EditorGUI.Foldout (foldRect, _foldout, "Ability Sounds");	      
-
-	        if (_foldout) 
-	        {
-				EditorGUI.indentLevel++;
-				EditorGUILayout.PropertyField(AbilityStartSfx);
-				EditorGUILayout.PropertyField(AbilityInProgressSfx);
-				EditorGUILayout.PropertyField(AbilityStopSfx);
-		        EditorGUI.indentLevel--;
-	         }
-
-			serializedObject.ApplyModifiedProperties();
-		}	
+            if (EditorGUI.EndChangeCheck())
+            {
+                serializedObject.ApplyModifiedProperties();
+            }                
+        }	
 	}
 }

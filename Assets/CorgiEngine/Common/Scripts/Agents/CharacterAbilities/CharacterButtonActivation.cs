@@ -3,26 +3,31 @@ using System.Collections;
 using MoreMountains.Tools;
 
 namespace MoreMountains.CorgiEngine
-{	
-	/// <summary>
-	/// Add this component to a character and it'll be able to crouch and crawl
-	/// Animator parameters : Activating (bool)
-	/// </summary>
-	[AddComponentMenu("Corgi Engine/Character/Abilities/Character Button Activation")] 
+{
+    /// <summary>
+    /// Add this component to a character and it'll be able to crouch and crawl
+    /// Animator parameters : Activating (bool)
+    /// </summary>
+    [HiddenProperties("AbilityStopFeedbacks")]
+    [AddComponentMenu("Corgi Engine/Character/Abilities/Character Button Activation")] 
 	public class CharacterButtonActivation : CharacterAbility 
 	{
 		/// This method is only used to display a helpbox text at the beginning of the ability's inspector
 		public override string HelpBoxText() { return "This component allows your character to interact with button powered objects (dialogue zones, switches...). "; }
-		/// true if the character is in a dialogue zone
+        /// true if the character is in a dialogue zone
 		public bool InButtonActivatedZone {get;set;}
         /// true if the zone is automated
         public bool InButtonAutoActivatedZone { get; set; }
         /// the current button activated zone
         public ButtonActivated ButtonActivatedZone {get;set;}
 
-		public bool PreventJumpWhenInZone = true;
+        [Header("Button Activation")]
+        public bool PreventJumpWhenInZone = true;
 
 		protected bool _activating = false;
+
+        // animation parameters
+        protected int _activatingAnimationParameter;
 
 		/// <summary>
 		/// Gets and stores components for further use
@@ -44,16 +49,7 @@ namespace MoreMountains.CorgiEngine
 				ButtonActivation();
 			}
 		}
-
-		/// <summary>
-		/// Every frame, we check if we're crouched and if we still should be
-		/// </summary>
-		public override void ProcessAbility()
-		{
-			base.ProcessAbility();
-			_activating = false;
-		}
-
+        
 		/// <summary>
 		/// Tries to activate the button activated zone
 		/// </summary>
@@ -79,7 +75,9 @@ namespace MoreMountains.CorgiEngine
 				MMCharacterEvent.Trigger(_character, MMCharacterEventTypes.ButtonActivation);
 
 				ButtonActivatedZone.TriggerButtonAction();
-				_activating = true;
+                PlayAbilityStartFeedbacks();
+
+                _activating = true;
 			}
 		}
 
@@ -98,7 +96,7 @@ namespace MoreMountains.CorgiEngine
         /// </summary>
         protected override void InitializeAnimatorParameters()
 		{
-			RegisterAnimatorParameter ("Activating", AnimatorControllerParameterType.Bool);
+			RegisterAnimatorParameter ("Activating", AnimatorControllerParameterType.Bool, out _activatingAnimationParameter);
 		}
 
 		/// <summary>
@@ -106,7 +104,8 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public override void UpdateAnimator()
 		{
-			MMAnimator.UpdateAnimatorBool(_animator,"Activating", _activating, _character._animatorParameters);	
-		}
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator,_activatingAnimationParameter, _activating, _character._animatorParameters);
+            _activating = false;
+        }
 	}
 }

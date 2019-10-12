@@ -32,7 +32,7 @@ namespace MoreMountains.CorgiEngine
                 return false;
             }
 
-            _targetCharacter = _brain.Target.gameObject.GetComponentNoAlloc<Character>();
+            _targetCharacter = _brain.Target.gameObject.MMGetComponentNoAlloc<Character>();
             if (_targetCharacter != null)
             {
                 if (_targetCharacter.IsFacingRight && (this.transform.position.x > _targetCharacter.transform.position.x))

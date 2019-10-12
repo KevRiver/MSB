@@ -22,16 +22,19 @@ namespace MoreMountains.CorgiEngine
 		public float DetectionRaycastLength = 0.2f;
 		/// the minimum horizontal speed below which we don't consider the character pushing anymore
 		public float MinimumPushSpeed = 0.05f;
-
-
+        
 		protected bool _collidingWithPushable = false;
 		protected Vector3 _raycastDirection;
 		protected Vector3 _raycastOrigin;
 
-		/// <summary>
-		/// On Start(), we initialize our various flags
-		/// </summary>
-		protected override void Initialization()
+        // animation parameters
+        protected const string _pushingAnimationParameterName = "Pushing";
+        protected int _pushingAnimationParameter;
+
+        /// <summary>
+        /// On Start(), we initialize our various flags
+        /// </summary>
+        protected override void Initialization()
 		{
 			base.Initialization();
 			_controller.Parameters.Physics2DInteraction = CanPush;
@@ -78,10 +81,16 @@ namespace MoreMountains.CorgiEngine
 				}
 			}
 
-			if (_controller.State.IsGrounded && _collidingWithPushable && Mathf.Abs(_controller.Speed.x) > MinimumPushSpeed && _movement.CurrentState != CharacterStates.MovementStates.Pushing && _movement.CurrentState != CharacterStates.MovementStates.Jumping)
+			if (_controller.State.IsGrounded 
+                && _collidingWithPushable 
+                && (Mathf.Abs(_controller.Speed.x) > MinimumPushSpeed) 
+                && (_movement.CurrentState != CharacterStates.MovementStates.Pushing)
+                && (_movement.CurrentState != CharacterStates.MovementStates.Jumping)
+                && (_movement.CurrentState != CharacterStates.MovementStates.Crouching)
+                && (_movement.CurrentState != CharacterStates.MovementStates.Crawling)
+                && !_startFeedbackIsPlaying)
 			{
-				PlayAbilityStartSfx ();
-				PlayAbilityUsedSfx ();
+				PlayAbilityStartFeedbacks ();
 				_movement.ChangeState (CharacterStates.MovementStates.Pushing);
 			}
 
@@ -90,15 +99,16 @@ namespace MoreMountains.CorgiEngine
 			{
 				// we reset the state
 				_movement.ChangeState(CharacterStates.MovementStates.Idle);
-				PlayAbilityStopSfx ();
-				StopAbilityUsedSfx();
-			}
+                StopStartFeedbacks();
+                PlayAbilityStopFeedbacks();
 
-			if (_movement.CurrentState != CharacterStates.MovementStates.Pushing && _abilityInProgressSfx != null)
-			{
-				PlayAbilityStopSfx ();
-				StopAbilityUsedSfx();
-			}
+            }
+
+            if ((_movement.CurrentState != CharacterStates.MovementStates.Pushing) && _startFeedbackIsPlaying) 
+            {
+                StopStartFeedbacks();
+                PlayAbilityStopFeedbacks();
+            }
 		}
 
 		/// <summary>
@@ -106,7 +116,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected override void InitializeAnimatorParameters()
 		{
-			RegisterAnimatorParameter ("Pushing", AnimatorControllerParameterType.Bool);
+			RegisterAnimatorParameter (_pushingAnimationParameterName, AnimatorControllerParameterType.Bool, out _pushingAnimationParameter);
 		}
 
 		/// <summary>
@@ -114,7 +124,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public override void UpdateAnimator()
 		{
-			MMAnimator.UpdateAnimatorBool(_animator,"Pushing",(_movement.CurrentState == CharacterStates.MovementStates.Pushing),_character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _pushingAnimationParameter, (_movement.CurrentState == CharacterStates.MovementStates.Pushing), _character._animatorParameters);
 		}
 	}
 }

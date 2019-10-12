@@ -17,8 +17,6 @@ namespace MoreMountains.CorgiEngine
 			Normal,
 			ControlledMovement,
 			Frozen,
-            Stun,   //MSB Custom
-            Slow,   //MSB Custom
 			Paused,
 			Dead
 		}

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using MoreMountains.Tools;
+using MoreMountains.Feedbacks;
 
 namespace MoreMountains.CorgiEngine
 {	
@@ -14,10 +15,9 @@ namespace MoreMountains.CorgiEngine
 
 		[Header("Explosion")]
 		public float TimeBeforeExplosion = 2f;
-		public GameObject ExplosionEffect;
-		public AudioClip ExplosionSfx;
+        public MMFeedbacks ExplosionFeedback;
 
-		[Header("Flicker")]
+        [Header("Flicker")]
 		public bool FlickerSprite = true;
 		public float TimeBeforeFlicker = 1f;
 
@@ -50,7 +50,7 @@ namespace MoreMountains.CorgiEngine
 			DamageAreaCollider.isTrigger = true;
 			DisableDamageArea ();
 
-			_renderer = gameObject.GetComponentNoAlloc<Renderer> ();
+			_renderer = gameObject.MMGetComponentNoAlloc<Renderer> ();
 			if (_renderer != null)
 			{
 				if (_renderer.material.HasProperty("_Color"))
@@ -59,7 +59,7 @@ namespace MoreMountains.CorgiEngine
 				}
 			}
 
-			_poolableObject = gameObject.GetComponentNoAlloc<MMPoolableObject> ();
+			_poolableObject = gameObject.MMGetComponentNoAlloc<MMPoolableObject> ();
 			if (_poolableObject != null)
 			{
 				_poolableObject.LifeTime = 0;
@@ -91,9 +91,8 @@ namespace MoreMountains.CorgiEngine
 			{
 				EnableDamageArea ();
 				_renderer.enabled = false;
-				InstantiateExplosionEffect ();
-				PlayExplosionSound ();
-				_damageAreaActive = true;
+                ExplosionFeedback?.PlayFeedbacks();
+                _damageAreaActive = true;
 			}
 
 			if (_timeSinceStart >= TimeBeforeExplosion + DamageAreaActiveDuration)
@@ -115,24 +114,6 @@ namespace MoreMountains.CorgiEngine
 				Destroy ();
 			}
 
-		}
-
-		protected virtual void InstantiateExplosionEffect()
-		{
-			// instantiates the destroy effect
-			if (ExplosionEffect!=null)
-			{
-				GameObject instantiatedEffect=(GameObject)Instantiate(ExplosionEffect,transform.position,transform.rotation);
-				instantiatedEffect.transform.localScale = transform.localScale;
-			}
-		}
-
-		protected virtual void PlayExplosionSound()
-		{
-			if (ExplosionSfx!=null)
-			{
-				SoundManager.Instance.PlaySound(ExplosionSfx,transform.position);
-			}
 		}
 
 		/// <summary>

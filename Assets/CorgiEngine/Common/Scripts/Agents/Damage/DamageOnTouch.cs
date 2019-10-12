@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using MoreMountains.Tools;
 using System.Collections.Generic;
-using MSBNetwork;
+using MoreMountains.Feedbacks;
 
 namespace MoreMountains.CorgiEngine
 {	
@@ -16,10 +16,6 @@ namespace MoreMountains.CorgiEngine
 		public enum KnockbackStyles { NoKnockback, SetForce, AddForce }
         /// the possible knockback directions
         public enum KnockbackDirections { BasedOnOwnerPosition, BasedOnSpeed }
-        //MSB Custom CC Style
-        public enum MSBCCStyles { NoCC, Stun, Slow, KnockBack }
-
-        public enum DamageAreaType { Trigger, DestroyOnColliding };
 
 		[Header("Targets")]
 		[Information("This component will make your object cause damage to objects that collide with it. Here you can define what layers will be affected by the damage (for a standard enemy, choose Player), how much damage to give, and how much force should be applied to the object that gets the damage on hit. You can also specify how long the post-hit invincibility should last (in seconds).",MoreMountains.Tools.InformationAttribute.InformationType.Info,false)]
@@ -29,26 +25,11 @@ namespace MoreMountains.CorgiEngine
 		[Header("Damage Caused")]
 		/// The amount of health to remove from the player's health
 		public int DamageCaused = 10;
-        /// the type of knockback to apply when causing damage
-        //public KnockbackStyles DamageCausedKnockbackType = KnockbackStyles.SetForce;
+		/// the type of knockback to apply when causing damage
+		public KnockbackStyles DamageCausedKnockbackType = KnockbackStyles.SetForce;
         /// The direction to apply the knockback 
-        //public KnockbackDirections DamageCausedKnockbackDirection;
-
-        //MSB Custom
-        public CharacterStates.CharacterConditions CCActivateCondition;
-        public MSBCCStyles CausedMSBCCType = MSBCCStyles.NoCC;
-        public DamageAreaType _damageAreaType;
-
-        [Header("CCType 'Slow' ")]
-        public float MovementMultiplier = 1.0f;
-        public float SlowDuration;
-
-        [Header("CCType 'Stun'")]
-        public float StunDuration;
-
-        [Header("CCType 'KnowBack'")]
-        public Vector2 CausedKnockbackForce = Vector2.zero;
-        public float shortStunDuration;
+        public KnockbackDirections DamageCausedKnockbackDirection;
+        /// The force to apply to the object that gets damaged
         public Vector2 DamageCausedKnockbackForce = new Vector2(10,2);
         /// The duration of the invincibility frames after the hit (in seconds)
         public float InvincibilityDuration = 0.5f;
@@ -71,6 +52,10 @@ namespace MoreMountains.CorgiEngine
         public float DamageTakenInvincibilityDuration = 0.5f;
 
         [Header("Feedback")]
+        /// the feedback to play when applying damage to a damageable
+        public MMFeedbacks HitDamageableFeedback;
+        /// the feedback to play when applying damage to a non damageable
+        public MMFeedbacks HitNonDamageableFeedback;
         /// the duration of freeze frames on hit (leave it at 0 to ignore)
         public float FreezeFramesOnHitDuration = 0f;
 
@@ -83,20 +68,19 @@ namespace MoreMountains.CorgiEngine
 		protected float _startTime = 0f;
 		protected Health _colliderHealth;
 		protected CorgiController _corgiController;
-		protected CorgiController _colliderCorgiController;              
+		protected CorgiController _colliderCorgiController;
 		protected Health _health;
 		protected List<GameObject> _ignoredGameObjects;
         protected Color _gizmosColor;
         protected Vector3 _gizmoSize;
+
         protected CircleCollider2D _circleCollider2D;
         protected BoxCollider2D _boxCollider2D;
-        public bool isBelongToLocalUser;
-        public bool collideOnce;
 
-        /// <summary>
-        /// Initialization
-        /// </summary>
-        protected virtual void Awake()
+		/// <summary>
+		/// Initialization
+		/// </summary>
+		protected virtual void Awake()
 		{
 			_ignoredGameObjects = new List<GameObject>();
 			_health = GetComponent<Health>();
@@ -105,15 +89,22 @@ namespace MoreMountains.CorgiEngine
             _circleCollider2D = GetComponent<CircleCollider2D>();
             _gizmosColor = Color.red;
             _gizmosColor.a = 0.25f;
+            InitializeFeedbacks();
         }
 
-		/// <summary>
-		/// OnEnable we set the start time to the current timestamp
-		/// </summary>
-		protected virtual void OnEnable()
+        protected virtual void InitializeFeedbacks()
+        {
+            HitDamageableFeedback?.Initialization(this.gameObject);
+            HitNonDamageableFeedback?.Initialization(this.gameObject);
+        }
+
+        /// <summary>
+        /// OnEnable we set the start time to the current timestamp
+        /// </summary>
+        protected virtual void OnEnable()
 		{
 			_startTime = Time.time;
-        }
+		}
 
 		/// <summary>
 		/// During last update, we store the position and velocity of the object
@@ -164,78 +155,56 @@ namespace MoreMountains.CorgiEngine
 		/// <param name="collider">what's colliding with the object.</param>
 		public virtual void OnTriggerStay2D(Collider2D collider)
 		{			
-			//Colliding (collider);
+			Colliding (collider);
 	    }
 
 		public virtual void OnTriggerEnter2D(Collider2D collider)
-		{            
-			Colliding (collider);           
+		{			
+			Colliding (collider);
 		}
 
-        const int LAYER_DEFAULT = 0;
-        const int LAYER_PLATFORM = 8;
 		protected virtual void Colliding(Collider2D collider)
 		{
-            //Debug.LogWarning("Colliding at " + collider.gameObject.name);
-
-            if (!this.isActiveAndEnabled)
+			if (!this.isActiveAndEnabled)
 			{
-                //Debug.LogWarning("DamageOnTouch : func Colliding 1st Condition Enter");
 				return;
 			}
 
 			// if the object we're colliding with is part of our ignore list, we do nothing and exit
 			if (_ignoredGameObjects.Contains(collider.gameObject))
 			{
-                //Debug.LogWarning("DamageOnTouch : func Colliding 2nd Condition Enter " + collider.gameObject.name);
-                return;
+				return;
 			}
 
 			// if what we're colliding with isn't part of the target layers, we do nothing and exit
 			if (!MMLayers.LayerInLayerMask(collider.gameObject.layer,TargetLayerMask))
 			{
-                //Debug.LogWarning("Collider Layer : " + collider.gameObject.layer);
-                switch (collider.gameObject.layer)
-                {
-                    case LAYER_PLATFORM:
-                        if (_damageAreaType == DamageAreaType.DestroyOnColliding)
-                        {
-                            gameObject.SetActive(false);
-                        }
-                        break;
-                }
-                return;
+				return;
 			}
-			
-			_colliderHealth = collider.gameObject.GetComponentNoAlloc<Health>();
+
+			/*if (Time.time - _knockbackTimer < InvincibilityDuration)
+			{
+				return;
+			}
+			else
+			{
+				_knockbackTimer = Time.time;
+			}*/
+
+			_colliderHealth = collider.gameObject.MMGetComponentNoAlloc<Health>();
 
 			// if what we're colliding with is damageable
 			if (_colliderHealth != null)
 			{
 			    if(_colliderHealth.CurrentHealth > 0)
-			    {                    
-                    OnCollideWithDamageable(_colliderHealth);
-                    if (collideOnce)
-                    {
-                        if (_damageAreaType == DamageAreaType.DestroyOnColliding)
-                            gameObject.SetActive(false);
-                        if (_boxCollider2D != null)
-                        {
-                            if(_damageAreaType == DamageAreaType.Trigger)
-                                _boxCollider2D.enabled = false;                           
-                        }
-                        if (_circleCollider2D != null)
-                        {
-                            if (_damageAreaType == DamageAreaType.Trigger)
-                                    _circleCollider2D.enabled = false;
-                        }
-                    }
-                }
+			    {
+			        OnCollideWithDamageable(_colliderHealth);
+			    }
 			} 
 
 			// if what we're colliding with can't be damaged
 			else
-			{                
+			{
 				OnCollideWithNonDamageable();
 			}
 		}
@@ -244,69 +213,61 @@ namespace MoreMountains.CorgiEngine
 	    /// Describes what happens when colliding with a damageable object
 	    /// </summary>
 	    /// <param name="health">Health.</param>
-        /// MSB Custom
 	    protected virtual void OnCollideWithDamageable(Health health)
 	    {
-            
-            MSB_Character colliderPlayer = health.GetComponent<MSB_Character>();
-            string option = ((int)CausedMSBCCType).ToString() +
-                "," + ((int)CCActivateCondition).ToString();
+			// if what we're colliding with is a CorgiController, we apply a knockback force
+			_colliderCorgiController = health.gameObject.MMGetComponentNoAlloc<CorgiController>();
 
-            switch (CausedMSBCCType)
-            {
-                case MSBCCStyles.NoCC:
-                    break;
-                case MSBCCStyles.KnockBack:
-                    _colliderCorgiController = health.gameObject.GetComponentNoAlloc<CorgiController>();
-
+			if ((_colliderCorgiController != null) && (DamageCausedKnockbackForce != Vector2.zero) && (!_colliderHealth.TemporaryInvulnerable) && (!_colliderHealth.Invulnerable) && (!_colliderHealth.ImmuneToKnockback))
+			{
+                _knockbackForce.x = DamageCausedKnockbackForce.x;
+                if (DamageCausedKnockbackDirection == KnockbackDirections.BasedOnSpeed)
+                {
+                    Vector2 totalVelocity = _colliderCorgiController.Speed + _velocity;
+                    _knockbackForce.x *= -1 * Mathf.Sign(totalVelocity.x);
+                }
+                if (DamagedTakenKnockbackDirection == KnockbackDirections.BasedOnOwnerPosition)
+                {
                     if (Owner == null) { Owner = this.gameObject; }
                     Vector2 relativePosition = _colliderCorgiController.transform.position - Owner.transform.position;
-
-                    _knockbackForce.x = CausedKnockbackForce.x;
                     _knockbackForce.x *= Mathf.Sign(relativePosition.x);
-                    _knockbackForce.y = CausedKnockbackForce.y;
-
-                    option += "," + shortStunDuration.ToString() +
-                        "," + (_knockbackForce.x).ToString() +
-                        "," + (_knockbackForce.y).ToString();
-                    break;
-                case MSBCCStyles.Slow:
-                    option += "," + SlowDuration.ToString() +
-                        "," + MovementMultiplier.ToString();
-                    break;
-                case MSBCCStyles.Stun:
-                    option += "," + StunDuration.ToString();
-                    break;
-            }
-
-
-            //상대가 무적상태가 아니고, DamageOnTouch를 생성한 Owner가 LocalUser일때 ActionDamage를 요청한다
-            if (!_colliderHealth.Invulnerable)
-            {
-                Debug.Log("Colliding Box is belong to local user ? : " + isBelongToLocalUser);
-                if (isBelongToLocalUser)
-                {
-                    Debug.LogWarning("Request Action Damage : " + option);
-                    NetworkModule.GetInstance().RequestGameUserActionDamage(MSB_GameManager.Instance.roomIndex, colliderPlayer.c_userData.userNumber, DamageCaused, option);
                 }
+				
+				_knockbackForce.y = DamageCausedKnockbackForce.y;	
 
-                //_colliderHealth.Damage(DamageCaused);
+				if (DamageCausedKnockbackType == KnockbackStyles.SetForce)
+				{
+					_colliderCorgiController.SetForce(_knockbackForce);	
+				}
+				if (DamageCausedKnockbackType == KnockbackStyles.AddForce)
+				{
+					_colliderCorgiController.AddForce(_knockbackForce);	
+				}
+			}
+
+            HitDamageableFeedback?.PlayFeedbacks(this.transform.position);
+
+            if (FreezeFramesOnHitDuration > 0)
+            {
+                MMFreezeFrameEvent.Trigger(FreezeFramesOnHitDuration);
             }
+
+	    	// we apply the damage to the thing we've collided with
+			_colliderHealth.Damage(DamageCaused, gameObject,InvincibilityDuration,InvincibilityDuration);
+			SelfDamage(DamageTakenEveryTime + DamageTakenDamageable);
 	    }
 
 		/// <summary>
 	    /// Describes what happens when colliding with a non damageable object
 	    /// </summary>
 	    protected virtual void OnCollideWithNonDamageable()
-	    {
-            Debug.LogWarning("NonDamageable Collider");
-            if (_damageAreaType == DamageAreaType.DestroyOnColliding)
+        {
+            if (DamageTakenEveryTime + DamageTakenNonDamageable > 0)
             {
-                gameObject.SetActive(false);
+                HitNonDamageableFeedback?.PlayFeedbacks(this.transform.position);
+                SelfDamage(DamageTakenEveryTime + DamageTakenNonDamageable);
             }
-
-			SelfDamage(DamageTakenEveryTime + DamageTakenNonDamageable);
-	    }
+        }
 
 	    /// <summary>
 	    /// Applies damage to itself

@@ -49,27 +49,26 @@ namespace MoreMountains.CorgiEngine
 		{
 			if (!CheckNumberOfUses())
 			{
-				return;
+                PromptError();
+                return;
 			}
 
 			if (_collidingObject == null) { return; }
 
 			if (RequiresKey)
 			{
-				CharacterInventory characterInventory = _collidingObject.gameObject.GetComponentNoAlloc<CharacterInventory> ();
+				CharacterInventory characterInventory = _collidingObject.gameObject.MMGetComponentNoAlloc<CharacterInventory> ();
 				if (characterInventory == null)
-				{
-					return;
+                {
+                    PromptError();
+                    return;
 				}	
 
 				_keyList.Clear ();
 				_keyList = characterInventory.MainInventory.InventoryContains (KeyID);
 				if (_keyList.Count == 0)
 				{
-                    if (_buttonPromptAnimator != null)
-                    {
-                        _buttonPromptAnimator.SetTrigger("Error");
-                    }
+                    PromptError();
                     return;
 				}
 				else
@@ -82,10 +81,10 @@ namespace MoreMountains.CorgiEngine
 			ActivateZone ();
 		}
 
-		/// <summary>
-		/// Calls the method associated to the key action
-		/// </summary>
-		protected virtual void TriggerKeyAction()
+        /// <summary>
+        /// Calls the method associated to the key action
+        /// </summary>
+        protected virtual void TriggerKeyAction()
 		{
 			if (KeyAction != null)
 			{

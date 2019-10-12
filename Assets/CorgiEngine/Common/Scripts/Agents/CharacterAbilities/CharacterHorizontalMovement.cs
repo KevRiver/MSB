@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using MoreMountains.Tools;
+using MoreMountains.Feedbacks;
 
 namespace MoreMountains.CorgiEngine
 {	
@@ -35,28 +36,29 @@ namespace MoreMountains.CorgiEngine
         /// the threshold after which input is considered (usually 0.1f to eliminate small joystick noise)
         public float InputThreshold = 0.1f;
 
-		[Header("Effects")]
-		/// the effect that will be instantiated everytime the character touches the ground
-		public ParticleSystem TouchTheGroundEffect;
-		/// the sound effect to play when the character touches the ground
-		public AudioClip TouchTheGroundSfx;
-
-        
+        [Header("Touching the Ground")]
+        /// the MMFeedbacks to play when the character hits the ground
+        public MMFeedbacks TouchTheGroundFeedback;
+                
 		protected float _horizontalMovement;
 		protected float _horizontalMovementForce;
-	    public float _normalizedHorizontalSpeed;
-        MSB_Character msb_character;
+	    protected float _normalizedHorizontalSpeed;
 
-		/// <summary>
-		/// On Initialization, we set our movement speed to WalkSpeed.
-		/// </summary>
-		protected override void Initialization()
+        // animation parameters
+        protected const string _speedAnimationParameterName = "Speed";
+        protected const string _walkingAnimationParameterName = "Walking";
+        protected int _speedAnimationParameter;
+        protected int _walkingAnimationParameter;
+
+        /// <summary>
+        /// On Initialization, we set our movement speed to WalkSpeed.
+        /// </summary>
+        protected override void Initialization()
 		{
 			base.Initialization ();
 			MovementSpeed = WalkSpeed;
 			MovementSpeedMultiplier = 1f;
             MovementForbidden = false;
-            msb_character = gameObject.GetComponent<MSB_Character>();
 		}
 
 	    /// <summary>
@@ -91,34 +93,17 @@ namespace MoreMountains.CorgiEngine
 	    /// Called at Update(), handles horizontal movement
 	    /// </summary>
 	    protected virtual void HandleHorizontalMovement()
-		{
-            if (isLocalUser && InputManager.Instance.inputPermitted)
-            {
-                if (Input.GetKey(KeyCode.A))
-                {
-                    _horizontalMovement = -1;
-                }
-                else if (Input.GetKey(KeyCode.D))
-                {
-                    _horizontalMovement = 1;
-                }
-            }
-
+		{	
 			// if we're not walking anymore, we stop our walking sound
-			if (_movement.CurrentState != CharacterStates.MovementStates.Walking && _abilityInProgressSfx != null)
-			{
-				StopAbilityUsedSfx();
+			if ((_movement.CurrentState != CharacterStates.MovementStates.Walking) && _startFeedbackIsPlaying)
+            {
+                StopStartFeedbacks();
 			}
-
-			if (_movement.CurrentState == CharacterStates.MovementStates.Walking && _abilityInProgressSfx == null)
-			{
-				PlayAbilityUsedSfx();
-            }
-            
+                        
             // if movement is prevented, or if the character is dead/frozen/can't move, we exit and do nothing
             if ( !AbilityPermitted
 				|| (_condition.CurrentState != CharacterStates.CharacterConditions.Normal)
-				|| (_movement.CurrentState == CharacterStates.MovementStates.Gripping) )
+                || (_movement.CurrentState == CharacterStates.MovementStates.Gripping))
 			{
 				return;
             }
@@ -151,31 +136,31 @@ namespace MoreMountains.CorgiEngine
 			}
 			else
 			{
-                _normalizedHorizontalSpeed = 0;
+				_normalizedHorizontalSpeed = 0;
 			}
 
-            const float WALKING_STATE_SPEED_THRESHOLD = 0.2f;
-            // if we're grounded and moving, and currently Idle, Running or Dangling, we become Walking
-            if ((_controller.State.IsGrounded)
-                && (_normalizedHorizontalSpeed != 0 || Mathf.Abs(msb_character.RecievedSpeed.x) > WALKING_STATE_SPEED_THRESHOLD)
+            /// if we're dashing, we stop there
+            if (_movement.CurrentState == CharacterStates.MovementStates.Dashing)
+            {
+                return;
+            }
+
+			// if we're grounded and moving, and currently Idle, Running or Dangling, we become Walking
+			if ( (_controller.State.IsGrounded)
+				&& (_normalizedHorizontalSpeed != 0)
 				&& ( (_movement.CurrentState == CharacterStates.MovementStates.Idle)
 					|| (_movement.CurrentState == CharacterStates.MovementStates.Dangling) ))
-			{
-                //Debug.Log(msb_character.c_userData.userID + " ChangeState -> Walking nHS : " + _normalizedHorizontalSpeed + " RS : " + msb_character.RecievedSpeed.x);
-                _movement.ChangeState(CharacterStates.MovementStates.Walking);
-				PlayAbilityStartSfx();	
-				PlayAbilityUsedSfx();		
+			{				
+				_movement.ChangeState(CharacterStates.MovementStates.Walking);
+                PlayAbilityStartFeedbacks();	
 			}
 
-
-            
-            // if we're walking and not moving anymore, we go back to the Idle state
-            if ((_movement.CurrentState == CharacterStates.MovementStates.Walking)
-                && (_normalizedHorizontalSpeed == 0) && (Mathf.Abs(msb_character.RecievedSpeed.x) <= WALKING_STATE_SPEED_THRESHOLD)) 
+			// if we're walking and not moving anymore, we go back to the Idle state
+			if ((_movement.CurrentState == CharacterStates.MovementStates.Walking) 
+				&& (_normalizedHorizontalSpeed == 0))
 			{
-                //Debug.Log(msb_character.c_userData.userID + " ChangeState -> Idle nHS : " + _normalizedHorizontalSpeed + " RS : " + msb_character.RecievedSpeed.x);
-                _movement.ChangeState(CharacterStates.MovementStates.Idle);
-				PlayAbilityStopSfx();
+				_movement.ChangeState(CharacterStates.MovementStates.Idle);
+                PlayAbilityStopFeedbacks();
 			}
 
 			// if the character is not grounded, but currently idle or walking, we change its state to Falling
@@ -197,14 +182,22 @@ namespace MoreMountains.CorgiEngine
 			// we pass the horizontal force that needs to be applied to the controller.
 			float movementFactor = _controller.State.IsGrounded ? _controller.Parameters.SpeedAccelerationOnGround : _controller.Parameters.SpeedAccelerationInAir;
 			float movementSpeed = _normalizedHorizontalSpeed * MovementSpeed * _controller.Parameters.SpeedFactor * MovementSpeedMultiplier * PushSpeedMultiplier;
-
-            if (!InstantAcceleration)
+                        
+            if (InstantAcceleration && _controller.State.IsGrounded)
             {
-                _horizontalMovementForce = Mathf.Lerp(_controller.Speed.x, movementSpeed, Time.deltaTime * movementFactor);
+                // if we are in instant acceleration mode, we just apply our movement speed
+                _horizontalMovementForce = movementSpeed;
+
+                // and any external forces that may be active right now
+                if (Mathf.Abs(_controller.ExternalForce.x) > 0)
+                {
+                    _horizontalMovementForce += _controller.ExternalForce.x;
+                }                
             }
             else
             {
-                _horizontalMovementForce = movementSpeed;
+                // if we are not in instant acceleration mode, we lerp towards our movement speed
+                _horizontalMovementForce = Mathf.Lerp(_controller.Speed.x, movementSpeed, Time.deltaTime * movementFactor);
             }			
 						
 			// we handle friction
@@ -220,6 +213,11 @@ namespace MoreMountains.CorgiEngine
 		protected virtual void CheckJustGotGrounded()
 		{
 			// if the character just got grounded
+            if (_movement.CurrentState == CharacterStates.MovementStates.Dashing)
+            {
+                return;
+            }
+
 			if (_controller.State.JustGotGrounded)
 			{
                 if (_controller.State.ColliderResized)
@@ -231,13 +229,10 @@ namespace MoreMountains.CorgiEngine
                     _movement.ChangeState(CharacterStates.MovementStates.Idle);
                 }
 				
-				_controller.SlowFall (0f);			
-	            if (TouchTheGroundEffect != null)
-	            {
-					Instantiate(TouchTheGroundEffect, _controller.BoundsBottom, transform.rotation);
-	            }
-				PlayTouchTheGroundSfx();
-			}
+				_controller.SlowFall (0f);
+                TouchTheGroundFeedback?.PlayFeedbacks();
+
+            }
 		}
 
 		/// <summary>
@@ -263,15 +258,6 @@ namespace MoreMountains.CorgiEngine
 		}
 
 		/// <summary>
-		/// Plays the touch the ground sfx. Triggered when hitting the ground from any state
-		/// </summary>
-		protected virtual void PlayTouchTheGroundSfx()
-		{
-			if (TouchTheGroundSfx!=null) {	SoundManager.Instance.PlaySound(TouchTheGroundSfx,transform.position); }
-		}	
-
-
-		/// <summary>
 		/// A public method to reset the horizontal speed
 		/// </summary>
 		public virtual void ResetHorizontalSpeed()
@@ -284,8 +270,8 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected override void InitializeAnimatorParameters()
 		{
-			RegisterAnimatorParameter ("Speed", AnimatorControllerParameterType.Float);
-			RegisterAnimatorParameter ("Walking", AnimatorControllerParameterType.Bool);
+			RegisterAnimatorParameter (_speedAnimationParameterName, AnimatorControllerParameterType.Float, out _speedAnimationParameter);
+			RegisterAnimatorParameter (_walkingAnimationParameterName, AnimatorControllerParameterType.Bool, out _walkingAnimationParameter);
 		}
 
 		/// <summary>
@@ -293,15 +279,13 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public override void UpdateAnimator()
 		{
-            if(msb_character.isLocalUser)
-                MMAnimator.UpdateAnimatorFloat(_animator, "Speed", Mathf.Abs(_normalizedHorizontalSpeed), _character._animatorParameters);
-            else
-                MMAnimator.UpdateAnimatorFloat(_animator, "Speed", Mathf.Abs(msb_character.RecievedSpeed.x), _character._animatorParameters);
-
-            MMAnimator.UpdateAnimatorBool(_animator, "Walking", (_movement.CurrentState == CharacterStates.MovementStates.Walking), _character._animatorParameters);
-        }
-       
-
+            MMAnimatorExtensions.UpdateAnimatorFloat(_animator, _speedAnimationParameter, Mathf.Abs(_normalizedHorizontalSpeed), _character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _walkingAnimationParameter, (_movement.CurrentState == CharacterStates.MovementStates.Walking), _character._animatorParameters);
+		}
+        
+        /// <summary>
+        /// When the character gets revived we reinit it again
+        /// </summary>
 		protected virtual void OnRevive()
 		{
 			Initialization ();
@@ -315,9 +299,9 @@ namespace MoreMountains.CorgiEngine
 		protected override void OnEnable ()
 		{
 			base.OnEnable ();
-			if (gameObject.GetComponentNoAlloc<Health>() != null)
+			if (gameObject.MMGetComponentNoAlloc<Health>() != null)
 			{
-				gameObject.GetComponentNoAlloc<Health>().OnRevive += OnRevive;
+				gameObject.MMGetComponentNoAlloc<Health>().OnRevive += OnRevive;
 			}
 		}
 

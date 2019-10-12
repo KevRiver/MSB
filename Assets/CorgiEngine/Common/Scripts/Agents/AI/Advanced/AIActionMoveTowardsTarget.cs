@@ -36,6 +36,11 @@ namespace MoreMountains.CorgiEngine
         /// </summary>
         protected virtual void Move()
         {
+            if (_brain.Target == null)
+            {
+                _characterHorizontalMovement.SetHorizontalMove(0f);
+                return;
+            }
             if (Mathf.Abs(this.transform.position.x - _brain.Target.position.x) < MinimumDistance)
             {
                 _characterHorizontalMovement.SetHorizontalMove(0f);

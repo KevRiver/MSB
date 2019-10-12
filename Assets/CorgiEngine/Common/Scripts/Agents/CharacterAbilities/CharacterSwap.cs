@@ -8,6 +8,7 @@ namespace MoreMountains.CorgiEngine
     /// Add this ability to a Character and it'll be part of a pool of characters in a scene to swap from. 
     /// You'll need a CharacterSwapManager in your scene for this to work.
     /// </summary>
+    [HiddenProperties("AbilityStopFeedbacks")]
     [AddComponentMenu("Corgi Engine/Character/Abilities/Character Swap")]
     public class CharacterSwap : CharacterAbility
     {
@@ -36,6 +37,7 @@ namespace MoreMountains.CorgiEngine
         /// </summary>
         public virtual void SwapToThisCharacter()
         {
+            PlayAbilityStartFeedbacks();
             _character.PlayerID = PlayerID;
             _character.CharacterType = Character.CharacterTypes.Player;
             _character.SetInputManager();

@@ -3,6 +3,8 @@ using System.Collections;
 using MoreMountains.Tools;
 using System;
 using System.Collections.Generic;
+using MoreMountains.Feedbacks;
+using UnityEngine.Audio;
 
 namespace MoreMountains.CorgiEngine
 {	
@@ -17,7 +19,7 @@ namespace MoreMountains.CorgiEngine
 	/// This persistent singleton handles sound playing
 	/// </summary>
 	[AddComponentMenu("Corgi Engine/Managers/Sound Manager")]
-	public class SoundManager : PersistentSingleton<SoundManager>, MMEventListener<MMSfxEvent>, MMEventListener<CorgiEngineEvent>, MMEventListener<MMGameEvent>
+	public class SoundManager : PersistentSingleton<SoundManager>,  MMEventListener<CorgiEngineEvent>, MMEventListener<MMGameEvent>
 	{	
 		[Header("Settings")]
 		public SoundSettings Settings;
@@ -61,53 +63,126 @@ namespace MoreMountains.CorgiEngine
 			_backgroundMusic.loop=true;
 			// we start playing the background music
 			_backgroundMusic.Play();		
-		}	
-		
-		/// <summary>
-		/// Plays a sound
-		/// </summary>
-		/// <returns>An audiosource</returns>
-		/// <param name="sfx">The sound clip you want to play.</param>
-		/// <param name="location">The location of the sound.</param>
-		/// <param name="loop">If set to true, the sound will loop.</param>
-		public virtual AudioSource PlaySound(AudioClip sfx, Vector3 location, bool loop=false)
-		{
-			if (!Settings.SfxOn)
-				return null;
-			// we create a temporary game object to host our audio source
-			GameObject temporaryAudioHost = new GameObject("TempAudio");
-			// we set the temp audio's position
-			temporaryAudioHost.transform.position = location;
-			// we add an audio source to that host
-			AudioSource audioSource = temporaryAudioHost.AddComponent<AudioSource>() as AudioSource; 
-			// we set that audio source clip to the one in paramaters
-			audioSource.clip = sfx; 
-			// we set the audio source volume to the one in parameters
-			audioSource.volume = SfxVolume;
-			// we set our loop setting
-			audioSource.loop = loop;
-			// we start playing the sound
-			audioSource.Play(); 
-
-			if (!loop)
-			{
-				// we destroy the host after the clip has played
-				Destroy(temporaryAudioHost, sfx.length);
-			}
-			else
-			{
-				_loopingSounds.Add (audioSource);
-			}
-
-			// we return the audiosource reference
-			return audioSource;
 		}
 
-		/// <summary>
-		/// Stops the looping sounds if there are any
-		/// </summary>
-		/// <param name="source">Source.</param>
-		public virtual void StopLoopingSound(AudioSource source)
+        /// <summary>
+        /// Plays a sound
+        /// </summary>
+        /// <returns>An audiosource</returns>
+        /// <param name="sfx">The sound clip you want to play.</param>
+        /// <param name="location">The location of the sound.</param>
+        /// <param name="loop">If set to true, the sound will loop.</param>
+        public virtual AudioSource PlaySound(AudioClip sfx, Vector3 location, bool loop = false)
+        {
+            if (!Settings.SfxOn)
+                return null;
+            // we create a temporary game object to host our audio source
+            GameObject temporaryAudioHost = new GameObject("TempAudio");
+            // we set the temp audio's position
+            temporaryAudioHost.transform.position = location;
+            // we add an audio source to that host
+            AudioSource audioSource = temporaryAudioHost.AddComponent<AudioSource>() as AudioSource;
+            // we set that audio source clip to the one in paramaters
+            audioSource.clip = sfx;
+            // we set the audio source volume to the one in parameters
+            audioSource.volume = SfxVolume;
+            // we set our loop setting
+            audioSource.loop = loop;
+            // we start playing the sound
+            audioSource.Play();
+
+            if (!loop)
+            {
+                // we destroy the host after the clip has played
+                Destroy(temporaryAudioHost, sfx.length);
+            }
+            else
+            {
+                _loopingSounds.Add(audioSource);
+            }
+
+            // we return the audiosource reference
+            return audioSource;
+        }
+
+        /// <summary>
+        /// Advanced PlaySound method
+        /// </summary>
+        /// <param name="sfx"></param>
+        /// <param name="location"></param>
+        /// <param name="pitch"></param>
+        /// <param name="pan"></param>
+        /// <param name="spatialBlend"></param>
+        /// <param name="volumeMultiplier"></param>
+        /// <param name="loop"></param>
+        /// <param name="reuseSource"></param>
+        /// <param name="audioGroup"></param>
+        /// <param name="soundFadeInDuration"></param>
+        /// <returns></returns>
+        public virtual AudioSource PlaySound(AudioClip sfx, Vector3 location, float pitch, float pan, float spatialBlend = 0.0f, float volumeMultiplier = 1.0f, bool loop = false,
+            AudioSource reuseSource = null, AudioMixerGroup audioGroup = null)
+        {
+            if (!Settings.SfxOn || !sfx)
+            {
+                return null;
+            }
+
+            var audioSource = reuseSource;
+            GameObject temporaryAudioHost = null;
+
+            if (audioSource == null)
+            {
+                // we create a temporary game object to host our audio source
+                temporaryAudioHost = new GameObject("TempAudio");
+                // we add an audio source to that host
+                var newAudioSource = temporaryAudioHost.AddComponent<AudioSource>() as AudioSource;
+                audioSource = newAudioSource;
+            }
+            // we set the temp audio's position
+            audioSource.transform.position = location;
+
+            audioSource.time = 0.0f; // Reset time in case it's a reusable one.
+
+            // we set that audio source clip to the one in paramaters
+            audioSource.clip = sfx;
+
+            audioSource.pitch = pitch;
+            audioSource.spatialBlend = spatialBlend;
+            audioSource.panStereo = pan;
+
+            // we set the audio source volume to the one in parameters
+            audioSource.volume = SfxVolume * volumeMultiplier;
+            // we set our loop setting
+            audioSource.loop = loop;
+            // Assign an audio mixer group.
+            if (audioGroup)
+                audioSource.outputAudioMixerGroup = audioGroup;
+
+
+            // we start playing the sound
+            audioSource.Play();
+
+            if (!loop && !reuseSource)
+            {
+                // we destroy the host after the clip has played (if it not tag for reusability.
+                Destroy(temporaryAudioHost, sfx.length);
+            }
+
+            if (loop)
+            {
+                _loopingSounds.Add(audioSource);
+            }
+
+            // we return the audiosource reference
+            return audioSource;
+        }
+
+
+        /// <summary>
+        /// Stops the looping sounds if there are any
+        /// </summary>
+        /// <param name="source">Source.</param>
+        public virtual void StopLoopingSound(AudioSource source)
 		{
 			if (source != null)
 			{
@@ -198,10 +273,10 @@ namespace MoreMountains.CorgiEngine
         /// When we grab a sfx event, we play the corresponding sound
         /// </summary>
         /// <param name="sfxEvent"></param>
-		public virtual void OnMMEvent(MMSfxEvent sfxEvent)
-		{
-			PlaySound (sfxEvent.ClipToPlay, this.transform.position);
-		} 
+		public virtual void OnMMSfxEvent(AudioClip clipToPlay, AudioMixerGroup audioGroup = null, float volume = 1f, float pitch = 1f)
+        {
+            PlaySound(clipToPlay, this.transform.position, pitch, 0.0f, 0.0f, volume, false, audioGroup: audioGroup);
+        }
 
         /// <summary>
         /// Watches for game events to mute sfx if needed
@@ -298,9 +373,9 @@ namespace MoreMountains.CorgiEngine
         /// On enable we start listening for events
         /// </summary>
         protected virtual void OnEnable()
-		{
-			this.MMEventStartListening<MMSfxEvent>();
-			this.MMEventStartListening<MMGameEvent>();	
+        {
+            MMSfxEvent.Register(OnMMSfxEvent);
+            this.MMEventStartListening<MMGameEvent>();	
 			this.MMEventStartListening<CorgiEngineEvent>();
 			LoadSoundSettings ();
 			_loopingSounds = new List<AudioSource> ();
@@ -312,9 +387,9 @@ namespace MoreMountains.CorgiEngine
 		protected virtual void OnDisable()
 		{
 			if (_enabled)
-			{
-				this.MMEventStopListening<MMSfxEvent>();	
-				this.MMEventStopListening<MMGameEvent>();	
+            {
+                MMSfxEvent.Unregister(OnMMSfxEvent);
+                this.MMEventStopListening<MMGameEvent>();	
 				this.MMEventStopListening<CorgiEngineEvent>();	
 			}
 		}

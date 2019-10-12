@@ -1,54 +1,43 @@
 ﻿using UnityEngine;
 using System.Collections;
 using MoreMountains.Tools;
+using MoreMountains.Feedbacks;
 
 namespace MoreMountains.CorgiEngine
 {	
 	/// <summary>
 	/// A class meant to be overridden that handles a character's ability. 
 	/// </summary>
+    /// 
 	[RequireComponent(typeof(Character))]
 	public class CharacterAbility : MonoBehaviour 
 	{
-        //MSB Custom
-        public enum ActionType { NULL, BasicAttack, ActiveSkill }
-
-		/// the sound fx to play when the ability starts
-		public AudioClip AbilityStartSfx;
-		/// the sound fx to play while the ability is running
-		public AudioClip AbilityInProgressSfx;
-		/// the sound fx to play when the ability stops
-		public AudioClip AbilityStopSfx;
+		/// the feedbacks to play when the ability starts
+		public MMFeedbacks AbilityStartFeedbacks;
+        /// the feedbacks to play when the ability stops
+        public MMFeedbacks AbilityStopFeedbacks;
         /// if true, this ability can perform as usual, if not, it'll be ignored. You can use this to unlock abilities over time for example
-		public bool AbilityPermitted = true;
+        [Header("Permissions")]
+        public bool AbilityPermitted = true;
         /// true if the ability has already been initialized
 		public bool AbilityInitialized { get { return _abilityInitialized; } }
 
 		protected Character _character;
-        //MSB Custom
-        protected MSB_Character _MSB_character;
-        public bool isLocalUser;       
-
 		protected Health _health;
 		protected CharacterHorizontalMovement _characterHorizontalMovement;
 		protected CorgiController _controller;
 		protected InputManager _inputManager;
-		protected CameraController _sceneCamera;
-		protected Animator _animator;
+        protected CameraController _sceneCamera;
+        protected Animator _animator;
 		protected CharacterStates _state;
 		protected SpriteRenderer _spriteRenderer;
 		protected MMStateMachine<CharacterStates.MovementStates> _movement;
 		protected MMStateMachine<CharacterStates.CharacterConditions> _condition;
-		protected AudioSource _abilityInProgressSfx;
 		protected bool _abilityInitialized = false;
 		protected CharacterGravity _characterGravity;
 		protected float _verticalInput;
 		protected float _horizontalInput;
-        
-        //MSB Custom Request된 버튼 ID OnGameUserSync로 0.1초마다 동기화
-        public string RecievedButtonID;
-        //MSB Custom Request된 버튼 ID의 상태 OnGameUserSync로 0.1초마다 동기화
-        public int RecievedButtonState;
+        protected bool _startFeedbackIsPlaying = false;
 
 		/// This method is only used to display a helpbox text at the beginning of the ability's inspector
 		public virtual string HelpBoxText() { return ""; }
@@ -67,12 +56,6 @@ namespace MoreMountains.CorgiEngine
 		protected virtual void Initialization()
 		{
 			_character = GetComponent<Character>();
-            isLocalUser = false;
-            if (GetComponent<MSB_Character>() != null)
-            {
-                _MSB_character = GetComponent<MSB_Character>();
-                isLocalUser = _MSB_character.isLocalUser;
-            }
 			_controller = GetComponent<CorgiController>();
 			_characterHorizontalMovement = GetComponent<CharacterHorizontalMovement>();
 			_characterGravity = GetComponent<CharacterGravity> ();
@@ -123,9 +106,6 @@ namespace MoreMountains.CorgiEngine
 		{
 			if (_inputManager == null) { return; }
 
-            if (!_inputManager.inputPermitted)
-                return;
-
 			_verticalInput = _inputManager.PrimaryMovement.y;
 			_horizontalInput = _inputManager.PrimaryMovement.x;
 
@@ -155,21 +135,6 @@ namespace MoreMountains.CorgiEngine
 		}
 
         /// <summary>
-        /// MSB Custom 원격으로 LocalPlayer가 아닌 플레이어는 HandleInput 대신 MSBRemoteControl 로 조작된다
-        /// </summary>
-        protected virtual void MSBRemoteControl(ActionType _actionType, bool _actionAimable, float _actionDirX, float _actionDirY)
-        {
-            if (_actionType == ActionType.NULL)
-                return;
-            //Debug.LogWarning("MSBRemoteControl Params : " + _actionType + " " + _state);
-        }
-
-        protected virtual void ResetRecievedData()
-        {
-
-        }
-
-        /// <summary>
         /// Resets all input for this ability. Can be overridden for ability specific directives
         /// </summary>
         public virtual void ResetInput()
@@ -183,8 +148,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public virtual void EarlyProcessAbility()
 		{
-            InternalHandleInput();
-            MSBRemoteControl(_MSB_character.RecievedActionType, _MSB_character.RecievedActionAimable,_MSB_character.RecievedActionDirX,_MSB_character.RecievedActionDirY);
+			InternalHandleInput();
 		}
 
 		/// <summary>
@@ -231,7 +195,7 @@ namespace MoreMountains.CorgiEngine
 		/// <summary>
 		/// Override this to reset this ability's parameters. It'll be automatically called when the character gets killed, in anticipation for its respawn.
 		/// </summary>
-		public virtual void Reset()
+		public virtual void ResetAbility()
 		{
 			
 		}
@@ -239,65 +203,47 @@ namespace MoreMountains.CorgiEngine
 		/// <summary>
 		/// Plays the ability start sound effect
 		/// </summary>
-		protected virtual void PlayAbilityStartSfx()
+		protected virtual void PlayAbilityStartFeedbacks()
 		{
-			if (AbilityStartSfx!=null) 
-			{	
-				SoundManager.Instance.PlaySound(AbilityStartSfx,transform.position);	
-			}
-		}	
-
-		/// <summary>
-		/// Plays the ability used sound effect
-		/// </summary>
-		protected virtual void PlayAbilityUsedSfx()
-		{
-			if (AbilityInProgressSfx!=null) 
-			{	
-				if (_abilityInProgressSfx == null)
-				{
-					_abilityInProgressSfx = SoundManager.Instance.PlaySound(AbilityInProgressSfx, transform.position, true);	
-				}
-			}
-		}	
-
+            AbilityStartFeedbacks?.PlayFeedbacks(this.transform.position);
+            _startFeedbackIsPlaying = true;
+        }	
+        
 		/// <summary>
 		/// Stops the ability used sound effect
 		/// </summary>
-		protected virtual void StopAbilityUsedSfx()
-		{
-			if (AbilityInProgressSfx!=null) 
-			{	
-				SoundManager.Instance.StopLoopingSound(_abilityInProgressSfx);	
-				_abilityInProgressSfx = null;
-			}
-		}	
+		public virtual void StopStartFeedbacks()
+        {
+            AbilityStartFeedbacks?.StopFeedbacks();
+            _startFeedbackIsPlaying = false;
+        }	
+
 
 		/// <summary>
 		/// Plays the ability stop sound effect
 		/// </summary>
-		protected virtual void PlayAbilityStopSfx()
-		{
-			if (AbilityStopSfx!=null) 
-			{	
-				SoundManager.Instance.PlaySound(AbilityStopSfx,transform.position);	
-			}
-		}
+		protected virtual void PlayAbilityStopFeedbacks()
+        {
+            AbilityStopFeedbacks?.PlayFeedbacks();
+        }
+        
 
 		/// <summary>
 		/// Registers a new animator parameter to the list
 		/// </summary>
 		/// <param name="parameterName">Parameter name.</param>
 		/// <param name="parameterType">Parameter type.</param>
-		protected virtual void RegisterAnimatorParameter(string parameterName, AnimatorControllerParameterType parameterType)
+		protected virtual void RegisterAnimatorParameter(string parameterName, AnimatorControllerParameterType parameterType, out int parameter)
 		{
+            parameter = Animator.StringToHash(parameterName);
+
 			if (_animator == null) 
 			{
 				return;
 			}
-			if (_animator.HasParameterOfType(parameterName, parameterType))
+			if (_animator.MMHasParameterOfType(parameterName, parameterType))
 			{
-				_character._animatorParameters.Add(parameterName);
+				_character._animatorParameters.Add(parameter);
 			}
 		}
 
@@ -313,7 +259,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected virtual void OnDeath()
 		{
-			StopAbilityUsedSfx ();
+			StopStartFeedbacks ();
 		}
 
         /// <summary>

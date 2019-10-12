@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections;
 using MoreMountains.Tools;
-using MSBNetwork;
 
 namespace MoreMountains.CorgiEngine
 {	
@@ -31,7 +30,6 @@ namespace MoreMountains.CorgiEngine
 	    protected Bounds _bounds;
 	    protected CorgiController _controller;
 		protected Character _character;
-        protected MSB_Character _MSB_Character;
 	    protected BoxCollider2D _boxCollider;
 
 		
@@ -41,12 +39,11 @@ namespace MoreMountains.CorgiEngine
 		public virtual void Start () 
 		{
 			_character = GetComponent<Character>();
-            _MSB_Character = GetComponent<MSB_Character>();
 			_controller = GetComponent<CorgiController>();
 			_boxCollider = GetComponent<BoxCollider2D>();
 			if (LevelManager.Instance != null)
 			{
-				_bounds = MSB_LevelManager.Instance.LevelBounds;
+				_bounds = LevelManager.Instance.LevelBounds;
 			}
 		}
 		
@@ -104,19 +101,11 @@ namespace MoreMountains.CorgiEngine
 			{
 				if (_character.CharacterType == Character.CharacterTypes.Player)
 				{
-                    _MSB_Character.MovementState.ChangeState(CharacterStates.MovementStates.Idle);
-                    int room = MSB_GameManager.Instance.roomIndex;
-                    int target = _MSB_Character.c_userData.userNumber;
-                    int amount = 100;
-                    string option = "";
-                    if (_MSB_Character.isLocalUser)
-                    {
-                        NetworkModule.GetInstance().RequestGameUserActionDamage(room, target, amount, option);
-                    }
+					LevelManager.Instance.KillPlayer (_character);
 				}
 				else
 				{
-					Health health = _character.gameObject.GetComponentNoAlloc<Health>();
+					Health health = _character.gameObject.MMGetComponentNoAlloc<Health>();
 					if (health != null)
 					{
 						health.Kill();

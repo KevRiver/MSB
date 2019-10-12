@@ -44,4 +44,4 @@ SOUNDS
 All the music files in this asset are copyright Uniform Motion and can't be reused without authorization.
 The sound effects come from either www.freesound.org or www.noiseforfun.com (under the CC-BY-ND 3.0 Attribution license)
 
-v5.4
+v6.0

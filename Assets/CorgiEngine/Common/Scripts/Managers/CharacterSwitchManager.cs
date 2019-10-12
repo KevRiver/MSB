@@ -27,6 +27,8 @@ namespace MoreMountains.CorgiEngine
         public NextCharacterChoices NextCharacterChoice = NextCharacterChoices.Sequential;
         /// the initial (and at runtime, current) index of the character prefab
         public int CurrentIndex = 0;
+        /// if this is true, current health value will be passed from character to character
+        public bool CommonHealth;
 
         [Header("Visual Effects")]
         /// a particle system to play when a character gets changed
@@ -123,6 +125,12 @@ namespace MoreMountains.CorgiEngine
             // we move the new one at the old one's position
             _instantiatedCharacters[CurrentIndex].transform.position = LevelManager.Instance.Players[0].transform.position;
             _instantiatedCharacters[CurrentIndex].transform.rotation = LevelManager.Instance.Players[0].transform.rotation;
+
+            // we keep the health if needed
+            if (CommonHealth)
+            {
+                _instantiatedCharacters[CurrentIndex].gameObject.MMGetComponentNoAlloc<Health>().CurrentHealth = LevelManager.Instance.Players[0].gameObject.MMGetComponentNoAlloc<Health>().CurrentHealth;
+            }
 
             // we put it in the same state the old one was in
             _instantiatedCharacters[CurrentIndex].MovementState.ChangeState(LevelManager.Instance.Players[0].MovementState.CurrentState);

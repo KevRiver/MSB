@@ -1,8 +1,6 @@
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 using MoreMountains.Tools;
-using MSBNetwork;
 
 namespace MoreMountains.CorgiEngine
 {	
@@ -13,28 +11,38 @@ namespace MoreMountains.CorgiEngine
 	/// Animator parameters : defined from the Weapon's inspector
 	/// </summary>
 	[AddComponentMenu("Corgi Engine/Character/Abilities/Character Handle Weapon")] 
-	public class CharacterHandleWeapon : CharacterAbility
+	public class CharacterHandleWeapon : CharacterAbility 
 	{
 		/// This method is only used to display a helpbox text at the beginning of the ability's inspector
 		public override string HelpBoxText() { return "This component will allow your character to pickup and use weapons. What the weapon will do is defined in the Weapon classes. This just describes the behaviour of the 'hand' holding the weapon, not the weapon itself. Here you can set an initial weapon for your character to start with, allow weapon pickup, and specify a weapon attachment (a transform inside of your character, could be just an empty child gameobject, or a subpart of your model."; }
-
+        [Header("Weapon")]
 		/// the initial weapon owned by the character
-		public Weapon InitialWeapon;	
-		/// the position the weapon will be attached to. If left blank, will be this.transform.
+		public Weapon InitialWeapon;
+        /// if this is set to true, the character can pick up PickableWeapons
+        public bool CanPickupWeapons = true;
+        [Header("Binding")]
+        /// the position the weapon will be attached to. If left blank, will be this.transform.
 		public Transform WeaponAttachment;
-		/// if this is set to true, the character can pick up PickableWeapons
-		public bool CanPickupWeapons = true;
-        /// returns the current equipped weapon
-        /// MSB Custom 버튼을 손에서 땠을 때 Shoot 이 실행된다
-        public bool ShootWhenButtonReleased = false;
-        [ReadOnly]
-        public Weapon CurrentWeapon;
-		/// if this is true you won't have to release your fire button to auto reload
-		public bool ContinuousPress = false;
         /// if this is true this animator will be automatically bound to the weapon
         public bool AutomaticallyBindAnimator = true;
+        [Header("Input")]
+        /// if this is true you won't have to release your fire button to auto reload
+		public bool ContinuousPress = false;
         /// whether or not this character getting hit should interrupt its attack (will only work if the weapon is marked as interruptable)
         public bool GettingHitInterruptsAttack = false;
+        [Header("Buffering")]
+        /// whether or not attack input should be buffered, letting you prepare an attack while another is being performed, making it easier to chain them
+        public bool BufferInput;
+        [Condition("BufferInput", true)]
+        /// if this is true, every new input will prolong the buffer
+        public bool NewInputExtendsBuffer;
+        [Condition("BufferInput", true)]
+        /// the maximum duration for the buffer, in seconds
+        public float MaximumBufferDuration = 0.25f;
+        /// returns the current equipped weapon
+        [Header("Debug")]
+        [ReadOnly]
+        public Weapon CurrentWeapon;
 
         public Animator CharacterAnimator { get; set; }
 
@@ -45,22 +53,28 @@ namespace MoreMountains.CorgiEngine
 		protected WeaponIK _weaponIK;
 		protected Transform _leftHandTarget = null;
 		protected Transform _rightHandTarget = null;
-           
+
+        protected float _bufferEndsAt = 0f;
+        protected bool _buffering = false;
+
 	    // Initialization
 		protected override void Initialization () 
 		{
-			base.Initialization();								
-			Setup ();           
+			base.Initialization();
+								
+			Setup ();
 		}
 
 		/// <summary>
 		/// Grabs various components and inits stuff
 		/// </summary>
 		public virtual void Setup()
-		{                              
-    
-			// filler if the WeaponAttachment has not been set
-			if (WeaponAttachment==null)
+        {
+            _character = gameObject.MMGetComponentNoAlloc<Character>();
+            CharacterAnimator = _animator;
+
+            // filler if the WeaponAttachment has not been set
+            if (WeaponAttachment==null)
 			{
 				WeaponAttachment=transform;
 			}		
@@ -70,61 +84,31 @@ namespace MoreMountains.CorgiEngine
 			}	
 			// we set the initial weapon
 			if (InitialWeapon != null)
-			{               
+			{
 				ChangeWeapon(InitialWeapon, null);			
 			}
-			_character = gameObject.GetComponentNoAlloc<Character> ();
-            CharacterAnimator = _animator;
         }
 
-        //Early Process Abilites 에서 호출
-        /// <summary>
-        /// Gets input and triggers methods based on what's been pressed
-        /// </summary>  
+		/// <summary>
+		/// Every frame we check if it's needed to update the ammo display
+		/// </summary>
+		public override void ProcessAbility()
+		{
+			base.ProcessAbility ();
+			UpdateAmmoDisplay ();
+            HandleBuffer();
+		}
 
-        public Vector2 aimDirection;
-        const float AIM_INPUT_THRESHOLD = 0.2f;
-        protected override void HandleInput()
-        {
-           //MSB Custom Handling Input
-            if (_inputManager.BasicAttackButton.State.CurrentState == MMInput.ButtonStates.ButtonDown)
+		/// <summary>
+		/// Gets input and triggers methods based on what's been pressed
+		/// </summary>
+		protected override void HandleInput ()
+		{			
+
+			if ((_inputManager.ShootButton.State.CurrentState == MMInput.ButtonStates.ButtonDown) || (_inputManager.ShootAxis == MMInput.ButtonStates.ButtonDown))
             {
-                if (!ShootWhenButtonReleased)
-                    ShootStart();
-            }
-
-            if (_inputManager.BasicAttackButton.State.CurrentState == MMInput.ButtonStates.ButtonPressed)
-            {
-                aimDirection = _inputManager.ThirdMovement;
-            }
-
-            if (_inputManager.BasicAttackButton.State.CurrentState == MMInput.ButtonStates.ButtonUp)
-            {
-                if (CurrentWeapon.GetComponent<WeaponAim>() != null)
-                {                    
-                    WeaponAim weaponAim = CurrentWeapon.GetComponent<WeaponAim>();
-                    if (Mathf.Abs(aimDirection.x) < AIM_INPUT_THRESHOLD)
-                    {
-                        aimDirection.x = (_MSB_character.IsFacingRight) ? 1.0f : -1.0f;
-                    }
-                    if (Mathf.Abs(aimDirection.y) < AIM_INPUT_THRESHOLD)
-                    {
-                        aimDirection.y = 0f;
-                    }
-                    Debug.LogWarning("Aim Direction Vector : " + aimDirection);
-                    weaponAim.SetCurrentAim(aimDirection);
-                    //Debug.LogWarning("Aim Direction Vector : " + aimDirection);
-                    Debug.LogWarning("Aim Direction  : " + Mathf.Atan2(aimDirection.x, aimDirection.y) * Mathf.Rad2Deg);
-                }
-
-                if (ShootWhenButtonReleased)
-                    ShootStart();
-            }
-
-            if ((_inputManager.ShootButton.State.CurrentState == MMInput.ButtonStates.ButtonDown) || (_inputManager.ShootAxis == MMInput.ButtonStates.ButtonDown))
-            {
-                ShootStart();
-            }
+				ShootStart();
+			}
 
             if (CurrentWeapon != null)
             {
@@ -136,11 +120,11 @@ namespace MoreMountains.CorgiEngine
                 {
                     ShootStart();
                 }
-            }
+            }			
 
-            if (_inputManager.ReloadButton.State.CurrentState == MMInput.ButtonStates.ButtonDown)
-            {
-                Reload();
+			if (_inputManager.ReloadButton.State.CurrentState == MMInput.ButtonStates.ButtonDown)
+			{
+				Reload();
             }
 
             if ((_inputManager.ShootButton.State.CurrentState == MMInput.ButtonStates.ButtonUp) || (_inputManager.ShootAxis == MMInput.ButtonStates.ButtonUp))
@@ -155,49 +139,35 @@ namespace MoreMountains.CorgiEngine
                 {
                     CurrentWeapon.WeaponInputStop();
                 }
-            }
+            }            
         }
-       
-        protected override void MSBRemoteControl(ActionType _actionType, bool _actionAimable, float _actionDirX, float _actionDirY)
-        {
-            base.MSBRemoteControl(_actionType, _actionAimable, _actionDirX, _actionDirY);
 
-            if ((_actionType == ActionType.BasicAttack))
+        /// <summary>
+        /// Triggers an attack if the weapon is idle and an input has been buffered
+        /// </summary>
+        protected virtual void HandleBuffer()
+        {
+            if (CurrentWeapon == null)
             {
-                if (_actionAimable)
-                {
-                    CurrentWeapon.GetComponent<WeaponAim>().SetCurrentAim(new Vector3(_actionDirX, _actionDirY));
-                }
+                return;
+            }
 
-                Debug.LogWarning("Recieved Data : " + _actionType);
-                CurrentWeapon.WeaponState.ChangeState(Weapon.WeaponStates.WeaponUse);
-                ResetRecievedData();
+            // if we are currently buffering an input and if the weapon is now idle
+            if (_buffering && (CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponIdle))
+            {
+                // and if our buffer is still valid, we trigger an attack
+                if (Time.time < _bufferEndsAt)
+                {
+                    ShootStart();
+                }
+                _buffering = false;
             }
         }
-
-        //MSB_RC 가 받은 데이터를 초기화
-        protected override void ResetRecievedData()
-        {
-            base.ResetRecievedData();
-            _MSB_character.RecievedActionType = ActionType.NULL;
-            _MSB_character.RecievedActionAimable = false;
-            _MSB_character.RecievedActionDirX = 0f;
-            _MSB_character.RecievedActionDirY = 0f;
-        }
-
-        /// <summary>
-        /// Every frame we check if it's needed to update the ammo display
-        /// </summary>
-        public override void ProcessAbility()
-		{
-			base.ProcessAbility ();
-			UpdateAmmoDisplay ();
-		}
-                                       
-        /// <summary>
-        /// Causes the character to start shooting
-        /// </summary>
-        public virtual void ShootStart()
+						
+		/// <summary>
+		/// Causes the character to start shooting
+		/// </summary>
+		public virtual void ShootStart()
 		{
 			// if the Shoot action is enabled in the permissions, we continue, if not we do nothing.  If the player is dead we do nothing.
 			if ( !AbilityPermitted
@@ -206,8 +176,21 @@ namespace MoreMountains.CorgiEngine
 				|| (_movement.CurrentState == CharacterStates.MovementStates.LadderClimbing))
 			{
 				return;
-			}            
-			CurrentWeapon.WeaponInputStart();
+			}
+
+            //  if we've decided to buffer input, and if the weapon is in use right now
+            if (BufferInput && (CurrentWeapon.WeaponState.CurrentState != Weapon.WeaponStates.WeaponIdle))
+            {
+                // if we're not already buffering, or if each new input extends the buffer, we turn our buffering state to true
+                if (!_buffering || NewInputExtendsBuffer)
+                {
+                    _buffering = true;
+                    _bufferEndsAt = Time.time + MaximumBufferDuration;
+                }
+            }
+
+            PlayAbilityStartFeedbacks();
+            CurrentWeapon.WeaponInputStart();
 		}
 		
 		/// <summary>
@@ -230,7 +213,8 @@ namespace MoreMountains.CorgiEngine
 
 			if ((CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponReload)
 				|| (CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponReloadStart)
-				|| (CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponReloadStop))
+                || (CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponReloadStop)
+                || (CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponUse))
 			{
 				return;
 			}
@@ -245,6 +229,8 @@ namespace MoreMountains.CorgiEngine
                 return;
             }
 
+            StopStartFeedbacks();
+            PlayAbilityStopFeedbacks();
             CurrentWeapon.TurnWeaponOff();
 		}
 
@@ -264,14 +250,19 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		/// <param name="newWeapon">The new weapon.</param>
 		public virtual void ChangeWeapon(Weapon newWeapon, string weaponID, bool combo = false)
-		{           
+		{
             // if the character already has a weapon, we make it stop shooting
             if (CurrentWeapon!=null)
 			{
                 if (!combo)
                 {
                     ShootStop();
-                    MMAnimator.UpdateAnimatorBool(_animator, CurrentWeapon.EquippedAnimationParameter, false, _character._animatorParameters);
+                    int equippedAnimationParameter = Animator.StringToHash(CurrentWeapon.EquippedAnimationParameter);
+                    if (_character._animatorParameters.Contains(equippedAnimationParameter))
+                    {
+                        MMAnimatorExtensions.UpdateAnimatorBool(_animator, equippedAnimationParameter, false, _character._animatorParameters);
+                    }
+                    
                     Destroy(CurrentWeapon.gameObject);
                 }				
 			}
@@ -280,10 +271,10 @@ namespace MoreMountains.CorgiEngine
 			{			
                 if (!combo)
                 {
-                    CurrentWeapon = (Weapon)Instantiate(newWeapon, WeaponAttachment.transform.position + newWeapon.WeaponAttachmentOffset, WeaponAttachment.transform.rotation);
+                    CurrentWeapon = (Weapon)Instantiate(newWeapon, WeaponAttachment.transform.position + newWeapon.WeaponAttachmentOffset, Quaternion.identity);
                 }				
-				CurrentWeapon.transform.parent = WeaponAttachment.transform;
-				CurrentWeapon.SetOwner (_MSB_character, this);                
+				CurrentWeapon.transform.SetParent(WeaponAttachment.transform);
+				CurrentWeapon.SetOwner (_character, this);
 				CurrentWeapon.WeaponID = weaponID;
 				_aimableWeapon = CurrentWeapon.GetComponent<WeaponAim> ();
 				// we handle (optional) inverse kinematics (IK) 
@@ -291,14 +282,11 @@ namespace MoreMountains.CorgiEngine
 				{
 					_weaponIK.SetHandles(CurrentWeapon.LeftHandHandle, CurrentWeapon.RightHandHandle);
 				}
-                // we turn off the gun's emitters.
-                CurrentWeapon.isBelongToLocalUser = isLocalUser;
-                CurrentWeapon.Initialization();
+				// we turn off the gun's emitters.
+				CurrentWeapon.Initialization();
                 CurrentWeapon.InitializeComboWeapons();
                 CurrentWeapon.InitializeAnimatorParameters();
-                
-                InitializeAnimatorParameters();
-                
+				InitializeAnimatorParameters();
                 if ((_character != null) && !combo)
                 {
                     if (!_character.IsFacingRight)
@@ -323,7 +311,7 @@ namespace MoreMountains.CorgiEngine
 		public override void Flip()
 		{
 			if (CurrentWeapon != null)
-            {                
+            {
                 CurrentWeapon.FlipWeapon();
 				if (CurrentWeapon.FlipWeaponOnCharacterFlip)
 				{
@@ -365,63 +353,7 @@ namespace MoreMountains.CorgiEngine
 				}
 			}
 		}
-
-		/// <summary>
-		/// Adds required animator parameters to the animator parameters list if they exist
-		/// </summary>
-		protected override void InitializeAnimatorParameters()
-		{
-			if (CurrentWeapon == null)
-			{	return; }
-
-			RegisterAnimatorParameter(CurrentWeapon.WeaponAngleAnimationParameter, AnimatorControllerParameterType.Float);
-			RegisterAnimatorParameter(CurrentWeapon.WeaponAngleRelativeAnimationParameter, AnimatorControllerParameterType.Float);
-			RegisterAnimatorParameter(CurrentWeapon.IdleAnimationParameter, AnimatorControllerParameterType.Bool);
-			RegisterAnimatorParameter(CurrentWeapon.StartAnimationParameter, AnimatorControllerParameterType.Bool);
-			RegisterAnimatorParameter(CurrentWeapon.DelayBeforeUseAnimationParameter, AnimatorControllerParameterType.Bool);
-			RegisterAnimatorParameter(CurrentWeapon.DelayBetweenUsesAnimationParameter, AnimatorControllerParameterType.Bool);
-			RegisterAnimatorParameter(CurrentWeapon.StopAnimationParameter, AnimatorControllerParameterType.Bool);
-			RegisterAnimatorParameter(CurrentWeapon.ReloadStartAnimationParameter, AnimatorControllerParameterType.Bool);
-			RegisterAnimatorParameter(CurrentWeapon.ReloadStopAnimationParameter, AnimatorControllerParameterType.Bool);
-			RegisterAnimatorParameter(CurrentWeapon.ReloadAnimationParameter, AnimatorControllerParameterType.Bool);
-			RegisterAnimatorParameter(CurrentWeapon.SingleUseAnimationParameter, AnimatorControllerParameterType.Bool);
-            RegisterAnimatorParameter(CurrentWeapon.UseAnimationParameter, AnimatorControllerParameterType.Bool);
-            RegisterAnimatorParameter(CurrentWeapon.EquippedAnimationParameter, AnimatorControllerParameterType.Bool);
-        }
-
-		/// <summary>
-		/// Override this to send parameters to the character's animator. This is called once per cycle, by the Character
-		/// class, after Early, normal and Late process().
-		/// </summary>
-		public override void UpdateAnimator()
-		{
-			if (CurrentWeapon == null)
-			{	return; }
-
-			MMAnimator.UpdateAnimatorBool(_animator,CurrentWeapon.IdleAnimationParameter,(CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponIdle),_character._animatorParameters);
-			MMAnimator.UpdateAnimatorBool(_animator,CurrentWeapon.StartAnimationParameter,(CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponStart),_character._animatorParameters);
-			MMAnimator.UpdateAnimatorBool(_animator,CurrentWeapon.DelayBeforeUseAnimationParameter,(CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponDelayBeforeUse),_character._animatorParameters);
-            MMAnimator.UpdateAnimatorBool(_animator,CurrentWeapon.UseAnimationParameter,(CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponDelayBeforeUse || CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponUse || CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponDelayBetweenUses ),_character._animatorParameters);
-            MMAnimator.UpdateAnimatorBool(_animator,CurrentWeapon.SingleUseAnimationParameter,(CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponUse),_character._animatorParameters);
-			MMAnimator.UpdateAnimatorBool(_animator,CurrentWeapon.DelayBetweenUsesAnimationParameter,(CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponDelayBetweenUses),_character._animatorParameters);
-			MMAnimator.UpdateAnimatorBool(_animator,CurrentWeapon.StopAnimationParameter,(CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponStop),_character._animatorParameters);
-			MMAnimator.UpdateAnimatorBool(_animator,CurrentWeapon.ReloadStartAnimationParameter,(CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponReloadStart),_character._animatorParameters);
-			MMAnimator.UpdateAnimatorBool(_animator,CurrentWeapon.ReloadAnimationParameter,(CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponReload),_character._animatorParameters);
-			MMAnimator.UpdateAnimatorBool(_animator,CurrentWeapon.ReloadStopAnimationParameter,(CurrentWeapon.WeaponState.CurrentState == Weapon.WeaponStates.WeaponReloadStop),_character._animatorParameters);
-            MMAnimator.UpdateAnimatorBool(_animator, CurrentWeapon.EquippedAnimationParameter, true, _character._animatorParameters);
-
-            if (_aimableWeapon != null)
-			{
-				MMAnimator.UpdateAnimatorFloat (_animator, CurrentWeapon.WeaponAngleAnimationParameter, _aimableWeapon.CurrentAngle,_character._animatorParameters);
-				MMAnimator.UpdateAnimatorFloat (_animator, CurrentWeapon.WeaponAngleRelativeAnimationParameter, _aimableWeapon.CurrentAngleRelative,_character._animatorParameters);
-			}
-			else
-			{
-				MMAnimator.UpdateAnimatorFloat (_animator, CurrentWeapon.WeaponAngleAnimationParameter, 0f,_character._animatorParameters);
-				MMAnimator.UpdateAnimatorFloat (_animator, CurrentWeapon.WeaponAngleRelativeAnimationParameter, 0f,_character._animatorParameters);
-			}
-		}
-
+        
         protected override void OnHit()
         {
             base.OnHit();
@@ -436,12 +368,5 @@ namespace MoreMountains.CorgiEngine
             base.OnDeath();
             ShootStop();
         }
-
-        protected override void OnDisable()
-        {
-            base.OnDisable();
-        }
-
-        
     }
 }

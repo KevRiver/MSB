@@ -74,6 +74,10 @@ namespace MoreMountains.CorgiEngine
 		public float IntroFadeDuration=1f;
 		/// duration of the fade to black at the end of the level (in seconds)
 		public float OutroFadeDuration=1f;
+        /// the ID to use when triggering the event (should match the ID on the fader you want to use)
+        public int FaderID = 0;
+        /// the curve to use for in and out fades
+        public MMTween.MMTweenCurve FadeCurve = MMTween.MMTweenCurve.EaseInCubic;
 		/// duration between a death of the main character and its respawn
 		public float RespawnDelay = 2f;
 
@@ -84,7 +88,12 @@ namespace MoreMountains.CorgiEngine
 		/// the level limits, camera and player won't go beyond this point.
 		public Bounds LevelBounds = new Bounds(Vector3.zero,Vector3.one*10);
 
-		[Space(10)]
+        [InspectorButton("GenerateColliderBounds")]
+        public bool ConvertToColliderBoundsButton;
+        public Collider BoundsCollider { get; protected set; }
+
+
+        [Space(10)]
 		[Header("One Way Levels")]
 		[Information("Just like in early Mario levels for example, you can prevent your character from going back in the level on one axis Here you can define that axis and the size of the NoGoingBack object that will be created. Make it big enough so your character can't go through it. The default size should be fine in most situations. You can also decide whether touching this new boundary should kill your player or not, and the distance it should maintain from the player and the level bounds.",InformationAttribute.InformationType.Info,false)]
 		/// if this is set to anything but None, the level manager will instantiate (on start) a NoGoingBack object that will prevent movement from the player on the specified axis if it tries to go back.
@@ -116,17 +125,16 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected override void Awake()
 		{
-            Debug.Log("LevelManager Awake");
-            base.Awake();
-			
+			base.Awake();
+			InstantiatePlayableCharacters ();
 	    }
 
 		/// <summary>
 		/// Instantiate playable characters based on the ones specified in the PlayerPrefabs list in the LevelManager's inspector.
 		/// </summary>
 		protected virtual void InstantiatePlayableCharacters()
-		{
-			Players = new List<Character> ();
+        {
+            Players = new List<Character> ();
 
 			// we check if there's a stored character in the game manager we should instantiate
 			if (GameManager.Instance.StoredCharacter != null)
@@ -141,12 +149,11 @@ namespace MoreMountains.CorgiEngine
 
 			// player instantiation
 			if (PlayerPrefabs.Count() != 0)
-			{               
-                foreach (Character playerPrefab in PlayerPrefabs)
-				{                  
-					Character newPlayer = (Character)Instantiate (playerPrefab, new Vector3 (0, 0, 0), Quaternion.identity);               
-                    newPlayer.name = playerPrefab.name;                  
-                                                         
+			{
+				foreach (Character playerPrefab in PlayerPrefabs)
+				{
+					Character newPlayer = (Character)Instantiate (playerPrefab, new Vector3 (0, 0, 0), Quaternion.identity);
+					newPlayer.name = playerPrefab.name;
 					Players.Add(newPlayer);
 
 					if (playerPrefab.CharacterType != Character.CharacterTypes.Player)
@@ -157,9 +164,9 @@ namespace MoreMountains.CorgiEngine
 			}
 			else
 			{
-				Debug.LogWarning ("LevelManager : The Level Manager doesn't have any Player prefab to spawn. You need to select a Player prefab from its inspector.");
+				//Debug.LogWarning ("LevelManager : The Level Manager doesn't have any Player prefab to spawn. You need to select a Player prefab from its inspector.");
 				return;
-			}           
+			}
 		}
 
 		/// <summary>
@@ -167,12 +174,9 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public virtual void Start()
 		{
-            InstantiatePlayableCharacters();
-
             if (Players == null || Players.Count == 0) { return; }
 
 			Initialization ();
-			LevelGUIStart ();
 
 			// we handle the spawn of the character(s)
 			if (Players.Count == 1)
@@ -185,13 +189,17 @@ namespace MoreMountains.CorgiEngine
 				SpawnMultipleCharacters ();
 			}
 
-			CheckpointAssignment ();
+            LevelGUIStart();
+            CheckpointAssignment ();
 
 			// we trigger a level start event
 			CorgiEngineEvent.Trigger(CorgiEngineEventTypes.LevelStart);
 			MMGameEvent.Trigger("Load");
-
-		}
+            
+            MMCameraEvent.Trigger(MMCameraEventTypes.SetConfiner, null, BoundsCollider);
+            MMCameraEvent.Trigger(MMCameraEventTypes.SetTargetCharacter, Players[0]);
+            MMCameraEvent.Trigger(MMCameraEventTypes.StartFollowing);
+        }
 
 		/// <summary>
 		/// Gets current camera, points number, start time, etc.
@@ -203,8 +211,16 @@ namespace MoreMountains.CorgiEngine
 			_savedPoints=GameManager.Instance.Points;
 			_started = DateTime.UtcNow;
 
-			// we store all the checkpoints present in the level, ordered by their x value
-			if ((CheckpointAttributionAxis == CheckpointsAxis.x) && (CheckpointAttributionDirection == CheckpointDirections.Ascending))
+            // if we don't find a bounds collider we generate one
+            BoundsCollider = this.gameObject.GetComponent<Collider>();
+            if (BoundsCollider == null)
+            {
+                GenerateColliderBounds();
+                BoundsCollider = this.gameObject.GetComponent<Collider>();
+            }
+
+            // we store all the checkpoints present in the level, ordered by their x value
+            if ((CheckpointAttributionAxis == CheckpointsAxis.x) && (CheckpointAttributionDirection == CheckpointDirections.Ascending))
 			{
 				Checkpoints = FindObjectsOfType<CheckPoint> ().OrderBy (o => o.transform.position.x).ToList ();
 			}
@@ -285,8 +301,15 @@ namespace MoreMountains.CorgiEngine
             // set the level name in the GUI
             LevelNameEvent.Trigger(SceneManager.GetActiveScene().name);
 			// fade in
-			MMFadeOutEvent.Trigger(IntroFadeDuration);			
-		}
+            if (Players.Count > 0)
+            {
+                MMFadeOutEvent.Trigger(IntroFadeDuration, FadeCurve, FaderID, false, Players[0].transform.position);
+            }
+            else
+            {
+                MMFadeOutEvent.Trigger(IntroFadeDuration, FadeCurve, FaderID, false, Vector3.zero);
+            }
+        }
 
 		/// <summary>
 		/// Spawns a playable character into the scene
@@ -317,7 +340,7 @@ namespace MoreMountains.CorgiEngine
 			PointsOfEntryStorage point = GameManager.Instance.GetPointsOfEntry(SceneManager.GetActiveScene().name);
 			if ((point != null) && (PointsOfEntry.Length >= (point.PointOfEntryIndex + 1)))
 			{
-				Players[0].RespawnAt(PointsOfEntry[point.PointOfEntryIndex], Character.FacingDirections.Right);
+				Players[0].RespawnAt(PointsOfEntry[point.PointOfEntryIndex], point.FacingDirection);
 				return;
 			}
 
@@ -342,7 +365,7 @@ namespace MoreMountains.CorgiEngine
 
 				if (AutoAttributePlayerIDs)
 				{
-                    player.SetPlayerID("Player"+characterCounter);
+					player.SetPlayerID("Player"+characterCounter);
 				}
 
 				player.name += " - " + player.PlayerID;
@@ -446,8 +469,14 @@ namespace MoreMountains.CorgiEngine
 		{
 			CorgiEngineEvent.Trigger(CorgiEngineEventTypes.LevelEnd);
 			MMGameEvent.Trigger("Save");
-
-	        MMFadeInEvent.Trigger(OutroFadeDuration);
+            if (Players.Count > 0)
+            {
+                MMFadeInEvent.Trigger(OutroFadeDuration, FadeCurve, FaderID, true, Players[0].transform.position);
+            }
+	        else
+            {
+                MMFadeInEvent.Trigger(OutroFadeDuration, FadeCurve, FaderID, true, Vector3.zero);
+            }
 	        StartCoroutine(GotoLevelCo(levelName));
 	    }
 
@@ -470,6 +499,10 @@ namespace MoreMountains.CorgiEngine
 	        {
 	            yield return new WaitForSeconds(OutroFadeDuration);
 			}
+            else
+            {
+                yield return new WaitForSecondsRealtime(OutroFadeDuration);
+            }
 			// we trigger an unPause event for the GameManager (and potentially other classes)
 			CorgiEngineEvent.Trigger(CorgiEngineEventTypes.UnPause);
 
@@ -603,5 +636,30 @@ namespace MoreMountains.CorgiEngine
 				}
 			}
 		}
-	}
+
+        /// <summary>
+        /// A temporary method used to convert level bounds from the old system to actual collider bounds
+        /// </summary>
+        [ExecuteAlways]
+        protected virtual void GenerateColliderBounds()
+        {
+            // set transform
+            this.transform.position = LevelBounds.center;
+
+            // remove existing collider
+            if (this.gameObject.GetComponent<BoxCollider>() != null)
+            {
+                DestroyImmediate(this.gameObject.GetComponent<BoxCollider>());
+            }
+
+            // create collider
+            BoxCollider collider = this.gameObject.AddComponent<BoxCollider>();
+            // set size
+            collider.size = LevelBounds.extents * 2f;
+
+            // set layer
+            this.gameObject.layer = LayerMask.NameToLayer("NoCollision");
+        }
+
+    }
 }

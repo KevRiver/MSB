@@ -45,11 +45,6 @@ namespace MoreMountains.CorgiEngine
 		protected bool _facingRightInitially;
 		protected bool _initialFlipX;
 		protected Vector3 _initialLocalScale;
-        Color objColor;
-        public bool isBelongsToLocalUser;
-
-        public LayerMask EnemyLayer;
-        public LayerMask PlayerLayer;
 
 	    /// <summary>
 		/// On awake, we store the initial speed of the object 
@@ -60,11 +55,6 @@ namespace MoreMountains.CorgiEngine
 			_initialSpeed = Speed;
 			_collider = GetComponent<BoxCollider2D> ();
 			_spriteRenderer = GetComponent<SpriteRenderer> ();
-            if (_spriteRenderer != null)
-            {
-                objColor = _spriteRenderer.color;
-                Debug.LogWarning("ObjColor.a : " + objColor.a);
-            }
 			_damageOnTouch = GetComponent<DamageOnTouch>();
 			_initialInvulnerabilityDurationWFS = new WaitForSeconds (InitialInvulnerabilityDuration);
 			if (_spriteRenderer != null) {	_initialFlipX = _spriteRenderer.flipX ;		}
@@ -78,8 +68,7 @@ namespace MoreMountains.CorgiEngine
 		{
 			base.OnEnable();
 			Initialization();
-            StartCoroutine(ShowObj(InitialInvulnerabilityDuration));
-            if (InitialInvulnerabilityDuration>0)
+			if (InitialInvulnerabilityDuration>0)
 			{
 				StartCoroutine(InitialInvulnerability());
 			}
@@ -92,15 +81,15 @@ namespace MoreMountains.CorgiEngine
 	    protected virtual IEnumerator InitialInvulnerability()
 	    {
 			if (_damageOnTouch == null) { yield break; }
-			if (_weapon == null) { yield break; }           
+			if (_weapon == null) { yield break; }
+            _damageOnTouch.ClearIgnoreList();
 			_damageOnTouch.IgnoreGameObject(_weapon.Owner.gameObject);
 	    	yield return _initialInvulnerabilityDurationWFS;
 			if (DamageOwner)
 			{
 				_damageOnTouch.StopIgnoringObject(_weapon.Owner.gameObject);
 			}
-            //_spriteRenderer.color = new Color(objColor.r, objColor.g, objColor.b, 1.0f);
-        }
+	    }
 
 	    /// <summary>
 	    /// Initializes the projectile
@@ -110,16 +99,8 @@ namespace MoreMountains.CorgiEngine
 			Speed = _initialSpeed;
 			ProjectileIsFacingRight = _facingRightInitially;
 			if (_spriteRenderer != null) {	_spriteRenderer.flipX = _initialFlipX;	}
-			transform.localScale = _initialLocalScale;
-            _spriteRenderer.color = new Color(objColor.r, objColor.g, objColor.b, 0f);            
-        }
-
-        IEnumerator ShowObj(float _afterSec)
-        {
-            yield return new WaitForSeconds(_afterSec);
-            Debug.LogWarning("ShowObj objcolor.a : " + objColor.a);
-            _spriteRenderer.color = new Color(objColor.r, objColor.g, objColor.b, objColor.a);
-        }
+			transform.localScale = _initialLocalScale;	
+	    }
 		
 		// On update(), we move the object based on the level's speed and the object's speed, and apply acceleration
 		protected override void Update ()
@@ -192,13 +173,11 @@ namespace MoreMountains.CorgiEngine
 		public virtual void SetOwner(GameObject newOwner)
 		{
 			_owner = newOwner;
-			DamageOnTouch damageOnTouch = this.gameObject.GetComponentNoAlloc<DamageOnTouch>();            
+			DamageOnTouch damageOnTouch = this.gameObject.MMGetComponentNoAlloc<DamageOnTouch>();            
 			if (damageOnTouch != null)
             {
                 damageOnTouch.Owner = newOwner;
                 damageOnTouch.Owner = newOwner;
-                damageOnTouch.isBelongToLocalUser = isBelongsToLocalUser;
-                damageOnTouch.TargetLayerMask = (isBelongsToLocalUser) ? EnemyLayer : PlayerLayer;
                 if (!DamageOwner)
                 {
                     damageOnTouch.IgnoreGameObject(newOwner);

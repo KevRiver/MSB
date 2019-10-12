@@ -30,10 +30,21 @@ namespace MoreMountains.CorgiEngine
 		[ReadOnly]
 		public bool InATunnel;
 
-		/// <summary>
-		/// On Start(), we set our tunnel flag to false
-		/// </summary>
-		protected override void Initialization()
+        [Header("Cinemachine")]
+        public bool MoveCameraTarget = true;
+        public Vector3 CameraTargetOffset = new Vector3(0f, -3f, 0f);
+
+        // animation parameters
+        protected const string _crouchingAnimationParameterName = "Crouching";
+        protected const string _crawlingAnimationParameterName = "Crawling";
+        protected int _crouchingAnimationParameter;
+        protected int _crawlingAnimationParameter;
+        protected bool _wasInATunnelLastFrame;
+
+        /// <summary>
+        /// On Start(), we set our tunnel flag to false
+        /// </summary>
+        protected override void Initialization()
 		{
 			base.Initialization();
 			InATunnel = false;
@@ -53,9 +64,7 @@ namespace MoreMountains.CorgiEngine
 		/// At the start of the ability's cycle, we check if we're pressing down. If yes, we call Crouch()
 		/// </summary>
 		protected override void HandleInput()
-		{			
-
-
+		{
 			// Crouch Detection : if the player is pressing "down" and if the character is grounded and the crouch action is enabled
 			if (_verticalInput < -_inputManager.Threshold.y) 				
 			{
@@ -80,9 +89,8 @@ namespace MoreMountains.CorgiEngine
 			// if this is the first time we're here, we trigger our sounds
 			if ((_movement.CurrentState != CharacterStates.MovementStates.Crouching) && (_movement.CurrentState != CharacterStates.MovementStates.Crawling))
 			{
-				// we play the crouch start sound 
-				PlayAbilityStartSfx();
-				PlayAbilityUsedSfx();
+                // we play the crouch start sound 
+                PlayAbilityStartFeedbacks();
 			}
 
 			// we set the character's state to Crouching and if it's also moving we set it to Crawling
@@ -114,9 +122,13 @@ namespace MoreMountains.CorgiEngine
 			// we make our camera look down
 			if (_sceneCamera!=null)
 			{
-				_sceneCamera.LookDown();			
-			}
-		}
+				_sceneCamera.LookDown();
+            }
+            if (MoveCameraTarget)
+            {
+                _character.SetCameraTargetOffset(CameraTargetOffset);
+            }
+        }
 
 		/// <summary>
 		/// Runs every frame to check if we should switch from crouching to crawling or the other way around
@@ -146,16 +158,24 @@ namespace MoreMountains.CorgiEngine
                 ExitCrouch();
             }
 
-			// if we're currently grounded
-			if ( (_movement.CurrentState == CharacterStates.MovementStates.Crouching)
-				|| (_movement.CurrentState == CharacterStates.MovementStates.Crawling))
-			{	
-				// but we're not pressing down anymore, or we're not grounded anymore
-				if ( (!_controller.State.IsGrounded) || (_verticalInput >= -_inputManager.Threshold.y) )
-				{
+            if ((_movement.CurrentState == CharacterStates.MovementStates.Crouching)
+                || (_movement.CurrentState == CharacterStates.MovementStates.Crawling))
+            {
+                // but we're not pressing down anymore, or we're not grounded anymore
+                if ((!_controller.State.IsGrounded) || (_verticalInput >= -_inputManager.Threshold.y))
+                {
                     ExitCrouch();
-				}
-			}
+                }
+            }
+
+            // if we're currently grounded
+            if (_wasInATunnelLastFrame && (_movement.CurrentState == CharacterStates.MovementStates.Pushing))
+            {
+                if ((!_controller.State.IsGrounded) || (_verticalInput >= -_inputManager.Threshold.y))
+                {
+                    ExitCrouch();
+                }
+            }			
 		}
 
         /// <summary>
@@ -165,7 +185,7 @@ namespace MoreMountains.CorgiEngine
         {
             // we cast a raycast above to see if we have room enough to go back to normal size
             InATunnel = !_controller.CanGoBackToOriginalSize();
-
+            _wasInATunnelLastFrame = InATunnel;
             // if the character is not in a tunnel, we can go back to normal size
             if (!InATunnel)
             {
@@ -179,10 +199,14 @@ namespace MoreMountains.CorgiEngine
                 {
                     _sceneCamera.ResetLookUpDown();
                 }
+                if (MoveCameraTarget)
+                {
+                    _character.SetCameraTargetOffset(Vector3.zero);
+                }
 
-                // we play our exit sound
-                StopAbilityUsedSfx();
-                PlayAbilityStopSfx();
+                // we play our exit feedback
+                StopStartFeedbacks();
+                PlayAbilityStopFeedbacks();
 
                 // we go back to Idle state and reset our collider's size
                 _movement.ChangeState(CharacterStates.MovementStates.Idle);
@@ -191,13 +215,13 @@ namespace MoreMountains.CorgiEngine
             }
         }
 
-		/// <summary>
-		/// Adds required animator parameters to the animator parameters list if they exist
-		/// </summary>
-		protected override void InitializeAnimatorParameters()
+        /// <summary>
+        /// Adds required animator parameters to the animator parameters list if they exist
+        /// </summary>
+        protected override void InitializeAnimatorParameters()
 		{
-			RegisterAnimatorParameter ("Crouching", AnimatorControllerParameterType.Bool);
-			RegisterAnimatorParameter ("Crawling", AnimatorControllerParameterType.Bool);
+			RegisterAnimatorParameter ("Crouching", AnimatorControllerParameterType.Bool, out _crouchingAnimationParameter);
+			RegisterAnimatorParameter ("Crawling", AnimatorControllerParameterType.Bool, out _crawlingAnimationParameter);
 		}
 
 		/// <summary>
@@ -205,8 +229,8 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public override void UpdateAnimator()
 		{
-			MMAnimator.UpdateAnimatorBool(_animator,"Crouching",(_movement.CurrentState == CharacterStates.MovementStates.Crouching), _character._animatorParameters);			
-			MMAnimator.UpdateAnimatorBool(_animator,"Crawling",(_movement.CurrentState == CharacterStates.MovementStates.Crawling), _character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _crouchingAnimationParameter, (_movement.CurrentState == CharacterStates.MovementStates.Crouching), _character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _crawlingAnimationParameter, (_movement.CurrentState == CharacterStates.MovementStates.Crawling), _character._animatorParameters);
 		}
 
 		/// <summary>

@@ -29,8 +29,10 @@ namespace MoreMountains.CorgiEngine
 		public float JetpackFuelDuration = 5f;
 		/// the jetpack refuel cooldown
 		public float JetpackRefuelCooldown=1f;
-		/// the remaining jetpack fuel duration (in seconds)
-		public float JetpackFuelDurationLeft{get; protected set;}
+        /// the speed at which the jetpack refuels
+        public float RefuelSpeed = 0.5f;
+        /// the remaining jetpack fuel duration (in seconds)
+        public float JetpackFuelDurationLeft{get; protected set;}
 		/// the minimum amount of fuel required in the tank to be able to jetpack again
 		public float MinimumFuelRequirement = 0.2f;
 
@@ -45,10 +47,14 @@ namespace MoreMountains.CorgiEngine
 		protected AudioSource _jetpackUsedSound;
 		protected WaitForSeconds _jetpackRefuelCooldownWFS;
 
-		/// <summary>
-		/// On Start(), we grab our particle emitter if there's one, and setup our fuel reserves
-		/// </summary>
-		protected override void Initialization () 
+        // animation parameters
+        protected const string _jetpackingAnimationParameterName = "Jetpacking";
+        protected int _jetpackingAnimationParameter;
+
+        /// <summary>
+        /// On Start(), we grab our particle emitter if there's one, and setup our fuel reserves
+        /// </summary>
+        protected override void Initialization () 
 		{
 			base.Initialization();
 					
@@ -125,11 +131,10 @@ namespace MoreMountains.CorgiEngine
 			} 
 
 			// if this is the first time we're here, we trigger our sounds
-			if (_movement.CurrentState != CharacterStates.MovementStates.Jetpacking)
+			if ((_movement.CurrentState != CharacterStates.MovementStates.Jetpacking) && !_startFeedbackIsPlaying)
 			{
-				// we play the jetpack start sound 
-				PlayAbilityStartSfx();
-				PlayAbilityUsedSfx();
+                // we play the jetpack start sound 
+                PlayAbilityStartFeedbacks();
 				_jetpacking = true;
 			}
 
@@ -171,9 +176,9 @@ namespace MoreMountains.CorgiEngine
 		{
 			// we play our stop sound
 			if (_movement.CurrentState == CharacterStates.MovementStates.Jetpacking)
-			{
-				StopAbilityUsedSfx();
-				PlayAbilityStopSfx();
+            {
+                StopStartFeedbacks();
+				PlayAbilityStopFeedbacks();
 			}
 
 			// if we have a jetpack particle emitter, we turn it off
@@ -222,7 +227,7 @@ namespace MoreMountains.CorgiEngine
 			float refuelDuration = JetpackFuelDurationLeft;
 			while ((refuelDuration < JetpackFuelDuration) && (_movement.CurrentState != CharacterStates.MovementStates.Jetpacking))
 			{
-				refuelDuration += Time.deltaTime/2;
+				refuelDuration += Time.deltaTime * RefuelSpeed;
 				JetpackFuelDurationLeft = refuelDuration;
 				UpdateJetpackBar();
 				// we prevent the character to jetpack again while at low fuel and refueling
@@ -247,11 +252,12 @@ namespace MoreMountains.CorgiEngine
 		{
 			base.ProcessAbility();
 
-			// if we're not walking anymore, we stop our walking sound
-			if (_movement.CurrentState != CharacterStates.MovementStates.Jetpacking && _abilityInProgressSfx != null)
-			{
-				StopAbilityUsedSfx();
-			}
+            // if we're not jetpacking anymore, we stop our jetpacking feedback
+            if ((_movement.CurrentState != CharacterStates.MovementStates.Jetpacking) && _startFeedbackIsPlaying)
+            {
+                StopStartFeedbacks();
+                PlayAbilityStopFeedbacks();
+            }
 
 			if (_movement.CurrentState != CharacterStates.MovementStates.Jetpacking && _jetpacking )
 			{
@@ -269,10 +275,13 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected virtual void UpdateJetpackBar()
 		{
-			if ( (GUIManager.Instance != null) && (_character.CharacterType == Character.CharacterTypes.Player) )
-			{
-				GUIManager.Instance.UpdateJetpackBar(JetpackFuelDurationLeft,0f,JetpackFuelDuration, _character.PlayerID);
-			}
+            if (Application.isPlaying)
+            {
+                if ((GUIManager.Instance != null) && (_character.CharacterType == Character.CharacterTypes.Player))
+                {
+                    GUIManager.Instance.UpdateJetpackBar(JetpackFuelDurationLeft, 0f, JetpackFuelDuration, _character.PlayerID);
+                }
+            }
 		}
 
 		/// <summary>
@@ -313,27 +322,27 @@ namespace MoreMountains.CorgiEngine
 		/// <summary>
 		/// When the character dies we stop its jetpack
 		/// </summary>
-		public override void Reset()
+		public override void ResetAbility()
 		{
 			// if we have a jetpack particle emitter, we turn it off
 			if (ParticleEmitter!=null)
 			{
 				ParticleSystem.EmissionModule emissionModule = ParticleEmitter.emission;
 				emissionModule.enabled=false;
-			}
-			StopAbilityUsedSfx();
+            }
+            StopStartFeedbacks();
 			JetpackFuelDurationLeft = JetpackFuelDuration;
 			UpdateJetpackBar();
-			_movement.ChangeState (CharacterStates.MovementStates.Idle);
+			_movement?.ChangeState (CharacterStates.MovementStates.Idle);
 			_stillFuelLeft = true;
 		}
-
-		/// <summary>
-		/// Adds required animator parameters to the animator parameters list if they exist
-		/// </summary>
-		protected override void InitializeAnimatorParameters()
+        
+        /// <summary>
+        /// Adds required animator parameters to the animator parameters list if they exist
+        /// </summary>
+        protected override void InitializeAnimatorParameters()
 		{
-			RegisterAnimatorParameter ("Jetpacking", AnimatorControllerParameterType.Bool);
+			RegisterAnimatorParameter (_jetpackingAnimationParameterName, AnimatorControllerParameterType.Bool, out _jetpackingAnimationParameter);
 		}
 
 		/// <summary>
@@ -341,7 +350,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public override void UpdateAnimator()
 		{
-			MMAnimator.UpdateAnimatorBool(_animator,"Jetpacking",(_movement.CurrentState == CharacterStates.MovementStates.Jetpacking),_character._animatorParameters);
+            MMAnimatorExtensions.UpdateAnimatorBool(_animator, _jetpackingAnimationParameter, (_movement.CurrentState == CharacterStates.MovementStates.Jetpacking), _character._animatorParameters);
 		}
 	}
 }

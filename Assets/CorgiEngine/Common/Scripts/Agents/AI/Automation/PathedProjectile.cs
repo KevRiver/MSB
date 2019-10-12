@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using MoreMountains.Tools;
+using MoreMountains.Feedbacks;
 
 namespace MoreMountains.CorgiEngine
 {	
@@ -11,8 +12,8 @@ namespace MoreMountains.CorgiEngine
 	public class PathedProjectile : MonoBehaviour
 	{
 		[Information("A GameObject with this component will move towards its target and get destroyed when it reaches it. Here you can define what object to instantiate on impact. Use the Initialize method to set its destination and speed.",MoreMountains.Tools.InformationAttribute.InformationType.Info,false)]
-		/// The effect to instantiate when the object gets destroyed
-		public GameObject DestroyEffect;
+		/// the MMFeedbacks to play when the object gets destroyed
+        public MMFeedbacks DestroyFeedbacks;
 		/// the destination of the projectile
 		protected Transform _destination;
 	    /// the movement speed
@@ -37,12 +38,11 @@ namespace MoreMountains.CorgiEngine
 			transform.position=Vector3.MoveTowards(transform.position,_destination.position,Time.deltaTime * _speed);
 			var distanceSquared = (_destination.transform.position - transform.position).sqrMagnitude;
 			if(distanceSquared > .01f * .01f)
-				return;
-			
-			if (DestroyEffect!=null)
-			{
-				Instantiate(DestroyEffect,transform.position,transform.rotation); 
-			}
+            {
+                return;
+            }
+
+            DestroyFeedbacks?.PlayFeedbacks();			
 			
 			Destroy(gameObject);
 		}	

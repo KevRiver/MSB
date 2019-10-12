@@ -1,12 +1,12 @@
-﻿using MoreMountains.Tools;
+﻿using UnityEngine;
 using System.Collections;
+using MoreMountains.Tools;
 using System.Collections.Generic;
-using UnityEngine;
 
 
 namespace MoreMountains.CorgiEngine
-{
-    [SelectionBase]
+{	
+	[SelectionBase]
 	/// <summary>
 	/// This class will pilot the CorgiController component of your character.
 	/// This is where you'll implement all of your character's game rules, like jump, dash, shoot, stuff like that.
@@ -24,7 +24,7 @@ namespace MoreMountains.CorgiEngine
 		public enum SpawnFacingDirections { Default, Left, Right }
 
 		[Information("The Character script is the mandatory basis for all Character abilities. Your character can either be a Non Player Character, controlled by an AI, or a Player character, controlled by the player. In this case, you'll need to specify a PlayerID, which must match the one specified in your InputManager. Usually 'Player1', 'Player2', etc.",MoreMountains.Tools.InformationAttribute.InformationType.Info,false)]
-		/// Is the character player-controlled or controlled by an AI 
+		/// Is the character player-controlled or controlled by an AI ?
 		public CharacterTypes CharacterType = CharacterTypes.AI;
 		/// Only used if the character is player-controlled. The PlayerID must match an input manager's PlayerID. It's also used to match Unity's input settings. So you'll be safe if you keep to Player1, Player2, Player3 or Player4
 		public string PlayerID = "";				
@@ -54,7 +54,10 @@ namespace MoreMountains.CorgiEngine
 		[Information("Leave this unbound if this is a regular, sprite-based character, and if the SpriteRenderer and the Character are on the same GameObject. If not, you'll want to parent the actual model to the Character object, and bind it below. See the 3D demo characters for an example of that. The idea behind that is that the model may move, flip, but the collider will remain unchanged.",MoreMountains.Tools.InformationAttribute.InformationType.Info,false)]
 		/// the 'model' (can be any gameobject) used to manipulate the character. Ideally it's separated (and nested) from the collider/corgi controller/abilities, to avoid messing with collisions.
 		public GameObject CharacterModel;
-
+        /// the object to use as the camera target for this character
+        public GameObject CameraTarget;
+        /// the speed at which the Camera Target moves
+        public float CameraTargetSpeed = 5f;
 
         [Information("You can also decide if the character must automatically flip when going backwards or not. Additionnally, if you're not using sprites, you can define here how the character's model's localscale will be affected by flipping. By default it flips on the x axis, but you can change that to fit your model.",MoreMountains.Tools.InformationAttribute.InformationType.Info,false)]
         /// whether we should flip the model's scale when the character changes direction or not
@@ -78,6 +81,12 @@ namespace MoreMountains.CorgiEngine
 		/// If this is true, a state machine processor component will be added and it'll emit events on updates (see state machine processor's doc for more details)
 		public bool SendStateUpdateEvents = true;
 
+        [Header("Airborne")]
+        /// The distance after which the character is considered airborne
+        public float AirborneDistance = 0.5f;
+        /// Whether or not the character is airborne this frame
+        public bool Airborne { get { return (_controller.DistanceToTheGround > AirborneDistance); } }
+
         // State Machines
         /// the movement state machine 
         public MMStateMachine<CharacterStates.MovementStates> MovementState;
@@ -91,32 +100,28 @@ namespace MoreMountains.CorgiEngine
         /// associated animator
 	    public Animator _animator { get; protected set; }
         /// a list of animator parameters to update
-		public List<string> _animatorParameters { get; set; }
-
+		public List<int> _animatorParameters { get; set; }
+        /// whether or not the character can flip this frame
         public bool CanFlip { get; set; }
-        //MSB Custom
-        public bool isLocalUser { get; set; }
 
-
-        public CorgiController _controller;
+        protected CorgiController _controller;
 		protected SpriteRenderer _spriteRenderer;
 	    protected Color _initialColor;
 		protected CharacterAbility[] _characterAbilities;
-        protected CharacterHorizontalMovement _characterhorizontalMovement;
-        protected CharacterJump _characterJump;
-        public float originmalJumpHeight;
-        public float originalWalkSpeed;
-        protected float _originalGravity;
+	    protected float _originalGravity;
 		protected Health _health;
 		protected bool _spawnDirectionForced = false;
         protected AIBrain _aiBrain;
         protected Vector3 _targetModelRotation;
-        protected DamageOnTouch _damageOnTouch;       
-        
-		/// <summary>
-		/// Initializes this instance of the character
-		/// </summary>
-		protected virtual void Awake()
+        protected DamageOnTouch _damageOnTouch;
+        protected Vector3 _cameraTargetInitialPosition;
+        protected Vector3 _cameraOffset = Vector3.zero;
+
+
+        /// <summary>
+        /// Initializes this instance of the character
+        /// </summary>
+        protected virtual void Awake()
 		{		
 			Initialization();
 		}
@@ -139,22 +144,32 @@ namespace MoreMountains.CorgiEngine
 				IsFacingRight = true;
 			}
 
-			// we get the current input manager
-			SetInputManager();
+            // instantiate camera target
+            if (CameraTarget == null)
+            {
+                CameraTarget = new GameObject();
+            }
+            CameraTarget.transform.SetParent(this.transform);
+            CameraTarget.transform.localPosition = Vector3.zero;
+            CameraTarget.name = "CameraTarget";
+            _cameraTargetInitialPosition = CameraTarget.transform.localPosition;
+
+            // we get the current input manager
+            SetInputManager();
 			// we get the main camera
-			if (Camera.main == null) { return; }
-			SceneCamera = Camera.main.GetComponent<CameraController>();
+			if (Camera.main != null)
+            {
+                SceneCamera = Camera.main.GetComponent<CameraController>();
+            }			
 			// we store our components for further use 
 			CharacterState = new CharacterStates();
 			_spriteRenderer = GetComponent<SpriteRenderer>();
 			_controller = GetComponent<CorgiController>();
 			_characterAbilities = GetComponents<CharacterAbility>();
-            //MSB Custom           
             _aiBrain = GetComponent<AIBrain>();
 			_health = GetComponent<Health> ();
             _damageOnTouch = GetComponent<DamageOnTouch>();
             CanFlip = true;
-            isLocalUser = false;
             AssignAnimator();           
 
 			_originalGravity = _controller.Parameters.Gravity;		
@@ -201,10 +216,10 @@ namespace MoreMountains.CorgiEngine
 				InputManager[] foundInputManagers = FindObjectsOfType(typeof(InputManager)) as InputManager[];
 				foreach (InputManager foundInputManager in foundInputManagers) 
 		        {
-                    if (foundInputManager.PlayerID == PlayerID)
+					if (foundInputManager.PlayerID == PlayerID)
 					{
 						LinkedInputManager = foundInputManager;
-					}                   
+					}
 		        }
 			}
             UpdateInputManagersInAbilities();
@@ -216,8 +231,11 @@ namespace MoreMountains.CorgiEngine
         /// <param name="inputManager"></param>
         public virtual void SetInputManager(InputManager inputManager)
         {
-            LinkedInputManager = inputManager;
-            UpdateInputManagersInAbilities();
+            if (PlayerID == inputManager.PlayerID)
+            {
+                LinkedInputManager = inputManager;
+                UpdateInputManagersInAbilities();
+            }
         }
 
         /// <summary>
@@ -259,13 +277,13 @@ namespace MoreMountains.CorgiEngine
 			PlayerID = newPlayerID;
 			SetInputManager();
 		}
-
+		
 		/// <summary>
 		/// This is called every frame.
 		/// </summary>
 		protected virtual void Update()
 		{		
-			EveryFrame();
+			EveryFrame();				
 		}
 
 		/// <summary>
@@ -279,12 +297,11 @@ namespace MoreMountains.CorgiEngine
 			EarlyProcessAbilities();
 			ProcessAbilities();
 			LateProcessAbilities();
+            HandleCameraTarget();
 
 			// we send our various states to the animator.		 
 			UpdateAnimators ();
-            RotateModel();
-            //Debug.Log("MovementState : " + MovementState.CurrentState.ToString());
-            //Debug.Log("CorgiControllerState : " + _controller.State.ToString());
+            RotateModel();	
 		}
 
         protected virtual void RotateModel()
@@ -346,6 +363,33 @@ namespace MoreMountains.CorgiEngine
 			}
 		}
 
+
+
+        // animation parameters
+        protected const string _groundedAnimationParameterName = "Grounded";
+        protected const string _airborneAnimationParameterName = "Airborne";
+        protected const string _xSpeedAnimationParameterName = "xSpeed";
+        protected const string _ySpeedAnimationParameterName = "ySpeed";
+        protected const string _collidingLeftAnimationParameterName = "CollidingLeft";
+        protected const string _collidingRightAnimationParameterName = "CollidingRight";
+        protected const string _collidingBelowAnimationParameterName = "CollidingBelow";
+        protected const string _collidingAboveAnimationParameterName = "CollidingAbove";
+        protected const string _idleSpeedAnimationParameterName = "Idle";
+        protected const string _aliveAnimationParameterName = "Alive";
+        protected const string _facingRightAnimationParameterName = "FacingRight";
+
+        protected int _groundedAnimationParameter;
+        protected int _airborneSpeedAnimationParameter;
+        protected int _xSpeedSpeedAnimationParameter;
+        protected int _ySpeedSpeedAnimationParameter;
+        protected int _collidingLeftAnimationParameter;
+        protected int _collidingRightAnimationParameter;
+        protected int _collidingBelowAnimationParameter;
+        protected int _collidingAboveAnimationParameter;
+        protected int _idleSpeedAnimationParameter;
+        protected int _aliveAnimationParameter;
+        protected int _facingRightAnimationParameter;
+
         /// <summary>
         /// Initializes the animator parameters.
         /// </summary>
@@ -353,18 +397,19 @@ namespace MoreMountains.CorgiEngine
         {
             if (_animator == null) { return; }
 
-            _animatorParameters = new List<string>();
+            _animatorParameters = new List<int>();
 
-            MMAnimator.AddAnimatorParamaterIfExists(_animator, "Grounded", AnimatorControllerParameterType.Bool, _animatorParameters);
-            MMAnimator.AddAnimatorParamaterIfExists(_animator, "xSpeed", AnimatorControllerParameterType.Float, _animatorParameters);
-            MMAnimator.AddAnimatorParamaterIfExists(_animator, "ySpeed", AnimatorControllerParameterType.Float, _animatorParameters);
-            MMAnimator.AddAnimatorParamaterIfExists(_animator, "CollidingLeft", AnimatorControllerParameterType.Bool, _animatorParameters);
-            MMAnimator.AddAnimatorParamaterIfExists(_animator, "CollidingRight", AnimatorControllerParameterType.Bool, _animatorParameters);
-            MMAnimator.AddAnimatorParamaterIfExists(_animator, "CollidingBelow", AnimatorControllerParameterType.Bool, _animatorParameters);
-            MMAnimator.AddAnimatorParamaterIfExists(_animator, "CollidingAbove", AnimatorControllerParameterType.Bool, _animatorParameters);
-            MMAnimator.AddAnimatorParamaterIfExists(_animator, "Idle", AnimatorControllerParameterType.Bool, _animatorParameters);
-            MMAnimator.AddAnimatorParamaterIfExists(_animator, "Alive", AnimatorControllerParameterType.Bool, _animatorParameters);
-            MMAnimator.AddAnimatorParamaterIfExists(_animator, "FacingRight", AnimatorControllerParameterType.Bool, _animatorParameters);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(_animator, _groundedAnimationParameterName, out _groundedAnimationParameter, AnimatorControllerParameterType.Bool, _animatorParameters);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(_animator, _airborneAnimationParameterName, out _airborneSpeedAnimationParameter, AnimatorControllerParameterType.Bool, _animatorParameters);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(_animator, _xSpeedAnimationParameterName, out _xSpeedSpeedAnimationParameter, AnimatorControllerParameterType.Float, _animatorParameters);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(_animator, _ySpeedAnimationParameterName, out _ySpeedSpeedAnimationParameter, AnimatorControllerParameterType.Float, _animatorParameters);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(_animator, _collidingLeftAnimationParameterName, out _collidingLeftAnimationParameter, AnimatorControllerParameterType.Bool, _animatorParameters);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(_animator, _collidingRightAnimationParameterName, out _collidingRightAnimationParameter, AnimatorControllerParameterType.Bool, _animatorParameters);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(_animator, _collidingBelowAnimationParameterName, out _collidingBelowAnimationParameter, AnimatorControllerParameterType.Bool, _animatorParameters);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(_animator, _collidingAboveAnimationParameterName, out _collidingAboveAnimationParameter, AnimatorControllerParameterType.Bool, _animatorParameters);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(_animator, _idleSpeedAnimationParameterName, out _idleSpeedAnimationParameter, AnimatorControllerParameterType.Bool, _animatorParameters);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(_animator, _aliveAnimationParameterName, out _aliveAnimationParameter, AnimatorControllerParameterType.Bool, _animatorParameters);
+            MMAnimatorExtensions.AddAnimatorParameterIfExists(_animator, _facingRightAnimationParameterName, out _facingRightAnimationParameter, AnimatorControllerParameterType.Bool, _animatorParameters);
         }
 
         /// <summary>
@@ -373,17 +418,18 @@ namespace MoreMountains.CorgiEngine
         protected virtual void UpdateAnimators()
 		{	
 			if ((UseDefaultMecanim) && (_animator!= null))
-			{ 
-				MMAnimator.UpdateAnimatorBool(_animator,"Grounded",_controller.State.IsGrounded,_animatorParameters);
-				MMAnimator.UpdateAnimatorBool(_animator,"Alive",(ConditionState.CurrentState != CharacterStates.CharacterConditions.Dead),_animatorParameters);
-				MMAnimator.UpdateAnimatorFloat(_animator,"xSpeed",_controller.Speed.x,_animatorParameters);
-				MMAnimator.UpdateAnimatorFloat(_animator,"ySpeed",_controller.Speed.y,_animatorParameters);
-				MMAnimator.UpdateAnimatorBool(_animator,"CollidingLeft",_controller.State.IsCollidingLeft,_animatorParameters);
-				MMAnimator.UpdateAnimatorBool(_animator,"CollidingRight",_controller.State.IsCollidingRight,_animatorParameters);
-				MMAnimator.UpdateAnimatorBool(_animator,"CollidingBelow",_controller.State.IsCollidingBelow,_animatorParameters);
-				MMAnimator.UpdateAnimatorBool(_animator,"CollidingAbove",_controller.State.IsCollidingAbove,_animatorParameters);
-				MMAnimator.UpdateAnimatorBool(_animator,"Idle",(MovementState.CurrentState == CharacterStates.MovementStates.Idle),_animatorParameters);
-                MMAnimator.UpdateAnimatorBool(_animator, "FacingRight", IsFacingRight, _animatorParameters);
+            {
+                MMAnimatorExtensions.UpdateAnimatorBool(_animator, _groundedAnimationParameter, _controller.State.IsGrounded, _animatorParameters);
+                MMAnimatorExtensions.UpdateAnimatorBool(_animator, _airborneSpeedAnimationParameter, Airborne, _animatorParameters);
+                MMAnimatorExtensions.UpdateAnimatorBool(_animator, _aliveAnimationParameter, (ConditionState.CurrentState != CharacterStates.CharacterConditions.Dead),_animatorParameters);
+                MMAnimatorExtensions.UpdateAnimatorFloat(_animator, _xSpeedSpeedAnimationParameter, _controller.Speed.x, _animatorParameters);
+                MMAnimatorExtensions.UpdateAnimatorFloat(_animator, _ySpeedSpeedAnimationParameter, _controller.Speed.y, _animatorParameters);
+                MMAnimatorExtensions.UpdateAnimatorBool(_animator, _collidingLeftAnimationParameter, _controller.State.IsCollidingLeft, _animatorParameters);
+                MMAnimatorExtensions.UpdateAnimatorBool(_animator, _collidingRightAnimationParameter, _controller.State.IsCollidingRight, _animatorParameters);
+                MMAnimatorExtensions.UpdateAnimatorBool(_animator, _collidingBelowAnimationParameter, _controller.State.IsCollidingBelow, _animatorParameters);
+                MMAnimatorExtensions.UpdateAnimatorBool(_animator, _collidingAboveAnimationParameter, _controller.State.IsCollidingAbove, _animatorParameters);
+                MMAnimatorExtensions.UpdateAnimatorBool(_animator, _idleSpeedAnimationParameter, (MovementState.CurrentState == CharacterStates.MovementStates.Idle), _animatorParameters);
+                MMAnimatorExtensions.UpdateAnimatorBool(_animator, _facingRightAnimationParameter, IsFacingRight, _animatorParameters);
 
                 foreach (CharacterAbility ability in _characterAbilities)
 				{
@@ -395,13 +441,11 @@ namespace MoreMountains.CorgiEngine
 	        }
 	    }
 
-        /// <summary>
-        /// Handles the character status.
-        /// </summary>
-
-        float timer = 0;
-        protected virtual void HandleCharacterStatus()
-		{           
+	    /// <summary>
+	    /// Handles the character status.
+	    /// </summary>
+		protected virtual void HandleCharacterStatus()
+		{
 			// if the character is dead, we prevent it from moving horizontally		
 			if (ConditionState.CurrentState == CharacterStates.CharacterConditions.Dead)
 			{
@@ -426,89 +470,12 @@ namespace MoreMountains.CorgiEngine
 				_controller.GravityActive(false);
 				_controller.SetForce(Vector2.zero);			
 			}
+		}
 
-
-            
-            if (ConditionState.CurrentState == CharacterStates.CharacterConditions.Stun)
-            {
-                timer += Time.deltaTime;
-                //Debug.LogWarning("Stun State");
-                //Debug.LogWarning("Duration : " + _duration);
-                //Debug.LogWarning("Timer : " + timer);
-                if (timer > _duration)
-                {
-                    foreach (CharacterAbility ability in _characterAbilities)
-                    {
-                        ability.AbilityPermitted = true;
-                    }
-                    ConditionState.ChangeState(CharacterStates.CharacterConditions.Normal);
-                    timer = 0;
-                    _duration = 0;
-                }
-            }
-
-            if (ConditionState.CurrentState == CharacterStates.CharacterConditions.Slow)
-            {
-                timer += Time.deltaTime;
-                Debug.LogWarning("CurrentState Slow");
-                
-
-                if (timer > _duration)
-                {
-                    Debug.LogWarning("Slow Duration End Reset Parameters");
-                    _characterhorizontalMovement.WalkSpeed = originalWalkSpeed;
-                    _characterJump.JumpHeight = originmalJumpHeight;
-                    ConditionState.ChangeState(CharacterStates.CharacterConditions.Normal);
-                    timer = 0;
-                    _duration = 0;
-                }
-            }
-
-            if (ConditionState.CurrentState == CharacterStates.CharacterConditions.Normal)
-            {
-               
-            }
-        }
-        public float _duration = 0;
-
-        public virtual void Stun()
-        {
-            Debug.LogWarning("Target Stun Condition");
-            ConditionState.ChangeState(CharacterStates.CharacterConditions.Stun);
-            foreach (CharacterAbility ability in _characterAbilities)
-            {
-                ability.AbilityPermitted = false;
-            }
-        }        
-        
-        public virtual void Slow(float _SpeedDecreaseRatio)
-        {
-            Debug.LogWarning("Target Slow Condition");
-            ConditionState.ChangeState(CharacterStates.CharacterConditions.Slow);
-            _characterhorizontalMovement.WalkSpeed *= 1 - _SpeedDecreaseRatio;
-            originmalJumpHeight = _characterJump.JumpHeight;
-            _characterJump.JumpHeight *= (1 - _SpeedDecreaseRatio);                              
-        }
-
-        public void ResetConditionFunc(float _duration)
-        {
-            StartCoroutine(ResetCondition(_duration));
-        }
-
-        public IEnumerator ResetCondition(float _duration)
-        {
-            yield return new WaitForSeconds(_duration);
-            ConditionState.ChangeState(CharacterStates.CharacterConditions.Normal);
-            _characterhorizontalMovement.AbilityPermitted = true;
-            _characterJump.AbilityPermitted = true;
-            _characterhorizontalMovement.MovementSpeedMultiplier = 1;
-            _characterJump.JumpHeight = originmalJumpHeight;
-        }
-
-        /// <summary>
-        /// Freezes this character.
-        /// </summary>
-        public virtual void Freeze()
+		/// <summary>
+		/// Freezes this character.
+		/// </summary>
+		public virtual void Freeze()
 		{
 			_controller.GravityActive(false);
 			_controller.SetForce(Vector2.zero);	
@@ -551,7 +518,7 @@ namespace MoreMountains.CorgiEngine
 		{
 			if (!gameObject.activeInHierarchy)
 			{
-				Debug.LogError("Spawn : your Character's gameobject is inactive");
+				//Debug.LogError("Spawn : your Character's gameobject is inactive");
 				return;
 			}
 
@@ -576,7 +543,7 @@ namespace MoreMountains.CorgiEngine
 		/// Flips the character and its dependencies (jetpack for example) horizontally
 		/// </summary>
 		public virtual void Flip(bool IgnoreFlipOnDirectionChange = false)
-		{           
+		{
 			// if we don't want the character to flip, we do nothing and exit
 			if (!FlipModelOnDirectionChange && !RotateModelOnDirectionChange && !IgnoreFlipOnDirectionChange)
             {
@@ -623,7 +590,7 @@ namespace MoreMountains.CorgiEngine
         /// Flips the model only, no impact on weapons or attachments
         /// </summary>
         public virtual void FlipModel()
-        {           
+        {
             if (FlipModelOnDirectionChange)
             {
                 if (CharacterModel != null)
@@ -702,6 +669,23 @@ namespace MoreMountains.CorgiEngine
 			}
 		}
 
+        /// <summary>
+        /// Called every frame, makes the camera target move
+        /// </summary>
+        protected virtual void HandleCameraTarget()
+        {
+            CameraTarget.transform.localPosition = Vector3.Lerp(CameraTarget.transform.localPosition, _cameraTargetInitialPosition + _cameraOffset, Time.deltaTime * CameraTargetSpeed);
+        }
+
+        /// <summary>
+        /// Sets a new offset for the camera target
+        /// </summary>
+        /// <param name="offset"></param>
+        public virtual void SetCameraTargetOffset(Vector3 offset)
+        {
+            _cameraOffset = offset;
+        }
+
 		/// <summary>
 		/// Called when the Character dies. 
 		/// Calls every abilities' Reset() method, so you can restore settings to their original value if needed
@@ -721,7 +705,7 @@ namespace MoreMountains.CorgiEngine
 			{
 				if (ability.enabled)
 				{
-					ability.Reset();
+					ability.ResetAbility();
 				}
 			}
 		}
