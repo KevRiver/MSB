@@ -231,8 +231,11 @@ namespace MoreMountains.CorgiEngine
         /// <param name="inputManager"></param>
         public virtual void SetInputManager(InputManager inputManager)
         {
-            LinkedInputManager = inputManager;
-            UpdateInputManagersInAbilities();
+            if (PlayerID == inputManager.PlayerID)
+            {
+                LinkedInputManager = inputManager;
+                UpdateInputManagersInAbilities();
+            }
         }
 
         /// <summary>
