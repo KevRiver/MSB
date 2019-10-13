@@ -376,7 +376,7 @@ MonoBehaviour:
   isAnimated: 0
   useExportedFrame: 0
   customFrameName: 
-  generatesOnStart: 0
+  generatesOnStart: 1
   generatesOnValidate: 1
 --- !u!1 &2746797624133750741
 GameObject:

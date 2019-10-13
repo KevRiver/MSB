@@ -509,7 +509,7 @@ public class NetworkManager : MonoBehaviour
         }
 
 
-
+        */
         private void Awake()
         {
             //Make NetworkManager don't destroyed on load
@@ -527,9 +527,9 @@ public class NetworkManager : MonoBehaviour
             Debug.Log("LobbyScene PortData : " + portData.port);
             Port = portData.port;
             Destroy(portData.gameObject);
-
+            */
         }
-        
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -537,11 +537,11 @@ public class NetworkManager : MonoBehaviour
         networkManager.Connect("203.250.148.113",9992);
         
         networkManager.AddOnEventSoloQueue(new OnSoloMatched());
-        networkManager.AddOnEventGameStatus(new OnGameStatus());
-        networkManager.AddOnEventGameUserMove(new OnGameUserMove());
-        networkManager.AddOnEventGameInfo(new OnGameInfo());
-        networkManager.AddOnEventGameEvent(new OnGameAction());
-        networkManager.AddOnEventGameUserSync(new OnGameUserSync());              
+        //networkManager.AddOnEventGameStatus(new OnGameStatus());
+        //networkManager.AddOnEventGameUserMove(new OnGameUserMove());
+        //networkManager.AddOnEventGameInfo(new OnGameInfo());
+        //networkManager.AddOnEventGameEvent(new OnGameAction());
+        //networkManager.AddOnEventGameUserSync(new OnGameUserSync());              
     }
 
     // Update is called once per frame
@@ -554,5 +554,4 @@ public class NetworkManager : MonoBehaviour
     {
         networkManager.Disconnect();
     }
-*/
 }

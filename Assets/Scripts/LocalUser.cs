@@ -9,8 +9,14 @@ public class LocalUser : PersistentSingleton<LocalUser>
     public ClientUserData localUserData;
 
     protected override void Awake()
-    {       
+    {
+        base.Awake();
         localUserData = new ClientUserData();
+        localUserData.userID = "Qon";
+        localUserData.userNick = "Qon";
+        localUserData.userNumber = 0;
+        localUserData.userWeapon = 0;
+        localUserData.userSkin = 0;
     }
    
     public void DebugLocalUserData()

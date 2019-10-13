@@ -30,5 +30,11 @@ public class GameInfo : PersistentSingleton<GameInfo>
     {
         base.Awake();
         Debug.Log("GameInfo Awake");
+        players = new List<PlayerInfo>();
+
+        PlayerInfo Qon = new PlayerInfo(0, "Qon", "Qon", 0, 0);
+        players.Add(Qon);
+        PlayerInfo Lime = new PlayerInfo(1, "Lime", "Lime", 1, 0);
+        players.Add(Lime);
     }
 }

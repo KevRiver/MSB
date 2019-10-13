@@ -15,8 +15,7 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
     /// the target frame rate for the game
     public int TargetFrameRate = 300;
 
-    [Header("Lives")]
-    /// the maximum amount of lives the character can currently have
+    /*the maximum amount of lives the character can currently have
     public int MaximumLives = 0;
     /// the current number of lives 
     public int CurrentLives = 0;
@@ -34,19 +33,19 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
     /// the stored selected character
     public Character StoredCharacter { get; set; }
     /// the list of points of entry and exit
-    public List<PointsOfEntryStorage> PointsOfEntry { get; set; }
+    public List<PointsOfEntryStorage> PointsOfEntry { get; set; }*/
 
-    protected bool _inventoryOpen = false;
+    /*protected bool _inventoryOpen = false;
     protected bool _pauseMenuOpen = false;
     protected InventoryInputManager _inventoryInputManager;
     protected int _initialMaximumLives;
-    protected int _initialCurrentLives;
+    protected int _initialCurrentLives;*/
 
     protected override void Awake()
     {
         Debug.Log("MSB_GameManager Awake");
         base.Awake();
-        PointsOfEntry = new List<PointsOfEntryStorage>();
+        //PointsOfEntry = new List<PointsOfEntryStorage>();
     }
 
     /// <summary>
@@ -55,8 +54,8 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
     protected virtual void Start()
     {
         Application.targetFrameRate = TargetFrameRate;
-        _initialCurrentLives = CurrentLives;
-        _initialMaximumLives = MaximumLives;
+       // _initialCurrentLives = CurrentLives;
+        //_initialMaximumLives = MaximumLives;
     }
 
     /// <summary>
@@ -64,17 +63,17 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
     /// </summary>
     public virtual void Reset()
     {
-        Points = 0;
+        //Points = 0;
         MMTimeScaleEvent.Trigger(MMTimeScaleMethods.Set, 1f, 0f, false, 0f, false);
-        Paused = false;
+        //Paused = false;
         //GUIManager.Instance.RefreshPoints();
-        PointsOfEntry.Clear();
+        //PointsOfEntry.Clear();
     }
 
     /// <summary>
     /// Use this method to decrease the current number of lives
     /// </summary>
-    public virtual void LoseLife()
+    /*public virtual void LoseLife()
     {
         CurrentLives--;
     }
@@ -122,7 +121,7 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
     public virtual void AddPoints(int pointsToAdd)
     {
         Debug.Log("AddPoints called");
-        Points += pointsToAdd;
+        //Points += pointsToAdd;
         //GUIManager.Instance.RefreshPoints();
     }
 
@@ -180,7 +179,7 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
             CorgiEngineEvent.Trigger(CorgiEngineEventTypes.UnPause);
         }
         LevelManager.Instance.ToggleCharacterPause();
-        */
+        
     }
 
     /// <summary>
@@ -298,7 +297,7 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
     public virtual void ClearSelectedCharacter()
     {
         StoredCharacter = null;
-    }
+    }*/
 
     /// <summary>
     /// Catches MMGameEvents and acts on them, playing the corresponding sounds
@@ -310,11 +309,11 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
         switch (gameEvent.EventName)
         {
             case "inventoryOpens":
-                Pause(PauseMethods.NoPauseMenu);
+                //Pause(PauseMethods.NoPauseMenu);
                 break;
 
             case "inventoryCloses":
-                Pause(PauseMethods.NoPauseMenu);
+                //Pause(PauseMethods.NoPauseMenu);
                 break;
         }
     }
@@ -329,11 +328,11 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
         switch (engineEvent.EventType)
         {
             case CorgiEngineEventTypes.Pause:
-                Pause();
+                //Pause();
                 break;
 
             case CorgiEngineEventTypes.UnPause:
-                UnPause();
+                //UnPause();
                 break;
         }
     }
@@ -348,11 +347,11 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
         switch (pointEvent.PointsMethod)
         {
             case PointsMethods.Set:
-                SetPoints(pointEvent.Points);
+                //SetPoints(pointEvent.Points);
                 break;
 
             case PointsMethods.Add:
-                AddPoints(pointEvent.Points);
+                //AddPoints(pointEvent.Points);
                 break;
         }
     }

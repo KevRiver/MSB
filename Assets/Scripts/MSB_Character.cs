@@ -68,7 +68,7 @@ public class MSB_Character : Character
             return;
 
         base.AssignAnimator();
-    }
+    } 
 
     protected override void OnEnable()
     {
@@ -76,11 +76,14 @@ public class MSB_Character : Character
         Color col = _spriteRenderer.color;
         col.a = 1.0f;
         _spriteRenderer.color = col;
+
+
     }
 
     protected override void OnDisable()
     {
         base.OnDisable();
+        
     }
 
     private void OnDestroy()

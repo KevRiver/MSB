@@ -47,6 +47,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
 
     // private stuff
     public List<MSB_Character> Players { get; protected set; }
+    private MSB_Character TargetPlayer;
     public List<CheckPoint> Checkpoints { get; protected set; }
     protected DateTime _started;
     private GameInfo gameInfo;
@@ -66,7 +67,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
             return;
         }
 
-        //InstantiatePlayableCharacters(gameInfo.players);
+        InstantiatePlayableCharacters(gameInfo.players);
     }
 
     /// <summary>
@@ -107,7 +108,10 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
                 if (user.number != LocalUser.Instance.localUserData.userNumber)
                     newPlayer.gameObject.AddComponent<RCReciever>();
                 else
+                {
                     newPlayer.SetPlayerID("LocalPlayer");
+                    TargetPlayer = newPlayer;
+                }
 
                 Players.Add(newPlayer);
             }
@@ -125,10 +129,20 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
     public virtual void Start()
     {
         MMCameraEvent.Trigger(MMCameraEventTypes.SetConfiner, null, BoundsCollider);
-        MSB_Character target = GameObject.Find("Purp").GetComponent<MSB_Character>();
-        //Debug.Log(target.gameObject);
-        MMCameraEvent.Trigger(MMCameraEventTypes.SetTargetCharacter, GameObject.Find("Purp").GetComponent<MSB_Character>());
+
+        if (TargetPlayer != null)
+        {
+            Debug.Log("Camera follow " + TargetPlayer);
+        }
+        else
+        {
+            return;
+        }
+
+        MMCameraEvent.Trigger(MMCameraEventTypes.SetTargetCharacter, TargetPlayer);
         MMCameraEvent.Trigger(MMCameraEventTypes.StartFollowing);
+
+        return;
 
         if (Players == null || Players.Count == 0) { return; }
 
