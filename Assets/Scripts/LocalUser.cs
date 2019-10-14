@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using MoreMountains.Tools;
 using UnityEngine;
-using MSBNetwork;
 
 public class LocalUser : PersistentSingleton<LocalUser>
 {
@@ -10,7 +9,10 @@ public class LocalUser : PersistentSingleton<LocalUser>
 
     protected override void Awake()
     {
+        Debug.Log("LocalUser Awake");
         base.Awake();
+        _instance.name = "LocalUser";
+
         localUserData = new ClientUserData();
         localUserData.userID = "Qon";
         localUserData.userNick = "Qon";

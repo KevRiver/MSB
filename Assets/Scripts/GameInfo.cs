@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.Tools;
 
-public struct PlayerInfo
+public class PlayerInfo
 {
     public int number;
     public string id;
@@ -28,10 +28,13 @@ public class GameInfo : PersistentSingleton<GameInfo>
 
     protected override void Awake()
     {
-        base.Awake();
         Debug.Log("GameInfo Awake");
+        base.Awake();
+
+        Debug.Log("PlayerInfo List Initialize");
         players = new List<PlayerInfo>();
 
+        Debug.Log("Put Data at List");
         PlayerInfo Qon = new PlayerInfo(0, "Qon", "Qon", 0, 0);
         players.Add(Qon);
         PlayerInfo Lime = new PlayerInfo(1, "Lime", "Lime", 1, 0);
