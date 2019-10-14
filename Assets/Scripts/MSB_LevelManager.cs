@@ -144,6 +144,14 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
             return;
         }
 
+        BoundsCollider = this.gameObject.GetComponent<Collider>();
+        if (BoundsCollider == null)
+        {
+            GenerateColliderBounds();
+            BoundsCollider = this.gameObject.GetComponent<Collider>();
+        }
+
+        MMCameraEvent.Trigger(MMCameraEventTypes.SetConfiner, null, BoundsCollider);
         MMCameraEvent.Trigger(MMCameraEventTypes.SetTargetCharacter, TargetPlayer);
         MMCameraEvent.Trigger(MMCameraEventTypes.StartFollowing);
 
