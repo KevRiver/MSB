@@ -104,7 +104,8 @@ namespace MoreMountains.CorgiEngine
         /// whether or not the character can flip this frame
         public bool CanFlip { get; set; }
 
-        protected CorgiController _controller;
+        /// MSB Custom : MSB_Character 에서 코기컨트롤러에 접근할 수 있도록 접근 제한자 변경 protected -> public
+        public CorgiController _controller;
 		protected SpriteRenderer _spriteRenderer;
 	    protected Color _initialColor;
 		protected CharacterAbility[] _characterAbilities;
