@@ -8,6 +8,8 @@ using MoreMountains.CorgiEngine;
 using UnityEngine.SceneManagement;
 using MSBNetwork;
 
+
+
 public class MSB_LevelManager : Singleton<MSB_LevelManager>
 {
     /// the prefab you want for your player
@@ -65,6 +67,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         gameInfo = GameInfo.Instance;
         if (gameInfo != null)
         {
+            Debug.Log("Check GameInfo exist");
             foreach (PlayerInfo player in gameInfo.players)
             {
                 Debug.Log(player.nick + " " + player.number);
@@ -84,36 +87,26 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
     const int WEAPON_SHURIKEN = 1;
     protected virtual void InstantiatePlayableCharacters(List<PlayerInfo> users)
     {
+        int localUserNum = LocalUser.Instance.localUserData.userNumber;
+        Debug.Log("local user number : " + localUserNum);
+
         Players = new List<MSB_Character>();        
-
         if (PlayerPrefabs == null) { return; }
-
+      
         // player instantiation
         if (PlayerPrefabs.Count != 0)
         {
             foreach (PlayerInfo user in users)
             {
-                MSB_Character newPlayer = new MSB_Character();
-                switch (user.weapon)
-                {
-                    case WEAPON_SWORD:
-                        newPlayer = (MSB_Character)Instantiate(PlayerPrefabs[WEAPON_SWORD], new Vector3(0, 0, 0), Quaternion.identity);
-                        break;
+                MSB_Character newPlayer = (MSB_Character)Instantiate(PlayerPrefabs[user.weapon], new Vector3(0, 0, 0), Quaternion.identity);
+                newPlayer.UserNum = user.number;
 
-                    case WEAPON_SHURIKEN:
-                        newPlayer = (MSB_Character)Instantiate(PlayerPrefabs[WEAPON_SHURIKEN], new Vector3(0, 0, 0), Quaternion.identity);
-                        break;
-
-                    default:
-                        Debug.LogWarning("recieved weapon id is not defined");
-                        break;
-             
-                }
-
-                int localUserNum = LocalUser.Instance.localUserData.userNumber;
                 //check remote players and add RCReciever component to its gameobject
-                if (user.number != localUserNum)
+                if (newPlayer.UserNum != localUserNum)
+                {
                     newPlayer.gameObject.AddComponent<RCReciever>();
+                    Debug.Log("RCReciever added to " + newPlayer.name);
+                }
                 else
                 {
                     newPlayer.SetPlayerID("LocalPlayer");
@@ -148,7 +141,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         MMGameEvent.Trigger("Load");
       
         MMCameraEvent.Trigger(MMCameraEventTypes.SetConfiner, null, BoundsCollider);
-        MMCameraEvent.Trigger(MMCameraEventTypes.SetTargetCharacter, GameObject.Find("Purp").GetComponent<MSB_Character>());
+        MMCameraEvent.Trigger(MMCameraEventTypes.SetTargetCharacter, TargetPlayer);
         MMCameraEvent.Trigger(MMCameraEventTypes.StartFollowing);
     }
 
