@@ -6,11 +6,63 @@ using MoreMountains.CorgiEngine;
 using MoreMountains.InventoryEngine;
 using MoreMountains.Feedbacks;
 
+namespace MoreMountains.CorgiEngine
+{
+
+
+    public struct MSBGameEvent
+    {
+
+    }
+
+    public enum MSBActionTypes
+    {
+        Attack,
+        Skill
+    }
+
+    public struct MSBActionEvent
+    {
+        public MSBActionTypes _actionType;
+
+        public MSBActionEvent(MSBActionTypes actionType)
+        {
+            _actionType = actionType;
+        }
+
+        static MSBActionEvent e;
+        public static void Trigger(MSBActionTypes actionType)
+        {
+            e._actionType = actionType;
+            MMEventManager.TriggerEvent(e);
+        }
+    }
+
+    public struct MSBCharacterStatusEvent
+    {
+        public string EventName;
+
+        public MSBCharacterStatusEvent(string eventName)
+        {
+            EventName = eventName;
+        }
+
+        static MSBCharacterStatusEvent e;
+        public static void TriggerEvent(string eventName)
+        {
+            e.EventName = eventName;
+            MMEventManager.TriggerEvent(e);
+        }
+    }
+}
+
 public class MSB_GameManager : Singleton<MSB_GameManager>,
     MMEventListener<MMGameEvent>,
     MMEventListener<CorgiEngineEvent>,
-    MMEventListener<CorgiEnginePointsEvent>
+    MMEventListener<CorgiEnginePointsEvent>,
+    MMEventListener<MSBCharacterStatusEvent>
 {
+    public int RoomNum { get; set; }
     [Header("Settings")]
     /// the target frame rate for the game
     public int TargetFrameRate = 300;
@@ -305,9 +357,17 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
     /// <param name="gameEvent">MMGameEvent event.</param>
     public virtual void OnMMEvent(MMGameEvent gameEvent)
     {
-        Debug.Log("On GameEvent");
+        Debug.Log("On GameEvent : " + gameEvent.EventName);
         switch (gameEvent.EventName)
         {
+            case "GameStart":
+                // LevelManager 에게 게임이 시작되었음을 알린다
+                break;
+
+            case "GameOver":
+                // LevelManager 에게 게임이 끝났음을 알린다
+                break;
+
             case "inventoryOpens":
                 //Pause(PauseMethods.NoPauseMenu);
                 break;
@@ -324,7 +384,7 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
     /// <param name="engineEvent">CorgiEngineEvent event.</param>
     public virtual void OnMMEvent(CorgiEngineEvent engineEvent)
     {
-        Debug.Log("On CorgiEngine Event");
+        Debug.Log("On CorgiEngine Event : " + engineEvent.EventType);
         switch (engineEvent.EventType)
         {
             case CorgiEngineEventTypes.Pause:
@@ -375,5 +435,26 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
         this.MMEventStopListening<MMGameEvent>();
         this.MMEventStopListening<CorgiEngineEvent>();
         this.MMEventStopListening<CorgiEnginePointsEvent>();
+    }
+
+    public void OnMMEvent(MSBCharacterStatusEvent eventType)
+    {
+        switch (eventType.EventName)
+        {
+            case "CharacterReady":
+                break;
+
+            case "WeaponReady":
+                break;
+
+            case "InitialSpawn":
+                break;
+
+            case "Respawned":
+                break;
+
+            case "Killed":
+                break;
+        }
     }
 }
