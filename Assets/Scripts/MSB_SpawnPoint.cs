@@ -10,7 +10,7 @@ public class MSB_SpawnPoint : MonoBehaviour
 
     public void SpawnPlayer(MSB_Character player)
     {
-        Debug.Log("CheckPoint::SpawnPlayer");
+        Debug.Log("MSB_SpawnPoint::SpawnPlayer");
         player.RespawnAt(transform, FacingDirection);
     }
 
