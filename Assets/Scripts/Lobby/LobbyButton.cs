@@ -23,7 +23,7 @@ public class LobbyButton : MonoBehaviour
     float cameraSize;
 
     Vector3 nextPos;
-    bool nextOn = false;
+    //bool nextOn = false;
 
     public bool characterChoice;
 
