@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.CorgiEngine;
 using MoreMountains.Tools;
-using MSBNetwork;
 using UnityEngine.UI;
+using MSBNetwork;
 
 public class MSB_Character : Character
 {
     [Header("MSB Custom")]
     public ClientUserData c_userData;
     public int bushID = 0;
+
+    public int RoomNum { get; set; }
     public int UserNum { get; internal set; }
     private InputManager inputManager;
 
@@ -72,7 +74,8 @@ public class MSB_Character : Character
 
     protected override void OnEnable()
     {
-        base.OnEnable();
+        base.OnEnable();       
+
         Color col = _spriteRenderer.color;
         col.a = 1.0f;
         _spriteRenderer.color = col;
@@ -82,7 +85,7 @@ public class MSB_Character : Character
 
     protected override void OnDisable()
     {
-        base.OnDisable();
+        base.OnDisable();       
         
     }
 
@@ -90,6 +93,4 @@ public class MSB_Character : Character
     {
 
     }
-
-    
 }
