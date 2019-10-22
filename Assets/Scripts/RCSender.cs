@@ -8,7 +8,7 @@ using MSBNetwork;
 /// <summary>
 /// 로컬 플레이어와 연결되어 동기화 정보를 보내는 오브젝트
 /// </summary>
-public class RCSender : MonoBehaviour, MMEventListener<MMGameEvent>
+public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
 {
     private int _room;
 
@@ -22,6 +22,12 @@ public class RCSender : MonoBehaviour, MMEventListener<MMGameEvent>
     private string speedX;
     private string speedY;
     private string isFacingRight;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        gameObject.name = "RCSender";
+    }
 
     public void Initialize(MSB_Character sender)
     {
