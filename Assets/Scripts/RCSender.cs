@@ -13,6 +13,7 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
     private int _room;
 
     public MSB_Character _sender;
+    private Rigidbody2D _rb;
     private CorgiController _controller;
     private Weapon _weapon;
 
@@ -34,7 +35,9 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
         _room = MSB_GameManager.Instance.RoomNum;
 
         _sender = sender;
+        _rb = _sender.GetComponent<Rigidbody2D>();
         _controller = _sender.gameObject.GetComponent<CorgiController>();
+
 
         Transform weaponAttachment = _sender.transform.GetChild(0);
         _weapon = weaponAttachment.transform.GetComponentInChildren<Weapon>();
@@ -48,8 +51,8 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
             posX = (_sender.transform.position.x).ToString();
             posY = (_sender.transform.position.y).ToString();
             posZ = (_sender.transform.position.z).ToString();
-            speedX = (_controller.Speed.x).ToString();
-            speedY = (_controller.Speed.y).ToString();
+            speedX = (_rb.velocity.x).ToString();
+            speedY = (_rb.velocity.y).ToString();
             isFacingRight = _sender.IsFacingRight.ToString();
 
             string data = _sender.UserNum.ToString() + "," + posX + "," + posY + "," + posZ + "," + speedX + "," + speedY + "," + isFacingRight;
