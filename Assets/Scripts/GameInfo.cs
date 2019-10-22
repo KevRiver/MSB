@@ -38,16 +38,9 @@ public class GameInfo : PersistentSingleton<GameInfo>
     {
         Debug.Log("GameInfo Awake");
         base.Awake();
+        gameObject.name = "GameInfo";
 
         localUser = LocalUser.Instance;
-
-        Debug.Log("PlayerInfo List Initialize");
         players = new List<PlayerInfo>();
-
-        Debug.Log("Put Data at List");
-        PlayerInfo Qon = new PlayerInfo(room, 0, "Qon", "Qon", 0, 0);
-        players.Add(Qon);
-        PlayerInfo Lime = new PlayerInfo(room, 1, "Lime", "Lime", 1, 0);
-        players.Add(Lime);
     }
 }
