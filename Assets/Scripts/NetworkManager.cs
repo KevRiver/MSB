@@ -43,7 +43,7 @@ public class NetworkManager : MonoBehaviour
             }
 
             // load play scene
-            SceneManager.LoadScene("PlayScene");
+            SceneManager.LoadScene("Test");
             yield return null;
         }
 
@@ -538,6 +538,7 @@ public class NetworkManager : MonoBehaviour
         networkManager.Connect("203.250.148.113",9993);
         
         networkManager.AddOnEventSoloQueue(new OnSoloMatched());
+        networkManager.AddOnEventGameInfo(new OnGameInfo());
         //networkManager.AddOnEventGameStatus(new OnGameStatus());
         //networkManager.AddOnEventGameUserMove(new OnGameUserMove());
         //networkManager.AddOnEventGameInfo(new OnGameInfo());
