@@ -76,6 +76,8 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         else
             return;
 
+        Debug.LogWarning("PlayerInfo : " + gameInfo.players);
+
         InstantiatePlayableCharacters(gameInfo.players);
     }
 
@@ -147,11 +149,11 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
 
     protected virtual void SpawnPlayers()
     {
+        int index = 0;
         foreach (MSB_Character character in Players)
         {
-            //UserNum 과 Spawnpoint의 인덱스가 일치하도록 할 것
-            int index = character.UserNum;
             Spawnpoints[index].SpawnPlayer(character);
+            index++;
         }
     }
 
