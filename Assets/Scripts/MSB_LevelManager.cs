@@ -113,6 +113,9 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
                 {
                     newPlayer.SetPlayerID("LocalPlayer");
                     TargetPlayer = newPlayer;
+
+                    RCSender rcSender = RCSender.Instance;
+                    rcSender.Initialize(newPlayer);
                 }
 
                 Players.Add(newPlayer);
@@ -141,6 +144,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         // we trigger a level start event
         CorgiEngineEvent.Trigger(CorgiEngineEventTypes.LevelStart);
         MMGameEvent.Trigger("Load");
+        MMGameEvent.Trigger("GameStart");
       
         MMCameraEvent.Trigger(MMCameraEventTypes.SetConfiner, null, BoundsCollider);
         MMCameraEvent.Trigger(MMCameraEventTypes.SetTargetCharacter, TargetPlayer);
