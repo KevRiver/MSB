@@ -69,10 +69,10 @@ public class RCReciever : MonoBehaviour
         char[] delimiterChars = { ',' };
         void NetworkModule.OnGameUserMoveListener.OnGameUserMove(object _data)
         {
-            Debug.Log("OnGameUserMove");
+            //Debug.Log("OnGameUserMove");
             string[] dataArray = ((string)_data).Split(delimiterChars);
             targetNum = int.Parse(dataArray[0]);
-
+            Debug.Log("Target : " + targetNum);
             //  If this is not target object, return
             if (userNum != targetNum)
                 return;
@@ -87,6 +87,8 @@ public class RCReciever : MonoBehaviour
             ySpeed = float.Parse(dataArray[5]);
 
             isFacingRight = bool.Parse(dataArray[6]);
+
+            Debug.Log("Recieved Data : " + "PosX, PosY : " + posX + " " + posY + " SpeedX, SpeedY : " + xSpeed + " " + ySpeed);
 
             // Sync User Facing
             if (lastFacing != isFacingRight)
