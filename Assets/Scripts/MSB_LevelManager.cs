@@ -143,8 +143,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
 
         // we trigger a level start event
         CorgiEngineEvent.Trigger(CorgiEngineEventTypes.LevelStart);
-        MMGameEvent.Trigger("Load");
-        MMGameEvent.Trigger("GameStart");
+        MMGameEvent.Trigger("Load");        
       
         MMCameraEvent.Trigger(MMCameraEventTypes.SetConfiner, null, BoundsCollider);
         MMCameraEvent.Trigger(MMCameraEventTypes.SetTargetCharacter, TargetPlayer);
