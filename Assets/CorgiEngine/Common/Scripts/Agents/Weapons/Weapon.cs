@@ -664,7 +664,8 @@ namespace MoreMountains.CorgiEngine
 		/// Flips the weapon model.
 		/// </summary>
 		public virtual void FlipWeaponModel()
-		{	
+		{
+            Debug.Log("Weapon.FlipWeaponModel");
 			if (_spriteRenderer != null)
 			{
 				_spriteRenderer.flipX = !_spriteRenderer.flipX;

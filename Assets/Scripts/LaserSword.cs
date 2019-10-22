@@ -141,6 +141,16 @@ public class LaserSword : Weapon
         _damageAreaCollider.enabled = false;
     }
 
+    public override void FlipWeapon()
+    {
+        Debug.Log("Flip Weapon Called");
+    }
+
+    public override void FlipWeaponModel()
+    {
+        Debug.Log("Flip Weapon Model Called");
+    }
+
     protected virtual void DrawGizmos()
     {
         _gizmoOffset = AreaOffset;
