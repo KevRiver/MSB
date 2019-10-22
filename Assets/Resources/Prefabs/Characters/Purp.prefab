@@ -379,7 +379,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CharacterType: 0
-  PlayerID: LocalPlayer
+  PlayerID: 
   InitialFacingDirection: 1
   DirectionOnSpawn: 0
   CharacterAnimator: {fileID: 0}
@@ -395,6 +395,7 @@ MonoBehaviour:
   SendStateChangeEvents: 1
   SendStateUpdateEvents: 1
   AirborneDistance: 0.5
+  _controller: {fileID: 0}
   bushID: 0
 --- !u!114 &8741214656735043768
 MonoBehaviour:
