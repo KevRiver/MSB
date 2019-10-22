@@ -14,11 +14,11 @@ public class LocalUser : PersistentSingleton<LocalUser>
         _instance.name = "LocalUser";
 
         localUserData = new ClientUserData();
-        localUserData.userID = "Qon";
+        /*localUserData.userID = "Qon";
         localUserData.userNick = "Qon";
         localUserData.userNumber = 0;
         localUserData.userWeapon = 0;
-        localUserData.userSkin = 0;
+        localUserData.userSkin = 0;*/
     }
    
     public void DebugLocalUserData()
