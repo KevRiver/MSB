@@ -38,6 +38,7 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
 
         Transform weaponAttachment = _sender.transform.GetChild(0);
         _weapon = weaponAttachment.transform.GetComponentInChildren<Weapon>();
+        Debug.Log("RCSender Initialized");
     }
 
     IEnumerator RequestUserMove()
@@ -53,13 +54,14 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
 
             string data = _sender.UserNum.ToString() + "," + posX + "," + posY + "," + posZ + "," + speedX + "," + speedY + "," + isFacingRight;
             NetworkModule.GetInstance().RequestGameUserMove(_room, data);
-            yield return null;
+            yield return new WaitForSeconds(0.1f);
         }
     }
 
-    public void OnMMEvent(MMGameEvent eventType)
+    public void OnMMEvent(MMGameEvent gameEvent)
     {
-        switch (eventType.EventName)
+        Debug.Log(gameEvent.EventName + " Called");
+        switch (gameEvent.EventName)
         {
             case "GameStart":
                 StartCoroutine(RequestUserMove());
@@ -69,5 +71,15 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
                 StopCoroutine(RequestUserMove());
                 break;
         }
+    }
+
+    private void OnEnable()
+    {
+        this.MMEventStartListening<MMGameEvent>();
+    }
+
+    private void OnDisable()
+    {
+        this.MMEventStopListening<MMGameEvent>();
     }
 }

@@ -69,6 +69,7 @@ public class RCReciever : MonoBehaviour
         char[] delimiterChars = { ',' };
         void NetworkModule.OnGameUserMoveListener.OnGameUserMove(object _data)
         {
+            Debug.Log("OnGameUserMove");
             string[] dataArray = ((string)_data).Split(delimiterChars);
             targetNum = int.Parse(dataArray[0]);
 
@@ -93,10 +94,8 @@ public class RCReciever : MonoBehaviour
                 lastFacing = !lastFacing;
                 rc.character.Flip();
             }
-
             // Sync User position
             rc.SyncUserPos(posX, posY, xSpeed, ySpeed);
-            
         }
     }
 
