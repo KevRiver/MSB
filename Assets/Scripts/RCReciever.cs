@@ -20,16 +20,15 @@ public class RCReciever : MonoBehaviour
         weaponAttachment = character.transform.GetChild(0);
         weapon = weaponAttachment.GetComponentInChildren<Weapon>();
 
-        Debug.Log("RCReciever Initialized");
-
         userNum = character.UserNum;
-        //Debug.Log("User number : " + userNum);
-        //Debug.Log("Weapon name : " + weapon.gameObject.name);
 
         NetworkModule networkModule = NetworkModule.GetInstance();
         networkModule.AddOnEventGameUserMove(new OnGameUserMove(this));
         networkModule.AddOnEventGameUserSync(new OnGameUserSync(this));
         networkModule.AddOnEventGameEvent(new OnGameEvent(this));
+
+        Debug.Log("RCReciever Initialized");
+        MMGameEvent.Trigger("GameStart");
     }
 
     private void SyncUserPos(float targetPosX, float targetPosY, float xSpeed, float ySpeed, float smoothTime = 0.1f)
