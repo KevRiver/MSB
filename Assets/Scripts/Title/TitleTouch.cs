@@ -61,12 +61,6 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
         networkModule.SetOnEventUserLogin(new LoginCallback());
 	}
 
-	// Update is called once per frame
-	void Update()
-	{
-
-	}
-
     public static void OnConnectResult(bool result, string msg)
     {
         if (result)
@@ -95,7 +89,7 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 		if (_result)
         {
             Debug.LogWarning("OnLoginResult : InitializeLocalUser");
-            LocalUser localUser = GameObject.Find("LocalUser").GetComponent<LocalUser>();
+            LocalUser localUser = LocalUser.Instance;
             localUser.localUserData.userID = _user.userID;
             localUser.localUserData.userNick = _user.userNick;
             localUser.localUserData.userNumber = _user.userNumber;
@@ -117,7 +111,8 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 	private static IEnumerator switchLobbyScene()
 	{
 		yield return new WaitForSeconds(2);
-		SceneManager.LoadScene("Lobby");
+        //Temp Lobby test
+		SceneManager.LoadScene("TempLobby");
 	}
 
 	public void showPopup()
