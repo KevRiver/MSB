@@ -109,16 +109,6 @@ public class LaserSword : Weapon
         StartCoroutine(MeleeWeaponAttack());
     }
 
-    public override void FlipWeapon()
-    {
-        //base.FlipWeapon();
-    }
-
-    public override void FlipWeaponModel()
-    {
-        //base.FlipWeaponModel();
-    }
-
     /// <summary>
     /// Triggers an attack, turning the damage area on and then off
     /// </summary>
