@@ -27,8 +27,9 @@ public class NetworkManager : MonoBehaviour
         void NetworkModule.OnGameInfoListener.OnGameInfo(bool _result, int _room, int _mode, LinkedList<UserData> _users, string _message)
         {
             Debug.LogWarning("OnGameInfo Called");
-            
-            UnityMainThreadDispatcher.Instance().Enqueue(LoadPlayScene(_room, _users));
+
+            //UnityMainThreadDispatcher.Instance().Enqueue(LoadPlayScene(_room, _users));
+            UnityMainThreadDispatcher.Instance().Enqueue(LoadScene(_mode, _room, _users));
         }
 
         public IEnumerator LoadScene(int _mode, int _room, LinkedList<UserData> _users)
@@ -534,7 +535,7 @@ public class NetworkManager : MonoBehaviour
     void Start()
     {
         networkManager = NetworkModule.GetInstance();        
-        networkManager.Connect("203.250.148.113",9992);
+        networkManager.Connect("203.250.148.113",9993);
         
         networkManager.AddOnEventSoloQueue(new OnSoloMatched());
         //networkManager.AddOnEventGameStatus(new OnGameStatus());
