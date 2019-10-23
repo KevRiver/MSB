@@ -44,6 +44,16 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
         Debug.Log("RCSender Initialized");
     }
 
+    public void StartRequest()
+    {
+        StartCoroutine(RequestUserMove());
+    }
+
+    public void StopRequest()
+    {
+        StopCoroutine(RequestUserMove());
+    }
+
     IEnumerator RequestUserMove()
     {
         while (true)
@@ -67,6 +77,7 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
         switch (gameEvent.EventName)
         {
             case "GameStart":
+                Debug.Log("RCSender begin request");
                 StartCoroutine(RequestUserMove());
                 break;
 
@@ -79,12 +90,12 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
     private void OnEnable()
     {
         this.MMEventStartListening<MMGameEvent>();
-        StartCoroutine(RequestUserMove());
+        //StartCoroutine(RequestUserMove());
     }
 
     private void OnDisable()
     {
         this.MMEventStopListening<MMGameEvent>();
-        StopCoroutine(RequestUserMove());
+        //StopCoroutine(RequestUserMove());
     }
 }
