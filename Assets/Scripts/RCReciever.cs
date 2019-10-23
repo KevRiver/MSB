@@ -11,8 +11,16 @@ public class RCReciever : MonoBehaviour
     public Transform weaponAttachment;
     public Weapon weapon;
 
-    public int userNum;   
-   
+    public int userNum;
+    // For position sync
+    public float posX;
+    public float posY;
+    public float posZ;
+    public float xSpeed;
+    public float ySpeed;
+    // For facing direction sync
+    public bool isFacingRight;
+
     void Start()
     {
         Debug.Log("RCReciever Start");
@@ -22,25 +30,31 @@ public class RCReciever : MonoBehaviour
 
         userNum = character.UserNum;
 
-        NetworkModule networkModule = NetworkModule.GetInstance();
-        networkModule.AddOnEventGameUserMove(new OnGameUserMove(this));
-        networkModule.AddOnEventGameUserSync(new OnGameUserSync(this));
-        networkModule.AddOnEventGameEvent(new OnGameEvent(this));
+        //NetworkModule networkModule = NetworkModule.GetInstance();
+        //networkModule.AddOnEventGameUserMove(new OnGameUserMove(this));
+        //networkModule.AddOnEventGameUserSync(new OnGameUserSync(this));
+        //networkModule.AddOnEventGameEvent(new OnGameEvent(this));
 
         Debug.Log("RCReciever Initialized");
         MMGameEvent.Trigger("GameStart");
     }
 
-    private void SyncUserPos(float targetPosX, float targetPosY, float xSpeed, float ySpeed, float smoothTime = 0.1f)
+    public void SyncUserPos(float targetPosX, float targetPosY, float xSpeed, float ySpeed, bool isFacingRight, float smoothTime = 0.1f)
     {
         Debug.Log("SyncUserPos Called");
+        if (character.IsFacingRight != isFacingRight)
+        {
+            character.IsFacingRight = !character.IsFacingRight;
+            character.Flip();
+        }
+
         float newPosX = Mathf.SmoothDamp(transform.position.x, targetPosX, ref xSpeed, smoothTime);
         float newPosY = Mathf.SmoothDamp(transform.position.y, targetPosY, ref ySpeed, smoothTime);
 
         transform.position = new Vector3(newPosX, newPosY);
     }
 
-    private class OnGameUserMove : NetworkModule.OnGameUserMoveListener
+    /*private class OnGameUserMove : NetworkModule.OnGameUserMoveListener
     {
         private RCReciever rc;
         private int userNum;
@@ -100,7 +114,7 @@ public class RCReciever : MonoBehaviour
             // Sync User position
             rc.SyncUserPos(posX, posY, xSpeed, ySpeed);
         }
-    }
+    }*/
 
     private class OnGameUserSync : NetworkModule.OnGameUserSyncListener
     {

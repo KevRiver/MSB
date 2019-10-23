@@ -273,7 +273,7 @@ public class NetworkManager : MonoBehaviour
             }
         }
 
-
+        */
         private class OnGameUserMove : NetworkModule.OnGameUserMoveListener
         {
             char[] delimiterChars = { ',' };
@@ -285,36 +285,37 @@ public class NetworkManager : MonoBehaviour
             public IEnumerator PlayerMove(object _data)
             {
                 string[] dataArray = ((string)_data).Split(delimiterChars);
-                int userNumber = int.Parse(dataArray[0]);
+                int target = int.Parse(dataArray[0]);
                 float posX = float.Parse(dataArray[1]);
                 float posY = float.Parse(dataArray[2]);
                 float posZ = float.Parse(dataArray[3]);
                 float speedX = float.Parse(dataArray[4]);
                 float speedY = float.Parse(dataArray[5]);
-                bool isGrounded = bool.Parse(dataArray[6]);
-                bool isFacingRight = bool.Parse(dataArray[7]);
+                //bool isGrounded = bool.Parse(dataArray[6]);
+                bool isFacingRight = bool.Parse(dataArray[6]);
 
-                if(LocalUser.Instance.localUserData.userNumber == userNumber)
+                if(LocalUser.Instance.localUserData.userNumber == target)
                 {
                     yield break;
                 }
                 else
                 {                
-                    foreach (MSB_Character player in MSB_LevelManager.Instance.MSB_Players)
-                    {                   
-                        if (player.c_userData.userNumber == userNumber)
+                    foreach (MSB_Character player in MSB_LevelManager.Instance.Players)
+                    {
+                        RCReciever rc = player.gameObject.GetComponent<RCReciever>();
+                        if (rc == null)
+                            Debug.Log(player.UserNum + "'s RCReciever null");
+
+                        if (player.UserNum == target)
                         {
-                            player.targetPos = new Vector3(posX, posY, posZ);
-                            player.RecievedSpeed = new Vector2(speedX, speedY);
-                            player.RecievedGroundCheck = isGrounded;
-                            player.RecievedFacingDirection = isFacingRight;
+                            rc.SyncUserPos(posX, posY, speedX, speedY, isFacingRight);
                         }
                     }
                 }          
                 yield return null;
             }
         }
-
+    /*
         private class OnGameAction : NetworkModule.OnGameEventListener
         {                         
             public void OnGameEventHealth(int num, int health)
@@ -540,7 +541,7 @@ public class NetworkManager : MonoBehaviour
         networkManager.AddOnEventSoloQueue(new OnSoloMatched());
         networkManager.AddOnEventGameInfo(new OnGameInfo());
         //networkManager.AddOnEventGameStatus(new OnGameStatus());
-        //networkManager.AddOnEventGameUserMove(new OnGameUserMove());
+        networkManager.AddOnEventGameUserMove(new OnGameUserMove());
         //networkManager.AddOnEventGameInfo(new OnGameInfo());
         //networkManager.AddOnEventGameEvent(new OnGameAction());
         //networkManager.AddOnEventGameUserSync(new OnGameUserSync());              
