@@ -61,6 +61,7 @@ public class RCReciever : MonoBehaviour
 
         public OnGameUserMove(RCReciever _rc)
         {
+            Debug.LogWarning(_rc.gameObject.name);
             rc = _rc;
             userNum = rc.userNum;
             lastFacing = _rc.character.IsFacingRight;
