@@ -33,6 +33,7 @@ public class RCReciever : MonoBehaviour
 
     private void SyncUserPos(float targetPosX, float targetPosY, float xSpeed, float ySpeed, float smoothTime = 0.1f)
     {
+        Debug.Log("SyncUserPos Called");
         float newPosX = Mathf.SmoothDamp(transform.position.x, targetPosX, ref xSpeed, smoothTime);
         float newPosY = Mathf.SmoothDamp(transform.position.y, targetPosY, ref ySpeed, smoothTime);
 
@@ -87,7 +88,7 @@ public class RCReciever : MonoBehaviour
 
             isFacingRight = bool.Parse(dataArray[6]);
 
-            Debug.Log("Recieved Data : " + "PosX, PosY : " + posX + " " + posY + " SpeedX, SpeedY : " + xSpeed + " " + ySpeed);
+            Debug.Log("Recieved Data : " + "PosX, PosY : " + posX + ", " + posY + " SpeedX, SpeedY : " + xSpeed + ", " + ySpeed);
 
             // Sync User Facing
             if (lastFacing != isFacingRight)
