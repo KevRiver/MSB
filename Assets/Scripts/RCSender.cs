@@ -37,6 +37,10 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
         _sender = sender;
         _rb = _sender.GetComponent<Rigidbody2D>();
         _controller = _sender.gameObject.GetComponent<CorgiController>();
+        if (_controller == null)
+        {
+            Debug.Log("RCSender corgicontroller is null");
+        }
 
 
         Transform weaponAttachment = _sender.transform.GetChild(0);
@@ -61,7 +65,7 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
             posX = (_sender.transform.position.x).ToString();
             posY = (_sender.transform.position.y).ToString();
             posZ = (_sender.transform.position.z).ToString();
-            speedX = (_controller.Speed.x).ToString();
+            speedX = (6).ToString();
             speedY = (_rb.velocity.y).ToString();
             isFacingRight = _sender.IsFacingRight.ToString();
 
