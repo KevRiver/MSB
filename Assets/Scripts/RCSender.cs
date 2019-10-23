@@ -17,6 +17,7 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
     private CorgiController _controller;
     private Weapon _weapon;
 
+    private string userNum;
     private string posX;
     private string posY;
     private string posZ;
@@ -41,7 +42,7 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
         {
             Debug.Log("RCSender corgicontroller is null");
         }
-
+        userNum = _sender.UserNum.ToString();
 
         Transform weaponAttachment = _sender.transform.GetChild(0);
         _weapon = weaponAttachment.transform.GetComponentInChildren<Weapon>();
@@ -65,11 +66,11 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
             posX = (_sender.transform.position.x).ToString();
             posY = (_sender.transform.position.y).ToString();
             posZ = (_sender.transform.position.z).ToString();
-            speedX = (6).ToString();
-            speedY = (_rb.velocity.y).ToString();
+            speedX = (_controller.Speed.x).ToString();
+            speedY = (_controller.Speed.y).ToString();
             isFacingRight = _sender.IsFacingRight.ToString();
 
-            string data = _sender.UserNum.ToString() + "," + posX + "," + posY + "," + posZ + "," + speedX + "," + speedY + "," + isFacingRight;
+            string data = userNum + "," + posX + "," + posY + "," + posZ + "," + speedX + "," + speedY + "," + isFacingRight;
             NetworkModule.GetInstance().RequestGameUserMove(_room, data);
             yield return new WaitForSeconds(0.1f);
         }

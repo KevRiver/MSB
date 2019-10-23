@@ -44,7 +44,7 @@ public class RCReciever : MonoBehaviour
         Debug.Log("SyncUserPos Called");
         if (character.IsFacingRight != isFacingRight)
         {
-            character.IsFacingRight = !character.IsFacingRight;
+            character.IsFacingRight = isFacingRight;
             character.Flip();
         }
 
