@@ -61,7 +61,7 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
             posX = (_sender.transform.position.x).ToString();
             posY = (_sender.transform.position.y).ToString();
             posZ = (_sender.transform.position.z).ToString();
-            speedX = (_rb.velocity.x).ToString();
+            speedX = (_controller.Speed.x).ToString();
             speedY = (_rb.velocity.y).ToString();
             isFacingRight = _sender.IsFacingRight.ToString();
 
