@@ -23,6 +23,8 @@ public class RCReciever : MonoBehaviour
     public bool isFacingRight;
     static bool lastFacing;
 
+    private Vector3 targetPos;
+
     void Start()
     {
         Debug.Log("RCReciever Start");
@@ -34,6 +36,8 @@ public class RCReciever : MonoBehaviour
 
         weaponAttachment = character.transform.GetChild(0);
         weapon = weaponAttachment.GetComponentInChildren<Weapon>();
+
+        targetPos = Vector3.zero;
 
         userNum = character.UserNum;
         lastFacing = character.IsFacingRight;
@@ -57,8 +61,11 @@ public class RCReciever : MonoBehaviour
 
         //float newPosX = Mathf.SmoothDamp(transform.position.x, targetPosX, ref xSpeed, smoothTime);
         //float newPosY = Mathf.SmoothDamp(transform.position.y, targetPosY, ref ySpeed, smoothTime);
+        targetPos.x = targetPosX;
+        targetPos.y = targetPosY;
 
-        //transform.position = new Vector3(newPosX, newPosY);
+        //targetPos += new Vector3(xSpeed * 0.1f, ySpeed * 0.1f);
+        transform.position = Vector3.Lerp(transform.position, targetPos, 0.5f);
         _controller.SetHorizontalForce(xSpeed);
         _controller.SetVerticalForce(ySpeed);
     }
