@@ -61,16 +61,16 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
     /// </summary>
     protected override void Awake()
     {
-        Debug.Log("MSB_LevelManager Awake");
+        //Debug.Log("MSB_LevelManager Awake");
         base.Awake();
 
         gameInfo = GameInfo.Instance;
         if (gameInfo != null)
         {
-            Debug.Log("Check GameInfo exist");
+            //Debug.Log("Check GameInfo exist");
             foreach (PlayerInfo player in gameInfo.players)
             {
-                Debug.Log(player.nick + " " + player.number);
+                //Debug.Log(player.nick + " " + player.number);
             }
         }
         else

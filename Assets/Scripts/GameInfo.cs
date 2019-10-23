@@ -36,7 +36,7 @@ public class GameInfo : PersistentSingleton<GameInfo>
 
     protected override void Awake()
     {
-        Debug.Log("GameInfo Awake");
+        //Debug.Log("GameInfo Awake");
         base.Awake();
         gameObject.name = "GameInfo";
 

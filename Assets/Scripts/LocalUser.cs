@@ -9,7 +9,7 @@ public class LocalUser : PersistentSingleton<LocalUser>
 
     protected override void Awake()
     {
-        Debug.Log("LocalUser Awake");
+        //Debug.Log("LocalUser Awake");
         base.Awake();
         _instance.name = "LocalUser";
 
@@ -23,7 +23,7 @@ public class LocalUser : PersistentSingleton<LocalUser>
    
     public void DebugLocalUserData()
     {
-        Debug.Log("DebugLocalUserData called");
+        //Debug.Log("DebugLocalUserData called");
         Debug.Log(localUserData.userID);
         Debug.Log(localUserData.userNick);
         Debug.Log(localUserData.userNumber);

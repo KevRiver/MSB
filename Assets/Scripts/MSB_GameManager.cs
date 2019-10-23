@@ -95,7 +95,7 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
 
     protected override void Awake()
     {
-        Debug.Log("MSB_GameManager Awake");
+        //Debug.Log("MSB_GameManager Awake");
         base.Awake();
         //PointsOfEntry = new List<PointsOfEntryStorage>();
     }
