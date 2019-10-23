@@ -8,6 +8,7 @@ using MoreMountains.CorgiEngine;
 public class RCReciever : MonoBehaviour
 {
     public MSB_Character character;
+    private CorgiController _controller;
     public Transform weaponAttachment;
     public Weapon weapon;
 
@@ -20,16 +21,22 @@ public class RCReciever : MonoBehaviour
     public float ySpeed;
     // For facing direction sync
     public bool isFacingRight;
+    static bool lastFacing;
 
     void Start()
     {
         Debug.Log("RCReciever Start");
-        character = GetComponent<MSB_Character>();
+        if (!(character = GetComponent<MSB_Character>()))
+            Debug.Log("MSB_Character is null");
+
+        if (!(_controller = GetComponent<CorgiController>()))
+            Debug.Log("CorgiController is null");
+
         weaponAttachment = character.transform.GetChild(0);
         weapon = weaponAttachment.GetComponentInChildren<Weapon>();
 
         userNum = character.UserNum;
-
+        lastFacing = character.IsFacingRight;
         //NetworkModule networkModule = NetworkModule.GetInstance();
         //networkModule.AddOnEventGameUserMove(new OnGameUserMove(this));
         //networkModule.AddOnEventGameUserSync(new OnGameUserSync(this));
@@ -42,16 +49,18 @@ public class RCReciever : MonoBehaviour
     public void SyncUserPos(float targetPosX, float targetPosY, float xSpeed, float ySpeed, bool isFacingRight, float smoothTime = 0.1f)
     {
         Debug.Log("SyncUserPos Called");
-        if (character.IsFacingRight != isFacingRight)
+        if (lastFacing != isFacingRight)
         {
-            character.IsFacingRight = isFacingRight;
+            lastFacing = !lastFacing;
             character.Flip();
         }
 
-        float newPosX = Mathf.SmoothDamp(transform.position.x, targetPosX, ref xSpeed, smoothTime);
-        float newPosY = Mathf.SmoothDamp(transform.position.y, targetPosY, ref ySpeed, smoothTime);
+        //float newPosX = Mathf.SmoothDamp(transform.position.x, targetPosX, ref xSpeed, smoothTime);
+        //float newPosY = Mathf.SmoothDamp(transform.position.y, targetPosY, ref ySpeed, smoothTime);
 
-        transform.position = new Vector3(newPosX, newPosY);
+        //transform.position = new Vector3(newPosX, newPosY);
+        _controller.SetHorizontalForce(xSpeed);
+        _controller.SetVerticalForce(ySpeed);
     }
 
     /*private class OnGameUserMove : NetworkModule.OnGameUserMoveListener
