@@ -143,12 +143,12 @@ public class LaserSword : Weapon
 
     public override void FlipWeapon()
     {
-        Debug.Log("Flip Weapon Called");
+        //Debug.Log("Flip Weapon Called");
     }
 
     public override void FlipWeaponModel()
     {
-        Debug.Log("Flip Weapon Model Called");
+        //Debug.Log("Flip Weapon Model Called");
     }
 
     protected virtual void DrawGizmos()
