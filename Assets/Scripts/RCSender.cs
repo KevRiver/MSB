@@ -33,7 +33,7 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
 
     public void Initialize(MSB_Character sender)
     {
-        _room = MSB_GameManager.Instance.RoomNum;
+        _room = GameInfo.Instance.room;
 
         _sender = sender;
         _rb = _sender.GetComponent<Rigidbody2D>();
