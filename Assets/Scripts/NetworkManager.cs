@@ -19,9 +19,9 @@ public class NetworkManager : MonoBehaviour
         {
             Debug.LogWarning("OnSoloMatched Called");
             NetworkModule.GetInstance().RequestGameInfo(_room);
-        }              
+        }
     }
-  
+
     private class OnGameInfo : NetworkModule.OnGameInfoListener
     {
         void NetworkModule.OnGameInfoListener.OnGameInfo(bool _result, int _room, int _mode, LinkedList<UserData> _users, string _message)
@@ -274,47 +274,49 @@ public class NetworkManager : MonoBehaviour
         }
 
         */
-        private class OnGameUserMove : NetworkModule.OnGameUserMoveListener
+    private class OnGameUserMove : NetworkModule.OnGameUserMoveListener
+    {
+        char[] delimiterChars = { ',' };
+        void NetworkModule.OnGameUserMoveListener.OnGameUserMove(object _data)
         {
-            char[] delimiterChars = { ',' };
-            void NetworkModule.OnGameUserMoveListener.OnGameUserMove(object _data)
-            {            
-                UnityMainThreadDispatcher.Instance().Enqueue(PlayerMove(_data));
-            }
-
-            public IEnumerator PlayerMove(object _data)
-            {
-                string[] dataArray = ((string)_data).Split(delimiterChars);
-                int target = int.Parse(dataArray[0]);
-                float posX = float.Parse(dataArray[1]);
-                float posY = float.Parse(dataArray[2]);
-                float posZ = float.Parse(dataArray[3]);
-                float speedX = float.Parse(dataArray[4]);
-                float speedY = float.Parse(dataArray[5]);
-                //bool isGrounded = bool.Parse(dataArray[6]);
-                bool isFacingRight = bool.Parse(dataArray[6]);
-
-                if(LocalUser.Instance.localUserData.userNumber == target)
-                {
-                    yield break;
-                }
-                else
-                {                
-                    foreach (MSB_Character player in MSB_LevelManager.Instance.Players)
-                    {
-                        RCReciever rc = player.gameObject.GetComponent<RCReciever>();
-                        if (rc == null)
-                            Debug.Log(player.UserNum + "'s RCReciever null");
-
-                        if (player.UserNum == target)
-                        {
-                            rc.SyncUserPos(posX, posY, speedX, speedY, isFacingRight);
-                        }
-                    }
-                }          
-                yield return null;
-            }
+            Debug.Log("OnGameUserMove called");
+            UnityMainThreadDispatcher.Instance().Enqueue(PlayerMove(_data));
         }
+
+        public IEnumerator PlayerMove(object _data)
+        {
+            string[] dataArray = ((string)_data).Split(delimiterChars);
+            int target = int.Parse(dataArray[0]);
+            float posX = float.Parse(dataArray[1]);
+            float posY = float.Parse(dataArray[2]);
+            float posZ = float.Parse(dataArray[3]);
+            float speedX = float.Parse(dataArray[4]);
+            float speedY = float.Parse(dataArray[5]);
+            //bool isGrounded = bool.Parse(dataArray[6]);
+            bool isFacingRight = bool.Parse(dataArray[6]);
+
+            if (LocalUser.Instance.localUserData.userNumber == target)
+            {
+                yield break;
+            }
+            else
+            {
+                foreach (MSB_Character player in MSB_LevelManager.Instance.Players)
+                {
+                    RCReciever rc = player.gameObject.GetComponent<RCReciever>();
+                    if (rc == null)
+                        Debug.Log(player.UserNum + "'s RCReciever null");
+
+                    if (player.UserNum == target)
+                    {
+                        rc.SyncUserPos(posX, posY, speedX, speedY, isFacingRight);
+                    }
+                }
+            }
+            yield return null;
+        }
+    }
+
     /*
         private class OnGameAction : NetworkModule.OnGameEventListener
         {                         
