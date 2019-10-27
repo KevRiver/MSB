@@ -20,14 +20,19 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
     private Weapon _weapon;
 
     private string _userNum;
+    private Vector3 _pos;
     private string _posX;
     private string _posY;
     private string _posZ;
     private string _speedX;
     private string _speedY;
     private string _isFacingRight;
+    private Quaternion _rot;
+    private string _rotX;
+    private string _rotY;
     private string _rotZ;
-    
+    private string _rotW;
+
 
     protected override void Awake()
     {
@@ -67,9 +72,10 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
     {
         while (true)
         {
-            _posX = (sender.transform.position.x).ToString();
-            _posY = (sender.transform.position.y).ToString();
-            _posZ = (sender.transform.position.z).ToString();
+            _pos = transform.position;
+            _posX = (_pos.x).ToString();
+            _posY = (_pos.y).ToString();
+            _posZ = (_pos.z).ToString();
             _speedX = (_controller.Speed.x).ToString();
             _speedY = (_controller.Speed.y).ToString();
             _isFacingRight = sender.IsFacingRight.ToString();
@@ -83,8 +89,12 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
 
     public void RequestUserSync()
     {
-        _rotZ = transform.rotation.z.ToString();
-        var data = _userNum + "," + _rotZ;
+        _rot = transform.rotation;
+        _rotX = _rot.x.ToString();
+        _rotY = _rot.y.ToString();
+        _rotZ = _rot.z.ToString();
+        _rotW = _rot.w.ToString();
+        var data = _userNum + "," + _rotX + "," + _rotY + "," + _rotZ + "," + _rotW;
         NetworkModule.GetInstance().RequestGameUserSync(_room, data);
     }
 
