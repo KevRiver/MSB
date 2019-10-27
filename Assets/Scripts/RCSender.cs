@@ -14,7 +14,7 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
 {
     private int _room;
 
-    public MSB_Character sender;
+    public MSB_Character character;
     private Rigidbody2D _rb;
     private CorgiController _controller;
     private Weapon _weapon;
@@ -44,16 +44,17 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
     {
         _room = GameInfo.Instance.room;
 
-        this.sender = sender;
-        _rb = this.sender.GetComponent<Rigidbody2D>();
-        _controller = this.sender.gameObject.GetComponent<CorgiController>();
+        this.character = sender;
+        _rb = this.character.GetComponent<Rigidbody2D>();
+        _controller = this.character.gameObject.GetComponent<CorgiController>();
         if (_controller == null)
         {
             Debug.Log("RCSender corgicontroller is null");
         }
-        _userNum = this.sender.UserNum.ToString();
+        _userNum = this.character.UserNum.ToString();
 
-        Transform weaponAttachment = this.sender.transform.GetChild(0);
+        Transform characterModel = character.transform.GetChild(0);
+        Transform weaponAttachment = characterModel.GetChild(0);
         _weapon = weaponAttachment.transform.GetComponentInChildren<Weapon>();
         Debug.Log("RCSender Initialized");
     }
@@ -72,14 +73,14 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
     {
         while (true)
         {
-            _pos = transform.position;
+            _pos = character.transform.position;
             _posX = (_pos.x).ToString();
             _posY = (_pos.y).ToString();
             _posZ = (_pos.z).ToString();
             _speedX = (_controller.Speed.x).ToString();
             _speedY = (_controller.Speed.y).ToString();
-            _isFacingRight = sender.IsFacingRight.ToString();
-            _rotZ = sender.transform.localRotation.z.ToString();
+            _isFacingRight = character.IsFacingRight.ToString();
+            //_rotZ = sender.transform.localRotation.z.ToString();
 
             string data = _userNum + "," + _posX + "," + _posY + "," + _posZ + "," + _speedX + "," + _speedY + "," + _isFacingRight + ","+ _rotZ;
             NetworkModule.GetInstance().RequestGameUserMove(_room, data);

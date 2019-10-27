@@ -116,7 +116,7 @@ public class RCReciever : MonoBehaviour
             _rotZ = float.Parse(dataArray[7]);
             
             // Sync User position
-            _rc.SyncUserPos(_posX, _posY, _xSpeed, _ySpeed, _isFacingRight,_rotZ);
+            _rc.SyncUserPos(_posX, _posY, _xSpeed, _ySpeed, _isFacingRight, _rotZ);
         }
     }
 
