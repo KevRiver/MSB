@@ -652,6 +652,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public virtual void FlipWeapon()
         {
+            Debug.LogWarning("Weapon.cs Flip");
             Flipped = !Flipped;
 
             if (_comboWeapon != null)
