@@ -145,7 +145,7 @@ MonoBehaviour:
     DisplayWarnings: 1
   PlatformMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   MovingPlatformMask:
     serializedVersion: 2
     m_Bits: 0
