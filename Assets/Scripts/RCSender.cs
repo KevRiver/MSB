@@ -120,12 +120,14 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>,MMEven
     private void OnEnable()
     {
         this.MMEventStartListening<MMGameEvent>();
+        this.MMEventStartListening<MMDamageTakenEvent>();
         //StartCoroutine(RequestUserMove());
     }
 
     private void OnDisable()
     {
         this.MMEventStopListening<MMGameEvent>();
+        this.MMEventStopListening<MMDamageTakenEvent>();
         //StopCoroutine(RequestUserMove());
     }
 

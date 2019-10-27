@@ -163,14 +163,14 @@ public class RCReciever : MonoBehaviour
 
         public void OnGameEventDamage(int from, int to, int amount, string option)
         {
-
+            Debug.LogWarning("DamageEvent called");
         }
 
         public void OnGameEventHealth(int num, int health)
         {
             if (num != _userNum)
                 return;
-            
+            Debug.LogWarning(num + "'s Health Changed");
         }
 
         public void OnGameEventItem(int type, int num, int action)
