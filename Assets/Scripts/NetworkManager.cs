@@ -281,7 +281,7 @@ public class NetworkManager : MonoBehaviour
         void NetworkModule.OnGameUserMoveListener.OnGameUserMove(object _data)
         {
             Debug.Log("OnGameUserMove called");
-            UnityMainThreadDispatcher.Instance().Enqueue(PlayerMove(_data));
+            //UnityMainThreadDispatcher.Instance().Enqueue(PlayerMove(_data));
         }
 
         public IEnumerator PlayerMove(object _data)

@@ -14,14 +14,14 @@ public class RCReciever : MonoBehaviour
 
     public int userNum;
     // For position sync
-    public float posX;
-    public float posY;
-    public float posZ;
-    public float xSpeed;
-    public float ySpeed;
+    public float posX = 0;
+    public float posY = 0;
+    public float posZ = 0;
+    public float xSpeed = 0;
+    public float ySpeed = 0;
     // For facing direction sync
     public bool isFacingRight;
-    static bool lastFacing;
+    private bool lastFacing;
 
     private Vector3 targetPos;
 
@@ -41,10 +41,10 @@ public class RCReciever : MonoBehaviour
 
         userNum = character.UserNum;
         lastFacing = character.IsFacingRight;
-        //NetworkModule networkModule = NetworkModule.GetInstance();
-        //networkModule.AddOnEventGameUserMove(new OnGameUserMove(this));
-        //networkModule.AddOnEventGameUserSync(new OnGameUserSync(this));
-        //networkModule.AddOnEventGameEvent(new OnGameEvent(this));
+        NetworkModule networkModule = NetworkModule.GetInstance();
+        networkModule.AddOnEventGameUserMove(new OnGameUserMove(this));
+        networkModule.AddOnEventGameUserSync(new OnGameUserSync(this));
+        networkModule.AddOnEventGameEvent(new OnGameEvent(this));
 
         Debug.Log("RCReciever Initialized");
         MMGameEvent.Trigger("GameStart");
@@ -70,11 +70,11 @@ public class RCReciever : MonoBehaviour
         _controller.SetVerticalForce(ySpeed);
     }
 
-    /*private class OnGameUserMove : NetworkModule.OnGameUserMoveListener
+    private class OnGameUserMove : NetworkModule.OnGameUserMoveListener
     {
         private RCReciever rc;
         private int userNum;
-        private static bool lastFacing;
+        private bool lastFacing;
 
         // Target number
         int targetNum;
@@ -128,21 +128,12 @@ public class RCReciever : MonoBehaviour
                 rc.character.Flip();
             }
             // Sync User position
-            rc.SyncUserPos(posX, posY, xSpeed, ySpeed);
+            rc.SyncUserPos(posX, posY, xSpeed, ySpeed, isFacingRight);
         }
-    }*/
+    }
 
     private class OnGameUserSync : NetworkModule.OnGameUserSyncListener
     {
-        private RCReciever rc;
-        private int userNum;
-
-        public OnGameUserSync(RCReciever _rc)
-        {
-            rc = _rc;
-            userNum = rc.userNum;
-        }
-
         void NetworkModule.OnGameUserSyncListener.OnGameUserSync(object _data)
         {
             throw new System.NotImplementedException();
