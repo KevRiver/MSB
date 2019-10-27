@@ -61,7 +61,20 @@ public class RCReciever : MonoBehaviour
         _targetPos.x = targetPosX;
         _targetPos.y = targetPosY;
 
-        transform.position = Vector3.Lerp(transform.position, _targetPos, 0.5f);
+        //transform.position = Vector3.Lerp(transform.position, _targetPos, 0.5f);
+        StartCoroutine(Lerp(_targetPos));
+    }
+
+    private float _t;
+    private IEnumerator Lerp(Vector3 target)
+    {
+        _t = 0;
+        while (_t<0.1f)
+        {
+            _t += Time.deltaTime;
+            transform.position = Vector3.Lerp(transform.position, target, _t / 0.1f);
+        }
+        yield return null;
     }
 
     private class OnGameUserMove : NetworkModule.OnGameUserMoveListener
