@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using MoreMountains.CorgiEngine;
 using MoreMountains.Tools;
 using MSBNetwork;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// 로컬 플레이어와 연결되어 동기화 정보를 보내는 오브젝트
@@ -12,18 +14,20 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
 {
     private int _room;
 
-    public MSB_Character _sender;
+    public MSB_Character sender;
     private Rigidbody2D _rb;
     private CorgiController _controller;
     private Weapon _weapon;
 
-    private string userNum;
-    private string posX;
-    private string posY;
-    private string posZ;
-    private string speedX;
-    private string speedY;
-    private string isFacingRight;
+    private string _userNum;
+    private string _posX;
+    private string _posY;
+    private string _posZ;
+    private string _speedX;
+    private string _speedY;
+    private string _isFacingRight;
+    private string _rot;
+    
 
     protected override void Awake()
     {
@@ -35,16 +39,16 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
     {
         _room = GameInfo.Instance.room;
 
-        _sender = sender;
-        _rb = _sender.GetComponent<Rigidbody2D>();
-        _controller = _sender.gameObject.GetComponent<CorgiController>();
+        this.sender = sender;
+        _rb = this.sender.GetComponent<Rigidbody2D>();
+        _controller = this.sender.gameObject.GetComponent<CorgiController>();
         if (_controller == null)
         {
             Debug.Log("RCSender corgicontroller is null");
         }
-        userNum = _sender.UserNum.ToString();
+        _userNum = this.sender.UserNum.ToString();
 
-        Transform weaponAttachment = _sender.transform.GetChild(0);
+        Transform weaponAttachment = this.sender.transform.GetChild(0);
         _weapon = weaponAttachment.transform.GetComponentInChildren<Weapon>();
         Debug.Log("RCSender Initialized");
     }
@@ -63,17 +67,24 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
     {
         while (true)
         {
-            posX = (_sender.transform.position.x).ToString();
-            posY = (_sender.transform.position.y).ToString();
-            posZ = (_sender.transform.position.z).ToString();
-            speedX = (_controller.Speed.x).ToString();
-            speedY = (_controller.Speed.y).ToString();
-            isFacingRight = _sender.IsFacingRight.ToString();
+            _posX = (sender.transform.position.x).ToString();
+            _posY = (sender.transform.position.y).ToString();
+            _posZ = (sender.transform.position.z).ToString();
+            _speedX = (_controller.Speed.x).ToString();
+            _speedY = (_controller.Speed.y).ToString();
+            _isFacingRight = sender.IsFacingRight.ToString();
+            _rot = sender.transform.localRotation.z.ToString();
 
-            string data = userNum + "," + posX + "," + posY + "," + posZ + "," + speedX + "," + speedY + "," + isFacingRight;
+            string data = _userNum + "," + _posX + "," + _posY + "," + _posZ + "," + _speedX + "," + _speedY + "," + _isFacingRight + ","+ _rot;
             NetworkModule.GetInstance().RequestGameUserMove(_room, data);
             yield return new WaitForSeconds(0.1f);
         }
+    }
+
+    public void RequestUserSync()
+    {
+        var data = _userNum;
+        NetworkModule.GetInstance().RequestGameUserSync(_room, data);
     }
 
     public void OnMMEvent(MMGameEvent gameEvent)

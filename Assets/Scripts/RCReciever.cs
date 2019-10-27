@@ -6,6 +6,7 @@ using MoreMountains.Tools;
 using MSBNetwork;
 using MoreMountains.CorgiEngine;
 using UnityEngine.Serialization;
+using UnityScript.Steps;
 
 public class RCReciever : MonoBehaviour
 {
@@ -52,7 +53,7 @@ public class RCReciever : MonoBehaviour
         MMGameEvent.Trigger("GameStart");
     }
 
-    public void SyncUserPos(float targetPosX, float targetPosY, float xSpeed, float ySpeed, bool isFacingRight, float smoothTime = 0.1f)
+    public void SyncUserPos(float targetPosX, float targetPosY, float xSpeed, float ySpeed, bool isFacingRight,float rotZ, float smoothTime = 0.1f)
     {
         if (lastFacing != isFacingRight)
         {
@@ -67,6 +68,7 @@ public class RCReciever : MonoBehaviour
         _speed.y = ySpeed;
 
         transform.position = Vector3.Lerp(transform.position, _targetPos, 0.5f);
+        transform.rotation = new Quaternion(0, 0, rotZ, 1);
     }
     
     private class OnGameUserMove : NetworkModule.OnGameUserMoveListener
@@ -80,6 +82,7 @@ public class RCReciever : MonoBehaviour
         private float _xSpeed;
         private float _ySpeed;
         private bool _isFacingRight;
+        private float _rotZ;
 
         public OnGameUserMove(RCReciever rc)
         {
@@ -105,17 +108,34 @@ public class RCReciever : MonoBehaviour
             _xSpeed = float.Parse(dataArray[4]);
             _ySpeed = float.Parse(dataArray[5]);
             _isFacingRight = bool.Parse(dataArray[6]);
+            _rotZ = float.Parse(dataArray[7]);
             
             // Sync User position
-            _rc.SyncUserPos(_posX, _posY, _xSpeed, _ySpeed, _isFacingRight);
+            _rc.SyncUserPos(_posX, _posY, _xSpeed, _ySpeed, _isFacingRight,_rotZ);
         }
     }
 
     private class OnGameUserSync : NetworkModule.OnGameUserSyncListener
     {
-        void NetworkModule.OnGameUserSyncListener.OnGameUserSync(object _data)
+        private readonly RCReciever _rc;
+        private readonly int _userNum;
+        private int _targetNum;
+        public OnGameUserSync(RCReciever rc)
         {
-            throw new System.NotImplementedException();
+            Debug.Log("OnGameUserMove Constructor called");
+            Debug.LogWarning(rc.gameObject.name);
+            this._rc = rc;
+            _userNum = this._rc.userNum;
+        }
+        
+        readonly char[] _delimiterChars = { ',' }; 
+        void NetworkModule.OnGameUserSyncListener.OnGameUserSync(object data)
+        {
+            string[] dataArray = ((string)data).Split(_delimiterChars);
+            _targetNum = int.Parse(dataArray[0]);
+            if (_userNum != _targetNum)
+                return;
+            _rc.weapon.WeaponState.ChangeState(Weapon.WeaponStates.WeaponUse);
         }
     }
 
