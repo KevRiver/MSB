@@ -58,14 +58,16 @@ public class VectorPad : MonoBehaviour
 
         _speedMultiplier.x = horizontalSpeed;
         _speedMultiplier.y = verticalSpeed;
-
+        _contacted = true;
         _activate = Activate(activateDelay);
         StartCoroutine(_activate);
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        StopCoroutine(_activate);
+        if(_contacted)
+            StopCoroutine(_activate);
+        _contacted = false;
     }
 
     private IEnumerator Activate(float delay)
