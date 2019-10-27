@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
     <e p="C:\Users\Kang seung gon\.Rider2019.2\system\extResources" t="IncludeRecursive" />
@@ -882,6 +882,7 @@
             <e p="MessageHandler.cs" t="Include" />
             <e p="ToastAlerter.cs" t="Include" />
           </e>
+          <e p="VectorPad.cs" t="Include" />
         </e>
         <e p="SpriteOutline" t="Include">
           <e p="Editor" t="Include">
