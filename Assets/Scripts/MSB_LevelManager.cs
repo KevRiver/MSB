@@ -94,6 +94,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
             foreach (PlayerInfo user in users)
             {
                 MSB_Character newPlayer = (MSB_Character)Instantiate(PlayerPrefabs[user.weapon], new Vector3(0, 0, 0), Quaternion.identity);
+                newPlayer.c_userData = new ClientUserData(user.number, user.id, user.nick, user.weapon, user.skin);
                 newPlayer.UserNum = user.number;
 
                 //check remote players and add RCReciever component to its gameobject
