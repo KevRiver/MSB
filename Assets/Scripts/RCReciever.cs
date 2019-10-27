@@ -169,6 +169,7 @@ public class RCReciever : MonoBehaviour
         private IEnumerator Log()
         {
             Debug.LogWarning("DamageEvent called");
+            yield return null;
         }
 
         public void OnGameEventHealth(int num, int health)
