@@ -142,7 +142,7 @@ public class RCReciever : MonoBehaviour
             if (_userNum != _targetNum)
                 return;
             _rotZ = float.Parse(dataArray[1]);
-            _rc.transform.rotation = new Quaternion(0,0,_rotZ,1);
+            _rc.characterModel.rotation = new Quaternion(0,0,_rotZ,1);
             _rc.weapon.WeaponState.ChangeState(Weapon.WeaponStates.WeaponUse);
         }
     }
