@@ -66,8 +66,8 @@ public class RCReciever : MonoBehaviour
 
         //targetPos += new Vector3(xSpeed * 0.1f, ySpeed * 0.1f);
         transform.position = Vector3.Lerp(transform.position, targetPos, 0.5f);
-        _controller.SetHorizontalForce(xSpeed);
-        _controller.SetVerticalForce(ySpeed);
+        //_controller.SetHorizontalForce(xSpeed);
+        //_controller.SetVerticalForce(ySpeed);
     }
 
     private class OnGameUserMove : NetworkModule.OnGameUserMoveListener
@@ -91,6 +91,7 @@ public class RCReciever : MonoBehaviour
 
         public OnGameUserMove(RCReciever _rc)
         {
+            Debug.Log("OnGameUserMove Constructor called");
             Debug.LogWarning(_rc.gameObject.name);
             rc = _rc;
             userNum = rc.userNum;
