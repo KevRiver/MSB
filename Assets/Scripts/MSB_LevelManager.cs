@@ -98,6 +98,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
                 if (newPlayer.UserNum != localUserNum)
                 {
                     newPlayer.gameObject.AddComponent<RCReciever>();
+                    newPlayer.IsRemote = true;
                 }
                 else
                 {
