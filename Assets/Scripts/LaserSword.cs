@@ -48,6 +48,8 @@ public class LaserSword : Weapon
     protected DamageOnTouch _damageOnTouch;
     protected GameObject _damageArea;
 
+    private bool _isOwnerRemote = false;
+
     /// <summary>
     /// Initialization
     /// </summary>
@@ -100,12 +102,21 @@ public class LaserSword : Weapon
         _damageOnTouch.InvincibilityDuration = InvincibilityDuration;
     }
 
+    public override void SetOwner(Character newOwner, CharacterHandleWeapon handleWeapon)
+    {
+        if (((MSB_Character) newOwner).IsRemote)
+            _isOwnerRemote = true;
+        base.SetOwner(newOwner,handleWeapon);
+    }
+
     /// <summary>
     /// When the weapon is used, we trigger our attack routine
     /// </summary>
     protected override void WeaponUse()
     {
         base.WeaponUse();
+        if(!_isOwnerRemote)
+            RCSender.Instance.RequestUserSync();
         StartCoroutine(MeleeWeaponAttack());
     }
 
