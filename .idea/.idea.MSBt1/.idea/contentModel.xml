@@ -850,6 +850,7 @@
           <e p="MSB_Character.cs" t="Include" />
           <e p="MSB_CheckPoint.cs" t="Include" />
           <e p="MSB_CinemachineCameraController.cs" t="Include" />
+          <e p="MSB_DamageOnTouch.cs" t="Include" />
           <e p="MSB_GameManager.cs" t="Include" />
           <e p="MSB_InputManager.cs" t="Include" />
           <e p="MSB_LevelManager.cs" t="Include" />

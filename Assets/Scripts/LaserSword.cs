@@ -96,6 +96,7 @@ public class LaserSword : Weapon
 
         _damageOnTouch = _damageArea.AddComponent<DamageOnTouch>();
         _damageOnTouch.TargetLayerMask = TargetLayerMask;
+        _damageOnTouch.IgnoreGameObject(Owner.gameObject);
         _damageOnTouch.DamageCaused = DamageCaused;
         _damageOnTouch.DamageCausedKnockbackType = Knockback;
         _damageOnTouch.DamageCausedKnockbackForce = KnockbackForce;
