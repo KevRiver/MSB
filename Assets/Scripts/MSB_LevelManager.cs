@@ -65,18 +65,11 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         base.Awake();
 
         gameInfo = GameInfo.Instance;
-        if (gameInfo != null)
+        if (gameInfo == null)
         {
-            //Debug.Log("Check GameInfo exist");
-            foreach (PlayerInfo player in gameInfo.players)
-            {
-                //Debug.Log(player.nick + " " + player.number);
-            }
-        }
-        else
+            Debug.LogWarning("GameInfo is null");
             return;
-
-        Debug.LogWarning("PlayerInfo : " + gameInfo.players);
+        }
 
         InstantiatePlayableCharacters(gameInfo.players);
     }
@@ -107,7 +100,6 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
                 if (newPlayer.UserNum != localUserNum)
                 {
                     newPlayer.gameObject.AddComponent<RCReciever>();
-                    Debug.Log("RCReciever added to " + newPlayer.name);
                 }
                 else
                 {

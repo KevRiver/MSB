@@ -14,6 +14,7 @@ public class MSB_Character : Character
 
     public int RoomNum { get; set; }
     public int UserNum { get; internal set; }
+
     private InputManager inputManager;
 
     protected override void Initialization()
