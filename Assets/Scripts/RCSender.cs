@@ -91,7 +91,7 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
 
     public void RequestUserSync()
     {
-        _rot = transform.rotation;
+        _rot = character.transform.rotation;
         _rotX = _rot.x.ToString();
         _rotY = _rot.y.ToString();
         _rotZ = _rot.z.ToString();
