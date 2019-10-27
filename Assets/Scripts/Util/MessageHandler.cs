@@ -41,17 +41,17 @@ public class MessageHandler : MonoBehaviour
 
     public void DisplayKillLog(MSB_Character killUser, MSB_Character deadUser)
     {
-        string message = killUser.c_userData.userNick + ", " + deadUser.c_userData.userNick + " 처치!";
-        if (killUser.c_userData.userNumber == deadUser.c_userData.userNumber)
+        string message = killUser.cUserData.userNick + ", " + deadUser.cUserData.userNick + " 처치!";
+        if (killUser.cUserData.userNumber == deadUser.cUserData.userNumber)
         {
-            message = deadUser.c_userData.userNick + " 낙사!";
+            message = deadUser.cUserData.userNick + " 낙사!";
         }
         Debug.LogWarning("***DISPLAY KILL LOG***");
         messageBackground.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
         messageUserA.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.75f);
         messageUserB.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.75f);
         messageText.GetComponent<Text>().color = new Color(1f, 1f, 1f, 1f);
-        if (killUser.c_userData.userWeapon == 0)
+        if (killUser.cUserData.userWeapon == 0)
         {
             messageUserAImage.GetComponent<Image>().sprite = swordHead;
         } else
@@ -59,7 +59,7 @@ public class MessageHandler : MonoBehaviour
             messageUserAImage.GetComponent<Image>().sprite = shurikenHead;
         }
         messageUserAImage.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
-        if (deadUser.c_userData.userWeapon == 0)
+        if (deadUser.cUserData.userWeapon == 0)
         {
             messageUserBImage.GetComponent<Image>().sprite = swordHead;
         } else

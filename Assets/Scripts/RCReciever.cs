@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.Tools;
@@ -25,6 +26,7 @@ public class RCReciever : MonoBehaviour
     public bool lastFacing;
 
     private Vector3 _targetPos;
+    private Vector2 _speed;
 
     void Start()
     {
@@ -61,22 +63,12 @@ public class RCReciever : MonoBehaviour
         _targetPos.x = targetPosX;
         _targetPos.y = targetPosY;
 
-        //transform.position = Vector3.Lerp(transform.position, _targetPos, 0.5f);
-        StartCoroutine(Lerp(_targetPos));
-    }
+        _speed.x = xSpeed;
+        _speed.y = ySpeed;
 
-    private float _t;
-    private IEnumerator Lerp(Vector3 target)
-    {
-        _t = 0;
-        while (_t<0.1f)
-        {
-            _t += Time.deltaTime;
-            transform.position = Vector3.Lerp(transform.position, target, _t / 0.1f);
-        }
-        yield return null;
+        transform.position = Vector3.Lerp(transform.position, _targetPos, 0.5f);
     }
-
+    
     private class OnGameUserMove : NetworkModule.OnGameUserMoveListener
     {
         private readonly RCReciever _rc;

@@ -293,7 +293,7 @@ namespace MoreMountains.CorgiEngine
                     {
                         if (CurrentWeapon != null)
                         {
-                            Debug.LogWarning("Initial Weapon Flip " + GetComponent<MSB_Character>().c_userData.userID);
+                            Debug.LogWarning("Initial Weapon Flip " + GetComponent<MSB_Character>().cUserData.userID);
                             CurrentWeapon.FlipWeapon();
                             CurrentWeapon.FlipWeaponModel();
                         }
@@ -313,7 +313,7 @@ namespace MoreMountains.CorgiEngine
 		{
 			if (CurrentWeapon != null)
             {
-                Debug.LogWarning("Weapon Flip" + GetComponent<MSB_Character>().c_userData.userID);
+                Debug.LogWarning("Weapon Flip" + GetComponent<MSB_Character>().cUserData.userID);
                 CurrentWeapon.FlipWeapon();
 				if (CurrentWeapon.FlipWeaponOnCharacterFlip)
 				{

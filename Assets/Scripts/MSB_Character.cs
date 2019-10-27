@@ -5,11 +5,12 @@ using MoreMountains.CorgiEngine;
 using MoreMountains.Tools;
 using UnityEngine.UI;
 using MSBNetwork;
+using UnityEngine.Serialization;
 
 public class MSB_Character : Character
 {
-    [Header("MSB Custom")]
-    public ClientUserData c_userData;
+    [FormerlySerializedAs("c_userData")] [Header("MSB Custom")]
+    public ClientUserData cUserData;
     public int bushID = 0;
 
     public int RoomNum { get; set; }
