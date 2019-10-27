@@ -154,12 +154,12 @@ public class LaserSword : Weapon
 
     public override void FlipWeapon()
     {
-        Debug.LogWarning("LaserSword Flip");
+        //Debug.LogWarning("LaserSword Flip");
     }
 
     public override void FlipWeaponModel()
     {
-        Debug.LogWarning("LaserSword Flip Model");
+        //Debug.LogWarning("LaserSword Flip Model");
         transform.localScale = Vector3.Scale (transform.localScale, FlipValue);		
     }
 
