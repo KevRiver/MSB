@@ -15,6 +15,7 @@ public class MSB_Character : Character
 
     public int RoomNum { get; set; }
     public int UserNum { get; internal set; }
+    public bool IsRemote { get; set; }
 
     private InputManager inputManager;
 
@@ -58,6 +59,7 @@ public class MSB_Character : Character
         _health = GetComponent<Health>();
         _damageOnTouch = GetComponent<DamageOnTouch>();
         CanFlip = true;
+        IsRemote = false;
 
         AssignAnimator();
 
