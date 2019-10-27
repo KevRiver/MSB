@@ -163,6 +163,11 @@ public class RCReciever : MonoBehaviour
 
         public void OnGameEventDamage(int from, int to, int amount, string option)
         {
+            UnityMainThreadDispatcher.Instance().Enqueue(Log());
+        }
+
+        private IEnumerator Log()
+        {
             Debug.LogWarning("DamageEvent called");
         }
 

@@ -553,7 +553,7 @@ namespace MoreMountains.CorgiEngine
 		protected virtual void WeaponUse()
 		{
             Owner.GetComponent<CharacterSpin>().speedMultiplier = 0.1f;
-            Debug.Log(Owner.gameObject.name +"'s rotation : " + Owner.transform.GetChild(0).rotation);
+            //Debug.Log(Owner.gameObject.name +"'s rotation : " + Owner.transform.GetChild(0).rotation);
 			TriggerWeaponUsedFeedback();
 		}
 

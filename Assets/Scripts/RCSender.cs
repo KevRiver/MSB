@@ -118,18 +118,6 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>,MMEven
         }
     }
 
-    private void OnEnable()
-    {
-        this.MMEventStartListening<MMGameEvent>();
-        this.MMEventStartListening<MMDamageTakenEvent>();
-    }
-
-    private void OnDisable()
-    {
-        this.MMEventStopListening<MMGameEvent>();
-        this.MMEventStopListening<MMDamageTakenEvent>();
-    }
-
     private int _target;
     private int _instigator;
     private int _causedDamage;
@@ -146,5 +134,17 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>,MMEven
         Debug.LogWarning("target is " + _target);
         _causedDamage = (int)(eventType.DamageCaused);
         NetworkModule.GetInstance().RequestGameUserActionDamage(_room, _target, _causedDamage, "");
+    }
+    
+    private void OnEnable()
+    {
+        this.MMEventStartListening<MMGameEvent>();
+        this.MMEventStartListening<MMDamageTakenEvent>();
+    }
+
+    private void OnDisable()
+    {
+        this.MMEventStopListening<MMGameEvent>();
+        this.MMEventStopListening<MMDamageTakenEvent>();
     }
 }
