@@ -104,9 +104,9 @@ public class MSB_Character : Character
     {
         base.OnEnable();       
 
-        Color col = _spriteRenderer.color;
-        col.a = 1.0f;
-        _spriteRenderer.color = col;
+        //Color col = _spriteRenderer.color;
+        //col.a = 1.0f;
+        //_spriteRenderer.color = col;
 
 
     }

@@ -7,6 +7,7 @@ using MoreMountains.CorgiEngine;
 public class CharacterSpin : CharacterAbility
 {
     private Vector3 _rotAngle = Vector3.zero;
+    public GameObject characterModel;
     public float spinSpeed;
     public float speedMultiplier = 1;
 
@@ -23,10 +24,14 @@ public class CharacterSpin : CharacterAbility
 
     public override void ProcessAbility()
     {
+        if (characterModel == null)
+            return;
+        
         if (AbilityPermitted)
         {
             _rotAngle.z = Time.deltaTime * spinSpeed * speedMultiplier;
-            transform.Rotate(_rotAngle);
+            characterModel.transform.Rotate(_rotAngle);
+            //transform.Rotate(_rotAngle);
             //transform.eulerAngles += new Vector3(0, 0, Time.deltaTime * spinSpeed * speedMultiplier);
         }
     }

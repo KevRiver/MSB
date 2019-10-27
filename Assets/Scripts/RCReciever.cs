@@ -12,6 +12,7 @@ public class RCReciever : MonoBehaviour
 {
     public MSB_Character character;
     private CorgiController _controller;
+    public Transform characterModel;
     public Transform weaponAttachment;
     public Weapon weapon;
 
@@ -39,7 +40,8 @@ public class RCReciever : MonoBehaviour
         if (!(_controller = GetComponent<CorgiController>()))
             Debug.Log("CorgiController is null");
 
-        weaponAttachment = character.transform.GetChild(0);
+        characterModel = character.transform.GetChild(0);
+        weaponAttachment = characterModel.GetChild(0);
         weapon = weaponAttachment.GetComponentInChildren<Weapon>();
 
         _targetPos = Vector3.zero;
