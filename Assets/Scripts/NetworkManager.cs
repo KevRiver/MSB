@@ -32,9 +32,9 @@ public class NetworkManager : MonoBehaviour
             UnityMainThreadDispatcher.Instance().Enqueue(LoadScene(_mode, _room, _users));
         }
 
-        public IEnumerator LoadScene(int _mode, int _room, LinkedList<UserData> _users)
+        private IEnumerator LoadScene(int _mode, int _room, LinkedList<UserData> _users)
         {
-            // make gameinfo object
+            // make "gameinfo" object
             GameInfo gameInfo = GameInfo.Instance;
             gameInfo.room = _room;
             foreach (UserData user in _users)

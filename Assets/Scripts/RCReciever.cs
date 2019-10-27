@@ -21,9 +21,9 @@ public class RCReciever : MonoBehaviour
     public float ySpeed = 0;
     // For facing direction sync
     public bool isFacingRight;
-    private bool lastFacing;
+    private bool _lastFacing;
 
-    private Vector3 targetPos;
+    private Vector3 _targetPos;
 
     void Start()
     {
@@ -37,10 +37,10 @@ public class RCReciever : MonoBehaviour
         weaponAttachment = character.transform.GetChild(0);
         weapon = weaponAttachment.GetComponentInChildren<Weapon>();
 
-        targetPos = Vector3.zero;
+        _targetPos = Vector3.zero;
 
         userNum = character.UserNum;
-        lastFacing = character.IsFacingRight;
+        _lastFacing = character.IsFacingRight;
         NetworkModule networkModule = NetworkModule.GetInstance();
         networkModule.AddOnEventGameUserMove(new OnGameUserMove(this));
         //networkModule.AddOnEventGameUserSync(new OnGameUserSync(this));
@@ -53,74 +53,74 @@ public class RCReciever : MonoBehaviour
     public void SyncUserPos(float targetPosX, float targetPosY, float xSpeed, float ySpeed, bool isFacingRight, float smoothTime = 0.1f)
     {
         //Debug.Log("SyncUserPos Called");
-        if (lastFacing != isFacingRight)
+        if (_lastFacing != isFacingRight)
         {
-            lastFacing = !lastFacing;
+            _lastFacing = !_lastFacing;
             character.Flip();
         }
 
-        targetPos.x = targetPosX;
-        targetPos.y = targetPosY;
+        _targetPos.x = targetPosX;
+        _targetPos.y = targetPosY;
 
-        transform.position = Vector3.Lerp(transform.position, targetPos, 0.5f);
+        transform.position = Vector3.Lerp(transform.position, _targetPos, 0.5f);
     }
 
     private class OnGameUserMove : NetworkModule.OnGameUserMoveListener
     {
-        private RCReciever rc;
-        private int userNum;
-        private bool lastFacing;
+        private readonly RCReciever _rc;
+        private readonly int _userNum;
+        private bool _lastFacing;
 
         // Target number
-        int targetNum;
+        int _targetNum;
         
         // For position sync
-        float posX;
-        float posY;
-        float posZ;
-        float xSpeed;
-        float ySpeed;
+        float _posX;
+        float _posY;
+        float _posZ;
+        float _xSpeed;
+        float _ySpeed;
 
         // For facing direction sync
-        bool isFacingRight;
+        bool _isFacingRight;
 
-        public OnGameUserMove(RCReciever _rc)
+        public OnGameUserMove(RCReciever rc)
         {
             Debug.Log("OnGameUserMove Constructor called");
-            Debug.LogWarning(_rc.gameObject.name);
-            rc = _rc;
-            userNum = rc.userNum;
-            lastFacing = _rc.character.IsFacingRight;
+            Debug.LogWarning(rc.gameObject.name);
+            this._rc = rc;
+            _userNum = this._rc.userNum;
+            _lastFacing = rc.character.IsFacingRight;
         }
 
-        char[] delimiterChars = { ',' };
-        void NetworkModule.OnGameUserMoveListener.OnGameUserMove(object _data)
+        readonly char[] _delimiterChars = { ',' };
+        void NetworkModule.OnGameUserMoveListener.OnGameUserMove(object data)
         {
-            string[] dataArray = ((string)_data).Split(delimiterChars);
-            targetNum = int.Parse(dataArray[0]);            
+            string[] dataArray = ((string)data).Split(_delimiterChars);
+            _targetNum = int.Parse(dataArray[0]);            
             //  If this is not target object, return
-            if (userNum != targetNum)
+            if (_userNum != _targetNum)
                 return;
 
             // Allocates recieved data
 
-            posX = float.Parse(dataArray[1]);
-            posY = float.Parse(dataArray[2]);
-            posZ = float.Parse(dataArray[3]);
+            _posX = float.Parse(dataArray[1]);
+            _posY = float.Parse(dataArray[2]);
+            _posZ = float.Parse(dataArray[3]);
 
-            xSpeed = float.Parse(dataArray[4]);
-            ySpeed = float.Parse(dataArray[5]);
+            _xSpeed = float.Parse(dataArray[4]);
+            _ySpeed = float.Parse(dataArray[5]);
 
-            isFacingRight = bool.Parse(dataArray[6]);
+            _isFacingRight = bool.Parse(dataArray[6]);
 
             // Sync User Facing
-            if (lastFacing != isFacingRight)
+            if (_lastFacing != _isFacingRight)
             {
-                lastFacing = !lastFacing;
-                rc.character.Flip();
+                _lastFacing = !_lastFacing;
+                _rc.character.Flip();
             }
             // Sync User position
-            rc.SyncUserPos(posX, posY, xSpeed, ySpeed, isFacingRight);
+            _rc.SyncUserPos(_posX, _posY, _xSpeed, _ySpeed, _isFacingRight);
         }
     }
 
