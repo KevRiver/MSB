@@ -155,7 +155,7 @@ namespace MoreMountains.CorgiEngine
 		/// <param name="collider">what's colliding with the object.</param>
 		public virtual void OnTriggerStay2D(Collider2D collider)
 		{			
-			Colliding (collider);
+			//Colliding (collider);
 	    }
 
 		public virtual void OnTriggerEnter2D(Collider2D collider)
