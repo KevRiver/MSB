@@ -125,6 +125,7 @@ public class RCReciever : MonoBehaviour
         private readonly RCReciever _rc;
         private readonly int _userNum;
         private int _targetNum;
+        private float _rotZ;
         public OnGameUserSync(RCReciever rc)
         {
             Debug.Log("OnGameUserMove Constructor called");
@@ -140,6 +141,8 @@ public class RCReciever : MonoBehaviour
             _targetNum = int.Parse(dataArray[0]);
             if (_userNum != _targetNum)
                 return;
+            _rotZ = float.Parse(dataArray[1]);
+            _rc.transform.rotation = new Quaternion(0,0,_rotZ,1);
             _rc.weapon.WeaponState.ChangeState(Weapon.WeaponStates.WeaponUse);
         }
     }

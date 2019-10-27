@@ -66,8 +66,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1628607475
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -321,7 +321,7 @@ MonoBehaviour:
   AbilityStopFeedbacks: {fileID: 0}
   AbilityPermitted: 1
   characterModel: {fileID: 3186536959345083222}
-  spinSpeed: -360
+  spinSpeed: -180
   speedMultiplier: 1
 --- !u!114 &2746426991537886781
 MonoBehaviour:

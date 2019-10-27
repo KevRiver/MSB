@@ -26,7 +26,7 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
     private string _speedX;
     private string _speedY;
     private string _isFacingRight;
-    private string _rot;
+    private string _rotZ;
     
 
     protected override void Awake()
@@ -73,9 +73,9 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
             _speedX = (_controller.Speed.x).ToString();
             _speedY = (_controller.Speed.y).ToString();
             _isFacingRight = sender.IsFacingRight.ToString();
-            _rot = sender.transform.localRotation.z.ToString();
+            _rotZ = sender.transform.localRotation.z.ToString();
 
-            string data = _userNum + "," + _posX + "," + _posY + "," + _posZ + "," + _speedX + "," + _speedY + "," + _isFacingRight + ","+ _rot;
+            string data = _userNum + "," + _posX + "," + _posY + "," + _posZ + "," + _speedX + "," + _speedY + "," + _isFacingRight + ","+ _rotZ;
             NetworkModule.GetInstance().RequestGameUserMove(_room, data);
             yield return new WaitForSeconds(0.1f);
         }
@@ -83,7 +83,8 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
 
     public void RequestUserSync()
     {
-        var data = _userNum;
+        _rotZ = transform.rotation.z.ToString();
+        var data = _userNum + "," + _rotZ;
         NetworkModule.GetInstance().RequestGameUserSync(_room, data);
     }
 
