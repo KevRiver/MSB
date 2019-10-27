@@ -46,7 +46,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   direction: 2
-  speed: 10
+  horizontalSpeed: 0
+  verticalSpeed: 30
+  activateDelay: 1
 --- !u!212 &5373692472145811551
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -82,8 +84,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -180921573
-  m_SortingLayer: 0
+  m_SortingLayerID: 1820194523
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 4665208324050091490, guid: 5f414902c0f7d5145b0d510412f46693,
     type: 3}

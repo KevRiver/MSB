@@ -48,6 +48,7 @@ MonoBehaviour:
   direction: 5
   horizontalSpeed: 30
   verticalSpeed: 15
+  activateDelay: 1.5
 --- !u!212 &4007883782271990526
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -83,8 +84,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -180921573
-  m_SortingLayer: 0
+  m_SortingLayerID: 1820194523
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: -4126605164930191043, guid: 5f414902c0f7d5145b0d510412f46693,
     type: 3}
