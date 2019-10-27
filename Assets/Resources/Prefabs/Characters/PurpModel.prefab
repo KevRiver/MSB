@@ -98,7 +98,7 @@ GameObject:
   - component: {fileID: 2746426991537886781}
   - component: {fileID: 2662785436586005792}
   - component: {fileID: 7641441220494849844}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: PurpModel
   m_TagString: Untagged
   m_Icon: {fileID: 0}

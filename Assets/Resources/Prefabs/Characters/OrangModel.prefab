@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 2261488727721840444}
   - component: {fileID: 6179435472943349918}
   - component: {fileID: 5087793221089195577}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: OrangModel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
