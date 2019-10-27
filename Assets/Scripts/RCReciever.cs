@@ -28,6 +28,7 @@ public class RCReciever : MonoBehaviour
 
     private Vector3 _targetPos;
     private Vector2 _speed;
+    private Quaternion _targetRot;
 
     void Start()
     {
@@ -42,6 +43,7 @@ public class RCReciever : MonoBehaviour
         weapon = weaponAttachment.GetComponentInChildren<Weapon>();
 
         _targetPos = Vector3.zero;
+        _targetRot = Quaternion.identity;
 
         userNum = character.UserNum;
         NetworkModule networkModule = NetworkModule.GetInstance();
@@ -61,14 +63,15 @@ public class RCReciever : MonoBehaviour
             character.Flip();
         }
 
+        _targetRot.z = rotZ;
         _targetPos.x = targetPosX;
         _targetPos.y = targetPosY;
 
         _speed.x = xSpeed;
         _speed.y = ySpeed;
-
+        
         transform.position = Vector3.Lerp(transform.position, _targetPos, 0.5f);
-        transform.rotation = new Quaternion(0, 0, rotZ, 1);
+        transform.rotation = Quaternion.Lerp(transform.rotation, _targetRot, 0.5f);
     }
     
     private class OnGameUserMove : NetworkModule.OnGameUserMoveListener
