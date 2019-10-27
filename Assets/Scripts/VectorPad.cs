@@ -34,12 +34,14 @@ public class VectorPad : MonoBehaviour
     public Directions direction;
     public float horizontalSpeed;
     public float verticalSpeed;
-
+    public float activateDelay;
+    
     private CorgiController _controller;
     private MSB_Character _character;
     private Vector2 _speedMultiplier;
     private void OnTriggerEnter2D(Collider2D other)
     {
+        Debug.LogWarning("VectorPad Collided with " + other.name);
         _controller = other.GetComponent<CorgiController>();
         if (_controller == null)
             return;
@@ -50,8 +52,19 @@ public class VectorPad : MonoBehaviour
 
         if (_character.IsRemote)
             return;
-        _speedMultiplier = new Vector2(horizontalSpeed, verticalSpeed);
-        _controller.SetForce(Vector2.zero);
+
+        _speedMultiplier.x = horizontalSpeed;
+        _speedMultiplier.y = verticalSpeed;
+        
+        StartCoroutine(Activate(activateDelay));
+        
+    }
+
+    private IEnumerator Activate(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        _controller.SetHorizontalForce(0);
+        _controller.SetVerticalForce(0);
         _controller.SetForce(_vector[(int) direction] * _speedMultiplier);
     }
 }
