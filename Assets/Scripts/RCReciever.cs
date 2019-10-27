@@ -4,6 +4,7 @@ using UnityEngine;
 using MoreMountains.Tools;
 using MSBNetwork;
 using MoreMountains.CorgiEngine;
+using UnityEngine.Serialization;
 
 public class RCReciever : MonoBehaviour
 {
@@ -21,7 +22,7 @@ public class RCReciever : MonoBehaviour
     public float ySpeed = 0;
     // For facing direction sync
     public bool isFacingRight;
-    private bool _lastFacing;
+    public bool lastFacing;
 
     private Vector3 _targetPos;
 
@@ -40,7 +41,6 @@ public class RCReciever : MonoBehaviour
         _targetPos = Vector3.zero;
 
         userNum = character.UserNum;
-        _lastFacing = character.IsFacingRight;
         NetworkModule networkModule = NetworkModule.GetInstance();
         networkModule.AddOnEventGameUserMove(new OnGameUserMove(this));
         //networkModule.AddOnEventGameUserSync(new OnGameUserSync(this));
@@ -52,10 +52,9 @@ public class RCReciever : MonoBehaviour
 
     public void SyncUserPos(float targetPosX, float targetPosY, float xSpeed, float ySpeed, bool isFacingRight, float smoothTime = 0.1f)
     {
-        //Debug.Log("SyncUserPos Called");
-        if (_lastFacing != isFacingRight)
+        if (lastFacing != isFacingRight)
         {
-            _lastFacing = !_lastFacing;
+            lastFacing = !lastFacing;
             character.Flip();
         }
 
@@ -69,20 +68,13 @@ public class RCReciever : MonoBehaviour
     {
         private readonly RCReciever _rc;
         private readonly int _userNum;
-        private bool _lastFacing;
-
-        // Target number
-        int _targetNum;
-        
-        // For position sync
-        float _posX;
-        float _posY;
-        float _posZ;
-        float _xSpeed;
-        float _ySpeed;
-
-        // For facing direction sync
-        bool _isFacingRight;
+        private int _targetNum;
+        private float _posX;
+        private float _posY;
+        private float _posZ;
+        private float _xSpeed;
+        private float _ySpeed;
+        private bool _isFacingRight;
 
         public OnGameUserMove(RCReciever rc)
         {
@@ -90,7 +82,6 @@ public class RCReciever : MonoBehaviour
             Debug.LogWarning(rc.gameObject.name);
             this._rc = rc;
             _userNum = this._rc.userNum;
-            _lastFacing = rc.character.IsFacingRight;
         }
 
         readonly char[] _delimiterChars = { ',' };
@@ -103,22 +94,13 @@ public class RCReciever : MonoBehaviour
                 return;
 
             // Allocates recieved data
-
             _posX = float.Parse(dataArray[1]);
             _posY = float.Parse(dataArray[2]);
             _posZ = float.Parse(dataArray[3]);
-
             _xSpeed = float.Parse(dataArray[4]);
             _ySpeed = float.Parse(dataArray[5]);
-
             _isFacingRight = bool.Parse(dataArray[6]);
-
-            // Sync User Facing
-            if (_lastFacing != _isFacingRight)
-            {
-                _lastFacing = !_lastFacing;
-                _rc.character.Flip();
-            }
+            
             // Sync User position
             _rc.SyncUserPos(_posX, _posY, _xSpeed, _ySpeed, _isFacingRight);
         }

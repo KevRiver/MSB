@@ -77,9 +77,6 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
     /// <summary>
     /// Instantiate playable characters based on UserData.userWeapon
     /// </summary>
-
-    const int WEAPON_SWORD = 0;
-    const int WEAPON_SHURIKEN = 1;
     protected virtual void InstantiatePlayableCharacters(List<PlayerInfo> users)
     {
         int localUserNum = LocalUser.Instance.localUserData.userNumber;
@@ -145,8 +142,8 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
 
     protected virtual void SpawnPlayers()
     {
-        int index = 0;
-        foreach (MSB_Character character in Players)
+        var index = 0;
+        foreach (var character in Players)
         {
             Spawnpoints[index].SpawnPlayer(character);
             index++;

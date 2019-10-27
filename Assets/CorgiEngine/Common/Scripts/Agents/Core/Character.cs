@@ -525,6 +525,10 @@ namespace MoreMountains.CorgiEngine
 
 			// we make sure the character is facing right
 			Face(facingDirection);
+			// 캐릭터가 로컬이 아니라면 RCReciever의 현재 바라보고 있는 방향을 다시 초기화
+			var rcReciever = GetComponent<RCReciever>();
+			if (rcReciever != null)
+				rcReciever.lastFacing = IsFacingRight;
 
 			// we raise it from the dead (if it was dead)
 			ConditionState.ChangeState(CharacterStates.CharacterConditions.Normal);
