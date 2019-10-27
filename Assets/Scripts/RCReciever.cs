@@ -91,7 +91,7 @@ public class RCReciever : MonoBehaviour
         public OnGameUserMove(RCReciever rc)
         {
             Debug.Log("OnGameUserMove Constructor called");
-            Debug.LogWarning(rc.gameObject.name);
+            //Debug.LogWarning(rc.gameObject.name);
             this._rc = rc;
             _userNum = _rc.userNum;
         }
@@ -129,7 +129,7 @@ public class RCReciever : MonoBehaviour
         public OnGameUserSync(RCReciever rc)
         {
             Debug.Log("OnGameUserSync Constructor called");
-            Debug.LogWarning(rc.gameObject.name);
+            //Debug.LogWarning(rc.gameObject.name);
             _rc = rc;
             _userNum = this._rc.userNum;
         }

@@ -44,7 +44,7 @@ public class VectorPad : MonoBehaviour
     private bool _contacted;
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.LogWarning("VectorPad Collided with " + other.name);
+        //Debug.LogWarning("VectorPad Collided with " + other.name);
         _controller = other.GetComponent<CorgiController>();
         if (_controller == null)
             return;
