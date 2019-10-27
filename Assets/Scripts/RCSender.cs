@@ -17,6 +17,8 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
     public MSB_Character character;
     private Rigidbody2D _rb;
     private CorgiController _controller;
+    private Transform characterModel;
+    private Transform weaponAttachment;
     private Weapon _weapon;
 
     private string _userNum;
@@ -33,7 +35,7 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
     private string _rotZ;
     private string _rotW;
 
-
+    
     protected override void Awake()
     {
         base.Awake();
@@ -53,8 +55,8 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
         }
         _userNum = this.character.UserNum.ToString();
 
-        Transform characterModel = character.transform.GetChild(0);
-        Transform weaponAttachment = characterModel.GetChild(0);
+        characterModel = character.transform.GetChild(0);
+        weaponAttachment = characterModel.GetChild(0);
         _weapon = weaponAttachment.transform.GetComponentInChildren<Weapon>();
         Debug.Log("RCSender Initialized");
     }
@@ -83,7 +85,7 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
             //_rotZ = sender.transform.localRotation.z.ToString();
 
             string data = _userNum + "," + _posX + "," + _posY + "," + _posZ + "," + _speedX + "," + _speedY + "," + _isFacingRight;
-            Debug.LogWarning(data);
+            //Debug.LogWarning(data);
             NetworkModule.GetInstance().RequestGameUserMove(_room, data);
             yield return new WaitForSeconds(0.1f);
         }
@@ -91,7 +93,7 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
 
     public void RequestUserSync()
     {
-        _rot = character.transform.rotation;
+        _rot = characterModel.transform.rotation;
         _rotX = _rot.x.ToString();
         _rotY = _rot.y.ToString();
         _rotZ = _rot.z.ToString();

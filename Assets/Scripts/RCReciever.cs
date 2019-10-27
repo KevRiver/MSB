@@ -98,7 +98,7 @@ public class RCReciever : MonoBehaviour
         readonly char[] _delimiterChars = { ',' };
         void NetworkModule.OnGameUserMoveListener.OnGameUserMove(object data)
         {
-            Debug.Log("Recieved : " + data);
+            //Debug.Log("Recieved : " + data);
             string[] dataArray = ((string)data).Split(_delimiterChars);
             _targetNum = int.Parse(dataArray[0]);            
             //  If this is not target object, return
