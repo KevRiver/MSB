@@ -552,7 +552,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected virtual void WeaponUse()
 		{
-            Owner.GetComponent<CharacterSpin>().speedMultiplier = 0.1f;
+            Owner.GetComponent<CharacterSpin>().speedMultiplier = 0f;
 			TriggerWeaponUsedFeedback();
 		}
 
