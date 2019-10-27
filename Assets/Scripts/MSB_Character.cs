@@ -65,6 +65,30 @@ public class MSB_Character : Character
         ForceSpawnDirection();
     }
 
+    public override void Face(FacingDirections facingDirection)
+    {
+        if (!CanFlip)
+        {
+            return;
+        }
+
+        // Flips the character horizontally
+        if (facingDirection == FacingDirections.Right)
+        {
+            if (!IsFacingRight)
+            {
+                Flip();
+            }
+        }
+        else
+        {
+            if (IsFacingRight)
+            {
+                Flip();
+            }
+        }
+    }
+
     public override void AssignAnimator()
     {
         if (CharacterAnimator == null)
