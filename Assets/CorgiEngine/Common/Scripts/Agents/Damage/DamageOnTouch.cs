@@ -253,7 +253,7 @@ namespace MoreMountains.CorgiEngine
             }
 
 	    	// we apply the damage to the thing we've collided with
-			_colliderHealth.Damage(DamageCaused, gameObject,InvincibilityDuration,InvincibilityDuration);
+			_colliderHealth.Damage(DamageCaused, Owner,InvincibilityDuration,InvincibilityDuration);
 			SelfDamage(DamageTakenEveryTime + DamageTakenDamageable);
 	    }
 
