@@ -144,7 +144,7 @@ public class LaserSword : Weapon
     public override void FlipWeaponModel()
     {
         Debug.LogWarning("LaserSword Flip Model");
-        transform.localScale = Vector3.Scale(transform.localScale, FlipValue);
+        _spriteRenderer.flipX = !_spriteRenderer.flipX;
     }
 
     protected virtual void DrawGizmos()
