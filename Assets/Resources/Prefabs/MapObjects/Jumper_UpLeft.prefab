@@ -42,12 +42,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1096679863812094844}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2bd2c4fc2e9d3f408644502d3f06527, type: 3}
+  m_Script: {fileID: 11500000, guid: 3fd7ce2e885d48e408fd19ff42dc898a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  JumpPlatformBoost: 25
-  jumpDirection: 2
-  player: {fileID: 0}
+  direction: 5
+  horizontalSpeed: 30
+  verticalSpeed: 15
 --- !u!212 &4007883782271990526
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -73,6 +73,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -83,14 +84,15 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -180921573
-  m_SortingLayer: -1
+  m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300004, guid: 22958901ff8439e4f8a4ab9cd7967f8d, type: 3}
+  m_Sprite: {fileID: -4126605164930191043, guid: 5f414902c0f7d5145b0d510412f46693,
+    type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 3.23, y: 0.47}
+  m_Size: {x: 2.22, y: 1.51}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -113,33 +115,15 @@ PolygonCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 2.22, y: 1.39}
-    newSize: {x: 3.23, y: 0.47}
+    oldSize: {x: 2.22, y: 1.51}
+    newSize: {x: 2.22, y: 1.51}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 1.11, y: -0.465}
-      - {x: 1.11, y: 0.355}
-      - {x: 1.06, y: 0.415}
-      - {x: 0.96, y: 0.505}
-      - {x: 0.85999995, y: 0.695}
-      - {x: 0.63, y: 0.695}
-      - {x: 0.14, y: 0.48499998}
-      - {x: -0.64, y: 0.13499999}
-      - {x: -1.05, y: -0.035}
-      - {x: -1.11, y: -0.125}
-      - {x: -1.11, y: -0.265}
-      - {x: -1.04, y: -0.405}
-      - {x: -1.01, y: -0.475}
-      - {x: -0.97999996, y: -0.475}
-      - {x: -0.96999997, y: -0.465}
-      - {x: -0.049999997, y: -0.465}
-      - {x: 0.049999997, y: -0.675}
-      - {x: 0.08, y: -0.675}
-      - {x: 0.12, y: -0.66499996}
-      - {x: 0.28, y: -0.615}
-      - {x: 0.48999998, y: -0.515}
-      - {x: 0.48, y: -0.465}
+    - - {x: 0.926054, y: 0.43678588}
+      - {x: 0.79213285, y: 0.7490449}
+      - {x: -1.1400242, y: -0.09686057}
+      - {x: -1.0039706, y: -0.39899507}
