@@ -21,7 +21,7 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>,MMEven
     private Transform _weaponAttachment;
     private Weapon _weapon;
 
-    private string _userNum;
+    private int _userNum;
     private Vector3 _pos;
     private string _posX;
     private string _posY;
@@ -52,7 +52,8 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>,MMEven
         {
             Debug.Log("RCSender corgicontroller is null");
         }
-        _userNum = this.character.UserNum.ToString();
+
+        _userNum = this.character.UserNum;
 
         _characterModel = character.transform.GetChild(0);
         _weaponAttachment = _characterModel.GetChild(0);
@@ -83,7 +84,7 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>,MMEven
             _isFacingRight = character.IsFacingRight.ToString();
             //_rotZ = sender.transform.localRotation.z.ToString();
 
-            string data = _userNum + "," + _posX + "," + _posY + "," + _posZ + "," + _speedX + "," + _speedY + "," + _isFacingRight;
+            string data = _userNum.ToString() + "," + _posX + "," + _posY + "," + _posZ + "," + _speedX + "," + _speedY + "," + _isFacingRight;
             //Debug.LogWarning(data);
             NetworkModule.GetInstance().RequestGameUserMove(_room, data);
             yield return new WaitForSeconds(0.1f);
@@ -97,7 +98,7 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>,MMEven
         _rotY = _rot.y.ToString();
         _rotZ = _rot.z.ToString();
         _rotW = _rot.w.ToString();
-        var data = _userNum + "," + _rotX + "," + _rotY + "," + _rotZ + "," + _rotW;
+        var data = _userNum.ToString() + "," + _rotX + "," + _rotY + "," + _rotZ + "," + _rotW;
         NetworkModule.GetInstance().RequestGameUserSync(_room, data);
     }
 
@@ -121,14 +122,12 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>,MMEven
     {
         this.MMEventStartListening<MMGameEvent>();
         this.MMEventStartListening<MMDamageTakenEvent>();
-        //StartCoroutine(RequestUserMove());
     }
 
     private void OnDisable()
     {
         this.MMEventStopListening<MMGameEvent>();
         this.MMEventStopListening<MMDamageTakenEvent>();
-        //StopCoroutine(RequestUserMove());
     }
 
     private int _target;
@@ -136,11 +135,16 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>,MMEven
     private int _causedDamage;
     public void OnMMEvent(MMDamageTakenEvent eventType)
     {
+        Debug.LogWarning("MMDamageTakenEvent occured");
         _instigator = eventType.Instigator.GetComponent<MSB_Character>().UserNum;
-        if (_instigator != LocalUser.Instance.localUserData.userNumber)
+        if (_instigator != _userNum)
+        {
+            Debug.LogWarning("Instigator is not local user");
             return;
+        }
         _target = ((MSB_Character) (eventType.AffectedCharacter)).UserNum;
-        _causedDamage = (int)eventType.DamageCaused;
+        Debug.LogWarning("target is " + _target);
+        _causedDamage = (int)(eventType.DamageCaused);
         NetworkModule.GetInstance().RequestGameUserActionDamage(_room, _target, _causedDamage, "");
     }
 }

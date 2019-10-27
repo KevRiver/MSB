@@ -313,7 +313,7 @@ namespace MoreMountains.CorgiEngine
 		{
 			if (CurrentWeapon != null)
             {
-                Debug.LogWarning("Weapon Flip" + GetComponent<MSB_Character>().cUserData.userID);
+                //Debug.LogWarning("Weapon Flip" + GetComponent<MSB_Character>().cUserData.userID);
                 CurrentWeapon.FlipWeapon();
 				if (CurrentWeapon.FlipWeaponOnCharacterFlip)
 				{
