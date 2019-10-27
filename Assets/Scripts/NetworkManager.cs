@@ -295,6 +295,7 @@ public class NetworkManager : MonoBehaviour
             float speedY = float.Parse(dataArray[5]);
             //bool isGrounded = bool.Parse(dataArray[6]);
             bool isFacingRight = bool.Parse(dataArray[6]);
+            float rotZ = float.Parse(dataArray[7]);
 
             if (LocalUser.Instance.localUserData.userNumber == target)
             {
@@ -310,7 +311,7 @@ public class NetworkManager : MonoBehaviour
 
                     if (player.UserNum == target)
                     {
-                        rc.SyncUserPos(posX, posY, speedX, speedY, isFacingRight);
+                        rc.SyncUserPos(posX, posY, speedX, speedY, isFacingRight, rotZ);
                     }
                 }
             }
