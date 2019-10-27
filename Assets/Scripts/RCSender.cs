@@ -82,7 +82,7 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
             _isFacingRight = character.IsFacingRight.ToString();
             //_rotZ = sender.transform.localRotation.z.ToString();
 
-            string data = _userNum + "," + _posX + "," + _posY + "," + _posZ + "," + _speedX + "," + _speedY + "," + _isFacingRight + ","+ _rotZ;
+            string data = _userNum + "," + _posX + "," + _posY + "," + _posZ + "," + _speedX + "," + _speedY + "," + _isFacingRight;
             Debug.LogWarning(data);
             NetworkModule.GetInstance().RequestGameUserMove(_room, data);
             yield return new WaitForSeconds(0.1f);

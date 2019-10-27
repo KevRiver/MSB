@@ -57,15 +57,13 @@ public class RCReciever : MonoBehaviour
         MMGameEvent.Trigger("GameStart");
     }
 
-    public void SyncUserPos(float targetPosX, float targetPosY, float xSpeed, float ySpeed, bool isFacingRight,float rotZ, float smoothTime = 0.1f)
+    public void SyncUserPos(float targetPosX, float targetPosY, float xSpeed, float ySpeed, bool isFacingRight, float smoothTime = 0.1f)
     {
         if (lastFacing != isFacingRight)
         {
             lastFacing = !lastFacing;
             character.Flip();
         }
-
-        _targetRot.z = rotZ;
         _targetPos.x = targetPosX;
         _targetPos.y = targetPosY;
 
@@ -114,10 +112,10 @@ public class RCReciever : MonoBehaviour
             _xSpeed = float.Parse(dataArray[4]);
             _ySpeed = float.Parse(dataArray[5]);
             _isFacingRight = bool.Parse(dataArray[6]);
-            _rotZ = float.Parse(dataArray[7]);
+            //_rotZ = float.Parse(dataArray[7]);
             
             // Sync User position
-            _rc.SyncUserPos(_posX, _posY, _xSpeed, _ySpeed, _isFacingRight, _rotZ);
+            _rc.SyncUserPos(_posX, _posY, _xSpeed, _ySpeed, _isFacingRight);
         }
     }
 
