@@ -44,9 +44,9 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
     {
         _room = GameInfo.Instance.room;
 
-        this.character = sender;
-        _rb = this.character.GetComponent<Rigidbody2D>();
-        _controller = this.character.gameObject.GetComponent<CorgiController>();
+        character = sender;
+        _rb = character.GetComponent<Rigidbody2D>();
+        _controller = character.gameObject.GetComponent<CorgiController>();
         if (_controller == null)
         {
             Debug.Log("RCSender corgicontroller is null");
@@ -83,6 +83,7 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
             //_rotZ = sender.transform.localRotation.z.ToString();
 
             string data = _userNum + "," + _posX + "," + _posY + "," + _posZ + "," + _speedX + "," + _speedY + "," + _isFacingRight + ","+ _rotZ;
+            Debug.LogWarning(data);
             NetworkModule.GetInstance().RequestGameUserMove(_room, data);
             yield return new WaitForSeconds(0.1f);
         }

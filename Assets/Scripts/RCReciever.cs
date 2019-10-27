@@ -94,12 +94,13 @@ public class RCReciever : MonoBehaviour
             Debug.Log("OnGameUserMove Constructor called");
             Debug.LogWarning(rc.gameObject.name);
             this._rc = rc;
-            _userNum = this._rc.userNum;
+            _userNum = _rc.userNum;
         }
 
         readonly char[] _delimiterChars = { ',' };
         void NetworkModule.OnGameUserMoveListener.OnGameUserMove(object data)
         {
+            Debug.Log("Recieved : " + data);
             string[] dataArray = ((string)data).Split(_delimiterChars);
             _targetNum = int.Parse(dataArray[0]);            
             //  If this is not target object, return
@@ -128,9 +129,9 @@ public class RCReciever : MonoBehaviour
         private Quaternion _rot;
         public OnGameUserSync(RCReciever rc)
         {
-            Debug.Log("OnGameUserMove Constructor called");
+            Debug.Log("OnGameUserSync Constructor called");
             Debug.LogWarning(rc.gameObject.name);
-            this._rc = rc;
+            _rc = rc;
             _userNum = this._rc.userNum;
         }
         
