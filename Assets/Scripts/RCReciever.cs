@@ -59,15 +59,10 @@ public class RCReciever : MonoBehaviour
             character.Flip();
         }
 
-        //float newPosX = Mathf.SmoothDamp(transform.position.x, targetPosX, ref xSpeed, smoothTime);
-        //float newPosY = Mathf.SmoothDamp(transform.position.y, targetPosY, ref ySpeed, smoothTime);
         targetPos.x = targetPosX;
         targetPos.y = targetPosY;
 
-        //targetPos += new Vector3(xSpeed * 0.1f, ySpeed * 0.1f);
         transform.position = Vector3.Lerp(transform.position, targetPos, 0.5f);
-        //_controller.SetHorizontalForce(xSpeed);
-        //_controller.SetVerticalForce(ySpeed);
     }
 
     private class OnGameUserMove : NetworkModule.OnGameUserMoveListener
@@ -101,7 +96,6 @@ public class RCReciever : MonoBehaviour
         char[] delimiterChars = { ',' };
         void NetworkModule.OnGameUserMoveListener.OnGameUserMove(object _data)
         {
-            Debug.Log("OnGameUserMove");
             string[] dataArray = ((string)_data).Split(delimiterChars);
             targetNum = int.Parse(dataArray[0]);
             Debug.Log("Target : " + targetNum);
@@ -119,8 +113,6 @@ public class RCReciever : MonoBehaviour
             ySpeed = float.Parse(dataArray[5]);
 
             isFacingRight = bool.Parse(dataArray[6]);
-
-            Debug.Log("Recieved Data : " + "PosX, PosY : " + posX + ", " + posY + " SpeedX, SpeedY : " + xSpeed + ", " + ySpeed);
 
             // Sync User Facing
             if (lastFacing != isFacingRight)
