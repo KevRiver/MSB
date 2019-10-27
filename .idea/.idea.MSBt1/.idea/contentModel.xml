@@ -870,6 +870,7 @@
           <e p="RCReciever.cs" t="Include" />
           <e p="RCSender.cs" t="Include" />
           <e p="SpawnPoint.cs" t="Include" />
+          <e p="SpinAnimation.cs" t="Include" />
           <e p="Title" t="Include">
             <e p="PopupButton.cs" t="Include" />
             <e p="TitleImageLodaer.cs" t="Include" />

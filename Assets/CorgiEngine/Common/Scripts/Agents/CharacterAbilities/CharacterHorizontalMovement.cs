@@ -67,7 +67,6 @@ namespace MoreMountains.CorgiEngine
 		public override void ProcessAbility()
 	    {
 			base.ProcessAbility();
-
 			HandleHorizontalMovement();
 	    }
 

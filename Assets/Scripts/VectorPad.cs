@@ -39,6 +39,9 @@ public class VectorPad : MonoBehaviour
     private CorgiController _controller;
     private MSB_Character _character;
     private Vector2 _speedMultiplier;
+
+    private IEnumerator _activate;
+    private bool _contacted;
     private void OnTriggerEnter2D(Collider2D other)
     {
         Debug.LogWarning("VectorPad Collided with " + other.name);
@@ -55,9 +58,14 @@ public class VectorPad : MonoBehaviour
 
         _speedMultiplier.x = horizontalSpeed;
         _speedMultiplier.y = verticalSpeed;
-        
-        StartCoroutine(Activate(activateDelay));
-        
+
+        _activate = Activate(activateDelay);
+        StartCoroutine(_activate);
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        StopCoroutine(_activate);
     }
 
     private IEnumerator Activate(float delay)

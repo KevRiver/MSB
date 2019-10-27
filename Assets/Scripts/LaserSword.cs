@@ -127,7 +127,6 @@ public class LaserSword : Weapon
     protected virtual IEnumerator MeleeWeaponAttack()
     {
         if (_attackInProgress) { yield break; }
-
         _attackInProgress = true;
         yield return new WaitForSeconds(InitialDelay);
         EnableDamageArea();

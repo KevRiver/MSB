@@ -10,7 +10,7 @@ using UnityEngine.Serialization;
 /// <summary>
 /// 로컬 플레이어와 연결되어 동기화 정보를 보내는 오브젝트
 /// </summary>
-public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
+public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>,MMEventListener<MMDamageTakenEvent>
 {
     private int _room;
 
@@ -127,5 +127,18 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
     {
         this.MMEventStopListening<MMGameEvent>();
         //StopCoroutine(RequestUserMove());
+    }
+
+    private int _target;
+    private int _instigator;
+    private int _causedDamage;
+    public void OnMMEvent(MMDamageTakenEvent eventType)
+    {
+        _instigator = eventType.Instigator.GetComponent<MSB_Character>().UserNum;
+        if (_instigator != LocalUser.Instance.localUserData.userNumber)
+            return;
+        _target = ((MSB_Character) (eventType.AffectedCharacter)).UserNum;
+        _causedDamage = (int)eventType.DamageCaused;
+        NetworkModule.GetInstance().RequestGameUserActionDamage(_room, _target, _causedDamage, "");
     }
 }

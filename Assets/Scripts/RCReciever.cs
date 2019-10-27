@@ -15,7 +15,7 @@ public class RCReciever : MonoBehaviour
     public Transform characterModel;
     public Transform weaponAttachment;
     public Weapon weapon;
-
+    public Health health;
     public int userNum;
     // For position sync
     public float posX = 0;
@@ -43,7 +43,8 @@ public class RCReciever : MonoBehaviour
         characterModel = character.transform.GetChild(0);
         weaponAttachment = characterModel.GetChild(0);
         weapon = weaponAttachment.GetComponentInChildren<Weapon>();
-
+        health = GetComponent<Health>();
+        
         _targetPos = Vector3.zero;
         _targetRot = Quaternion.identity;
 
@@ -151,34 +152,30 @@ public class RCReciever : MonoBehaviour
 
     private class OnGameEvent : NetworkModule.OnGameEventListener
     {
-        private RCReciever rc;
-        private int userNum;
+        private RCReciever _rc;
+        private int _userNum;
 
-        public OnGameEvent(RCReciever _rc)
+        public OnGameEvent(RCReciever rc)
         {
-            rc = _rc;
-            userNum = rc.userNum;
+            _rc = rc;
+            _userNum = _rc.userNum;
         }
 
         public void OnGameEventDamage(int from, int to, int amount, string option)
         {
-            if (to != userNum)
-                return;
 
-            throw new System.NotImplementedException();
         }
 
         public void OnGameEventHealth(int num, int health)
         {
-            if (num != userNum)
+            if (num != _userNum)
                 return;
-
-            throw new System.NotImplementedException();
+            
         }
 
         public void OnGameEventItem(int type, int num, int action)
         {
-            if (num != userNum)
+            if (num != _userNum)
                 return;
 
             throw new System.NotImplementedException();
@@ -186,7 +183,7 @@ public class RCReciever : MonoBehaviour
 
         public void OnGameEventKill(int from, int to, string option)
         {
-            if (to != userNum)
+            if (to != _userNum)
                 return;
 
             throw new System.NotImplementedException();
@@ -194,7 +191,7 @@ public class RCReciever : MonoBehaviour
 
         public void OnGameEventObject(int num, int health)
         {
-            if (num != userNum)
+            if (num != _userNum)
                 return;
 
             throw new System.NotImplementedException();
@@ -202,7 +199,7 @@ public class RCReciever : MonoBehaviour
 
         public void OnGameEventRespawn(int num, int time)
         {
-            if (num != userNum)
+            if (num != _userNum)
                 return;
 
             throw new System.NotImplementedException();

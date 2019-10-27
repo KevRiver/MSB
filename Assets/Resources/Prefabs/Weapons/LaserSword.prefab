@@ -71,7 +71,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -782553589
-  m_SortingLayer: 4
+  m_SortingLayer: 5
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: e98fdd414885c654193e0746bd1834f7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -118,7 +118,7 @@ MonoBehaviour:
   PermanentMovementMultiplier: 0
   ModifyMovementWhileAttacking: 0
   MovementMultiplier: 0
-  PreventAllMovementWhileInUse: 1
+  PreventAllMovementWhileInUse: 0
   Animators:
   - {fileID: 8409312927696426065}
   EquippedAnimationParameter: 
@@ -142,13 +142,13 @@ MonoBehaviour:
   InitializeOnStart: 0
   Interruptable: 0
   DamageAreaShape: 0
-  AreaSize: {x: 1, y: 1}
-  AreaOffset: {x: 1, y: 0}
+  AreaSize: {x: 3, y: 2}
+  AreaOffset: {x: 1.5, y: 0}
   InitialDelay: 0
   ActiveDuration: 1
   TargetLayerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
   DamageCaused: 10
   Knockback: 0
   KnockbackForce: {x: 10, y: 2}
