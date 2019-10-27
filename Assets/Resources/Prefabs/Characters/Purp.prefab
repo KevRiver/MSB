@@ -297,7 +297,7 @@ MonoBehaviour:
     FallMultiplier: 1
     AscentMultiplier: 1
     MaxVelocity: {x: 100, y: 100}
-    SpeedAccelerationOnGround: 20
+    SpeedAccelerationOnGround: 10
     SpeedAccelerationInAir: 5
     SpeedFactor: 1
     MaximumSlopeAngle: 30
