@@ -141,14 +141,10 @@ public class LaserSword : Weapon
         _damageAreaCollider.enabled = false;
     }
 
-    public override void FlipWeapon()
-    {
-        Debug.Log("LaserSword Flip");
-    }
-
     public override void FlipWeaponModel()
     {
-        Debug.Log("LaserSword Flip Model");
+        Debug.LogWarning("LaserSword Flip Model");
+        transform.localScale = Vector3.Scale(transform.localScale, FlipValue);
     }
 
     protected virtual void DrawGizmos()

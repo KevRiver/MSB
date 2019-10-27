@@ -280,7 +280,7 @@ public class NetworkManager : MonoBehaviour
         char[] delimiterChars = { ',' };
         void NetworkModule.OnGameUserMoveListener.OnGameUserMove(object _data)
         {
-            Debug.Log("OnGameUserMove called");
+            //Debug.Log("OnGameUserMove called");
             //UnityMainThreadDispatcher.Instance().Enqueue(PlayerMove(_data));
         }
 
