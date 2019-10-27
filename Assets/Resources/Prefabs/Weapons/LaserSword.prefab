@@ -145,7 +145,7 @@ MonoBehaviour:
   AreaSize: {x: 3, y: 2}
   AreaOffset: {x: 1.5, y: 0}
   InitialDelay: 0
-  ActiveDuration: 1
+  ActiveDuration: 0.5
   TargetLayerMask:
     serializedVersion: 2
     m_Bits: 512
