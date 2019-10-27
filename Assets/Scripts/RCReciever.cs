@@ -46,7 +46,7 @@ public class RCReciever : MonoBehaviour
         userNum = character.UserNum;
         NetworkModule networkModule = NetworkModule.GetInstance();
         networkModule.AddOnEventGameUserMove(new OnGameUserMove(this));
-        //networkModule.AddOnEventGameUserSync(new OnGameUserSync(this));
+        networkModule.AddOnEventGameUserSync(new OnGameUserSync(this));
         networkModule.AddOnEventGameEvent(new OnGameEvent(this));
 
         Debug.Log("RCReciever Initialized");
