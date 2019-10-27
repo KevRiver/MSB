@@ -52,7 +52,7 @@ public class RCReciever : MonoBehaviour
 
     public void SyncUserPos(float targetPosX, float targetPosY, float xSpeed, float ySpeed, bool isFacingRight, float smoothTime = 0.1f)
     {
-        Debug.Log("SyncUserPos Called");
+        //Debug.Log("SyncUserPos Called");
         if (lastFacing != isFacingRight)
         {
             lastFacing = !lastFacing;
@@ -97,8 +97,7 @@ public class RCReciever : MonoBehaviour
         void NetworkModule.OnGameUserMoveListener.OnGameUserMove(object _data)
         {
             string[] dataArray = ((string)_data).Split(delimiterChars);
-            targetNum = int.Parse(dataArray[0]);
-            Debug.Log("Target : " + targetNum);
+            targetNum = int.Parse(dataArray[0]);            
             //  If this is not target object, return
             if (userNum != targetNum)
                 return;
