@@ -71,7 +71,7 @@ public class RCReciever : MonoBehaviour
         _speed.y = ySpeed;
         
         transform.position = Vector3.Lerp(transform.position, _targetPos, 0.5f);
-        transform.rotation = Quaternion.Lerp(transform.rotation, _targetRot, 0.5f);
+        //transform.rotation = Quaternion.Lerp(transform.rotation, _targetRot, 0.5f);
     }
     
     private class OnGameUserMove : NetworkModule.OnGameUserMoveListener
