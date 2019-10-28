@@ -114,6 +114,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
 
         SpawnPlayers();
 
+        _allPlayersCharacter = new Dictionary<int, MSB_Character>();
         StoreAllPlayersCharacter();
         
         //LevelGUIStart();
