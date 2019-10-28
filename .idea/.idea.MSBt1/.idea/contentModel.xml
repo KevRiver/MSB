@@ -838,6 +838,7 @@
           <e p="ClientUserData.cs" t="Include" />
           <e p="DamageTest.cs" t="Include" />
           <e p="GameInfo.cs" t="Include" />
+          <e p="Item.cs" t="Include" />
           <e p="LaserSword.cs" t="Include" />
           <e p="Lobby" t="Include">
             <e p="LobbyButton.cs" t="Include" />
@@ -870,6 +871,7 @@
           <e p="NetworkManager.cs" t="Include" />
           <e p="RCReciever.cs" t="Include" />
           <e p="RCSender.cs" t="Include" />
+          <e p="ScoreItem.cs" t="Include" />
           <e p="SpawnPoint.cs" t="Include" />
           <e p="SpinAnimation.cs" t="Include" />
           <e p="Title" t="Include">
