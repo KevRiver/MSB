@@ -109,6 +109,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
                     rcSender.Initialize(newPlayer);
                 }
 
+                NetworkModule.GetInstance().RequestGameUserActionReady(user.room);
                 Players.Add(newPlayer);
             }
         }
