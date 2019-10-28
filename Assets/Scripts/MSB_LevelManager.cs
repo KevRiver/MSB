@@ -108,8 +108,6 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
                     RCSender rcSender = RCSender.Instance;
                     rcSender.Initialize(newPlayer);
                 }
-
-                NetworkModule.GetInstance().RequestGameUserActionReady(user.room);
                 Players.Add(newPlayer);
             }
         }
@@ -118,6 +116,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
             //Debug.LogWarning ("LevelManager : The Level Manager doesn't have any Player prefab to spawn. You need to select a Player prefab from its inspector.");
             return;
         }
+        NetworkModule.GetInstance().RequestGameUserActionReady(gameInfo.room);
     }
 
     /// <summary>

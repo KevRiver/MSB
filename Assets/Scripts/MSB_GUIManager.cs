@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.Tools;
@@ -33,12 +34,13 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>
         public void OnGameEventReady(string readyData)
         {
             JArray jArray = JArray.Parse(readyData);
+            Debug.LogWarning(jArray);
             playerCount = 0;
             userNum = 0;
             foreach (var jToken in jArray)
             {
                 var obj = (JObject) jToken;
-                if (!(PlayerReady = (bool) obj.GetValue((userNum).ToString())))
+                if (!(PlayerReady = (bool) obj.GetValue((++userNum).ToString())))
                 {
                     Debug.LogWarning("Player " + userNum + "Not Ready");
                     continue;

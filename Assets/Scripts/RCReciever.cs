@@ -5,11 +5,13 @@ using UnityEngine;
 using MoreMountains.Tools;
 using MSBNetwork;
 using MoreMountains.CorgiEngine;
+using MoreMountains.Tools;
 using UnityEngine.Serialization;
 using UnityScript.Steps;
 
-public class RCReciever : MonoBehaviour
+public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
 {
+    private bool isInitialized = false;
     public MSB_Character character;
     private CorgiController _controller;
     public Transform characterModel;
@@ -27,6 +29,7 @@ public class RCReciever : MonoBehaviour
     public bool isFacingRight;
     public bool lastFacing;
 
+    private Vector3 _curPos;
     private Vector3 _targetPos;
     private Vector2 _speed;
     private Quaternion _targetRot;
@@ -45,8 +48,8 @@ public class RCReciever : MonoBehaviour
         weapon = weaponAttachment.GetComponentInChildren<Weapon>();
         health = GetComponent<Health>();
         
-        _targetPos = Vector3.zero;
-        _targetRot = Quaternion.identity;
+        _targetPos = transform.position;
+        _targetRot = transform.rotation;
 
         userNum = character.UserNum;
         NetworkModule networkModule = NetworkModule.GetInstance();
@@ -54,11 +57,43 @@ public class RCReciever : MonoBehaviour
         networkModule.AddOnEventGameUserSync(new OnGameUserSync(this));
         networkModule.AddOnEventGameEvent(new OnGameEvent(this));
 
+        isInitialized = true;
         Debug.Log("RCReciever Initialized");
-        MMGameEvent.Trigger("GameStart");
     }
 
-    public void SyncUserPos(float targetPosX, float targetPosY, float xSpeed, float ySpeed, bool isFacingRight, float smoothTime = 0.1f)
+    public void OnMMEvent(MMGameEvent eventType)
+    {
+        switch (eventType.EventName)
+        {
+            case "GameStart":
+                StartCoroutine(SyncUserPos());
+                break;
+        }
+    }
+    
+    private void OnEnable()
+    {
+        if (!isInitialized)
+            return;
+        StartCoroutine(SyncUserPos());
+    }
+    
+    private void OnDisable()
+    {
+        StopCoroutine(SyncUserPos());
+    }
+
+    private IEnumerator SyncUserPos()
+    {
+        while (true)
+        {
+            _curPos = transform.position;
+            transform.position = Vector3.Lerp(_curPos, _targetPos, Time.fixedTime);
+            yield return new WaitForFixedUpdate();
+        }
+    }
+
+    public void SetTargetPos(float targetPosX, float targetPosY, float xSpeed, float ySpeed, bool isFacingRight, float smoothTime = 0.1f)
     {
         if (lastFacing != isFacingRight)
         {
@@ -71,7 +106,7 @@ public class RCReciever : MonoBehaviour
         _speed.x = xSpeed;
         _speed.y = ySpeed;
         
-        transform.position = Vector3.Lerp(transform.position, _targetPos, 0.5f);
+        //transform.position = Vector3.Lerp(transform.position, _targetPos, 0.5f);
         //transform.rotation = Quaternion.Lerp(transform.rotation, _targetRot, 0.5f);
     }
     
@@ -105,7 +140,6 @@ public class RCReciever : MonoBehaviour
             //  If this is not target object, return
             if (_userNum != _targetNum)
                 return;
-
             // Allocates recieved data
             _posX = float.Parse(dataArray[1]);
             _posY = float.Parse(dataArray[2]);
@@ -116,7 +150,7 @@ public class RCReciever : MonoBehaviour
             //_rotZ = float.Parse(dataArray[7]);
             
             // Sync User position
-            _rc.SyncUserPos(_posX, _posY, _xSpeed, _ySpeed, _isFacingRight);
+            _rc.SetTargetPos(_posX, _posY, _xSpeed, _ySpeed, _isFacingRight);
         }
     }
 
@@ -211,4 +245,6 @@ public class RCReciever : MonoBehaviour
             throw new System.NotImplementedException();
         }
     }
+
+    
 }
