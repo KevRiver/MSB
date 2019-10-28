@@ -321,7 +321,7 @@ MonoBehaviour:
   AbilityStopFeedbacks: {fileID: 0}
   AbilityPermitted: 1
   characterModel: {fileID: 3186536959345083222}
-  spinSpeed: -180
+  spinSpeed: -360
   speedMultiplier: 1
 --- !u!114 &2746426991537886781
 MonoBehaviour:

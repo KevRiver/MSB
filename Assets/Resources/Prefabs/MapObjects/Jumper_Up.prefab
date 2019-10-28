@@ -48,7 +48,7 @@ MonoBehaviour:
   direction: 2
   horizontalSpeed: 0
   verticalSpeed: 30
-  activateDelay: 1
+  activateDelay: 0.2
 --- !u!212 &5373692472145811551
 SpriteRenderer:
   m_ObjectHideFlags: 0
