@@ -73,6 +73,7 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
     
     private void OnEnable()
     {
+        this.MMEventStartListening<MMGameEvent>();
         if (!isInitialized)
             return;
         StartCoroutine(SyncUserPos());
@@ -81,6 +82,7 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
     private void OnDisable()
     {
         StopCoroutine(SyncUserPos());
+        this.MMEventStopListening<MMGameEvent>();
     }
 
     private IEnumerator SyncUserPos()
