@@ -18,15 +18,6 @@ using MSBNetwork;
 
 public class LobbyButton : MonoBehaviour
 {
-    // 카메라 관련
-    GameObject mainCamera;
-    float cameraSize;
-
-    Vector3 nextPos;
-    //bool nextOn = false;
-
-    public bool characterChoice;
-
     // 배경 캐릭터
     GameObject character;
 
@@ -35,21 +26,13 @@ public class LobbyButton : MonoBehaviour
     GameObject multiQueueButton;
 
     // Canvas
-    GameObject canvas;
+    ManageLobbyObject canvas;
 
-    // Start is called before the first frame update
     void Start()
     {
-        characterChoice = false;      
-
-        mainCamera = GameObject.Find("Main Camera");
-        nextPos = new Vector3(10, 0, -10);
-
         character = GameObject.Find("LobbyCharacter");
 
-        cameraSize = mainCamera.GetComponent<Camera>().orthographicSize;
-
-        canvas = GameObject.Find("Canvas");
+        canvas = FindObjectOfType<ManageLobbyObject>();
     }
 
     // 큐 로딩 화면 띄워주기
@@ -70,12 +53,14 @@ public class LobbyButton : MonoBehaviour
         ManageLobbyObject lobbyObj = FindObjectOfType<ManageLobbyObject>();
         Debug.LogWarning("LobbyObj SkinID : " + lobbyObj.skinID);
 
-        //현재 무기 값이 SkinID 이고 스킨 값은 0으로 고정이다
-        int weaponID = lobbyObj.skinID;
-        int skinID = 0;
+        //현재 무기 값이 WeaponID 이고 스킨 값은 SkinID이다 WeaponID = SkinID
+        int weaponID = lobbyObj.weaponID;
+        int skinID = lobbyObj.skinID;
 
         LocalUser.Instance.localUserData.userWeapon = weaponID;
         LocalUser.Instance.localUserData.userSkin = skinID;
+        LocalUser.Instance.SetWeaponID(weaponID);
+        LocalUser.Instance.SetSkinID(skinID);
 
         NetworkModule.GetInstance().RequestSoloQueue(weaponID, skinID);
     }
@@ -85,103 +70,65 @@ public class LobbyButton : MonoBehaviour
     {
     }
 
-    // 스킨 스크롤뷰 선택 버튼
-    public void skinSelectButton()
+    // 스킨 선택 버튼
+    public void characterSelectWindow()
     {
         // Need Animation
+        characterSelectTransition();
 
-        // Deactive Lobby UI
-        deactiveLobbyUI();
-
-        // Active Select Skin
-        canvas.GetComponent<ManageLobbyObject>().sv_Skin.SetActive(true);
-        canvas.GetComponent<ManageLobbyObject>().homeButton.SetActive(true);
-        canvas.GetComponent<ManageLobbyObject>().centerSlot.SetActive(true);
-        // weapon select button
     }
 
-    // 무기 스크롤뷰 선택 버튼
-    public void weaponSelectButton()
+    void characterSelectTransition()
     {
-        // Need Animation
-
-        // Deactive Lobby UI
-        deactiveLobbyUI();
-
-        // Active Select Weapon
-        canvas.GetComponent<ManageLobbyObject>().sv_Weapon.SetActive(true);
-        canvas.GetComponent<ManageLobbyObject>().homeButton.SetActive(true);
-        canvas.GetComponent<ManageLobbyObject>().centerSlot.SetActive(true);
-        // MAKE! skin select button
-        // MAKE! game start button
-
+        if(canvas.mainLobby.transform.localPosition.y != 100)
+        {
+            canvas.bot_PlayButton.SetActive(false);
+            canvas.mainLobby.transform.localPosition = new Vector2(0, 100);
+        }
+        else
+        {
+            canvas.bot_PlayButton.SetActive(true);
+            canvas.mainLobby.transform.localPosition = new Vector2(0, 0);
+        }
     }
 
     // 캐릭터 선택시 뒤로가기 버튼
     public void backLobbyButton()
     {
-        // Deactive Select UI or Play UI
-        if(canvas.GetComponent<ManageLobbyObject>().sv_Weapon.activeSelf == true)
-        {
-            canvas.GetComponent<ManageLobbyObject>().sv_Weapon.SetActive(false);
-            canvas.GetComponent<ManageLobbyObject>().centerSlot.SetActive(false);
-        }
-        else if(canvas.GetComponent<ManageLobbyObject>().sv_Skin.activeSelf == true)
-        {
-            canvas.GetComponent<ManageLobbyObject>().sv_Skin.SetActive(false);
-            canvas.GetComponent<ManageLobbyObject>().centerSlot.SetActive(false);
-        }
-        else if (canvas.GetComponent<ManageLobbyObject>().single_Button.activeSelf == true)
-        {
-            canvas.GetComponent<ManageLobbyObject>().single_Button.SetActive(false);
-            canvas.GetComponent<ManageLobbyObject>().multi_Button.SetActive(false);
+        canvas.homeButton.SetActive(false);
 
-            canvas.GetComponent<ManageLobbyObject>().lobbyCharacter.GetComponent<SpriteRenderer>().enabled = true;
+        if (canvas.playLobby.transform.localPosition.x == 0)
+        {
+            canvas.lobbyCharacter.GetComponent<SpriteRenderer>().enabled = true;
+            canvas.mainLobby.transform.localPosition = new Vector2(0, 0);
+            canvas.playLobby.transform.localPosition = new Vector2(800, 0);
         }
-        canvas.GetComponent<ManageLobbyObject>().homeButton.SetActive(false);
+        
+
         // MAKE! select button
         // MAKE! game start button
 
-        // Active Lobby UI
-        activeLobbyUI();
     }
 
-    void deactiveLobbyUI()
-    {
-        // Deactive Lobby UI
-        canvas.GetComponent<ManageLobbyObject>().top_Coin.SetActive(false);
-        canvas.GetComponent<ManageLobbyObject>().top_Cash.SetActive(false);
-        canvas.GetComponent<ManageLobbyObject>().top_Profile.SetActive(false);
-        canvas.GetComponent<ManageLobbyObject>().mid_Right.SetActive(false);
-        canvas.GetComponent<ManageLobbyObject>().mid_Left.SetActive(false);
-        canvas.GetComponent<ManageLobbyObject>().bot_Store.SetActive(false);
-        canvas.GetComponent<ManageLobbyObject>().bot_Setting.SetActive(false);
-    }
-
-    void activeLobbyUI()
-    {
-        // Active Lobby UI
-        canvas.GetComponent<ManageLobbyObject>().top_Coin.SetActive(true);
-        canvas.GetComponent<ManageLobbyObject>().top_Cash.SetActive(true);
-        canvas.GetComponent<ManageLobbyObject>().top_Profile.SetActive(true);
-        canvas.GetComponent<ManageLobbyObject>().mid_Right.SetActive(true);
-        canvas.GetComponent<ManageLobbyObject>().mid_Left.SetActive(true);
-        canvas.GetComponent<ManageLobbyObject>().bot_Store.SetActive(true);
-        canvas.GetComponent<ManageLobbyObject>().bot_Setting.SetActive(true);
-    }
     
     public void gamePlayButton()
     {
-        deactiveLobbyUI();
+        //deactiveLobbyUI();
+        Debug.Log(canvas.playLobby.transform.localPosition);
+        playButton_transition();
 
         // Deactive Character
-        canvas.GetComponent<ManageLobbyObject>().lobbyCharacter.GetComponent<SpriteRenderer>().enabled = false;
+        canvas.lobbyCharacter.GetComponent<SpriteRenderer>().enabled = false;
 
-        // Active Play Button UI
-        canvas.GetComponent<ManageLobbyObject>().single_Button.SetActive(true);
-        canvas.GetComponent<ManageLobbyObject>().multi_Button.SetActive(true);
-
-        canvas.GetComponent<ManageLobbyObject>().homeButton.SetActive(true);
+        canvas.homeButton.SetActive(true);
     }
+
+    void playButton_transition()
+    {
+        canvas.mainLobby.transform.localPosition = new Vector2(-800, 0);
+        canvas.playLobby.transform.localPosition = new Vector2(0, 0);
+    }
+
+
     
 }

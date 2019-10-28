@@ -13,12 +13,13 @@ using UnityEngine;
 public class LobbyCharacter : MonoBehaviour
 {
     Animator animator;
-
+    public Sprite[] character = new Sprite[3];
 
     // Start is called before the first frame update
     void Start()
     {
-        animator = GetComponent<Animator>();
+        Debug.Log(this);
+        //animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -30,8 +31,11 @@ public class LobbyCharacter : MonoBehaviour
     // 스킨 선택에 따른 에니메이터 컨트롤러 변경 
     public void l_changeSkin(int id)
     {
-        animator.SetInteger("SkinID", id);
-        
+        //animator.SetInteger("SkinID", id);
+    }
+
+    public void changeSprite(int id){
+        GetComponent<SpriteRenderer>().sprite = character[id];
     }
 
 }

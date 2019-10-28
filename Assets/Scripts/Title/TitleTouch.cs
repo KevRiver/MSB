@@ -112,7 +112,7 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 	{
 		yield return new WaitForSeconds(2);
         //Temp Lobby test
-		SceneManager.LoadScene("TempLobby");
+		SceneManager.LoadScene("Lobby");
 	}
 
 	public void showPopup()

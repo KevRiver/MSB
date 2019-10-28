@@ -843,8 +843,7 @@
             <e p="LobbyButton.cs" t="Include" />
             <e p="LobbyCharacter.cs" t="Include" />
             <e p="ManageLobbyObject.cs" t="Include" />
-            <e p="ScrollViewContents.cs" t="Include" />
-            <e p="ScrollViewContentsManage.cs" t="Include" />
+            <e p="ManageSelectCharacter.cs" t="Include" />
           </e>
           <e p="LocalUser.cs" t="Include" />
           <e p="MSB_Character.cs" t="Include" />
