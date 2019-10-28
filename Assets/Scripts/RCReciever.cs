@@ -85,12 +85,17 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
         this.MMEventStopListening<MMGameEvent>();
     }
 
+    private float _newPosX;
+    private float _newPosY;
     private IEnumerator SyncUserPos()
     {
         while (true)
         {
             _curPos = transform.position;
-            transform.position = Vector3.Lerp(_curPos, _targetPos, Time.fixedTime);
+            _newPosX = Mathf.SmoothDamp(_curPos.x, _targetPos.x, ref _speed.x, Time.fixedDeltaTime);
+            _newPosY = Mathf.SmoothDamp(_curPos.y, _targetPos.y, ref _speed.y, Time.fixedDeltaTime);
+
+            transform.position = new Vector3(_newPosX, _newPosY);
             yield return new WaitForFixedUpdate();
         }
     }
