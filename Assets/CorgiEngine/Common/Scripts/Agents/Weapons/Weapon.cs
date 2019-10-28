@@ -574,8 +574,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public virtual void TurnWeaponOff()
         {
-            //Owner.GetComponent<CharacterSpin>().speedMultiplier = 1.0f;
-            if (_characterHorizontalMovement != null)
+	        if (_characterHorizontalMovement != null)
             {
                 _characterHorizontalMovement.MovementSpeedMultiplier = _permanentMovementMultiplierStorage;
             }            

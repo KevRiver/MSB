@@ -129,10 +129,17 @@ public class LaserSword : Weapon
     /// </summary>
     protected override void WeaponUse()
     {
+        Owner.GetComponent<CharacterSpin>().speedMultiplier = 0.1f;
         base.WeaponUse();
         if(!_isOwnerRemote)
             RCSender.Instance.RequestUserSync();
         StartCoroutine(MeleeWeaponAttack());
+    }
+
+    public override void TurnWeaponOff()
+    {
+        Owner.GetComponent<CharacterSpin>().speedMultiplier = 1.0f;
+        base.TurnWeaponOff();
     }
 
     /// <summary>
