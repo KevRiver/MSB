@@ -6,67 +6,16 @@ using MoreMountains.CorgiEngine;
 using MoreMountains.InventoryEngine;
 using MoreMountains.Feedbacks;
 
-namespace MoreMountains.CorgiEngine
-{
-
-
-    public struct MSBGameEvent
-    {
-
-    }
-
-    public enum MSBActionTypes
-    {
-        Attack,
-        Skill
-    }
-
-    public struct MSBActionEvent
-    {
-        public MSBActionTypes _actionType;
-
-        public MSBActionEvent(MSBActionTypes actionType)
-        {
-            _actionType = actionType;
-        }
-
-        static MSBActionEvent e;
-        public static void Trigger(MSBActionTypes actionType)
-        {
-            e._actionType = actionType;
-            MMEventManager.TriggerEvent(e);
-        }
-    }
-
-    public struct MSBCharacterStatusEvent
-    {
-        public string EventName;
-
-        public MSBCharacterStatusEvent(string eventName)
-        {
-            EventName = eventName;
-        }
-
-        static MSBCharacterStatusEvent e;
-        public static void TriggerEvent(string eventName)
-        {
-            e.EventName = eventName;
-            MMEventManager.TriggerEvent(e);
-        }
-    }
-}
 
 public class MSB_GameManager : Singleton<MSB_GameManager>,
     MMEventListener<MMGameEvent>,
     MMEventListener<CorgiEngineEvent>,
-    MMEventListener<CorgiEnginePointsEvent>,
-    MMEventListener<MSBCharacterStatusEvent>
+    MMEventListener<CorgiEnginePointsEvent>
 {
     public int RoomNum { get; set; }
     [Header("Settings")]
     /// the target frame rate for the game
     public int TargetFrameRate = 300;
-
     /*the maximum amount of lives the character can currently have
     public int MaximumLives = 0;
     /// the current number of lives 
@@ -435,26 +384,5 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
         this.MMEventStopListening<MMGameEvent>();
         this.MMEventStopListening<CorgiEngineEvent>();
         this.MMEventStopListening<CorgiEnginePointsEvent>();
-    }
-
-    public void OnMMEvent(MSBCharacterStatusEvent eventType)
-    {
-        switch (eventType.EventName)
-        {
-            case "CharacterReady":
-                break;
-
-            case "WeaponReady":
-                break;
-
-            case "InitialSpawn":
-                break;
-
-            case "Respawned":
-                break;
-
-            case "Killed":
-                break;
-        }
     }
 }
