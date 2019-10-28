@@ -47,31 +47,6 @@ public class NetworkManager : MonoBehaviour
             SceneManager.LoadScene("Test");
             yield return null;
         }
-
-        public IEnumerator LoadPlayScene(int _room, LinkedList<UserData> _users)
-        {
-            Debug.LogWarning("LoadPlayScene Called");
-            /*MSB_GameManager.Instance.roomIndex = _room;
-            MSB_GameManager.Instance.c_userData = new List<ClientUserData>();
-            foreach (UserData user in _users)
-            {
-                //받아온 UserData들을 ClientUserData로 옮기고 옮긴 Data를 GameManager의 c_userData 리스트에 추가한다
-                ClientUserData c_user = new ClientUserData();
-                c_user.userID = user.userID;
-                c_user.userNick = user.userNick;
-                c_user.userNumber = user.userNumber;
-                c_user.userSkin = user.userSkin;
-                c_user.userWeapon = user.userWeapon;
-                c_user.userRank = user.userRank;
-                c_user.userMoney = user.userMoney;
-                c_user.userCash = user.userCash;
-
-                MSB_GameManager.Instance.c_userData.Add(c_user);
-            }*/
-            SceneManager.LoadScene("PlayScene");
-
-            yield return null;
-        }
     }
     /*
         private class OnGameStatus : NetworkModule.OnGameStatusListener
