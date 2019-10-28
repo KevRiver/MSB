@@ -17,13 +17,13 @@ public class MSB_Character : Character
     public int UserNum { get; internal set; }
     public bool IsRemote { get; set; }
 
-    private InputManager inputManager;
+    private InputManager _inputManager;
 
     protected override void Initialization()
     {
         MovementState = new MMStateMachine<CharacterStates.MovementStates>(gameObject, SendStateChangeEvents);
         ConditionState = new MMStateMachine<CharacterStates.CharacterConditions>(gameObject, SendStateChangeEvents);
-        inputManager = InputManager.Instance;
+        _inputManager = InputManager.Instance;
 
         if (InitialFacingDirection == FacingDirections.Left)
         {
@@ -45,7 +45,7 @@ public class MSB_Character : Character
         _cameraTargetInitialPosition = CameraTarget.transform.localPosition;
 
         // we get the current input manager
-        SetInputManager(inputManager);
+        SetInputManager(_inputManager);
         // we get the main camera
         if (Camera.main != null)
         {
@@ -66,6 +66,7 @@ public class MSB_Character : Character
         //_originalGravity = _controller.Parameters.Gravity;
 
         ForceSpawnDirection();
+        NetworkModule.GetInstance().RequestUserStatus(cUserData.userID);
     }
 
     public override void Face(FacingDirections facingDirection)
