@@ -219,17 +219,11 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
 
         public void OnGameEventItem(int type, int num, int action)
         {
-            if (num != _userNum)
-                return;
-
             throw new System.NotImplementedException();
         }
 
         public void OnGameEventKill(int from, int to, string option)
         {
-            if (to != _userNum)
-                return;
-
             throw new System.NotImplementedException();
         }
 

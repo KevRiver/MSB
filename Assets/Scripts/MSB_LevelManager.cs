@@ -17,22 +17,6 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
     [Information("The LevelManager is responsible for handling spawn/respawn, checkpoints management and level bounds. Here you can define one or more playable characters for your level..", InformationAttribute.InformationType.Info, false)]
     /// the list of player prefabs to instantiate
     public List<MSB_Character> PlayerPrefabs;
-    /// should the player IDs be auto attributed (usually yes)
-
-    /*[Space(10)]
-    //[Header("Intro and Outro durations")]
-    //[Information("Here you can specify the length of the fade in and fade out at the start and end of your level. You can also determine the delay before a respawn.", InformationAttribute.InformationType.Info, false)]
-    /// duration of the initial fade in (in seconds)
-    //public float IntroFadeDuration = 1f;
-    /// duration of the fade to black at the end of the level (in seconds)
-    //public float OutroFadeDuration = 1f;
-    /// the ID to use when triggering the event (should match the ID on the fader you want to use)
-    //public int FaderID = 0;
-    /// the curve to use for in and out fades
-    //public MMTween.MMTweenCurve FadeCurve = MMTween.MMTweenCurve.EaseInCubic;
-    /// duration between a death of the main character and its respawn
-    //public float RespawnDelay = 2f;*/
-
 
     [Space(10)]
     [Header("Level Bounds")]
@@ -51,8 +35,8 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
     // private stuff
     public List<MSB_Character> Players { get; protected set; }
     private MSB_Character TargetPlayer;
-    //public List<CheckPoint> Checkpoints { get; protected set; }
     public List<MSB_SpawnPoint> Spawnpoints { get; protected set; }
+    private Dictionary<int, MSB_Character> _allPlayersCharacter;
     protected DateTime _started;
     private GameInfo gameInfo;
 
@@ -130,6 +114,8 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
 
         SpawnPlayers();
 
+        StoreAllPlayersCharacter();();
+        
         //LevelGUIStart();
 
         // we trigger a level start event
@@ -139,6 +125,8 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         MMCameraEvent.Trigger(MMCameraEventTypes.SetConfiner, null, BoundsCollider);
         MMCameraEvent.Trigger(MMCameraEventTypes.SetTargetCharacter, TargetPlayer);
         MMCameraEvent.Trigger(MMCameraEventTypes.StartFollowing);
+        
+        NetworkModule.GetInstance().AddOnEventGameEvent(new OnGameEvent(this));
     }
 
     protected virtual void SpawnPlayers()
@@ -148,6 +136,24 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         {
             Spawnpoints[index].SpawnPlayer(character);
             index++;
+        }
+    }
+    /// <summary>
+    /// MSB Custom
+    /// key : UserNum Value : Health
+    /// OnGameEvent에서 Player의 Health에 접근하는 경우가 많으므로 Dictionary에 모든 플레이어의 Health 객체를 캐싱한다
+    /// </summary>
+    protected virtual void StoreAllPlayersCharacter()
+    {
+        foreach (var character in Players)
+        {
+            if (character.GetComponent<Health>() == null)
+            {
+                Debug.LogWarning(character.cUserData.userID+" 's Health not initialized");
+                continue;
+            }
+
+            _allPlayersCharacter.Add(character.UserNum, character);
         }
     }
 
@@ -173,233 +179,48 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         Spawnpoints = FindObjectsOfType<MSB_SpawnPoint>().OrderBy(o=>o.SpawnerIndex).ToList();
     }
 
-    protected virtual void Update()
+    private class OnGameEvent : NetworkModule.OnGameEventListener
     {
-
-    }
-
-    /// <summary>
-    /// Initializes GUI stuff
-    /// </summary>
-    /*protected virtual void LevelGUIStart()
-    {
-        // set the level name in the GUI
-        LevelNameEvent.Trigger(SceneManager.GetActiveScene().name);
-        // fade in
-        if (Players.Count > 0)
+        private MSB_LevelManager _levelManager;
+        public OnGameEvent(MSB_LevelManager levelManager)
         {
-            MMFadeOutEvent.Trigger(IntroFadeDuration, FadeCurve, FaderID, false, Players[0].transform.position);
-        }
-        else
-        {
-            MMFadeOutEvent.Trigger(IntroFadeDuration, FadeCurve, FaderID, false, Vector3.zero);
-        }
-    }*/
-
-    /// <summary>
-    /// Spawns a playable character into the scene
-    /// </summary>
-    /*protected virtual void SpawnSingleCharacter()
-    {
-        // in debug mode we spawn the player on the debug spawn point
-#if UNITY_EDITOR
-        if (DebugSpawn != null)
-        {
-            DebugSpawn.SpawnPlayer(Players[0]);
-            return;
-        }
-        else
-        {
-            RegularSpawnSingleCharacter();
-        }
-#else
-				RegularSpawnSingleCharacter();
-#endif
-    }
-
-    /// <summary>
-    /// Spawns the character at the selected entry point if there's one, or at the selected checkpoint.
-    /// </summary>
-    protected virtual void RegularSpawnSingleCharacter()
-    {
-        PointsOfEntryStorage point = GameManager.Instance.GetPointsOfEntry(SceneManager.GetActiveScene().name);
-        if ((point != null) && (PointsOfEntry.Length >= (point.PointOfEntryIndex + 1)))
-        {
-            Players[0].RespawnAt(PointsOfEntry[point.PointOfEntryIndex], point.FacingDirection);
-            return;
+            _levelManager = levelManager;
         }
 
-        if (CurrentCheckPoint != null)
+        public void OnGameEventDamage(int from, int to, int amount, string option)
         {
-            CurrentCheckPoint.SpawnPlayer(Players[0]);
-            return;
+            Debug.LogWarning("DamageEvent Occured - from : " + from + " to : " + to + " damage : " + amount);
+        }
+
+        private Health _targetHealth;
+        public void OnGameEventHealth(int num, int health)
+        {
+            Debug.LogWarning(num + "'s Health Changed");
+            _levelManager._allPlayersCharacter.TryGetValue(num, out MSB_Character target);
+            _targetHealth = target.GetComponent<Health>();
+            if(_targetHealth!=null)
+                _targetHealth.ChangeHealth(health);
+        }
+
+        public void OnGameEventItem(int type, int num, int action)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnGameEventKill(int from, int to, string option)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnGameEventObject(int num, int health)
+        {
+            
+        }
+
+        public void OnGameEventRespawn(int num, int time)
+        {
         }
     }
-    */
-    /// <summary>
-    /// Spawns multiple playable characters into the scene
-    /// </summary>
-    /*protected virtual void SpawnMultipleCharacters()
-    {
-        int checkpointCounter = 0;
-        int characterCounter = 1;
-        bool spawned = false;
-        foreach (Character player in Players)
-        {
-            spawned = false;
-
-            /*if (AutoAttributePlayerIDs)
-            {
-                player.SetPlayerID("Player" + characterCounter);
-            }
-
-            player.name += " - " + player.PlayerID;
-
-            if (Checkpoints.Count > checkpointCounter + 1)
-            {
-                if (Checkpoints[checkpointCounter] != null)
-                {
-                    Checkpoints[checkpointCounter].SpawnPlayer(player);
-                    characterCounter++;
-                    spawned = true;
-                    checkpointCounter++;
-                }
-            }
-            if (!spawned)
-            {
-                Checkpoints[checkpointCounter].SpawnPlayer(player);
-                characterCounter++;
-            }
-        }
-    }*/
-
-    /// <summary>
-    /// Instantiates (if needed) the no going back object that will prevent back movement in the level
-    /// </summary>
-    /*protected virtual void InstantiateNoGoingBack()
-    {
-        if (OneWayLevelMode == OneWayLevelModes.None)
-        {
-            return;
-        }
-        // we instantiate the new no going back object
-        GameObject newObject = new GameObject();
-        newObject.name = "NoGoingBack";
-        newObject.layer = LayerMask.NameToLayer("PlatformsPlayerOnly");
-        Vector3 newPosition = Players[0].transform.position;
-        if (OneWayLevelMode == OneWayLevelModes.Left) { newPosition.x -= NoGoingBackThreshold + NoGoingBackColliderSize.x / 2f; }
-        if (OneWayLevelMode == OneWayLevelModes.Right) { newPosition.x += NoGoingBackThreshold + NoGoingBackColliderSize.x / 2f; }
-        if (OneWayLevelMode == OneWayLevelModes.Down) { newPosition.y -= NoGoingBackThreshold + NoGoingBackColliderSize.y / 2f; }
-        if (OneWayLevelMode == OneWayLevelModes.Top) { newPosition.y += NoGoingBackThreshold + NoGoingBackColliderSize.y / 2f; }
-        newObject.transform.position = newPosition;
-
-        WallClingingOverride wallClingingOverride = newObject.AddComponent<WallClingingOverride>();
-        wallClingingOverride.CanWallClingToThis = false;
-
-        BoxCollider2D collider2D = newObject.AddComponent<BoxCollider2D>();
-        collider2D.size = NoGoingBackColliderSize;
-
-        NoGoingBackObject = newObject.AddComponent<NoGoingBack>();
-        NoGoingBackObject.ThresholdDistance = NoGoingBackThreshold;
-        NoGoingBackObject.Target = Players[0].transform;
-        NoGoingBackObject.OneWayLevelMode = OneWayLevelMode;
-        NoGoingBackObject.NoGoingBackColliderSize = NoGoingBackColliderSize;
-        NoGoingBackObject.MinDistanceFromBounds = NoGoingBackMinDistanceFromBounds;
-
-        if (OneWayLevelKillMode == OneWayLevelKillModes.Kill)
-        {
-            newObject.AddComponent<KillPlayerOnTouch>();
-        }
-    }
-
-    /// <summary>
-    /// Every frame we check for checkpoint reach
-    /// </summary>
-    public virtual void Update()
-    {
-        if (Players == null)
-        {
-            return;
-        }
-
-        _savedPoints = GameManager.Instance.Points;
-        _started = DateTime.UtcNow;
-    }
-
-    /// <summary>
-    /// Sets the current checkpoint.
-    /// </summary>
-    /// <param name="newCheckPoint">New check point.</param>
-    public virtual void SetCurrentCheckpoint(CheckPoint newCheckPoint)
-    {
-        CurrentCheckPoint = newCheckPoint;
-    }
-
-    public virtual void SetNextLevel(string levelName)
-    {
-        _nextLevel = levelName;
-    }
-
-    public virtual void GotoNextLevel()
-    {
-        GotoLevel(_nextLevel);
-        _nextLevel = null;
-    }
-
-    /// <summary>
-    /// Gets the player to the specified level
-    /// </summary>
-    /// <param name="levelName">Level name.</param>
-    public virtual void GotoLevel(string levelName)
-    {
-        CorgiEngineEvent.Trigger(CorgiEngineEventTypes.LevelEnd);
-        MMGameEvent.Trigger("Save");
-        if (Players.Count > 0)
-        {
-            MMFadeInEvent.Trigger(OutroFadeDuration, FadeCurve, FaderID, true, Players[0].transform.position);
-        }
-        else
-        {
-            MMFadeInEvent.Trigger(OutroFadeDuration, FadeCurve, FaderID, true, Vector3.zero);
-        }
-        StartCoroutine(GotoLevelCo(levelName));
-    }
-
-    /// <summary>
-    /// Waits for a short time and then loads the specified level
-    /// </summary>
-    /// <returns>The level co.</returns>
-    /// <param name="levelName">Level name.</param>
-    protected virtual IEnumerator GotoLevelCo(string levelName)
-    {
-        if (Players != null && Players.Count > 0)
-        {
-            foreach (Character player in Players)
-            {
-                player.Disable();
-            }
-        }
-
-        if (Time.timeScale > 0.0f)
-        {
-            yield return new WaitForSeconds(OutroFadeDuration);
-        }
-        else
-        {
-            yield return new WaitForSecondsRealtime(OutroFadeDuration);
-        }
-        // we trigger an unPause event for the GameManager (and potentially other classes)
-        CorgiEngineEvent.Trigger(CorgiEngineEventTypes.UnPause);
-
-        if (string.IsNullOrEmpty(levelName))
-        {
-            LoadingSceneManager.LoadScene("StartScreen");
-        }
-        else
-        {
-            LoadingSceneManager.LoadScene(levelName);
-        }
-    }*/
 
     /// <summary>
     /// Kills the player.
@@ -424,103 +245,6 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
             }
         }
     }
-
-    /// <summary>
-    /// Coroutine that kills the player, stops the camera, resets the points.
-    /// </summary>
-    /// <returns>The player co.</returns>
-    /*protected virtual IEnumerator SoloModeRestart()
-    {
-        if (PlayerPrefabs.Count() <= 0)
-        {
-            yield break;
-        }
-
-        // if we've setup our game manager to use lives (meaning our max lives is more than zero)
-        if (GameManager.Instance.MaximumLives > 0)
-        {
-            // we lose a life
-            GameManager.Instance.LoseLife();
-            // if we're out of lives, we check if we have an exit scene, and move there
-            if (GameManager.Instance.CurrentLives <= 0)
-            {
-                CorgiEngineEvent.Trigger(CorgiEngineEventTypes.GameOver);
-                if ((GameManager.Instance.GameOverScene != null) && (GameManager.Instance.GameOverScene != ""))
-                {
-                    LoadingSceneManager.LoadScene(GameManager.Instance.GameOverScene);
-                }
-            }
-        }
-
-        if (LevelCameraController != null)
-        {
-            LevelCameraController.FollowsPlayer = false;
-        }
-
-        yield return new WaitForSeconds(RespawnDelay);
-
-        if (LevelCameraController != null)
-        {
-            LevelCameraController.FollowsPlayer = true;
-        }
-
-        if (CurrentCheckPoint != null)
-        {
-            CurrentCheckPoint.SpawnPlayer(Players[0]);
-        }
-        _started = DateTime.UtcNow;
-        // we send a new points event for the GameManager to catch (and other classes that may listen to it too)
-        CorgiEnginePointsEvent.Trigger(PointsMethods.Set, 0);
-        // we trigger a respawn event
-        CorgiEngineEvent.Trigger(CorgiEngineEventTypes.Respawn);
-    }*/
-
-    /// <summary>
-    /// Freezes the character(s)
-    /// </summary>
-    /*public virtual void FreezeCharacters()
-    {
-        foreach (Character player in Players)
-        {
-            player.Freeze();
-        }
-    }*/
-
-    /// <summary>
-    /// Unfreezes the character(s)
-    /// </summary>
-    /*public virtual void UnFreezeCharacters()
-    {
-        foreach (Character player in Players)
-        {
-            player.UnFreeze();
-        }
-    }*/
-
-    /// <summary>
-    /// Toggles Character Pause
-    /// </summary>
-    /*public virtual void ToggleCharacterPause()
-    {
-        foreach (Character player in Players)
-        {
-
-            CharacterPause characterPause = player.GetComponent<CharacterPause>();
-            if (characterPause == null)
-            {
-                break;
-            }
-
-            if (GameManager.Instance.Paused)
-            {
-                characterPause.PauseCharacter();
-            }
-            else
-            {
-                characterPause.UnPauseCharacter();
-            }
-        }
-    }*/
 
     /// <summary>
     /// A temporary method used to convert level bounds from the old system to actual collider bounds
