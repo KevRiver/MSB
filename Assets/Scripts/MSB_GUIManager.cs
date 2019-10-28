@@ -15,7 +15,7 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>
     public string timer;
     public List<string> msgSequence;
 
-    private class OnGameStatus : NetworkModule.OnGameStatusListener
+    /*private class OnGameStatus : NetworkModule.OnGameStatusListener
     {
         public void OnGameEventCount(int count)
         {
@@ -34,17 +34,13 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>
         public void OnGameEventReady(string readyData)
         {
             JArray jArray = JArray.Parse(readyData);
-            Debug.LogWarning(jArray);
             playerCount = 0;
             userNum = 0;
-            foreach (var jToken in jArray)
+            foreach (var jObject in jArray)
             {
-                var obj = (JObject) jToken;
-                if (!(PlayerReady = (bool) obj.GetValue((++userNum).ToString())))
-                {
-                    Debug.LogWarning("Player " + userNum + "Not Ready");
+                PlayerReady = (bool)((JObject)jObject).GetValue((++userNum).ToString());
+                if(!PlayerReady)
                     continue;
-                }
                 playerCount++;
             }
 
@@ -67,13 +63,13 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>
         {
             throw new System.NotImplementedException();
         }
-    }
+    }*/
 
     protected  override  void Awake()
     {
         base.Awake();
         gameObject.name = "GUIManager";
-        NetworkModule.GetInstance().AddOnEventGameStatus(new OnGameStatus());
+        //NetworkModule.GetInstance().AddOnEventGameStatus(new OnGameStatus());
     }
 
     // Start is called before the first frame update

@@ -50,7 +50,7 @@ public class NetworkManager : MonoBehaviour
     {       
         public void OnGameEventCount(int count)
         {
-            Debug.LogWarning("Initial Count : " + count);
+            //Debug.LogWarning("Initial Count : " + count);
         }
         /*public void OnGameEventMessage(object _data)
         {
@@ -61,13 +61,30 @@ public class NetworkManager : MonoBehaviour
         {
         }
 
+        private int playerCount;
+        public int expectedPlayers = 2;
+        private bool PlayerReady;
+        private int userNum;
         public void OnGameEventReady(string readyData)
         {
-            JArray jArray = new JArray(readyData);
-            int userNum = 0;
-            foreach (var obj in jArray)
+            JArray jArray = JArray.Parse(readyData);
+            playerCount = 0;
+            userNum = 0;
+            foreach (var jObject in jArray)
             {
-                Debug.LogWarning(obj);
+                PlayerReady = (bool)((JObject)jObject).GetValue((++userNum).ToString());
+                if(!PlayerReady)
+                    continue;
+                playerCount++;
+            }
+
+            if (playerCount < expectedPlayers)
+                Debug.LogWarning("Waiting another player loading");
+            else if (playerCount > expectedPlayers)
+                Debug.LogWarning("More Player Loaded than expected");
+            else
+            {
+                Debug.Log("All Players Ready");
             }
         }
 
@@ -126,7 +143,6 @@ public class NetworkManager : MonoBehaviour
     }*/
     private void Awake()
     {
-        //Make NetworkManager don't destroyed on load
         DontDestroyOnLoad(gameObject);
     }
     
