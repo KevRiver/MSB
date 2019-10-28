@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using MoreMountains.Tools;
 using MoreMountains.Feedbacks;
+using UnityEngine.Experimental.PlayerLoop;
 
 namespace MoreMountains.CorgiEngine
 {
@@ -266,6 +267,12 @@ namespace MoreMountains.CorgiEngine
 
 				Kill();
 			}
+		}
+
+		public void ChangeHealth(int health)
+		{
+			CurrentHealth = health;
+			UpdateHealthBar(true);
 		}
 
 		/// <summary>

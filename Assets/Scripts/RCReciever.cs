@@ -206,13 +206,7 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
 
         public void OnGameEventDamage(int from, int to, int amount, string option)
         {
-            Debug.LogWarning("DamageEvent Occured : from - " + from + " to - " + to + "damage - " + amount);
-        }
-
-        private IEnumerator Log()
-        {
-            Debug.LogWarning("DamageEvent called");
-            yield return null;
+            Debug.LogWarning("DamageEvent Occured - from : " + from + " to : " + to + " damage : " + amount);
         }
 
         public void OnGameEventHealth(int num, int health)
@@ -220,6 +214,7 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
             if (num != _userNum)
                 return;
             Debug.LogWarning(num + "'s Health Changed");
+            _rc.health.ChangeHealth(health);
         }
 
         public void OnGameEventItem(int type, int num, int action)
