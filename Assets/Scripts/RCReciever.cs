@@ -96,7 +96,7 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
             _newPosY = Mathf.SmoothDamp(_curPos.y, _targetPos.y, ref _speed.y, Time.fixedDeltaTime);
 
             transform.position = new Vector3(_newPosX, _newPosY);
-            yield return new WaitForFixedUpdate();
+            yield return null;
         }
     }
 
