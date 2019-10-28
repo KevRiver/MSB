@@ -206,7 +206,7 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
 
         public void OnGameEventDamage(int from, int to, int amount, string option)
         {
-            UnityMainThreadDispatcher.Instance().Enqueue(Log());
+            Debug.LogWarning("DamageEvent Occured : from - " + from + " to - " + to + "damage - " + amount);
         }
 
         private IEnumerator Log()

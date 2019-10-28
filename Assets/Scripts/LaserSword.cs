@@ -36,6 +36,8 @@ public class LaserSword : Weapon
     /// The duration of the invincibility frames after the hit (in seconds)
     public float InvincibilityDuration = 0.5f;
 
+    public float StunDuration;
+
     protected Collider2D _damageAreaCollider;
     protected bool _attackInProgress = false;
 
@@ -46,6 +48,7 @@ public class LaserSword : Weapon
     protected BoxCollider2D _boxCollider2D;
     protected Vector3 _gizmoOffset;
     protected DamageOnTouch _damageOnTouch;
+    protected MSB_DamageOnTouch _msbDamageOnTouch;
     protected GameObject _damageArea;
 
     private bool _isOwnerRemote = false;
@@ -94,14 +97,24 @@ public class LaserSword : Weapon
         Rigidbody2D rigidBody = _damageArea.AddComponent<Rigidbody2D>();
         rigidBody.isKinematic = true;
 
-        _damageOnTouch = _damageArea.AddComponent<DamageOnTouch>();
+        /*_damageOnTouch = _damageArea.AddComponent<DamageOnTouch>();
         _damageOnTouch.TargetLayerMask = TargetLayerMask;
         _damageOnTouch.Owner = Owner.gameObject;
         _damageOnTouch.IgnoreGameObject(Owner.gameObject);
         _damageOnTouch.DamageCaused = DamageCaused;
         _damageOnTouch.DamageCausedKnockbackType = Knockback;
         _damageOnTouch.DamageCausedKnockbackForce = KnockbackForce;
-        _damageOnTouch.InvincibilityDuration = InvincibilityDuration;
+        _damageOnTouch.InvincibilityDuration = InvincibilityDuration;*/
+        
+        _msbDamageOnTouch = _damageArea.AddComponent<MSB_DamageOnTouch>();
+        _msbDamageOnTouch.TargetLayerMask = TargetLayerMask;
+        _msbDamageOnTouch.Owner = Owner.gameObject;
+        _msbDamageOnTouch.IgnoreGameObject(Owner.gameObject);
+        _msbDamageOnTouch.DamageCaused = DamageCaused;
+        _msbDamageOnTouch.DamageCausedKnockbackType = Knockback;
+        _msbDamageOnTouch.DamageCausedKnockbackForce = KnockbackForce;
+        _msbDamageOnTouch.InvincibilityDuration = InvincibilityDuration;
+        _msbDamageOnTouch.stunDuration = StunDuration;
     }
 
     public override void SetOwner(Character newOwner, CharacterHandleWeapon handleWeapon)

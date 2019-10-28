@@ -136,7 +136,12 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>,MMEven
         _causedDamage = (int)(eventType.DamageCaused);
         NetworkModule.GetInstance().RequestGameUserActionDamage(_room, _target, _causedDamage, "");
     }
-    
+
+    public void RequestDamage(int target, int damage, string options)
+    {
+        NetworkModule.GetInstance().RequestGameUserActionDamage(_room, target, damage, options);
+    }
+
     private void OnEnable()
     {
         this.MMEventStartListening<MMGameEvent>();
