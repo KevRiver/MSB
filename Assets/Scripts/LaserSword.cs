@@ -64,7 +64,7 @@ public class LaserSword : Weapon
             CreateDamageArea();
             DisableDamageArea();
         }
-        _damageOnTouch.Owner = Owner.gameObject;
+        _msbDamageOnTouch.Owner = Owner.gameObject;
     }
 
     /// <summary>
