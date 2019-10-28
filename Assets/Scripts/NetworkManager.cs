@@ -50,7 +50,9 @@ public class NetworkManager : MonoBehaviour
     {       
         public void OnGameEventCount(int count)
         {
-            //Debug.LogWarning("Initial Count : " + count);
+            Debug.LogWarning("Countdown : " + count);
+            if(count == 0)
+                MMGameEvent.Trigger("GameStart");
         }
         /*public void OnGameEventMessage(object _data)
         {
@@ -72,6 +74,7 @@ public class NetworkManager : MonoBehaviour
             userNum = 0;
             foreach (var jObject in jArray)
             {
+                Debug.Log((JObject) jObject);
                 PlayerReady = (bool)((JObject)jObject).GetValue((++userNum).ToString());
                 if(!PlayerReady)
                     continue;
@@ -83,9 +86,7 @@ public class NetworkManager : MonoBehaviour
             else if (playerCount > expectedPlayers)
                 Debug.LogWarning("More Player Loaded than expected");
             else
-            {
-                Debug.Log("All Players Ready");
-            }
+                Debug.LogWarning("All Players Ready");
         }
 
         public void OnGameEventScore(int blueKill, int blueDeath, int bluePoint, int redKill, int redDeath, int redPoint)
