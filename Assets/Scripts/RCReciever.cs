@@ -27,6 +27,7 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
     public float ySpeed = 0;
     // For facing direction sync
     public bool isFacingRight;
+    public bool isGrounded;
     public bool lastFacing;
 
     private Vector3 _curPos;
@@ -94,7 +95,7 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
             _curPos = transform.position;
             _newPosX = Mathf.SmoothDamp(_curPos.x, _targetPos.x, ref _speed.x, 0.1f);
             _newPosY = Mathf.SmoothDamp(_curPos.y, _targetPos.y, ref _speed.y, 0.1f);
-
+            _controller.SetVerticalForce(_speed.y);
             transform.position = new Vector3(_newPosX, _newPosY);
             yield return null;
         }

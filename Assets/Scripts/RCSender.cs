@@ -28,6 +28,7 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>,MMEven
     private string _posZ;
     private string _speedX;
     private string _speedY;
+    private bool _grounded;
     private string _isFacingRight;
     
     private Quaternion _rot;
