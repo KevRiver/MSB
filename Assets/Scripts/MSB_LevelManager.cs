@@ -114,7 +114,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
 
         SpawnPlayers();
 
-        StoreAllPlayersCharacter();();
+        StoreAllPlayersCharacter();
         
         //LevelGUIStart();
 
