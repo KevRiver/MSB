@@ -19,12 +19,14 @@ public class OutlineController : MonoBehaviour
         _characterIsRemote = GetComponent<MSB_Character>().IsRemote;
         _model = transform.GetChild(0);
         _spriteOutline = _model.GetComponent<SpriteOutline>();
+        if(_spriteOutline == null)
+            Debug.LogWarning("SpriteOutline not initialized");
 
-        if (_characterIsRemote)
+        /*if (_characterIsRemote)
             _spriteOutline.color = OpponentOutlineColor;
         else
         {
             _spriteOutline.color = AllyOutlineColor;
-        }
+        }*/
     }
 }

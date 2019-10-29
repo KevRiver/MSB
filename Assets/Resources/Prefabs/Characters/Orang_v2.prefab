@@ -286,7 +286,7 @@ MonoBehaviour:
   HealthBarType: 1
   TimeScale: 0
   HealthBarPrefab: {fileID: 0}
-  Size: {x: 2, y: 0.3}
+  Size: {x: 1.5, y: 0.2}
   BackgroundPadding: {x: 0.05, y: 0.05}
   OpponentForegroundColor:
     serializedVersion: 2
@@ -513,8 +513,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e8a90d363cedc8418aee8d98462df4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OpponentOutlineColor: {r: 0.90588236, g: 0.15686275, b: 0.21568628, a: 0}
-  AllyOutlineColor: {r: 0.53333336, g: 0.9254902, b: 0.17254902, a: 0}
+  OpponentOutlineColor: {r: 0.90588236, g: 0.15686275, b: 0.21568628, a: 1}
+  AllyOutlineColor: {r: 0.53333336, g: 0.9254902, b: 0.17254902, a: 1}
 --- !u!1 &2261488729087178757
 GameObject:
   m_ObjectHideFlags: 0
