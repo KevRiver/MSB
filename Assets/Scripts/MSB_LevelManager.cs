@@ -190,13 +190,11 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
 
         public void OnGameEventDamage(int from, int to, int amount, string option)
         {
-            Debug.LogWarning("DamageEvent Occured - from : " + from + " to : " + to + " damage : " + amount);
         }
 
         private Health _targetHealth;
         public void OnGameEventHealth(int num, int health)
         {
-            Debug.LogWarning(num + "'s Health Changed");
             _levelManager._allPlayersCharacter.TryGetValue(num, out MSB_Character target);
             _targetHealth = target.GetComponent<Health>();
             if(_targetHealth!=null)

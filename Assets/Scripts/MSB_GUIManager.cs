@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.Tools;
+using UnityEngine.UI;
 using MSBNetwork;
 using Newtonsoft.Json.Linq;
 
@@ -12,8 +13,15 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>
     // 중앙 메세지 박스
     // 스코어 전광판
 
-    public string timer;
+    public int initialTime;
+    private int _curTime;
     public List<string> msgSequence;
+    
+    public Text timer;
+    private string _min;
+    private string _sec;
+    public Text blueScore, redScore;
+    public Text MessageBox;
 
     /*private class OnGameStatus : NetworkModule.OnGameStatusListener
     {
@@ -69,13 +77,54 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>
     {
         base.Awake();
         gameObject.name = "GUIManager";
-        //NetworkModule.GetInstance().AddOnEventGameStatus(new OnGameStatus());
     }
-
-    // Start is called before the first frame update
+    
     void Start()
     {
-        
+        Initialization();
+    }
+
+    private void Initialization()
+    {
+        blueScore.text = "0";
+        redScore.text = "0";
+        _min = (initialTime / 60).ToString();
+        _sec = (initialTime % 60).ToString();
+        timer.text = _min + " : " + _sec;
+    }
+    
+    public void UpdateScoreSign(MSB_GameManager.Team team, int score)
+    {
+        switch (team)
+        {
+            case MSB_GameManager.Team.Blue:
+                blueScore.text = score.ToString();
+                break;
+            
+            case MSB_GameManager.Team.Red:
+                redScore.text = score.ToString();
+                break;
+        }
+    }
+
+    public void UpdateTimer(int time)
+    {
+        _curTime = time;
+        _min = (_curTime / 60).ToString();
+        _sec = (_curTime % 60).ToString();
+        timer.text = _min + " : " + _sec;
+    }
+
+    public void UpdateMessageBox(int _seq)
+    {
+        MessageBox.text = msgSequence[_seq];
+        if (_seq == 0)
+            Invoke("MessageBoxReset", 0.5f);
+
+    }
+    private void MessageBoxReset()
+    {
+        MessageBox.text = "";
     }
 
     // Update is called once per frame

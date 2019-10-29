@@ -17,6 +17,8 @@ public class MSB_Character : Character,MMEventListener<MMGameEvent>
     public int UserNum { get; internal set; }
     public bool IsRemote { get; set; }
 
+    public MSB_GameManager.Team team;
+
     private InputManager _inputManager;
 
     protected override void Initialization()

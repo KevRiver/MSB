@@ -50,7 +50,7 @@ public class NetworkManager : MonoBehaviour
     {       
         public void OnGameEventCount(int count)
         {
-            Debug.LogWarning("Countdown : " + count);
+            MSB_GUIManager.Instance.UpdateMessageBox(count);
             if(count == 0)
                 MMGameEvent.Trigger("GameStart");
         }
@@ -95,7 +95,7 @@ public class NetworkManager : MonoBehaviour
         }
         public void OnGameEventTime(int time)
         {
-            
+            MSB_GUIManager.Instance.UpdateTimer(time);
         }
     }
 

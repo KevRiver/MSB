@@ -19,6 +19,8 @@ public class Item : MonoBehaviour
     protected virtual  void Start()
     {
         Room = GameInfo.Instance.room;
+        ItemSpawnFeedback?.Initialization();
+        ItemSpawnFeedback?.Initialization();
     }
 
     protected virtual void OnTriggerEnter2D(Collider2D other)

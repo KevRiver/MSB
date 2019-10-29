@@ -12,6 +12,21 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
     MMEventListener<CorgiEngineEvent>,
     MMEventListener<CorgiEnginePointsEvent>
 {
+    public enum Team
+    {
+        Blue,
+        Red
+    }
+
+    private int[] _score = new int[2];
+    private int _index;
+    public void ScoreUpdate(Team team, int score)
+    {
+        _index = (int) team;
+        _score[_index] += score;
+        MSB_GUIManager.Instance.UpdateScoreSign(team,_score[_index]);
+    }
+
     public int RoomNum { get; set; }
     [Header("Settings")]
     /// the target frame rate for the game
