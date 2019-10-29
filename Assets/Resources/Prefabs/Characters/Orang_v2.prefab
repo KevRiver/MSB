@@ -722,10 +722,10 @@ MonoBehaviour:
     RepeatForever: 0
     DelayBetweenRepeats: 1
   DebugActive: 0
-  BoundRenderer: {fileID: 0}
+  BoundRenderer: {fileID: 2529746372198444820}
   FlickerDuration: 0.1
   FlickerOctave: 0.04
-  FlickerColor: {r: 1, g: 0.078431375, b: 0.078431375, a: 1}
+  FlickerColor: {r: 1, g: 0.42745098, b: 0.078431375, a: 0.5882353}
 --- !u!114 &8881656388187594999
 MonoBehaviour:
   m_ObjectHideFlags: 0
