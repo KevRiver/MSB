@@ -102,22 +102,6 @@ InputManager:
     axis: 0
     joyNum: 1
   - serializedVersion: 3
-    m_Name: LocalPlayer_Horizontal
-    descriptiveName: Horizontal
-    descriptiveNegativeName: 
-    negativeButton: a
-    positiveButton: d
-    altNegativeButton: q
-    altPositiveButton: 
-    gravity: 10
-    dead: 0.5
-    sensitivity: 4
-    snap: 1
-    invert: 0
-    type: 0
-    axis: 0
-    joyNum: 1
-  - serializedVersion: 3
     m_Name: Player2_Horizontal
     descriptiveName: Horizontal
     descriptiveNegativeName: 
@@ -167,22 +151,6 @@ InputManager:
     joyNum: 4
   - serializedVersion: 3
     m_Name: Player1_Vertical
-    descriptiveName: Vertical
-    descriptiveNegativeName: 
-    negativeButton: s
-    positiveButton: z
-    altNegativeButton: 
-    altPositiveButton: w
-    gravity: 10
-    dead: 0.5
-    sensitivity: 4
-    snap: 1
-    invert: 0
-    type: 0
-    axis: 1
-    joyNum: 1
-  - serializedVersion: 3
-    m_Name: LocalPlayer_Vertical
     descriptiveName: Vertical
     descriptiveNegativeName: 
     negativeButton: s
@@ -1622,22 +1590,6 @@ InputManager:
     axis: 3
     joyNum: 1
   - serializedVersion: 3
-    m_Name: LocalPlayer_SecondaryHorizontal
-    descriptiveName: 
-    descriptiveNegativeName: 
-    negativeButton: 
-    positiveButton: 
-    altNegativeButton: 
-    altPositiveButton: 
-    gravity: 0
-    dead: 0.19
-    sensitivity: 1
-    snap: 0
-    invert: 0
-    type: 2
-    axis: 3
-    joyNum: 1
-  - serializedVersion: 3
     m_Name: Player2_SecondaryHorizontal
     descriptiveName: 
     descriptiveNegativeName: 
@@ -1687,22 +1639,6 @@ InputManager:
     joyNum: 4
   - serializedVersion: 3
     m_Name: Player1_SecondaryVertical
-    descriptiveName: 
-    descriptiveNegativeName: 
-    negativeButton: 
-    positiveButton: 
-    altNegativeButton: 
-    altPositiveButton: 
-    gravity: 0
-    dead: 0.19
-    sensitivity: 1
-    snap: 0
-    invert: 1
-    type: 2
-    axis: 4
-    joyNum: 1
-  - serializedVersion: 3
-    m_Name: LocalPlayer_SecondaryVertical
     descriptiveName: 
     descriptiveNegativeName: 
     negativeButton: 
@@ -1782,22 +1718,6 @@ InputManager:
     axis: 2
     joyNum: 1
   - serializedVersion: 3
-    m_Name: LocalPlayer_ShootAxis
-    descriptiveName: 
-    descriptiveNegativeName: 
-    negativeButton: 
-    positiveButton: 
-    altNegativeButton: 
-    altPositiveButton: 
-    gravity: 0
-    dead: 0.19
-    sensitivity: 1
-    snap: 0
-    invert: 0
-    type: 2
-    axis: 2
-    joyNum: 1
-  - serializedVersion: 3
     m_Name: Player2_ShootAxis
     descriptiveName: 
     descriptiveNegativeName: 
@@ -1846,7 +1766,7 @@ InputManager:
     axis: 2
     joyNum: 4
   - serializedVersion: 3
-    m_Name: LocalPlayer_SecondaryShootAxis
+    m_Name: Player1_SecondaryShootAxis
     descriptiveName: 
     descriptiveNegativeName: 
     negativeButton: 
