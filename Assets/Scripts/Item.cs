@@ -31,15 +31,11 @@ public class Item : MonoBehaviour
             Debug.LogWarning("Trigger is not Msb Character");
             return;
         }
+        ItemTakenFeedback?.PlayFeedbacks();
     }
 
     protected virtual void OnEnable()
     {
         ItemSpawnFeedback?.PlayFeedbacks();
-    }
-
-    protected void OnDisable()
-    {
-        ItemTakenFeedback?.PlayFeedbacks();
     }
 }

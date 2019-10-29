@@ -373,7 +373,7 @@ MonoBehaviour:
   FlickerSpriteOnHit: 1
   ImmuneToKnockback: 0
   DeathFeedbacks: {fileID: 5370054760883370152}
-  DestroyOnDeath: 1
+  DestroyOnDeath: 0
   DelayBeforeDestruction: 0
   CollisionsOffOnDeath: 1
   PointsWhenDestroyed: 0

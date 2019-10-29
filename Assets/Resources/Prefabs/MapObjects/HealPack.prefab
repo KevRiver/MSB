@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6782744070182827719}
   - component: {fileID: 1221873928941775905}
+  - component: {fileID: 3857856699764510884}
   m_Layer: 0
   m_Name: ItemTakenFeedBack
   m_TagString: Untagged
@@ -43,9 +44,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 841b72de2996c5c40bfb394f3d0e0a98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Feedbacks: []
+  Feedbacks:
+  - {fileID: 3857856699764510884}
   InitializationMode: 2
   DebugActive: 0
+--- !u!114 &3857856699764510884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1596270059883758303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1503d540d467c874eb716ca9a18b8bc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Active: 1
+  Label: Corgi Engine Sound
+  Chance: 100
+  Timing:
+    InitialDelay: 0
+    CooldownDuration: 0
+    NumberOfRepeats: 0
+    RepeatForever: 0
+    DelayBetweenRepeats: 1
+  DebugActive: 0
+  SoundFX: {fileID: 8300000, guid: be1aa07df624a6049acbdad8838a93d4, type: 3}
+  Loop: 0
 --- !u!1 &3782000169538072209
 GameObject:
   m_ObjectHideFlags: 0
@@ -137,6 +163,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2907181790140970487}
   - component: {fileID: 4516059607593064451}
+  - component: {fileID: 5688211754587199007}
   m_Layer: 0
   m_Name: ItemSpawnFeedBack
   m_TagString: Untagged
@@ -170,9 +197,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 841b72de2996c5c40bfb394f3d0e0a98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Feedbacks: []
+  Feedbacks:
+  - {fileID: 5688211754587199007}
   InitializationMode: 2
   DebugActive: 0
+--- !u!114 &5688211754587199007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5546164709868668384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1503d540d467c874eb716ca9a18b8bc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Active: 1
+  Label: Corgi Engine Sound
+  Chance: 100
+  Timing:
+    InitialDelay: 0
+    CooldownDuration: 0
+    NumberOfRepeats: 0
+    RepeatForever: 0
+    DelayBetweenRepeats: 1
+  DebugActive: 0
+  SoundFX: {fileID: 8300000, guid: a062a34b834f77a4fbc0961eb9ca4a25, type: 3}
+  Loop: 0
 --- !u!1 &7494791001474940419
 GameObject:
   m_ObjectHideFlags: 0
@@ -183,6 +235,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4906799936215550251}
   - component: {fileID: 5912030061152263103}
+  - component: {fileID: 814884618796815435}
   m_Layer: 0
   m_Name: HealPack
   m_TagString: Untagged
@@ -223,3 +276,18 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 1, y: 2}
   m_Direction: 0
+--- !u!114 &814884618796815435
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7494791001474940419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76aa5c133648f5b4c82a1e13dbb00418, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ItemIndex: 0
+  ItemSpawnFeedback: {fileID: 4516059607593064451}
+  ItemTakenFeedback: {fileID: 1221873928941775905}
