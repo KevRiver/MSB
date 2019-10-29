@@ -7,7 +7,7 @@ using UnityEngine.UI;
 using MSBNetwork;
 using UnityEngine.Serialization;
 
-public class MSB_Character : Character
+public class MSB_Character : Character,MMEventListener<MMGameEvent>
 {
     [FormerlySerializedAs("c_userData")] [Header("MSB Custom")]
     public ClientUserData cUserData;
@@ -102,23 +102,39 @@ public class MSB_Character : Character
 
     protected override void OnEnable()
     {
-        base.OnEnable();       
-
+        base.OnEnable();
+        this.MMEventStartListening();
+        
         //Color col = _spriteRenderer.color;
         //col.a = 1.0f;
         //_spriteRenderer.color = col;
-
-
     }
 
     protected override void OnDisable()
     {
-        base.OnDisable();       
-        
+        base.OnDisable();
+        this.MMEventStopListening();
     }
 
-    private void OnDestroy()
+    public virtual void AbilityControl(bool active)
     {
+        foreach (var ability in _characterAbilities)
+        {
+            ability.AbilityPermitted = active;
+        }
+    }
 
+    public void OnMMEvent(MMGameEvent eventType)
+    {
+        switch (eventType.EventName)
+        {
+            case "GameStart":
+                AbilityControl(true);
+                break;
+            
+            case "GameOver":
+                AbilityControl(false);
+                break;
+        }
     }
 }

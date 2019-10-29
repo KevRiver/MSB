@@ -298,7 +298,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AbilityStartFeedbacks: {fileID: 0}
   AbilityStopFeedbacks: {fileID: 0}
-  AbilityPermitted: 1
+  AbilityPermitted: 0
   WalkSpeed: 10
   MovementSpeedMultiplier: 1
   PushSpeedMultiplier: 1
@@ -319,7 +319,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AbilityStartFeedbacks: {fileID: 0}
   AbilityStopFeedbacks: {fileID: 0}
-  AbilityPermitted: 1
+  AbilityPermitted: 0
   characterModel: {fileID: 3186536959345083222}
   spinSpeed: -360
   speedMultiplier: 1
@@ -337,7 +337,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AbilityStartFeedbacks: {fileID: 0}
   AbilityStopFeedbacks: {fileID: 0}
-  AbilityPermitted: 1
+  AbilityPermitted: 0
   InitialWeapon: {fileID: 1544106584760390544, guid: 33f834833cfbf2d48b58ae6025f7d315,
     type: 3}
   CanPickupWeapons: 1

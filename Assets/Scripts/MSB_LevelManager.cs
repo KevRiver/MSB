@@ -213,6 +213,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
             _levelManager._allPlayersCharacter.TryGetValue(to, out MSB_Character target);
             _targetHealth = target.GetComponent<Health>();
             _targetHealth.Kill();
+            MMGameEvent.Trigger("GameOver");
         }
 
         public void OnGameEventObject(int num, int health)

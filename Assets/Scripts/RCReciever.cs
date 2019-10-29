@@ -34,10 +34,9 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
     private Vector3 _targetPos;
     private Vector2 _speed;
     private Quaternion _targetRot;
-
+    private bool onSync = false;
     void Start()
     {
-        Debug.Log("RCReciever Start");
         if (!(character = GetComponent<MSB_Character>()))
             Debug.Log("MSB_Character is null");
 
@@ -68,6 +67,12 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
         {
             case "GameStart":
                 StartCoroutine(SyncUserPos());
+                onSync = true;
+                break;
+            
+            case "GameOver":
+                StopCoroutine(SyncUserPos());
+                onSync = false;
                 break;
         }
     }
@@ -77,12 +82,18 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
         this.MMEventStartListening<MMGameEvent>();
         if (!isInitialized)
             return;
+        onSync = true;
         StartCoroutine(SyncUserPos());
     }
     
     private void OnDisable()
     {
-        StopCoroutine(SyncUserPos());
+        if (onSync)
+        {
+            onSync = false;
+            StopCoroutine(SyncUserPos());
+        }
+
         this.MMEventStopListening<MMGameEvent>();
     }
 

@@ -109,7 +109,6 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>,MMEven
         switch (gameEvent.EventName)
         {
             case "GameStart":
-                Debug.Log("RCSender begin request");
                 StartCoroutine(RequestUserMove());
                 break;
 
