@@ -10,7 +10,7 @@ public class ScoreItem : Item
     protected override void OnTriggerEnter2D(Collider2D other)
     {
         base.OnTriggerEnter2D(other);
-        NetworkModule.GetInstance().RequestGameUserActionItem(Room, 0, TargetNum);
+        NetworkModule.GetInstance().RequestGameUserActionItem(Room, 0, ItemIndex);
         gameObject.SetActive(false);
     }
 }

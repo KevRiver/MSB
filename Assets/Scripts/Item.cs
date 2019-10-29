@@ -10,7 +10,7 @@ public class Item : MonoBehaviour
 {
     protected int Room;
     protected MSB_Character Target;
-    protected int TargetNum;
+    public int ItemIndex;
 
     public MMFeedbacks ItemSpawnFeedback;
     public MMFeedbacks ItemTakenFeedback;
@@ -26,11 +26,10 @@ public class Item : MonoBehaviour
     protected virtual void OnTriggerEnter2D(Collider2D other)
     {
         Target = other.gameObject.MMGetComponentNoAlloc<MSB_Character>();
-        if (Target != null)
-            TargetNum = Target.UserNum;
-        else
+        if (Target == null)
         {
             Debug.LogWarning("Trigger is not Msb Character");
+            return;
         }
     }
 

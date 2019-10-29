@@ -36,6 +36,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
     public List<MSB_Character> Players { get; protected set; }
     private MSB_Character TargetPlayer;
     public List<MSB_SpawnPoint> Spawnpoints { get; protected set; }
+    public List<Item> Items { get; protected set; }
     private Dictionary<int, MSB_Character> _allPlayersCharacter;
     protected DateTime _started;
     private GameInfo gameInfo;
@@ -173,6 +174,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         // Hierachy에 있는 MSB_SpawnPoint 오브젝트들을 List에 저장
         // Find Spawnpoints which in level and sort by its index (ascending)
         Spawnpoints = FindObjectsOfType<MSB_SpawnPoint>().OrderBy(o=>o.SpawnerIndex).ToList();
+        Items = FindObjectsOfType<Item>().OrderBy(o => o.ItemIndex).ToList();
     }
 
     private class OnGameEvent : NetworkModule.OnGameEventListener
@@ -195,10 +197,16 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
             if(_targetHealth!=null)
                 _targetHealth.ChangeHealth(health);
         }
-
+        
         public void OnGameEventItem(int type, int num, int action)
         {
+            Item item;
             Debug.LogWarning("Item event called");
+            item = _levelManager.Items[num];
+            if (action == 0)
+            {
+                item.gameObject.SetActive(true);
+            }
         }
 
         public void OnGameEventKill(int from, int to, string option)
