@@ -135,6 +135,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         var index = 0;
         foreach (var character in Players)
         {
+            character.team = (MSB_GameManager.Team) index;
             Spawnpoints[index].SpawnPlayer(character);
             index++;
         }
@@ -197,7 +198,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
 
         public void OnGameEventItem(int type, int num, int action)
         {
-            throw new System.NotImplementedException();
+            Debug.LogWarning("Item event called");
         }
 
         public void OnGameEventKill(int from, int to, string option)
