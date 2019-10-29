@@ -148,12 +148,6 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
     {
         foreach (var character in Players)
         {
-            if (character.GetComponent<Health>() == null)
-            {
-                Debug.LogWarning(character.cUserData.userID+" 's Health not initialized");
-                continue;
-            }
-
             _allPlayersCharacter.Add(character.UserNum, character);
         }
     }
