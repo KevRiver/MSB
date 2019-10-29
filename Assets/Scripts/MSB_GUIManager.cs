@@ -108,6 +108,16 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
         _uiContainer.Add(AttackButton.gameObject);
     }
 
+    private void OnEnable()
+    {
+        this.MMEventStartListening();
+    }
+
+    private void OnDisable()
+    {
+        this.MMEventStopListening();
+    }
+
     public void UIActive(bool active)
     {
         foreach (var ui in _uiContainer)
