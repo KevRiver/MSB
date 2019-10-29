@@ -87,7 +87,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
                 }
                 else
                 {
-                    newPlayer.SetPlayerID("LocalPlayer");
+                    newPlayer.SetPlayerID("Player1");
                     TargetPlayer = newPlayer;
 
                     RCSender rcSender = RCSender.Instance;
