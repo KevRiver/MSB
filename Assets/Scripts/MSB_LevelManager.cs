@@ -187,6 +187,10 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
 
         public void OnGameEventDamage(int from, int to, int amount, string option)
         {
+            _levelManager._allPlayersCharacter.TryGetValue(to, out MSB_Character target);
+            _targetHealth = target.GetComponent<Health>();
+            if(_targetHealth!=null)
+                _targetHealth.DamageFeedbacks?.PlayFeedbacks();
         }
 
         private Health _targetHealth;

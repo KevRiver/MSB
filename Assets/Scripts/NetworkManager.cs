@@ -91,6 +91,9 @@ public class NetworkManager : MonoBehaviour
 
         public void OnGameEventScore(int blueKill, int blueDeath, int bluePoint, int redKill, int redDeath, int redPoint)
         {
+            if (blueDeath > 0 || redDeath > 0)
+                MMGameEvent.Trigger("GameOver");
+            
             Debug.LogWarning("Event Score - blue : " + bluePoint + " red : " + redPoint);
             MSB_GameManager.Instance.ScoreUpdate(bluePoint, redPoint);
         }
