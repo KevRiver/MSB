@@ -7,6 +7,7 @@ using MoreMountains.Tools;
 using UnityEngine.UI;
 using MSBNetwork;
 using Newtonsoft.Json.Linq;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEvent>
 {
@@ -23,6 +24,7 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
     private bool _timeStop;
     private string _min;
     private string _sec;
+    public Text ScoreSign;
     public Text BlueScore, RedScore;
     public Text MessageBox;
     public Image Joystick;
@@ -95,15 +97,14 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
         RedScore.text = "0";
         _min = (initialTime / 60).ToString();
         _sec = (initialTime % 60).ToString();
-        Timer.text = _min + " : " + _sec;
+        Timer.text = _min + ":" + _sec;
         _timeStop = false;
 
         // MessageBox를 제외한 UI 들을 저장
         _uiContainer = new List<GameObject>();
         _uiContainer.Add(Timer.gameObject);
         _uiContainer.Add(TimerImage.gameObject);
-        _uiContainer.Add(BlueScore.gameObject);
-        _uiContainer.Add(RedScore.gameObject);
+        _uiContainer.Add(ScoreSign.gameObject);
         _uiContainer.Add(Joystick.gameObject);
         _uiContainer.Add(AttackButton.gameObject);
     }
@@ -125,7 +126,6 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
             ui.SetActive(active);
         }
     }
-
     public void UpdateScoreSign(int b, int r)
     {
         BlueScore.text = b.ToString();
@@ -139,7 +139,7 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
         _curTime = time;
         _min = (_curTime / 60).ToString();
         _sec = (_curTime % 60).ToString();
-        Timer.text = _min + " : " + _sec;
+        Timer.text = _min + ":" + _sec;
     }
     public void UpdateMessageBox(int _seq)
     {
