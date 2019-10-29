@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.CorgiEngine;
+using MoreMountains.Tools;
 using UnityEngine.Serialization;
 
 public class VectorPad : MonoBehaviour
@@ -36,7 +37,7 @@ public class VectorPad : MonoBehaviour
     public float verticalSpeed;
     public float activateDelay;
     
-    private CorgiController _controller;
+    //private CorgiController _controller;
     private MSB_Character _character;
     private Vector2 _speedMultiplier;
 
@@ -45,7 +46,7 @@ public class VectorPad : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         //Debug.LogWarning("VectorPad Collided with " + other.name);
-        _controller = other.GetComponent<CorgiController>();
+        CorgiController _controller = other.gameObject.MMGetComponentNoAlloc<CorgiController>();
         if (_controller == null)
             return;
 
@@ -59,7 +60,7 @@ public class VectorPad : MonoBehaviour
         _speedMultiplier.x = horizontalSpeed;
         _speedMultiplier.y = verticalSpeed;
         _contacted = true;
-        _activate = Activate(activateDelay);
+        _activate = Activate(_controller,activateDelay);
         StartCoroutine(_activate);
     }
 
@@ -70,7 +71,7 @@ public class VectorPad : MonoBehaviour
         _contacted = false;
     }
 
-    private IEnumerator Activate(float delay)
+    private IEnumerator Activate(CorgiController _controller,float delay)
     {
         yield return new WaitForSeconds(delay);
         _controller.SetHorizontalForce(0);
