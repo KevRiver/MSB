@@ -395,7 +395,7 @@ MonoBehaviour:
   HealthBarType: 1
   TimeScale: 0
   HealthBarPrefab: {fileID: 0}
-  Size: {x: 1.5, y: 0.2}
+  Size: {x: 0.75, y: 0.25}
   BackgroundPadding: {x: 0.05, y: 0.05}
   OpponentForegroundColor:
     serializedVersion: 2
