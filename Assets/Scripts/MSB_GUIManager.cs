@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using MoreMountains.Tools;
 using UnityEngine.UI;
 using MSBNetwork;
 using Newtonsoft.Json.Linq;
 
-public class MSB_GUIManager : Singleton<MSB_GUIManager>
+public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEvent>
 {
     // 타이머
     // 중앙 메세지 박스
@@ -17,12 +18,17 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>
     private int _curTime;
     public List<string> msgSequence;
     
-    public Text timer;
+    public Text Timer;
+    public Image TimerImage;
+    private bool _timeStop;
     private string _min;
     private string _sec;
-    public Text blueScore, redScore;
+    public Text BlueScore, RedScore;
     public Text MessageBox;
+    public Image Joystick;
+    public Image AttackButton;
 
+    private List<GameObject> _uiContainer;
     /*private class OnGameStatus : NetworkModule.OnGameStatusListener
     {
         public void OnGameEventCount(int count)
@@ -83,45 +89,86 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>
     {
         Initialization();
     }
-
     private void Initialization()
     {
-        blueScore.text = "0";
-        redScore.text = "0";
+        BlueScore.text = "0";
+        RedScore.text = "0";
         _min = (initialTime / 60).ToString();
         _sec = (initialTime % 60).ToString();
-        timer.text = _min + " : " + _sec;
-    }
-    
-    public void UpdateScoreSign(int b, int r)
-    {
-        blueScore.text = b.ToString();
-        redScore.text = r.ToString();
+        Timer.text = _min + " : " + _sec;
+        _timeStop = false;
+
+        // MessageBox를 제외한 UI 들을 저장
+        _uiContainer = new List<GameObject>();
+        _uiContainer.Add(Timer.gameObject);
+        _uiContainer.Add(TimerImage.gameObject);
+        _uiContainer.Add(BlueScore.gameObject);
+        _uiContainer.Add(RedScore.gameObject);
+        _uiContainer.Add(Joystick.gameObject);
+        _uiContainer.Add(AttackButton.gameObject);
     }
 
+    public void UIActive(bool active)
+    {
+        foreach (var ui in _uiContainer)
+        {
+            ui.SetActive(active);
+        }
+    }
+
+    public void UpdateScoreSign(int b, int r)
+    {
+        BlueScore.text = b.ToString();
+        RedScore.text = r.ToString();
+    }
     public void UpdateTimer(int time)
     {
+        if (_timeStop)
+            return;
+        
         _curTime = time;
         _min = (_curTime / 60).ToString();
         _sec = (_curTime % 60).ToString();
-        timer.text = _min + " : " + _sec;
+        Timer.text = _min + " : " + _sec;
     }
-
     public void UpdateMessageBox(int _seq)
     {
         MessageBox.text = msgSequence[_seq];
         if (_seq == 0)
             Invoke("MessageBoxReset", 0.5f);
-
     }
+    
+
+    /// <summary>
+    /// 메세지 박스에 메세지를 출력합니다
+    /// </summary>
+    /// <param name="message"> 출력할 메세지 </param>
+    /// <param name="duration"> -1 메세지 출력 유지 / 메세지 출력 유지 시간</param>
+    public void UpdateMessageBox(string message, float duration)
+    {
+        if (!MessageBox.enabled)
+            MessageBox.enabled = true;
+        
+        MessageBox.text = message;
+        if (duration > 0)
+            Invoke("MessageBoxReset",duration);
+    }
+
     private void MessageBoxReset()
     {
         MessageBox.text = "";
     }
-
-    // Update is called once per frame
-    void Update()
+    public void OnMMEvent(MMGameEvent eventType)
     {
-        
+        switch (eventType.EventName)
+        {
+            case "GameStart":
+                break;
+            
+            case "GameOver":
+                _timeStop = true;
+                UIActive(false);
+                break;
+        }
     }
 }

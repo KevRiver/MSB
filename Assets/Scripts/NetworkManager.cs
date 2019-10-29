@@ -97,6 +97,8 @@ public class NetworkManager : MonoBehaviour
         public void OnGameEventTime(int time)
         {
             MSB_GUIManager.Instance.UpdateTimer(time);
+            if(time == 0)
+                MMGameEvent.Trigger("GameOver");
         }
     }
 
