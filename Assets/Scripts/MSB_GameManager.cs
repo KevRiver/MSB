@@ -20,11 +20,11 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
 
     private int[] _score = new int[2];
     private int _index;
-    public void ScoreUpdate(Team team, int score)
+    public void ScoreUpdate(int blueScore, int redScore)
     {
-        _index = (int) team;
-        _score[_index] += score;
-        MSB_GUIManager.Instance.UpdateScoreSign(team,_score[_index]);
+        _score[(int)Team.Blue] = blueScore;
+        _score[(int) Team.Red] = redScore;
+        MSB_GUIManager.Instance.UpdateScoreSign(blueScore,redScore);
     }
 
     public int RoomNum { get; set; }

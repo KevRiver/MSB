@@ -33,6 +33,11 @@ namespace MoreMountains.Tools
 		public Vector2 Size = new Vector2(1f,0.2f);
 		/// if the healthbar is drawn, the padding to apply to the foreground, in world units
 		public Vector2 BackgroundPadding = new Vector2(0.01f,0.01f);
+
+		/// <summary>
+		/// MSB Custom 플레이어가 Remote라면 ForeGround Color를 바꾼다
+		/// </summary>
+		public Gradient OpponentForegroundColor;
 		/// if the healthbar is drawn, the color of its foreground
 		public Gradient ForegroundColor;
 		/// if the healthbar is drawn, the color of its delayed bar
@@ -100,6 +105,7 @@ namespace MoreMountains.Tools
             Initialization();
 		}
 
+		private bool _isRemote;
         public virtual void Initialization()
         {
             if (_progressBar != null)
@@ -120,9 +126,12 @@ namespace MoreMountains.Tools
                 _progressBar.gameObject.name = "HealthBar";
             }
 
+            _isRemote = GetComponent<MSB_Character>().IsRemote;
             if (HealthBarType == HealthBarTypes.Drawn)
             {
-                DrawHealthBar();
+	            if (_isRemote)
+		            ForegroundColor = OpponentForegroundColor;
+	            DrawHealthBar();
                 UpdateDrawnColors();
             }
 

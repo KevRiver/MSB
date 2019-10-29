@@ -93,18 +93,10 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>
         timer.text = _min + " : " + _sec;
     }
     
-    public void UpdateScoreSign(MSB_GameManager.Team team, int score)
+    public void UpdateScoreSign(int b, int r)
     {
-        switch (team)
-        {
-            case MSB_GameManager.Team.Blue:
-                blueScore.text = score.ToString();
-                break;
-            
-            case MSB_GameManager.Team.Red:
-                redScore.text = score.ToString();
-                break;
-        }
+        blueScore.text = b.ToString();
+        redScore.text = r.ToString();
     }
 
     public void UpdateTimer(int time)

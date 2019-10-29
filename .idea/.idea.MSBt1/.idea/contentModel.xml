@@ -870,6 +870,7 @@
             <e p="NetworkModule.cs" t="Include" />
           </e>
           <e p="NetworkManager.cs" t="Include" />
+          <e p="OutlineController.cs" t="Include" />
           <e p="RCReciever.cs" t="Include" />
           <e p="RCSender.cs" t="Include" />
           <e p="ScoreItem.cs" t="Include" />

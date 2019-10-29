@@ -92,6 +92,7 @@ public class NetworkManager : MonoBehaviour
         public void OnGameEventScore(int blueKill, int blueDeath, int bluePoint, int redKill, int redDeath, int redPoint)
         {
             Debug.LogWarning("Event Score - blue : " + bluePoint + " red : " + redPoint);
+            MSB_GameManager.Instance.ScoreUpdate(bluePoint, redPoint);
         }
         public void OnGameEventTime(int time)
         {
