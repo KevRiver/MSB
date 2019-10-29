@@ -66,7 +66,6 @@ public class MSB_Character : Character
         //_originalGravity = _controller.Parameters.Gravity;
 
         ForceSpawnDirection();
-        //NetworkModule.GetInstance().RequestUserStatus(cUserData.userID);
     }
 
     public override void Face(FacingDirections facingDirection)

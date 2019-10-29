@@ -210,7 +210,9 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
 
         public void OnGameEventKill(int from, int to, string option)
         {
-            throw new System.NotImplementedException();
+            _levelManager._allPlayersCharacter.TryGetValue(to, out MSB_Character target);
+            _targetHealth = target.GetComponent<Health>();
+            _targetHealth.Kill();
         }
 
         public void OnGameEventObject(int num, int health)

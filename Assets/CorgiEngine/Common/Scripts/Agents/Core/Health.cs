@@ -269,6 +269,10 @@ namespace MoreMountains.CorgiEngine
 			}
 		}
 
+		/// <summary>
+		/// MSB Custom 체력을 지정된 값으로 바꾼다
+		/// </summary>
+		/// <param name="health"></param>
 		public void ChangeHealth(int health)
 		{
 			CurrentHealth = health;
