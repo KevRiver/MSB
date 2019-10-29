@@ -70,7 +70,7 @@ MonoBehaviour:
     RepeatForever: 0
     DelayBetweenRepeats: 1
   DebugActive: 0
-  SoundFX: {fileID: 8300000, guid: 928be94c43c63c141b69149097e159c4, type: 3}
+  SoundFX: {fileID: 8300000, guid: 698d0b5cee3aae743b133281278a7979, type: 3}
   Loop: 0
 --- !u!1 &7550453279324976699
 GameObject:
@@ -230,6 +230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0e72ac51f78a9448a5928b811fc6ec4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ItemIndex: 0
   ItemSpawnFeedback: {fileID: 8874565729927446993}
   ItemTakenFeedback: {fileID: 365065958938448133}
 --- !u!1 &8931325628877887706
