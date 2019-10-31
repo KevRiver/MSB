@@ -162,7 +162,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TargetLayerMask:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 512
   DamageCaused: 10
   DamageCausedKnockbackType: 1
   DamageCausedKnockbackDirection: 1
