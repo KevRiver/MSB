@@ -29,7 +29,8 @@ public class ShurikenLauncher : Weapon
         protected Vector3 _randomSpreadDirection;
         protected Vector3 _spawnPositionCenter;
         protected bool _poolInitialized = false;
-
+        private bool _isOwnerRemote = false;
+        
         /// <summary>
         /// Initialize this weapon
         /// </summary>
@@ -63,6 +64,13 @@ public class ShurikenLauncher : Weapon
             }            
 		}
 
+        public override void SetOwner(Character newOwner, CharacterHandleWeapon handleWeapon)
+        {
+	        if (((MSB_Character) newOwner).IsRemote)
+		        _isOwnerRemote = true;
+	        base.SetOwner(newOwner,handleWeapon);
+        }
+        
 		/// <summary>
 		/// Called everytime the weapon is used
 		/// </summary>
@@ -71,8 +79,9 @@ public class ShurikenLauncher : Weapon
 			base.WeaponUse ();
 			Owner.GetComponent<CharacterSpin>().SetSpinSpeedMultiplier(0.5f);
 			DetermineSpawnPosition ();
-            			
-            for (int i = 0; i < ProjectilesPerShot; i++)
+			if(!_isOwnerRemote)
+				RCSender.Instance.RequestUserSync();
+			for (int i = 0; i < ProjectilesPerShot; i++)
             {
                 SpawnProjectile(SpawnPosition, i, ProjectilesPerShot, true);
             }			
