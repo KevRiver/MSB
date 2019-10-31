@@ -8,6 +8,15 @@ using MSBNetwork;
 public class MSB_DamageOnTouch : DamageOnTouch
 {
     public float stunDuration;
+    private MSB_Projectile _projectile;
+    protected override void Awake()
+    {
+        base.Awake();
+        _projectile = GetComponent<MSB_Projectile>();
+        if(_projectile != null)
+            IgnoreGameObject(_projectile._owner);
+    }
+
     public override void OnTriggerStay2D(Collider2D collider)
     {
     }
@@ -17,29 +26,42 @@ public class MSB_DamageOnTouch : DamageOnTouch
         Colliding(collider);
     }
 
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        string objectName = other.gameObject.name;
+        Debug.Log("Trigger Exit : " + objectName);
+    }
+
     protected override void Colliding(Collider2D collider)
     {
         if (!this.isActiveAndEnabled)
         {
+            Debug.Log("1");
             return;
         }
 
         // if the object we're colliding with is part of our ignore list, we do nothing and exit
         if (_ignoredGameObjects.Contains(collider.gameObject))
         {
+            Debug.Log("2");
             return;
         }
 
         // if what we're colliding with isn't part of the target layers, we do nothing and exit
         if (!MMLayers.LayerInLayerMask(collider.gameObject.layer,TargetLayerMask))
         {
+            Debug.Log("3");
             return;
         }
-
+        Debug.LogWarning("DamageOnTouch : " + collider.gameObject);
         _colliderHealth = collider.gameObject.MMGetComponentNoAlloc<Health>();
         if (_colliderHealth != null)
         {
             OnCollideWithDamageable(_colliderHealth);
+        }
+        else
+        {
+            OnCollideWithNonDamageable();
         }
     }
 
@@ -76,5 +98,13 @@ public class MSB_DamageOnTouch : DamageOnTouch
             _options = _knockbackForce.x.ToString() + _knockbackForce.y.ToString() + stunDuration.ToString();
             RCSender.Instance.RequestDamage(_targetNum, DamageCaused, _options);
         }
+        
+        if(_health!=null)
+            SelfDamage(DamageTakenEveryTime + DamageTakenNonDamageable);
+    }
+    protected override void OnCollideWithNonDamageable()
+    {
+        if(_health!=null)
+            SelfDamage(DamageTakenEveryTime + DamageTakenNonDamageable);
     }
 }

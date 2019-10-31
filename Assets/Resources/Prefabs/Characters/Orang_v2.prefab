@@ -261,7 +261,7 @@ MonoBehaviour:
   AbilityStartFeedbacks: {fileID: 0}
   AbilityStopFeedbacks: {fileID: 0}
   AbilityPermitted: 0
-  InitialWeapon: {fileID: 1544106584760390544, guid: 33f834833cfbf2d48b58ae6025f7d315,
+  InitialWeapon: {fileID: 8157225758954831789, guid: e81e4a483aec11642b76751530237d96,
     type: 3}
   CanPickupWeapons: 1
   WeaponAttachment: {fileID: 2261488729087178754}

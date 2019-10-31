@@ -118,6 +118,11 @@ public class MSB_Character : Character,MMEventListener<MMGameEvent>
         this.MMEventStopListening();
     }
 
+    private void ControllerReset()
+    {
+        _controller.SetForce(Vector2.zero);
+    }
+
     public virtual void AbilityControl(bool active)
     {
         foreach (var ability in _characterAbilities)
@@ -135,6 +140,7 @@ public class MSB_Character : Character,MMEventListener<MMGameEvent>
                 break;
             
             case "GameOver":
+                ControllerReset();
                 AbilityControl(false);
                 break;
         }

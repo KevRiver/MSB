@@ -856,6 +856,7 @@
           <e p="MSB_GUIManager.cs" t="Include" />
           <e p="MSB_InputManager.cs" t="Include" />
           <e p="MSB_LevelManager.cs" t="Include" />
+          <e p="MSB_Projectile.cs" t="Include" />
           <e p="MSB_SpawnPoint.cs" t="Include" />
           <e p="Network" t="Include">
             <e p="MSBC2C_common.cs" t="Include" />
@@ -874,6 +875,7 @@
           <e p="RCReciever.cs" t="Include" />
           <e p="RCSender.cs" t="Include" />
           <e p="ScoreItem.cs" t="Include" />
+          <e p="ShurikenLauncher.cs" t="Include" />
           <e p="SpawnPoint.cs" t="Include" />
           <e p="SpinAnimation.cs" t="Include" />
           <e p="Title" t="Include">

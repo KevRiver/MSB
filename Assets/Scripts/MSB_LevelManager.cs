@@ -65,7 +65,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
     protected virtual void InstantiatePlayableCharacters(List<PlayerInfo> users)
     {
         int localUserNum = LocalUser.Instance.localUserData.userNumber;
-        Debug.Log("local user number : " + localUserNum);
+        //Debug.Log("local user number : " + localUserNum);
 
         Players = new List<MSB_Character>();        
         if (PlayerPrefabs == null) { return; }

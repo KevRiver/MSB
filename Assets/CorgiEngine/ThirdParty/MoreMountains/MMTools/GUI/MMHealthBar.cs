@@ -2,6 +2,7 @@
 using MoreMountains.Tools;
 using System.Collections;
 using UnityEngine.UI;
+using MoreMountains.Tools;
 
 namespace MoreMountains.Tools
 {	
@@ -105,7 +106,7 @@ namespace MoreMountains.Tools
             Initialization();
 		}
 
-		private bool _isRemote;
+		private bool _isRemote = false;
         public virtual void Initialization()
         {
             if (_progressBar != null)
@@ -126,7 +127,10 @@ namespace MoreMountains.Tools
                 _progressBar.gameObject.name = "HealthBar";
             }
 
-            _isRemote = GetComponent<MSB_Character>().IsRemote;
+            MSB_Character _character;
+            _character = gameObject.MMGetComponentNoAlloc<MSB_Character>();
+            if (_character != null)
+	            _isRemote = _character.IsRemote;
             if (HealthBarType == HealthBarTypes.Drawn)
             {
 	            if (_isRemote)

@@ -119,12 +119,15 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>,MMEven
     }
 
     private int _target;
-    private int _instigator;
+    private int? _instigator;
     private int _causedDamage;
+    private MSB_Character _msbInstigator;
     public void OnMMEvent(MMDamageTakenEvent eventType)
     {
-        Debug.LogWarning("MMDamageTakenEvent occured");
-        _instigator = eventType.Instigator.GetComponent<MSB_Character>().UserNum;
+        /*Debug.LogWarning("MMDamageTakenEvent occured");
+        _instigator = 0;
+        _msbInstigator = eventType.Instigator.GetComponent<MSB_Character>();
+        _instigator = _msbInstigator?.UserNum;
         if (_instigator != _userNum)
         {
             Debug.LogWarning("Instigator is not local user");
@@ -133,7 +136,7 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>,MMEven
         _target = ((MSB_Character) (eventType.AffectedCharacter)).UserNum;
         Debug.LogWarning("target is " + _target);
         _causedDamage = (int)(eventType.DamageCaused);
-        NetworkModule.GetInstance().RequestGameUserActionDamage(_room, _target, _causedDamage, "");
+        NetworkModule.GetInstance().RequestGameUserActionDamage(_room, _target, _causedDamage, "");*/
     }
 
     public void RequestDamage(int target, int damage, string options)
