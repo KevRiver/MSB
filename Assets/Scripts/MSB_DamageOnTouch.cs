@@ -9,12 +9,16 @@ public class MSB_DamageOnTouch : DamageOnTouch
 {
     public float stunDuration;
     private MSB_Projectile _projectile;
+    public LayerMask[] TargetLayerMasks;
     protected override void Awake()
     {
         base.Awake();
         _projectile = GetComponent<MSB_Projectile>();
         if(_projectile != null)
             IgnoreGameObject(_projectile._owner);
+        Debug.LogError("PlayerLayer : " + LayerMask.NameToLayer("Player"));
+        Debug.LogError("PlatformLayer : " + LayerMask.NameToLayer("Platform"));
+        Debug.LogError("Target LayerMask : " + TargetLayerMask);
     }
 
     public override void OnTriggerStay2D(Collider2D collider)

@@ -162,7 +162,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TargetLayerMask:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 768
   DamageCaused: 10
   DamageCausedKnockbackType: 1
   DamageCausedKnockbackDirection: 1
@@ -180,6 +180,7 @@ MonoBehaviour:
   FreezeFramesOnHitDuration: 0
   Owner: {fileID: 0}
   stunDuration: 0.5
+  TargetLayerMasks: []
 --- !u!114 &7729972404493961826
 MonoBehaviour:
   m_ObjectHideFlags: 0
