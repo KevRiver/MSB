@@ -36,6 +36,16 @@ public class CharacterSpin : CharacterAbility
         }
     }
 
+    public void SetSpinSpeedMultiplier(float value)
+    {
+        speedMultiplier = value;
+    }
+
+    public void ResetSpinSpeedMultiplier()
+    {
+        speedMultiplier = 1.0f;
+    }
+
     public override void LateProcessAbility()
     {
         base.LateProcessAbility();

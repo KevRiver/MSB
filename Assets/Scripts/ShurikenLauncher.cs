@@ -69,7 +69,7 @@ public class ShurikenLauncher : Weapon
 		protected override void WeaponUse()
 		{
 			base.WeaponUse ();
-			Owner.GetComponent<CharacterSpin>().speedMultiplier = 0.1f;
+			Owner.GetComponent<CharacterSpin>().SetSpinSpeedMultiplier(0.5f);
 			DetermineSpawnPosition ();
             			
             for (int i = 0; i < ProjectilesPerShot; i++)
@@ -80,8 +80,8 @@ public class ShurikenLauncher : Weapon
 
 		public override void TurnWeaponOff()
 		{
+			Owner.GetComponent<CharacterSpin>().ResetSpinSpeedMultiplier();
 			base.TurnWeaponOff();
-			Owner.GetComponent<CharacterSpin>().speedMultiplier = 1.0f;
 		}
 
 		/// <summary>

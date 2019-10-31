@@ -129,7 +129,7 @@ public class LaserSword : Weapon
     /// </summary>
     protected override void WeaponUse()
     {
-        Owner.GetComponent<CharacterSpin>().speedMultiplier = 0.1f;
+        Owner.GetComponent<CharacterSpin>().SetSpinSpeedMultiplier(0.1f);
         base.WeaponUse();
         if(!_isOwnerRemote)
             RCSender.Instance.RequestUserSync();
@@ -138,7 +138,7 @@ public class LaserSword : Weapon
 
     public override void TurnWeaponOff()
     {
-        Owner.GetComponent<CharacterSpin>().speedMultiplier = 1.0f;
+        Owner.GetComponent<CharacterSpin>().ResetSpinSpeedMultiplier();
         base.TurnWeaponOff();
     }
 

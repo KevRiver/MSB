@@ -47,7 +47,7 @@ MonoBehaviour:
   TriggerMode: 0
   DelayBeforeUse: 0
   DelayBeforeUseReleaseInterruption: 1
-  TimeBetweenUses: 1
+  TimeBetweenUses: 0.5
   TimeBetweenUsesReleaseInterruption: 0
   MagazineBased: 0
   MagazineSize: 30
@@ -91,8 +91,8 @@ MonoBehaviour:
   ProjectileSpawnTransform: {fileID: 8157225758954831788}
   ProjectileSpawnOffset: {x: 0, y: 0, z: 0}
   ProjectilesPerShot: 2
-  Spread: {x: 0, y: 0, z: 0}
-  RotateWeaponOnSpread: 0
+  Spread: {x: 0, y: 0, z: 10}
+  RotateWeaponOnSpread: 1
   RandomSpread: 0
   SpawnPosition: {x: 226.29942, y: 134.1789, z: -50.86945}
 --- !u!114 &8157225758954831794
