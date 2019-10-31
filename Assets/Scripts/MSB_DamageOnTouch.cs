@@ -16,9 +16,9 @@ public class MSB_DamageOnTouch : DamageOnTouch
         _projectile = GetComponent<MSB_Projectile>();
         if(_projectile != null)
             IgnoreGameObject(_projectile._owner);
-        Debug.LogError("PlayerLayer : " + LayerMask.NameToLayer("Player"));
-        Debug.LogError("PlatformLayer : " + LayerMask.NameToLayer("Platform"));
-        Debug.LogError("Target LayerMask : " + TargetLayerMask);
+        //Debug.LogError("PlayerLayer : " + LayerMask.NameToLayer("Player"));
+        //Debug.LogError("PlatformLayer : " + LayerMask.NameToLayer("Platform"));
+        //Debug.LogError("Target LayerMask : " + TargetLayerMask);
     }
 
     public override void OnTriggerStay2D(Collider2D collider)
