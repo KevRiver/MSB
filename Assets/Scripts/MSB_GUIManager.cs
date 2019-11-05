@@ -22,8 +22,10 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
     public Text Timer;
     public Image TimerImage;
     private bool _timeStop;
-    private string _min;
-    private string _sec;
+    private int _min;
+    private string _minString;
+    private int _sec;
+    private string _secString;
     public Text ScoreSign;
     public Text BlueScore, RedScore;
     public Text MessageBox;
@@ -95,9 +97,11 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
     {
         BlueScore.text = "0";
         RedScore.text = "0";
-        _min = (initialTime / 60).ToString();
-        _sec = (initialTime % 60).ToString();
-        Timer.text = _min + ":" + _sec;
+        _min = initialTime / 60;
+        _minString = (_min >= 10) ? _min.ToString() : "0" + _min.ToString();
+        _sec = initialTime % 60;
+        _secString = (_sec >= 10) ? _sec.ToString() : "0" + _sec.ToString();
+        Timer.text = _minString + ":" + _secString;
         _timeStop = false;
 
         // MessageBox를 제외한 UI 들을 저장
@@ -137,9 +141,11 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
             return;
         
         _curTime = time;
-        _min = (_curTime / 60).ToString();
-        _sec = (_curTime % 60).ToString();
-        Timer.text = _min + ":" + _sec;
+        _min = _curTime / 60;
+        _minString = (_min >= 10) ? _min.ToString() : "0" + _min.ToString();
+        _sec = _curTime % 60;
+        _secString = (_sec >= 10) ? _sec.ToString() : "0" + _sec.ToString();
+        Timer.text = _minString + ":" + _secString;
     }
     public void UpdateMessageBox(int _seq)
     {

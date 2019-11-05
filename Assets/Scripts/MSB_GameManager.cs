@@ -5,6 +5,7 @@ using MoreMountains.Tools;
 using MoreMountains.CorgiEngine;
 using MoreMountains.InventoryEngine;
 using MoreMountains.Feedbacks;
+using UnityEngine.SceneManagement;
 
 
 public class MSB_GameManager : Singleton<MSB_GameManager>,
@@ -25,6 +26,33 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
         _score[(int)Team.Blue] = blueScore;
         _score[(int) Team.Red] = redScore;
         MSB_GUIManager.Instance.UpdateScoreSign(blueScore,redScore);
+    }
+
+    private const int FALSE = 0;
+    private const int TRUE = 1;
+    public void GameSet(int blueDeath, int redDeath)
+    {
+       Debug.LogWarning("BlueDeath : " + blueDeath + " RedDeath : " + redDeath);
+       if (blueDeath == TRUE && redDeath == TRUE)
+       {
+           Debug.LogWarning("Network Delayed");
+           return;
+       }
+
+       string message = "";
+       const float duration = 5.0f;
+       if (blueDeath == TRUE)
+           message = "Red Team Win";
+       else
+           message = "Blue Team Win";
+       
+       MSB_GUIManager.Instance.UpdateMessageBox(message,duration);
+       Invoke("ChangeScene",duration);
+    }
+
+    private void ChangeScene()
+    {
+        SceneManager.LoadScene("Lobby");
     }
 
     public int RoomNum { get; set; }
@@ -325,19 +353,9 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
         switch (gameEvent.EventName)
         {
             case "GameStart":
-                // LevelManager 에게 게임이 시작되었음을 알린다
                 break;
 
             case "GameOver":
-                // LevelManager 에게 게임이 끝났음을 알린다
-                break;
-
-            case "inventoryOpens":
-                //Pause(PauseMethods.NoPauseMenu);
-                break;
-
-            case "inventoryCloses":
-                //Pause(PauseMethods.NoPauseMenu);
                 break;
         }
     }
