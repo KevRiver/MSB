@@ -9,11 +9,20 @@ using MSBNetwork;
 using Newtonsoft.Json.Linq;
 using UnityEngine.SocialPlatforms.Impl;
 
-public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEvent>
+public enum MessageBoxStyles
+{
+    Plain,
+    Blue,
+    Red,
+    Green
+}
+public class MSB_GUIManager : Singleton<MSB_GUIManager>
 {
     // 타이머
     // 중앙 메세지 박스
     // 스코어 전광판
+
+    
 
     public int initialTime;
     private int _curTime;
@@ -29,10 +38,14 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
     public Text ScoreSign;
     public Text BlueScore, RedScore;
     public Text MessageBox;
+    public Text MessageBox1;
+    public Text MessageBox2;
+    public Text MessageBox3;
     public Image Joystick;
     public Image AttackButton;
 
     private List<GameObject> _uiContainer;
+    private List<Text> _messageBoxes;
     /*private class OnGameStatus : NetworkModule.OnGameStatusListener
     {
         public void OnGameEventCount(int count)
@@ -95,6 +108,7 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
     }
     private void Initialization()
     {
+        Debug.LogWarning("GUIManager  Init");
         BlueScore.text = "0";
         RedScore.text = "0";
         _min = initialTime / 60;
@@ -104,6 +118,12 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
         Timer.text = _minString + ":" + _secString;
         _timeStop = false;
 
+        _messageBoxes = new List<Text>();
+        _messageBoxes.Add(MessageBox);
+        _messageBoxes.Add(MessageBox1);
+        _messageBoxes.Add(MessageBox2);
+        _messageBoxes.Add(MessageBox3);
+        
         // MessageBox를 제외한 UI 들을 저장
         _uiContainer = new List<GameObject>();
         _uiContainer.Add(Timer.gameObject);
@@ -113,14 +133,10 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
         _uiContainer.Add(AttackButton.gameObject);
     }
 
-    private void OnEnable()
+    public void OnGameOver()
     {
-        this.MMEventStartListening();
-    }
-
-    private void OnDisable()
-    {
-        this.MMEventStopListening();
+        //_timeStop = true;
+        UIActive(false);
     }
 
     public void UIActive(bool active)
@@ -154,7 +170,6 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
             Invoke("MessageBoxReset", 0.5f);
     }
     
-
     /// <summary>
     /// 메세지 박스에 메세지를 출력합니다
     /// </summary>
@@ -170,21 +185,30 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
             Invoke("MessageBoxReset",duration);
     }
 
+    public void UpdateMessageBox(MessageBoxStyles style, string message, float duration)
+    {
+        Text messagebox = _messageBoxes[(int) style];
+        if (!messagebox.enabled)
+            messagebox.enabled = true;
+
+        messagebox.text = message;
+        if(duration>0)
+            Invoke("MessageBoxReset",duration);
+    }
+
     private void MessageBoxReset()
     {
         MessageBox.text = "";
     }
-    public void OnMMEvent(MMGameEvent eventType)
+    /*public void OnMMEvent(MMGameEvent eventType)
     {
         switch (eventType.EventName)
         {
             case "GameStart":
                 break;
             
-            case "GameOver":
-                _timeStop = true;
-                UIActive(false);
+            case "GameOver"
                 break;
         }
-    }
+    }*/
 }

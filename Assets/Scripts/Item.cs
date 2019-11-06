@@ -25,13 +25,7 @@ public class Item : MonoBehaviour
 
     protected virtual void OnTriggerEnter2D(Collider2D other)
     {
-        Target = other.gameObject.MMGetComponentNoAlloc<MSB_Character>();
-        if (Target == null)
-        {
-            Debug.LogWarning("Trigger is not Msb Character");
-            return;
-        }
-        ItemTakenFeedback?.PlayFeedbacks();
+        
     }
 
     protected virtual void OnEnable()

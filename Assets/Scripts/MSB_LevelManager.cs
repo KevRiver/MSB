@@ -206,6 +206,8 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         {
             Item item;
             Debug.LogWarning("Item event called");
+            Debug.Log("OnEventItem : " + type +", " + num + "," + action);
+            
             item = _levelManager.Items[num];
             if (action == 0)
             {
@@ -216,9 +218,15 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         public void OnGameEventKill(int from, int to, string option)
         {
             _levelManager._allPlayersCharacter.TryGetValue(to, out MSB_Character target);
+            if (target == null)
+            {
+                Debug.LogError("Killed Character doesnt exist");
+                return;
+            }
+
             _targetHealth = target.GetComponent<Health>();
             _targetHealth.Kill();
-            MMGameEvent.Trigger("GameOver");
+            //MMGameEvent.Trigger("GameOver");
         }
 
         public void OnGameEventObject(int num, int health)

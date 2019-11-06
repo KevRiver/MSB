@@ -33,7 +33,7 @@ public class MSB_DamageOnTouch : DamageOnTouch
     private void OnTriggerExit2D(Collider2D other)
     {
         string objectName = other.gameObject.name;
-        Debug.Log("Trigger Exit : " + objectName);
+        //Debug.Log("Trigger Exit : " + objectName);
     }
 
     protected override void Colliding(Collider2D collider)

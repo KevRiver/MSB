@@ -15,45 +15,81 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
 {
     public enum Team
     {
-        Blue,
+        Blue = 0,
         Red
     }
 
     private int[] _score = new int[2];
+    public int[] _death = new int[2];
     private int _index;
-    public void ScoreUpdate(int blueScore, int redScore)
+    public void ScoreUpdate(int blueDeath, int redDeath,int blueScore, int redScore)
     {
-        _score[(int)Team.Blue] = blueScore;
-        _score[(int) Team.Red] = redScore;
+        _death[0] = blueDeath;
+        _death[1] = redDeath;
+        _score[0] = blueScore;
+        _score[1] = redScore;
+        
         MSB_GUIManager.Instance.UpdateScoreSign(blueScore,redScore);
     }
 
     private const int FALSE = 0;
     private const int TRUE = 1;
-    public void GameSet(int blueDeath, int redDeath)
+    
+    public void GameSet(int[] death, int[] score)
     {
-       Debug.LogWarning("BlueDeath : " + blueDeath + " RedDeath : " + redDeath);
+        int blueDeath = death[0];
+        int redDeath = death[1]; 
+        Debug.LogWarning("BlueDeath : " + blueDeath + " RedDeath : " + redDeath);
        if (blueDeath == TRUE && redDeath == TRUE)
        {
-           Debug.LogWarning("Network Delayed");
+           Debug.LogWarning("Have some error");
            return;
        }
 
+       int blueScore = score[0];
+       int redScore = score[1];
        string message = "";
+       MessageBoxStyles messageBoxStyle;
+       
        const float duration = 5.0f;
        if (blueDeath == TRUE)
-           message = "Red Team Win";
+       {
+           messageBoxStyle = MessageBoxStyles.Red;
+           message = "RED TEAM\nWIN";
+       }
+       else if (redDeath == TRUE)
+       {
+           messageBoxStyle = MessageBoxStyles.Blue;
+           message = "BLUE TEAM\nWIN";
+       }
        else
-           message = "Blue Team Win";
-       
-       MSB_GUIManager.Instance.UpdateMessageBox(message,duration);
-       Invoke("ChangeScene",duration);
+       {
+           if (blueScore > redScore)
+           {
+               messageBoxStyle = MessageBoxStyles.Blue;
+               message = "BLUE TEAM\nWIN";
+           }
+           else if (blueScore == redScore)
+           {
+               messageBoxStyle = MessageBoxStyles.Green;
+               message = "DRAW";
+           }
+           else
+           {
+               messageBoxStyle = MessageBoxStyles.Red;
+               message = "RED TEAM\nWIN";
+           }
+       }
+
+       MSB_GUIManager.Instance.UpdateMessageBox(messageBoxStyle, message, 0);
     }
 
-    private void ChangeScene()
+    private IEnumerator ChangeScene(float duration)
     {
+        yield return  new WaitForSeconds(duration);
         SceneManager.LoadScene("Lobby");
     }
+    
 
     public int RoomNum { get; set; }
     [Header("Settings")]
@@ -350,12 +386,17 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
     public virtual void OnMMEvent(MMGameEvent gameEvent)
     {
         Debug.Log("On GameEvent : " + gameEvent.EventName);
+        // Game 종료 이벤트에 대한 처리는 게임 매니저에서 다 처리
         switch (gameEvent.EventName)
         {
             case "GameStart":
                 break;
 
             case "GameOver":
+                MSB_GUIManager.Instance.OnGameOver();
+                GameSet(_death,_score);
+                Destroy(GameObject.Find("GameInfo"));
+                StartCoroutine(ChangeScene(5.0f));
                 break;
         }
     }
