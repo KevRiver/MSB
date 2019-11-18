@@ -4,12 +4,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.CorgiEngine;
 using MoreMountains.Tools;
-using MSBNetwork;
+
+public enum CausedCCType
+{
+    Non,
+    KnockBack,
+    Stun,
+    Root
+}
+
 public class MSB_DamageOnTouch : DamageOnTouch
 {
-    public float stunDuration;
-    private MSB_Projectile _projectile;
     public LayerMask[] TargetLayerMasks;
+    [Header("MSB Custom")]
+    private MSB_Projectile _projectile;
+    
+    [Space(10)]
+    
+    [Header("MSB CC Options")] //caused cc types and duration
+    public CausedCCType CCType;
+    public float stunDuration;
+    
+    
     protected override void Awake()
     {
         base.Awake();
@@ -99,7 +115,7 @@ public class MSB_DamageOnTouch : DamageOnTouch
         if (_ownerMsbCharacter.IsRemote)
         {
             _targetNum = _colliderMsbCharacter.UserNum;
-            _options = _knockbackForce.x.ToString() + _knockbackForce.y.ToString() + stunDuration.ToString();
+            _options = ((int) CCType).ToString() + "," + _knockbackForce.x.ToString() + "," + _knockbackForce.y.ToString() + "," + stunDuration.ToString();
             RCSender.Instance.RequestDamage(_targetNum, DamageCaused, _options);
         }
         
