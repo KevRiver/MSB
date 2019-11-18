@@ -177,6 +177,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         Items = FindObjectsOfType<Item>().OrderBy(o => o.ItemIndex).ToList();
     }
 
+    
     private class OnGameEvent : NetworkModule.OnGameEventListener
     {
         private MSB_LevelManager _levelManager;
@@ -184,22 +185,70 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         {
             _levelManager = levelManager;
         }
-
+        
+        private char[] spliter = {','};
+        
+        private Health _targetHealth;
+        private FloatingMessageController _floatingMessageController;
+        private FloatingMessageType _floatingMessageType;
+        private string message = "";
         public void OnGameEventDamage(int from, int to, int amount, string option)
         {
+            string[] options = option.Split(spliter);
+            CausedCCType ccType = CausedCCType.Non;
+            float xForce = 0f;
+            float yForce = 0f;
+            float duration = 0f;
+            ccType = (CausedCCType) int.Parse(options[0]);
+            xForce = float.Parse(options[1]);
+            yForce = float.Parse(options[2]);
+            duration = float.Parse(options[3]);
+            
             _levelManager._allPlayersCharacter.TryGetValue(to, out MSB_Character target);
             _targetHealth = target.GetComponent<Health>();
+            _floatingMessageController = target.GetComponentInChildren<FloatingMessageController>();
+            if (_floatingMessageController != null && ccType != CausedCCType.Non)
+            {
+                if (target._controller != null)
+                {
+                    switch (ccType)
+                    {
+                        case CausedCCType.KnockBack:
+                            message = "KNOCK BACK";
+                            break;
+                        
+                        case CausedCCType.Stun:
+                            message = "STUN";
+                            break;
+                        
+                        case CausedCCType.Root:
+                            message = "ROOTED";
+                            break;
+                    }
+                    _floatingMessageType = FloatingMessageType.Text0;
+                    FloatingMessageEvent.Trigger(target.UserNum, _floatingMessageType, message, duration);
+                    target._controller.SetForce(new Vector2(xForce, yForce));
+                }
+            }
             if(_targetHealth!=null)
                 _targetHealth.DamageFeedbacks?.PlayFeedbacks();
         }
 
-        private Health _targetHealth;
+        private int previousHealth;
         public void OnGameEventHealth(int num, int health)
         {
             _levelManager._allPlayersCharacter.TryGetValue(num, out MSB_Character target);
             _targetHealth = target.GetComponent<Health>();
-            if(_targetHealth!=null)
+            if (_targetHealth != null)
+            {
+                previousHealth = _targetHealth.CurrentHealth;
+                message = (health - previousHealth).ToString();
+                _floatingMessageType =
+                    (previousHealth > health) ? FloatingMessageType.Damage : FloatingMessageType.Heal;
+                
+                FloatingMessageEvent.Trigger(num, _floatingMessageType, message, 0f);
                 _targetHealth.ChangeHealth(health);
+            }
         }
         
         public void OnGameEventItem(int type, int num, int action)
