@@ -179,8 +179,9 @@ MonoBehaviour:
   HitNonDamageableFeedback: {fileID: 0}
   FreezeFramesOnHitDuration: 0
   Owner: {fileID: 0}
-  stunDuration: 0.5
   TargetLayerMasks: []
+  CCType: 1
+  stunDuration: 0.5
 --- !u!114 &7729972404493961826
 MonoBehaviour:
   m_ObjectHideFlags: 0
