@@ -837,6 +837,8 @@
           <e p="CharacterSpin.cs" t="Include" />
           <e p="ClientUserData.cs" t="Include" />
           <e p="DamageTest.cs" t="Include" />
+          <e p="FloatingMessage.cs" t="Include" />
+          <e p="FloatingMessageController.cs" t="Include" />
           <e p="GameInfo.cs" t="Include" />
           <e p="HealItem.cs" t="Include" />
           <e p="Item.cs" t="Include" />
