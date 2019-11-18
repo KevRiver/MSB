@@ -54,7 +54,7 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
         NetworkModule networkModule = NetworkModule.GetInstance();
         networkModule.AddOnEventGameUserMove(new OnGameUserMove(this));
         networkModule.AddOnEventGameUserSync(new OnGameUserSync(this));
-        networkModule.AddOnEventGameEvent(new OnGameEvent(this));
+        //networkModule.AddOnEventGameEvent(new OnGameEvent(this));
 
         isInitialized = true;
         Debug.Log("RCReciever Initialized");
@@ -205,7 +205,7 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
         }
     }
 
-    private class OnGameEvent : NetworkModule.OnGameEventListener
+   /* private class OnGameEvent : NetworkModule.OnGameEventListener
     {
         private RCReciever _rc;
         private int _userNum;
@@ -254,7 +254,7 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
 
             throw new System.NotImplementedException();
         }
-    }
+    }*/
 
     
 }
