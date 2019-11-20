@@ -88,7 +88,7 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 		
 		if (_result)
         {
-            Debug.LogWarning("OnLoginResult : InitializeLocalUser");
+            //Debug.LogWarning("OnLoginResult : InitializeLocalUser");
             LocalUser localUser = LocalUser.Instance;
             localUser.localUserData.userID = _user.userID;
             localUser.localUserData.userNick = _user.userNick;

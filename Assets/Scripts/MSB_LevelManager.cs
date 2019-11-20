@@ -179,7 +179,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         // Find Spawnpoints which in level and sort by its index (ascending)
         Spawnpoints = FindObjectsOfType<MSB_SpawnPoint>().OrderBy(o=>o.SpawnerIndex).ToList();
         Items = FindObjectsOfType<Item>().OrderBy(o => o.ItemIndex).ToList();
-        Debug.LogWarning(Items);
+        //Debug.LogWarning(Items);
     }
 
     public void RespawnPlayer(int userNum)
@@ -212,6 +212,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         private string message = "";
         public void OnGameEventDamage(int from, int to, int amount, string option)
         {
+            Debug.LogWarning("from :" + from + " to :" + to);
             string[] options = option.Split(spliter);
             CausedCCType ccType = CausedCCType.Non;
             float xForce = 0f;
@@ -272,8 +273,8 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         public void OnGameEventItem(int type, int num, int action)
         {
             Item item;
-            Debug.LogWarning("Item event called");
-            Debug.Log("OnEventItem : " + type +", " + num + "," + action);
+            //Debug.LogWarning("Item event called");
+            //Debug.Log("OnEventItem : " + type +", " + num + "," + action);
             
             item = _levelManager.Items[num];
             if (action == 0)

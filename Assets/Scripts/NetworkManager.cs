@@ -17,9 +17,9 @@ public class NetworkManager : MonoBehaviour
     {
         void NetworkModule.OnGameMatchedListener.OnGameMatched(bool _result, int _room, string _message)
         {
-            Debug.LogWarning("OnSoloMatched Called");
+            //Debug.LogWarning("OnSoloMatched Called");
             NetworkModule.GetInstance().RequestGameInfo(_room);
-            Debug.LogWarning("RequestGameInfo");
+            //Debug.LogWarning("RequestGameInfo");
         }
     }
     private class OnGameInfo : NetworkModule.OnGameInfoListener
@@ -81,7 +81,6 @@ public class NetworkManager : MonoBehaviour
         public void OnGameEventScore(int blueKill, int blueDeath, int bluePoint, int redKill, int redDeath, int redPoint)
         {
             MSB_GameManager.Instance.ScoreUpdate(blueDeath,redDeath,bluePoint, redPoint);
-            Debug.Log("OnGameEventScore called");
             Debug.LogWarning("Event Score - blue : " + bluePoint + " red : " + redPoint);
 
         }

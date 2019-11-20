@@ -73,7 +73,7 @@ public class MSB_DamageOnTouch : DamageOnTouch
             Debug.Log("3");
             return;
         }
-        Debug.LogWarning("DamageOnTouch : " + collider.gameObject);
+        //Debug.LogWarning("DamageOnTouch : " + collider.gameObject);
         _colliderHealth = collider.gameObject.MMGetComponentNoAlloc<Health>();
         if (_colliderHealth != null)
         {
@@ -112,7 +112,7 @@ public class MSB_DamageOnTouch : DamageOnTouch
             _knockbackForce.y = DamageCausedKnockbackForce.y;
         }
 
-        if (_ownerMsbCharacter.IsRemote)
+        if (!_ownerMsbCharacter.IsRemote)
         {
             _targetNum = _colliderMsbCharacter.UserNum;
             _options = ((int) CCType).ToString() + "," + _knockbackForce.x.ToString() + "," + _knockbackForce.y.ToString() + "," + stunDuration.ToString();
