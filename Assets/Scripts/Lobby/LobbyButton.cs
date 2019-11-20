@@ -114,7 +114,7 @@ public class LobbyButton : MonoBehaviour
     public void gamePlayButton()
     {
         //deactiveLobbyUI();
-        Debug.Log(canvas.playLobby.transform.localPosition);
+        //Debug.Log(canvas.playLobby.transform.localPosition);
         playButton_transition();
 
         // Deactive Character

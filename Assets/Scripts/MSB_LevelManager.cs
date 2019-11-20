@@ -292,8 +292,8 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
             _targetHealth = target.gameObject.GetComponent<Health>();
             if (_targetHealth != null)
             {
+                Debug.LogWarning("Access target health .kill");
                 _targetHealth.Kill();
-                
             }
 
         }

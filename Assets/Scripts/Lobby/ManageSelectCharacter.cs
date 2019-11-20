@@ -37,7 +37,7 @@ public class ManageSelectCharacter : MonoBehaviour
     {
         if (skinID != canvas.skinID && GetComponent<Image>().sprite != greyCharacter)
         {
-            Debug.Log("yq");
+            //Debug.Log("yq");
             GetComponent<Image>().sprite = greyCharacter;
         }
     }
