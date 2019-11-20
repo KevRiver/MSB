@@ -887,9 +887,10 @@
           </e>
           <e p="Util" t="Include">
             <e p="EffectFloatingRotation.cs" t="Include" />
+            <e p="KillMessageHandler.cs" t="Include" />
             <e p="LoadSplash.cs" t="Include" />
             <e p="LoadSplashTips.cs" t="Include" />
-            <e p="MessageHandler.cs" t="Include" />
+            <e p="MedalMessageHandler.cs" t="Include" />
             <e p="ToastAlerter.cs" t="Include" />
           </e>
           <e p="VectorPad.cs" t="Include" />

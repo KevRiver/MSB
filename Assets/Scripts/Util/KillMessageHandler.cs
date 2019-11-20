@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using MSBNetwork;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MessageHandler : MonoBehaviour
+public class KillMessageHandler : MonoBehaviour
 {
     public GameObject messageBackground;
     public GameObject messageUserA;
@@ -14,6 +16,40 @@ public class MessageHandler : MonoBehaviour
 
     public Sprite swordHead;
     public Sprite shurikenHead;
+
+    private class OnGameStatus : NetworkModule.OnGameStatusListener
+    {
+        private KillMessageHandler _killMessageHandler;
+
+        public OnGameStatus(KillMessageHandler killMessageHandler)
+        {
+            this._killMessageHandler = killMessageHandler;
+        }
+        public void OnGameEventCount(int count)
+        {
+            
+        }
+
+        public void OnGameEventTime(int time)
+        {
+            
+        }
+
+        public void OnGameEventReady(string readyData)
+        {
+            
+        }
+
+        public void OnGameEventScore(int blueKill, int blueDeath, int bluePoint, int redKill, int redDeath, int redPoint)
+        {
+            
+        }
+
+        public void OnGameEventMessage(int type, string message)
+        {
+            if (type == 1) _killMessageHandler.DisplayKillMessage(type, message);
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -31,6 +67,8 @@ public class MessageHandler : MonoBehaviour
         messageUserB.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
         messageUserBImage.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
         messageText.GetComponent<Text>().color = new Color(1f, 1f, 1f, 0f);
+        
+        NetworkModule.GetInstance().AddOnEventGameStatus(new OnGameStatus(this));
     }
 
     // Update is called once per frame
@@ -39,14 +77,30 @@ public class MessageHandler : MonoBehaviour
         
     }
 
-    public void DisplayKillLog(MSB_Character killUser, MSB_Character deadUser)
+    public void DisplayKillMessage(int type, string message)
     {
-        string message = killUser.cUserData.userNick + ", " + deadUser.cUserData.userNick + " 처치!";
+        JObject killObject = JObject.Parse(message);
+        int killMakerIndex = killObject.GetValue("KillMaker").Value<int>();
+        int killTargetIndex = killObject.GetValue("KillTarget").Value<int>();
+        int killCount = killObject.GetValue("killCount").Value<int>();
+        int deathCount = killObject.GetValue("deathCount").Value<int>();
+        MSB_Character killUser = null;
+        MSB_Character deadUser = null;
+        if (!MSB_LevelManager.Instance._allPlayersCharacter.TryGetValue(killMakerIndex, out killUser))
+        {
+            Debug.LogWarning("***NO USER FOR KILLER INDEX " + killMakerIndex + "***");
+            return;
+        }
+        if (!MSB_LevelManager.Instance._allPlayersCharacter.TryGetValue(killTargetIndex, out deadUser))
+        {
+            Debug.LogWarning("***NO USER FOR TARGET INDEX " + killTargetIndex + "***");
+            return;
+        }
+        string displayMessage = killUser.cUserData.userNick + ", " + deadUser.cUserData.userNick + " 처치!";
         if (killUser.cUserData.userNumber == deadUser.cUserData.userNumber)
         {
-            message = deadUser.cUserData.userNick + " 낙사!";
+            displayMessage = deadUser.cUserData.userNick + " 낙사!";
         }
-        Debug.LogWarning("***DISPLAY KILL LOG***");
         messageBackground.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
         messageUserA.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.75f);
         messageUserB.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.75f);
@@ -67,7 +121,7 @@ public class MessageHandler : MonoBehaviour
             messageUserBImage.GetComponent<Image>().sprite = shurikenHead;
         }
         messageUserBImage.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
-        messageText.GetComponent<Text>().text = message;
+        messageText.GetComponent<Text>().text = displayMessage;
 
         StartCoroutine(fadeObject(false, messageBackground.GetComponent<Image>(), 1f, 1f));
         StartCoroutine(fadeObject(false, messageUserA.GetComponent<Image>(), 1f, 1f));
