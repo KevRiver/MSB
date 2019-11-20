@@ -858,6 +858,7 @@
           <e p="MSB_DamageOnTouch.cs" t="Include" />
           <e p="MSB_GameManager.cs" t="Include" />
           <e p="MSB_GUIManager.cs" t="Include" />
+          <e p="MSB_Health.cs" t="Include" />
           <e p="MSB_InputManager.cs" t="Include" />
           <e p="MSB_LevelManager.cs" t="Include" />
           <e p="MSB_Projectile.cs" t="Include" />

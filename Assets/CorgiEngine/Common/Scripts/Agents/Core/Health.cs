@@ -466,7 +466,7 @@ namespace MoreMountains.CorgiEngine
 				_healthBar.UpdateBar(CurrentHealth, 0f, MaximumHealth, show);
 	    	}
 
-	    	if (_character != null)
+	    	/*if (_character != null)
 	    	{
 	    		if (_character.CharacterType == Character.CharacterTypes.Player)
 	    		{
@@ -476,7 +476,7 @@ namespace MoreMountains.CorgiEngine
 						GUIManager.Instance.UpdateHealthBar(CurrentHealth, 0f, MaximumHealth, _character.PlayerID);
 					}
 	    		}
-	    	}
+	    	}*/
 	    }
 
 	    /// <summary>

@@ -246,7 +246,7 @@ namespace MoreMountains.Tools
 			UpdateDrawnColors();
             
 			if (AlwaysVisible)	
-			{ 
+			{
 				return; 
 			}
 

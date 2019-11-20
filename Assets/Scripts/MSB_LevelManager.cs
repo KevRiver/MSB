@@ -291,8 +291,9 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
                 Debug.LogError("Killed Character doesnt exist");
                 return;
             }
-
+            Debug.LogWarning(target.cUserData.userNick+" is dead");
             _targetHealth = target.gameObject.GetComponent<Health>();
+            //target.gameObject.SetActive(false);
             if (_targetHealth != null)
             {
                 Debug.LogWarning("Access target health .kill");
