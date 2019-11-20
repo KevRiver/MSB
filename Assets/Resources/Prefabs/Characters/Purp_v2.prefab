@@ -581,9 +581,9 @@ MonoBehaviour:
   InstantiatedOnDeath: {fileID: 0}
   HealthBarOffset: {x: 0, y: 1.25, z: 0}
   AlwaysVisible: 1
-  DisplayDurationOnHit: 1
+  DisplayDurationOnHit: 0.5
   HideBarAtZero: 1
-  HideBarAtZeroDelay: 1
+  HideBarAtZeroDelay: 0
 --- !u!114 &5790925200833189212
 MonoBehaviour:
   m_ObjectHideFlags: 0

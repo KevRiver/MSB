@@ -1,4 +1,4 @@
-﻿#define NOUNITY // COMMENT IF UNITY
+﻿//#define NOUNITY // COMMENT IF UNITY
 #define SYNCUDP // COMMENT IF TCP ONLY
 using System;
 using System.Collections.Generic;
@@ -1230,7 +1230,7 @@ namespace MSBNetwork
                     }
                 }
             }
-            catch (DivideByZeroException e)
+            catch (Exception e)
             {
 #if (!NOUNITY)
                 Debug.LogError("OnEventGameEventItem ERROR");
@@ -1245,6 +1245,19 @@ namespace MSBNetwork
 
         private static bool OnEventGameEventKill(HostID remote, RmiContext rmiContext, string _data)
         {
+            /*Debug.Log("OnEventGameEventKill");
+            JObject data = JObject.Parse(_data);
+            int from = data.GetValue("from").Value<int>();
+            int to = data.GetValue("to").Value<int>();
+            string option = data.GetValue("option").ToString();
+            if (onGameEventListeners != null && onGameEventListeners.Count > 0)
+            {
+                foreach (OnGameEventListener listener in onGameEventListeners)
+                {
+                    listener?.OnGameEventKill(@from, to, option);
+                }
+            }*/
+            
             try
             {
 #if (!NOUNITY)
