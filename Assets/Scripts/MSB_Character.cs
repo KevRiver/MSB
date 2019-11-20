@@ -11,6 +11,8 @@ public class MSB_Character : Character,MMEventListener<MMGameEvent>
 {
     [FormerlySerializedAs("c_userData")] [Header("MSB Custom")]
     public ClientUserData cUserData;
+
+    public int SpawnerIndex;
     public int bushID = 0;
 
     public int RoomNum { get; set; }

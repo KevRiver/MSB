@@ -1,4 +1,4 @@
-﻿#define NOUNITY // COMMENT IF UNITY
+﻿//#define NOUNITY // COMMENT IF UNITY
 #define SYNCUDP // COMMENT IF TCP ONLY
 using System;
 using System.Collections.Generic;
@@ -908,7 +908,7 @@ namespace MSBNetwork
                 int result = data.GetValue("result").Value<int>();
                 int room = data.GetValue("room").Value<int>();
                 int mode = data.GetValue("mode").Value<int>();
-                JArray dataUsersRaw = data.GetValue("users").Value<JArray>();
+                JArray dataUsersRaw = JArray.Parse(data.GetValue("users").ToString());
                 LinkedList<UserData> dataUsers = new LinkedList<UserData>();
                 foreach (var jToken in dataUsersRaw)
                 {
@@ -1017,13 +1017,11 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameStatusReady");
 #endif
-                JObject data = JObject.Parse(_data);
-                string readyData = data.GetValue("readyData").ToString();
                 if (onGameStatusListeners != null && onGameStatusListeners.Count > 0)
                 {
                     foreach (OnGameStatusListener listener in onGameStatusListeners)
                     {
-                        listener?.OnGameEventReady(readyData);
+                        listener?.OnGameEventReady(_data);
                     }
                 }
             }
@@ -1232,11 +1230,11 @@ namespace MSBNetwork
                     }
                 }
             }
-            catch (Exception e)
+            catch (DivideByZeroException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("OnEventGameEventItem ERROR");
-                Debug.LogError(e);
+                Debug.LogError(e.StackTrace);
 #else
                 Debug.WriteLine("OnEventGameEventItem ERROR");
                 Debug.WriteLine(e);

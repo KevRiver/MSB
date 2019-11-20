@@ -37,7 +37,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
     private MSB_Character TargetPlayer;
     public List<MSB_SpawnPoint> Spawnpoints { get; protected set; }
     public List<Item> Items { get; protected set; }
-    private Dictionary<int, MSB_Character> _allPlayersCharacter;
+    public Dictionary<int, MSB_Character> _allPlayersCharacter;
     protected DateTime _started;
     private GameInfo gameInfo;
 
@@ -133,11 +133,15 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
 
     protected virtual void SpawnPlayers()
     {
-        var index = 0;
+        int index = 0;
+        int mid = Spawnpoints.Count - 1;
+        MSB_GameManager.Team team = MSB_GameManager.Team.Blue;
         foreach (var character in Players)
         {
-            character.team = (MSB_GameManager.Team) index;
+            character.team = team;
+            character.SpawnerIndex = index;
             Spawnpoints[index].SpawnPlayer(character);
+            team = (index < mid) ? MSB_GameManager.Team.Blue : MSB_GameManager.Team.Red;
             index++;
         }
     }
@@ -175,9 +179,20 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         // Find Spawnpoints which in level and sort by its index (ascending)
         Spawnpoints = FindObjectsOfType<MSB_SpawnPoint>().OrderBy(o=>o.SpawnerIndex).ToList();
         Items = FindObjectsOfType<Item>().OrderBy(o => o.ItemIndex).ToList();
+        Debug.LogWarning(Items);
     }
 
-    
+    public void RespawnPlayer(int userNum)
+    {
+        _allPlayersCharacter.TryGetValue(userNum, out MSB_Character target);
+        if (target != null)
+        {
+            if(!target.gameObject.activeInHierarchy)
+                target.gameObject.SetActive(true);
+            Spawnpoints[target.SpawnerIndex].SpawnPlayer(target);
+        }
+    }
+
     private class OnGameEvent : NetworkModule.OnGameEventListener
     {
         private MSB_LevelManager _levelManager;
@@ -266,6 +281,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
 
         public void OnGameEventKill(int from, int to, string option)
         {
+            Debug.LogWarning(to + " slained by" + from);
             _levelManager._allPlayersCharacter.TryGetValue(to, out MSB_Character target);
             if (target == null)
             {
@@ -273,9 +289,13 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
                 return;
             }
 
-            _targetHealth = target.GetComponent<Health>();
-            _targetHealth.Kill();
-            //MMGameEvent.Trigger("GameOver");
+            _targetHealth = target.gameObject.GetComponent<Health>();
+            if (_targetHealth != null)
+            {
+                _targetHealth.Kill();
+                
+            }
+
         }
 
         public void OnGameEventObject(int num, int health)
@@ -285,6 +305,8 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
 
         public void OnGameEventRespawn(int num, int time)
         {
+            if(time == 0)
+                _levelManager.RespawnPlayer(num);
         }
     }
 

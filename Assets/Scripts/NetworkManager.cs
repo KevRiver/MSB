@@ -6,6 +6,7 @@ using MoreMountains.Tools;
 using UnityEngine.SceneManagement;
 using MSBNetwork;
 using System.Linq;
+using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -18,6 +19,7 @@ public class NetworkManager : MonoBehaviour
         {
             Debug.LogWarning("OnSoloMatched Called");
             NetworkModule.GetInstance().RequestGameInfo(_room);
+            Debug.LogWarning("RequestGameInfo");
         }
     }
     private class OnGameInfo : NetworkModule.OnGameInfoListener
@@ -62,31 +64,18 @@ public class NetworkManager : MonoBehaviour
         public void OnGameEventMessage(int type, string message)
         {
         }
-
-        private int playerCount;
-        public int expectedPlayers = 2;
-        private bool PlayerReady;
-        private int userNum;
+        
         public void OnGameEventReady(string readyData)
         {
-            JArray jArray = JArray.Parse(readyData);
-            playerCount = 0;
-            userNum = 0;
+            /*JArray jArray = JArray.Parse(readyData);
             foreach (var jObject in jArray)
             {
                 Debug.Log((JObject) jObject);
-                PlayerReady = (bool)((JObject)jObject).GetValue((++userNum).ToString());
-                if(!PlayerReady)
-                    continue;
-                playerCount++;
-            }
-
-            if (playerCount < expectedPlayers)
-                Debug.LogWarning("Waiting another player loading");
-            else if (playerCount > expectedPlayers)
-                Debug.LogWarning("More Player Loaded than expected");
-            else
-                Debug.LogWarning("All Players Ready");
+                foreach (JProperty prop in jObject)
+                {
+                    //Debug.LogWarning(prop.Name + " : " + prop.Value<bool>());
+                }
+            }*/
         }
 
         public void OnGameEventScore(int blueKill, int blueDeath, int bluePoint, int redKill, int redDeath, int redPoint)
@@ -94,10 +83,7 @@ public class NetworkManager : MonoBehaviour
             MSB_GameManager.Instance.ScoreUpdate(blueDeath,redDeath,bluePoint, redPoint);
             Debug.Log("OnGameEventScore called");
             Debug.LogWarning("Event Score - blue : " + bluePoint + " red : " + redPoint);
-            
-            if(blueDeath > 0 || redDeath > 0)
-                MMGameEvent.Trigger("GameOver");
-            
+
         }
         public void OnGameEventTime(int time)
         {
