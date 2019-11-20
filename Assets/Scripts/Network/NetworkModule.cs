@@ -289,7 +289,8 @@ namespace MSBNetwork
 
         public static NetworkModule GetInstance()
         {
-            return INSTANCE ??= new NetworkModule();
+            if (INSTANCE == null) INSTANCE = new NetworkModule();
+            return INSTANCE;
         }
 
         private const string DEFAULT_SERVER_IP = "127.0.0.1";
@@ -1407,7 +1408,7 @@ namespace MSBNetwork
         /// 해당 OnServerConnectListener 를 유일한 콜백으로 등록합니다
         /// </summary>
         /// <param name="_listener">OnServerConnectListener implemented class</param>
-        public static void SetOnEventServerConnect(OnServerConnectListener _listener)
+        public void SetOnEventServerConnect(OnServerConnectListener _listener)
         {
             onServerConnectListeners.Clear();
             AddOnEventServerConnect(_listener);
@@ -1417,7 +1418,7 @@ namespace MSBNetwork
         /// 해당 OnServerConnectListener 를 콜백 목록에 등록합니다
         /// </summary>
         /// <param name="_listener">OnServerConnectListener implemented class</param>
-        public static void AddOnEventServerConnect(OnServerConnectListener _listener)
+        public void AddOnEventServerConnect(OnServerConnectListener _listener)
         {
             onServerConnectListeners.Add(_listener);
         }
@@ -1426,7 +1427,7 @@ namespace MSBNetwork
         /// 해당 OnLoginResultListener 를 유일한 콜백으로 등록합니다
         /// </summary>
         /// <param name="_listener">OnLoginResultListener implemented class</param>
-        public static void SetOnEventUserLogin(OnLoginResultListener _listener)
+        public void SetOnEventUserLogin(OnLoginResultListener _listener)
         {
             onLoginResultListeners.Clear();
             AddOnEventUserLogin(_listener);
@@ -1436,7 +1437,7 @@ namespace MSBNetwork
         /// 해당 OnLoginResultListener 를 콜백 목록에 등록합니다
         /// </summary>
         /// <param name="_listener">OnLoginResultListener implemented class</param>
-        public static void AddOnEventUserLogin(OnLoginResultListener _listener)
+        public void AddOnEventUserLogin(OnLoginResultListener _listener)
         {
             onLoginResultListeners.Add(_listener);
         }
@@ -1445,7 +1446,7 @@ namespace MSBNetwork
         /// 해당 OnStatusResultListener 를 유일한 콜백으로 등록합니다
         /// </summary>
         /// <param name="_listener">OnStatusResultListener implemented class</param>
-        public static void SetOnEventUserStatus(OnStatusResultListener _listener)
+        public void SetOnEventUserStatus(OnStatusResultListener _listener)
         {
             onStatusResultListeners.Clear();
             AddOnEventUserStatus(_listener);
@@ -1455,7 +1456,7 @@ namespace MSBNetwork
         /// 해당 OnStatusResultListener 를 콜백 목록에 등록합니다
         /// </summary>
         /// <param name="_listener">OnStatusResultListener implemented class</param>
-        public static void AddOnEventUserStatus(OnStatusResultListener _listener)
+        public void AddOnEventUserStatus(OnStatusResultListener _listener)
         {
             onStatusResultListeners.Add(_listener);
         }
@@ -1464,7 +1465,7 @@ namespace MSBNetwork
         /// 해당 OnSystemResultListener 를 유일한 콜백으로 등록합니다
         /// </summary>
         /// <param name="_listener">OnSystemResultListener implemented class</param>
-        public static void SetOnEventSystem(OnSystemResultListener _listener)
+        public void SetOnEventSystem(OnSystemResultListener _listener)
         {
             onSystemResultListeners.Clear();
             AddOnEventSystem(_listener);
@@ -1474,7 +1475,7 @@ namespace MSBNetwork
         /// 해당 OnSystemResultListener 를 콜백 목록에 등록합니다
         /// </summary>
         /// <param name="_listener">OnSystemResultListener implemented class</param>
-        public static void AddOnEventSystem(OnSystemResultListener _listener)
+        public void AddOnEventSystem(OnSystemResultListener _listener)
         {
             onSystemResultListeners.Add(_listener);
         }
@@ -1483,7 +1484,7 @@ namespace MSBNetwork
         /// 해당 OnGameMatchedListener 를 유일한 콜백으로 등록합니다
         /// </summary>
         /// <param name="_listener">OnGameMatchedListener implemented class</param>
-        public static void SetOnEventGameQueue(OnGameMatchedListener _listener)
+        public void SetOnEventGameQueue(OnGameMatchedListener _listener)
         {
             onGameMatchedListeners.Clear();
             AddOnEventGameQueue(_listener);
@@ -1493,7 +1494,7 @@ namespace MSBNetwork
         /// 해당 OnGameMatchedListener 를 콜백 목록에 등록합니다
         /// </summary>
         /// <param name="_listener">OnGameMatchedListener implemented class</param>
-        public static void AddOnEventGameQueue(OnGameMatchedListener _listener)
+        public void AddOnEventGameQueue(OnGameMatchedListener _listener)
         {
             onGameMatchedListeners.Add(_listener);
         }
@@ -1502,7 +1503,7 @@ namespace MSBNetwork
         /// 해당 OnGameUserMoveListener 를 유일한 콜백으로 등록합니다
         /// </summary>
         /// <param name="_listener">OnGameUserMoveListener implemented class</param>
-        public static void SetOnEventGameUserMove(OnGameUserMoveListener _listener)
+        public void SetOnEventGameUserMove(OnGameUserMoveListener _listener)
         {
             onGameUserMoveListeners.Clear();
             AddOnEventGameUserMove(_listener);
@@ -1512,7 +1513,7 @@ namespace MSBNetwork
         /// 해당 OnGameUserMoveListener 를 콜백 목록에 등록합니다
         /// </summary>
         /// <param name="_listener">OnGameUserMoveListener implemented class</param>
-        public static void AddOnEventGameUserMove(OnGameUserMoveListener _listener)
+        public void AddOnEventGameUserMove(OnGameUserMoveListener _listener)
         {
             onGameUserMoveListeners.Add(_listener);
         }
@@ -1521,7 +1522,7 @@ namespace MSBNetwork
         /// 해당 OnGameUserSyncListener 를 유일한 콜백으로 등록합니다
         /// </summary>
         /// <param name="_listener">OnGameUserSyncListener implemented class</param>
-        public static void SetOnEventGameUserSync(OnGameUserSyncListener _listener)
+        public void SetOnEventGameUserSync(OnGameUserSyncListener _listener)
         {
             onGameUserSyncListeners.Clear();
             AddOnEventGameUserSync(_listener);
@@ -1531,7 +1532,7 @@ namespace MSBNetwork
         /// 해당 OnGameUserSyncListener 를 콜백 목록에 등록합니다
         /// </summary>
         /// <param name="_listener">OnGameUserSyncListener implemented class</param>
-        public static void AddOnEventGameUserSync(OnGameUserSyncListener _listener)
+        public void AddOnEventGameUserSync(OnGameUserSyncListener _listener)
         {
             onGameUserSyncListeners.Add(_listener);
         }
@@ -1540,7 +1541,7 @@ namespace MSBNetwork
         /// 해당 OnGameInfoListener 를 유일한 콜백으로 등록합니다
         /// </summary>
         /// <param name="_listener">OnGameInfoListener implemented class</param>
-        public static void SetOnEventGameInfo(OnGameInfoListener _listener)
+        public void SetOnEventGameInfo(OnGameInfoListener _listener)
         {
             onGameInfoListeners.Clear();
             AddOnEventGameInfo(_listener);
@@ -1550,7 +1551,7 @@ namespace MSBNetwork
         /// 해당 OnGameInfoListener 를 콜백 목록에 등록합니다
         /// </summary>
         /// <param name="_listener">OnGameInfoListener implemented class</param>
-        public static void AddOnEventGameInfo(OnGameInfoListener _listener)
+        public void AddOnEventGameInfo(OnGameInfoListener _listener)
         {
             onGameInfoListeners.Add(_listener);
         }
@@ -1559,7 +1560,7 @@ namespace MSBNetwork
         /// 해당 OnGameStatusListener 를 유일한 콜백으로 등록합니다
         /// </summary>
         /// <param name="_listener">OnGameStatusListener implemented class</param>
-        public static void SetOnEventGameStatus(OnGameStatusListener _listener)
+        public void SetOnEventGameStatus(OnGameStatusListener _listener)
         {
             onGameStatusListeners.Clear();
             AddOnEventGameStatus(_listener);
@@ -1569,7 +1570,7 @@ namespace MSBNetwork
         /// 해당 OnGameStatusListener 를 콜백 목록에 등록합니다
         /// </summary>
         /// <param name="_listener">OnGameStatusListener implemented class</param>
-        public static void AddOnEventGameStatus(OnGameStatusListener _listener)
+        public void AddOnEventGameStatus(OnGameStatusListener _listener)
         {
             onGameStatusListeners.Add(_listener);
         }
@@ -1578,7 +1579,7 @@ namespace MSBNetwork
         /// 해당 OnGameEventListener 를 유일한 콜백으로 등록합니다
         /// </summary>
         /// <param name="_listener">OnGameUserActionListener implemented class</param>
-        public static void SetOnEventGameEvent(OnGameEventListener _listener)
+        public void SetOnEventGameEvent(OnGameEventListener _listener)
         {
             onGameEventListeners.Clear();
             AddOnEventGameEvent(_listener);
@@ -1588,7 +1589,7 @@ namespace MSBNetwork
         /// 해당 OnGameEventListener 를 콜백 목록에 등록합니다
         /// </summary>
         /// <param name="_listener">OnGameEventListener implemented class</param>
-        public static void AddOnEventGameEvent(OnGameEventListener _listener)
+        public void AddOnEventGameEvent(OnGameEventListener _listener)
         {
             onGameEventListeners.Add(_listener);
         }
@@ -1597,7 +1598,7 @@ namespace MSBNetwork
         /// 해당 OnGameResultListener 를 유일한 콜백으로 등록합니다
         /// </summary>
         /// <param name="_listener">OnGameResultListener implemented class</param>
-        public static void SetOnEventGameResult(OnGameResultListener _listener)
+        public void SetOnEventGameResult(OnGameResultListener _listener)
         {
             onGameResultListeners.Clear();
             AddOnEventGameResult(_listener);
@@ -1607,7 +1608,7 @@ namespace MSBNetwork
         /// 해당 OnGameResultListener 를 콜백 목록에 등록합니다
         /// </summary>
         /// <param name="_listener">OnGameResultListener implemented class</param>
-        public static void AddOnEventGameResult(OnGameResultListener _listener)
+        public void AddOnEventGameResult(OnGameResultListener _listener)
         {
             onGameResultListeners.Add(_listener);
         }

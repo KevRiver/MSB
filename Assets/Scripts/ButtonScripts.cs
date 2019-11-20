@@ -22,7 +22,7 @@ public class ButtonScripts : MonoBehaviour
 
     public void RequestSoloMatch()
     {
-        networkModule.RequestSoloQueue(localUser.localUserData.userWeapon, localUser.localUserData.userSkin);
+        networkModule.RequestGameQueue(localUser.localUserData.userWeapon, localUser.localUserData.userSkin);
         //Debug.Log("Request Solo Queue");
     }
 }

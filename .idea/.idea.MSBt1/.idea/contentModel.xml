@@ -833,6 +833,9 @@
         </e>
         <e p="Scripts" t="Include">
           <e p="ButtonScripts.cs" t="Include" />
+          <e p="Catcher" t="Include">
+            <e p="Catcher.cs" t="Include" />
+          </e>
           <e p="CharacterGenerator.cs" t="Include" />
           <e p="CharacterSpin.cs" t="Include" />
           <e p="ClientUserData.cs" t="Include" />
@@ -860,9 +863,6 @@
           <e p="MSB_Projectile.cs" t="Include" />
           <e p="MSB_SpawnPoint.cs" t="Include" />
           <e p="Network" t="Include">
-            <e p="MSBC2C_common.cs" t="Include" />
-            <e p="MSBC2C_proxy.cs" t="Include" />
-            <e p="MSBC2C_stub.cs" t="Include" />
             <e p="MSBC2S_common.cs" t="Include" />
             <e p="MSBC2S_proxy.cs" t="Include" />
             <e p="MSBC2S_stub.cs" t="Include" />

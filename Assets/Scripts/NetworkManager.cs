@@ -12,9 +12,9 @@ using Newtonsoft.Json.Linq;
 public class NetworkManager : MonoBehaviour
 {
     NetworkModule _networkManager;
-    private class OnSoloMatched : NetworkModule.OnSoloMatchedListener
+    private class OnSoloMatched : NetworkModule.OnGameMatchedListener
     {
-        void NetworkModule.OnSoloMatchedListener.OnSoloMatched(bool _result, int _room, string _message)
+        void NetworkModule.OnGameMatchedListener.OnGameMatched(bool _result, int _room, string _message)
         {
             Debug.LogWarning("OnSoloMatched Called");
             NetworkModule.GetInstance().RequestGameInfo(_room);
@@ -161,7 +161,7 @@ public class NetworkManager : MonoBehaviour
         _networkManager = NetworkModule.GetInstance();        
         _networkManager.Connect("203.250.148.113",9993);
         
-        _networkManager.AddOnEventSoloQueue(new OnSoloMatched());
+        _networkManager.AddOnEventGameQueue(new OnSoloMatched());
         _networkManager.AddOnEventGameInfo(new OnGameInfo());
         _networkManager.AddOnEventGameStatus(new OnGameStatus());
         //networkManager.AddOnEventGameUserMove(new OnGameUserMove());

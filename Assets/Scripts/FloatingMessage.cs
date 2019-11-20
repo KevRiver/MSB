@@ -136,14 +136,11 @@ public class FloatingMessage : MMPoolableObject
 
     private void UpdateAnimator()
     {
-        MMAnimatorExtensions.UpdateAnimatorBool(_animator, _idleParam, (_messageState.CurrentState == FloatingMessageState.State.Idle), _animationParams);
-        MMAnimatorExtensions.UpdateAnimatorBool(_animator, _startParam, (_messageState.CurrentState == FloatingMessageState.State.Start), _animationParams);
-        MMAnimatorExtensions.UpdateAnimatorBool(_animator, _destroyParam, (_messageState.CurrentState == FloatingMessageState.State.Destroy), _animationParams);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        MMAnimatorExtensions.UpdateAnimatorBool(_animator, _idleParam,
+            (_messageState.CurrentState == FloatingMessageState.State.Idle), _animationParams);
+        MMAnimatorExtensions.UpdateAnimatorBool(_animator, _startParam,
+            (_messageState.CurrentState == FloatingMessageState.State.Start), _animationParams);
+        MMAnimatorExtensions.UpdateAnimatorBool(_animator, _destroyParam,
+            (_messageState.CurrentState == FloatingMessageState.State.Destroy), _animationParams);
     }
 }

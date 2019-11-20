@@ -62,7 +62,7 @@ public class LobbyButton : MonoBehaviour
         LocalUser.Instance.SetWeaponID(weaponID);
         LocalUser.Instance.SetSkinID(skinID);
 
-        NetworkModule.GetInstance().RequestSoloQueue(weaponID, skinID);
+        NetworkModule.GetInstance().RequestGameQueue(weaponID, skinID);
     }
 
     // 큐 버튼에 케릭터 정보 전달 
