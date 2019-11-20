@@ -26,7 +26,7 @@ public class NetworkManager : MonoBehaviour
     {
         void NetworkModule.OnGameInfoListener.OnGameInfo(bool _result, int _room, int _mode, LinkedList<UserData> _users, string _message)
         {
-            Debug.LogWarning("OnGameInfo Called");
+            //Debug.LogWarning("OnGameInfo Called");
 
             //UnityMainThreadDispatcher.Instance().Enqueue(LoadPlayScene(_room, _users));
             UnityMainThreadDispatcher.Instance().Enqueue(LoadScene(_mode, _room, _users));

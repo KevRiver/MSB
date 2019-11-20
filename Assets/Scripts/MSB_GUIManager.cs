@@ -108,7 +108,7 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>
     }
     private void Initialization()
     {
-        Debug.LogWarning("GUIManager  Init");
+        //Debug.LogWarning("GUIManager  Init");
         BlueScore.text = "0";
         RedScore.text = "0";
         _min = initialTime / 60;

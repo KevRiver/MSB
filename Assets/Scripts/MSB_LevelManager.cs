@@ -187,8 +187,11 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         _allPlayersCharacter.TryGetValue(userNum, out MSB_Character target);
         if (target != null)
         {
-            if(!target.gameObject.activeInHierarchy)
+            if (!target.gameObject.activeInHierarchy)
+            {
                 target.gameObject.SetActive(true);
+                target.GetComponent<MMHealthBar>().Initialization();
+            }
             Spawnpoints[target.SpawnerIndex].SpawnPlayer(target);
         }
     }
@@ -294,6 +297,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
             {
                 Debug.LogWarning("Access target health .kill");
                 _targetHealth.Kill();
+                target.gameObject.SetActive(false);
             }
 
         }
