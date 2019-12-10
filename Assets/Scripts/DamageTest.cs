@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.CorgiEngine;
@@ -6,11 +7,20 @@ using MoreMountains.CorgiEngine;
 public class DamageTest : MonoBehaviour
 {
     public MSB_Character[] players;
+    public int playerIndex;
 
     // Start is called before the first frame update
     void Start()
     {
         players = FindObjectsOfType<MSB_Character>();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            DoDamage(playerIndex);
+        }
     }
 
     public void DoDamage(int playerIndex)

@@ -26,7 +26,7 @@ public class ETFXButtonScript : MonoBehaviour
 	{
 		effectScript = GameObject.Find("ETFXFireProjectile").GetComponent<ETFXFireProjectile>();
 		getProjectileNames();
-		MyButtonText = Button.transform.FindChild("Text").GetComponent<Text>();
+		MyButtonText = Button.transform.Find("Text").GetComponent<Text>();
 		MyButtonText.text = projectileParticleName;
 	}
 

@@ -521,6 +521,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public virtual void KillPlayer(Character player)
 		{
+			Debug.LogWarning(" KillPlayer Called");
 			Health characterHealth = player.GetComponent<Health>();
 			if (characterHealth == null)
 			{

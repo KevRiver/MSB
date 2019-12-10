@@ -115,7 +115,6 @@ GameObject:
   - component: {fileID: 7934045980493314565}
   - component: {fileID: 1544106584760390544}
   - component: {fileID: 8409312927696426065}
-  - component: {fileID: 1869024149464171532}
   m_Layer: 0
   m_Name: LaserSword
   m_TagString: Untagged
@@ -177,12 +176,12 @@ SpriteRenderer:
   m_SortingLayerID: -782553589
   m_SortingLayer: 5
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: e98fdd414885c654193e0746bd1834f7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 9b8ce2b8a8e380940b004fdecc9c6f18, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.31, y: 1}
+  m_Size: {x: 0.62, y: 0.95}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -277,37 +276,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &1869024149464171532
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4420694713212194960}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d0e230e81a2f3148b6986fcb2c57e81, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  size: 5
-  blurSize: 0
-  color: {r: 1, g: 1, b: 1, a: 1}
-  blurAlphaMultiplier: 0.7
-  blurAlphaChoke: 1
-  invertBlur: 0
-  alphaThreshold: 0.05
-  buffer: 0
-  includeChildren: 0
-  childLayers:
-    serializedVersion: 2
-    m_Bits: 1
-  ignoreChildNames: []
-  sortMethod: 1
-  isAnimated: 1
-  useExportedFrame: 0
-  customFrameName: 
-  generatesOnStart: 1
-  generatesOnValidate: 1
 --- !u!1 &5396967349397471974
 GameObject:
   m_ObjectHideFlags: 0

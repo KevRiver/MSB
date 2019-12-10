@@ -254,18 +254,22 @@ namespace MoreMountains.CorgiEngine
 			// if health has reached zero
 			if (CurrentHealth <= 0)
 			{
+				Debug.LogWarning("CurrentHealth  <= 0");
 				// we set its health to zero (useful for the healthbar)
 				CurrentHealth = 0;
 				if (_character != null)
 				{
+					Debug.LogWarning("Character != null");
 					if (_character.CharacterType == Character.CharacterTypes.Player)
 					{
 						LevelManager.Instance.KillPlayer(_character);
+						
 						return;
 					}
 				}
-
+				
 				Kill();
+				Debug.LogWarning(" Kill Called");
 			}
 		}
 
@@ -284,6 +288,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public virtual void Kill()
 		{
+			Debug.LogWarning("Health.Kill Called");
 			// we make our handheld device vibrate
 			if (VibrateOnDeath)
 			{
@@ -294,8 +299,8 @@ namespace MoreMountains.CorgiEngine
 
 			// we prevent further damage
 			DamageDisabled();
-
-            // instantiates the destroy effect
+			Debug.LogWarning("1");
+			// instantiates the destroy effect
             DeathFeedbacks?.PlayFeedbacks();
 
             // Adds points if needed.
@@ -305,16 +310,18 @@ namespace MoreMountains.CorgiEngine
 				CorgiEnginePointsEvent.Trigger(PointsMethods.Add, PointsWhenDestroyed);
 			}
 
+            Debug.LogWarning("2");
 			if (_animator != null)
 			{
 				_animator.SetTrigger ("Death");
             }
 
+			Debug.LogWarning("3");
             if (OnDeath != null)
             {
                 OnDeath();
             }
-
+            Debug.LogWarning("4");
             // if we have a controller, removes collisions, restores parameters for a potential respawn, and applies a death force
             if (_controller != null)
 			{
@@ -344,7 +351,7 @@ namespace MoreMountains.CorgiEngine
 					_controller.SetForce(DeathForce);		
 				}
 			}
-
+            Debug.LogWarning("5");
 
 			// if we have a character, we want to change its state
 			if (_character != null)
@@ -356,9 +363,11 @@ namespace MoreMountains.CorgiEngine
 				// if this is a player, we quit here
 				if (_character.CharacterType == Character.CharacterTypes.Player)
 				{
+					//_character.gameObject.SetActive(false);
 					return;
 				}
 			}
+			Debug.LogWarning("6");
 
 			if (DelayBeforeDestruction > 0f)
 			{
@@ -418,6 +427,7 @@ namespace MoreMountains.CorgiEngine
 	    /// </summary>
 	    protected virtual void DestroyObject()
 		{
+			Debug.LogWarning("DestoryObject Called");
 			if (!DestroyOnDeath)
 			{
 				return;
@@ -425,6 +435,7 @@ namespace MoreMountains.CorgiEngine
 			
 			if (_autoRespawn == null)
 			{
+				Debug.LogWarning("Character SetActive false");
 				// object is turned inactive to be able to reinstate it at respawn
 				gameObject.SetActive(false);	
 			}

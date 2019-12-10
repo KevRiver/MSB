@@ -31,8 +31,6 @@ public class CharacterSpin : CharacterAbility
         {
             _rotAngle.z = Time.deltaTime * spinSpeed * speedMultiplier;
             characterModel.transform.Rotate(_rotAngle);
-            //transform.Rotate(_rotAngle);
-            //transform.eulerAngles += new Vector3(0, 0, Time.deltaTime * spinSpeed * speedMultiplier);
         }
     }
 

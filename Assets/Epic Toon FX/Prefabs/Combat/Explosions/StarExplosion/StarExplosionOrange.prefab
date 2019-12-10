@@ -4786,6 +4786,7 @@ GameObject:
   - component: {fileID: 417562}
   - component: {fileID: 19824602}
   - component: {fileID: 19975696}
+  - component: {fileID: -512966899269480692}
   m_Layer: 0
   m_Name: StarExplosionOrange
   m_TagString: Untagged
@@ -5078,7 +5079,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startSizeY:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 1
       minScalar: 1
       maxCurve:
@@ -5131,7 +5132,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startSizeZ:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 1
       minScalar: 1
       maxCurve:
@@ -5184,7 +5185,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotationX:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 1
       minScalar: 0
       maxCurve:
@@ -5237,7 +5238,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotationY:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 1
       minScalar: 0
       maxCurve:
@@ -9544,6 +9545,20 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &-512966899269480692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 113576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f13474093d5e96142b32136ddb5a8a14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DestroyParent: 0
+  DestroyDelay: 1
 --- !u!1 &138596
 GameObject:
   m_ObjectHideFlags: 0

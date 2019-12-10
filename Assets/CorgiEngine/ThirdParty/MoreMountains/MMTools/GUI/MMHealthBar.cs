@@ -131,6 +131,7 @@ namespace MoreMountains.Tools
             _character = gameObject.MMGetComponentNoAlloc<MSB_Character>();
             if (_character != null)
 	            _isRemote = _character.IsRemote;
+            
             if (HealthBarType == HealthBarTypes.Drawn)
             {
 	            if (_isRemote)

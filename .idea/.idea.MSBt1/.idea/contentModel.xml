@@ -828,6 +828,43 @@
             </e>
           </e>
         </e>
+        <e p="Epic Toon FX" t="Include">
+          <e p="Demo" t="Include">
+            <e p="ParticleEffectsShowcase" t="Include">
+              <e p="Scripts" t="Include">
+                <e p="ParticleEffectsLibrary.cs" t="Include" />
+                <e p="PEButtonScript.cs" t="Include" />
+                <e p="PEDestoryTimed.cs" t="Include" />
+                <e p="UICanvasManager.cs" t="Include" />
+              </e>
+            </e>
+            <e p="Scripts" t="Include">
+              <e p="ETFXButtonScript.cs" t="Include" />
+              <e p="ETFXFireProjectile.cs" t="Include" />
+              <e p="ETFXLoopScript.cs" t="Include" />
+              <e p="ETFXMouseOrbit.cs" t="Include" />
+              <e p="ETFXProjectileScript.cs" t="Include" />
+              <e p="ETFXSceneManager.cs" t="Include" />
+            </e>
+          </e>
+          <e p="ETFX Readme.txt" t="Include" />
+          <e p="Prefabs" t="Include">
+            <e p="Combat" t="Include">
+              <e p="Combat FX.txt" t="Include" />
+            </e>
+            <e p="Environment" t="Include">
+              <e p="Environment FX.txt" t="Include" />
+            </e>
+            <e p="Interactive" t="Include">
+              <e p="Interactive FX.txt" t="Include" />
+            </e>
+          </e>
+          <e p="Scripts" t="Include">
+            <e p="ETFXLightFade.cs" t="Include" />
+            <e p="ETFXPitchRandomizer.cs" t="Include" />
+            <e p="ETFXRotation.cs" t="Include" />
+          </e>
+        </e>
         <e p="JsonDotNet" t="Include">
           <e p="link.xml" t="Include" />
         </e>
@@ -836,6 +873,7 @@
           <e p="Catcher" t="Include">
             <e p="Catcher.cs" t="Include" />
           </e>
+          <e p="CharacterBounce.cs" t="Include" />
           <e p="CharacterGenerator.cs" t="Include" />
           <e p="CharacterSpin.cs" t="Include" />
           <e p="ClientUserData.cs" t="Include" />

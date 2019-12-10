@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.CorgiEngine;
 using MoreMountains.Tools;
+using MoreMountains.Feedbacks;
 using UnityEngine.Serialization;
 
-public class VectorPad : MonoBehaviour
+public class VectorPad : Jumper
 {
     public enum Directions
     {
@@ -33,49 +34,43 @@ public class VectorPad : MonoBehaviour
     };
 
     public Directions direction;
-    public float horizontalSpeed;
-    public float verticalSpeed;
-    public float activateDelay;
-    
-    //private CorgiController _controller;
     private MSB_Character _character;
-    private Vector2 _speedMultiplier;
 
-    private IEnumerator _activate;
-    private bool _contacted;
-    private void OnTriggerEnter2D(Collider2D other)
+    /*protected override void LateUpdate()
     {
-        //Debug.LogWarning("VectorPad Collided with " + other.name);
-        CorgiController _controller = other.gameObject.MMGetComponentNoAlloc<CorgiController>();
-        if (_controller == null)
-            return;
+        if (_controllers.Count != 0)
+        {
+            foreach (var controller in _controllers)
+            {
+                _character = controller.gameObject.GetComponent<MSB_Character>();
+                _characterJump = controller.gameObject.MMGetComponentNoAlloc<CharacterJump>();
+                if (_character != null && !_character.IsRemote)
+                {
+                    controller.SetForce(_vector[(int) direction] *
+                                        Mathf.Sqrt(2f * JumpPlatformBoost * -_controller.Parameters.Gravity));
+                    if (_characterJump != null)
+                        _characterJump.CanJumpStop = false;
+                }
 
-        _character = other.GetComponent<MSB_Character>();
-        if (_character == null)
-            return;
-
-        if (_character.IsRemote)
-            return;
-
-        _speedMultiplier.x = horizontalSpeed;
-        _speedMultiplier.y = verticalSpeed;
-        _contacted = true;
-        _activate = Activate(_controller,activateDelay);
-        StartCoroutine(_activate);
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
+                ActivationFeedback?.PlayFeedbacks();
+            }
+        }
+    }*/
+    
+    protected override void LateUpdate()
     {
-        if(_contacted)
-            StopCoroutine(_activate);
-        _contacted = false;
-    }
-
-    private IEnumerator Activate(CorgiController _controller,float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        _controller.SetHorizontalForce(0);
-        _controller.SetVerticalForce(0);
-        _controller.SetForce(_vector[(int) direction] * _speedMultiplier);
+        if (_controller != null)
+        {
+            _character = _controller.gameObject.GetComponent<MSB_Character>();
+            _characterJump = _controller.gameObject.MMGetComponentNoAlloc<CharacterJump>();
+            if (_character != null && !_character.IsRemote)
+            {
+                _controller.SetForce(_vector[(int) direction] *
+                                    Mathf.Sqrt(2f * JumpPlatformBoost * -_controller.Parameters.Gravity));
+                if (_characterJump != null)
+                    _characterJump.CanJumpStop = false;
+            }
+            ActivationFeedback?.PlayFeedbacks();
+        }
     }
 }

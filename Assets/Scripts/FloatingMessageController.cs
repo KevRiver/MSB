@@ -53,7 +53,7 @@ public class FloatingMessageController : MonoBehaviour, MMEventListener<Floating
     // Start is called before the first frame update
     void Start()
     {
-        
+        Initialization();
     }
 
     private void Initialization()
