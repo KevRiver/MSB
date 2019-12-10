@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using UnityEngine;
 using MoreMountains.Tools;
 using MoreMountains.CorgiEngine;
 using UnityEngine.SceneManagement;
 using MSBNetwork;
-
-
 
 public class MSB_LevelManager : Singleton<MSB_LevelManager>
 {
@@ -192,6 +191,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
                 target.gameObject.SetActive(true);
                 target.GetComponent<MMHealthBar>().Initialization();
             }
+
             Spawnpoints[target.SpawnerIndex].SpawnPlayer(target);
         }
     }
@@ -210,9 +210,17 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         private FloatingMessageController _floatingMessageController;
         private FloatingMessageType _floatingMessageType;
         private string message = "";
+
+        IEnumerator AbilityControl(MSB_Character target, float duration)
+        {
+            target.AbilityControl(false);
+            yield return new WaitForSeconds(duration);
+            target.AbilityControl(true);
+        }
+
         public void OnGameEventDamage(int from, int to, int amount, string option)
         {
-            Debug.LogWarning("from :" + from + " to :" + to);
+            Debug.LogWarning("Received Damage Event from :" + from + " to :" + to);
             string[] options = option.Split(spliter);
             CausedCCType ccType = CausedCCType.Non;
             float xForce = 0f;
@@ -222,9 +230,12 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
             xForce = float.Parse(options[1]);
             yForce = float.Parse(options[2]);
             duration = float.Parse(options[3]);
+            Debug.LogWarning("Received Damage Data" + ccType + " , " + xForce + " , " + yForce + " , " + duration);
             
             _levelManager._allPlayersCharacter.TryGetValue(to, out MSB_Character target);
             _targetHealth = target.GetComponent<Health>();
+            
+            // trigger floating message event
             _floatingMessageController = target.GetComponentInChildren<FloatingMessageController>();
             if (_floatingMessageController != null && ccType != CausedCCType.Non)
             {
@@ -246,9 +257,13 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
                     }
                     _floatingMessageType = FloatingMessageType.Text0;
                     FloatingMessageEvent.Trigger(target.UserNum, _floatingMessageType, message, duration);
+                    
+                    // apply Crowd-Cotrol
+                    target.AbilityControl(false,duration);
                     target._controller.SetForce(new Vector2(xForce, yForce));
                 }
             }
+            
             if(_targetHealth!=null)
                 _targetHealth.DamageFeedbacks?.PlayFeedbacks();
         }

@@ -930,7 +930,8 @@ MonoBehaviour:
   AbilityStartFeedbacks: {fileID: 0}
   AbilityStopFeedbacks: {fileID: 0}
   AbilityPermitted: 1
-  InitialWeapon: {fileID: 0}
+  InitialWeapon: {fileID: 8157225758954831789, guid: e81e4a483aec11642b76751530237d96,
+    type: 3}
   CanPickupWeapons: 1
   WeaponAttachment: {fileID: 7575857580553620203}
   AutomaticallyBindAnimator: 1
@@ -1272,7 +1273,7 @@ PrefabInstance:
     - target: {fileID: 421958123697289677, guid: c85e7d7086449d14480cf6b944561537,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7769009116029820061, guid: c85e7d7086449d14480cf6b944561537,
         type: 3}

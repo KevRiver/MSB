@@ -125,13 +125,27 @@ public class MSB_Character : Character,MMEventListener<MMGameEvent>
         _controller.SetForce(Vector2.zero);
     }
 
-    public virtual void AbilityControl(bool active)
+    public virtual void AbilityControl(bool active, float duration = 0)
     {
         foreach (var ability in _characterAbilities)
         {
             ability.AbilityPermitted = active;
         }
+
+        if (!active && duration > 0)
+            StartCoroutine(AbilityTempDeny(duration));
     }
+
+    public IEnumerator AbilityTempDeny(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        foreach (var ability in _characterAbilities)
+        {
+            ability.AbilityPermitted = true;
+        }
+    }
+    
+    
 
     public void OnMMEvent(MMGameEvent eventType)
     {

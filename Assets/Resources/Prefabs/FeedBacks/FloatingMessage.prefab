@@ -80,7 +80,7 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2747452251030753866}
-  m_Text: Lorem ipsum
+  m_Text: 
   m_OffsetZ: 0
   m_CharacterSize: 1
   m_LineSpacing: 1
@@ -127,6 +127,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BoundsBasedOn: 2
   LifeTime: 0
-  IdleState: 
-  StartState: 
-  DestoryState: 
+  idleParam: 
+  startParam: 
+  destroyParam: 
+  Duration: 0
+  StartAnimationDuration: 0
+  DestroyAnimationDuration: 0

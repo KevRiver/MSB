@@ -162,7 +162,7 @@ MonoBehaviour:
   DamageCaused: 10
   DamageCausedKnockbackType: 1
   DamageCausedKnockbackDirection: 1
-  DamageCausedKnockbackForce: {x: 10, y: 0}
+  DamageCausedKnockbackForce: {x: 30, y: 0}
   InvincibilityDuration: 0
   DamageTakenEveryTime: 0
   DamageTakenDamageable: 10
