@@ -8,7 +8,7 @@ public class CharacterBounce : CharacterAbility
     public float BounceForce;
     public override void ProcessAbility()
     {
-        if (!AbilityPermitted)
+        if (!AbilityPermitted && !(((MSB_Character)_character).IsRemote))
             return;
         
         if (_controller.State.IsCollidingBelow)
