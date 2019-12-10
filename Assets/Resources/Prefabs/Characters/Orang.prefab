@@ -856,7 +856,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CharacterType: 0
-  PlayerID: Player1
+  PlayerID: 
   InitialFacingDirection: 1
   DirectionOnSpawn: 0
   CharacterAnimator: {fileID: 0}
