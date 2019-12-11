@@ -161,8 +161,8 @@ MonoBehaviour:
     m_Bits: 768
   DamageCaused: 10
   DamageCausedKnockbackType: 1
-  DamageCausedKnockbackDirection: 1
-  DamageCausedKnockbackForce: {x: 30, y: 0}
+  DamageCausedKnockbackDirection: 0
+  DamageCausedKnockbackForce: {x: 5, y: 0}
   InvincibilityDuration: 0
   DamageTakenEveryTime: 0
   DamageTakenDamageable: 10

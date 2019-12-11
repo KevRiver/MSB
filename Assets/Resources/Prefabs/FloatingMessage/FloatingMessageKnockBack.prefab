@@ -80,14 +80,14 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2493834544649716951}
-  m_Text: KNOCKBACK
+  m_Text: SMASH
   m_OffsetZ: 0
   m_CharacterSize: 1
   m_LineSpacing: 1
   m_Anchor: 4
   m_Alignment: 0
   m_TabSize: 4
-  m_FontSize: 0
+  m_FontSize: 12
   m_FontStyle: 0
   m_RichText: 1
   m_Font: {fileID: 12800000, guid: 61165c170c0b97c48a9bf5be5ee0f5b6, type: 3}
@@ -125,11 +125,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2423ca7c57ab6f4c983dd627515d718, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BoundsBasedOn: 2
-  LifeTime: 0
-  idleParam: 
-  startParam: 
-  destroyParam: 
-  Duration: 0
-  StartAnimationDuration: 0
-  DestroyAnimationDuration: 0
+  DestroyDelay: 2
