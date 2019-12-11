@@ -125,11 +125,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2423ca7c57ab6f4c983dd627515d718, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BoundsBasedOn: 2
-  LifeTime: 0
-  idleParam: Idle
-  startParam: PopSlideUp
-  destroyParam: PopOut
-  Duration: 1
-  StartAnimationDuration: 0
-  DestroyAnimationDuration: 0
+  DestroyDelay: 2

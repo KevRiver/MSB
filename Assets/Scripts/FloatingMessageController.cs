@@ -45,7 +45,7 @@ public struct FloatingMessageEvent
 
 public class FloatingMessageController : MonoBehaviour, MMEventListener<FloatingMessageEvent>
 {
-    private int _id;
+    public int _id;
     //public Color DamageColor;
     //public Color HealColor;
     //public Color TextColor0;
