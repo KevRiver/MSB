@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7769009116029820061}
   - component: {fileID: 7117293968407001157}
-  - component: {fileID: 5632831626389329075}
   m_Layer: 0
   m_Name: FloatingMessageController
   m_TagString: Untagged
@@ -44,26 +43,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fccb43cee64ea8429506d7e6cf33206, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DamageColor: {r: 1, g: 0.29291964, b: 0, a: 0.89411765}
-  HealColor: {r: 0.20425417, g: 0.8490566, b: 0.2345978, a: 0.91764706}
-  TextColor0: {r: 0.8556142, g: 0, b: 1, a: 1}
-  TextColor1: {r: 1, g: 0.80423534, b: 0, a: 1}
+  FloatingMessagePrefabs:
+  - {fileID: 2051821644220395779, guid: d1db73f941bf7f949ab842ea25b33d84, type: 3}
+  - {fileID: 8212156996202939217, guid: 42cd6b2532969844ca671729258953f7, type: 3}
+  - {fileID: 2493834544649716951, guid: 5ca9c35d81585ab47aaa5fa112a5e08e, type: 3}
+  - {fileID: 5189089032581409711, guid: 5edfc722c84a20642b2f62f60f4824c8, type: 3}
   SpawnOffset: {x: 0, y: 0, z: 0}
---- !u!114 &5632831626389329075
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 421958123697289677}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b7277539b95c0d45895792ecc99ce66, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MutualizeWaitingPools: 0
-  NestWaitingPool: 1
-  GameObjectToPool: {fileID: 2747452251030753866, guid: ce6f410fc856b4342acfd952b626342b,
-    type: 3}
-  PoolSize: 5
-  PoolCanExpand: 1

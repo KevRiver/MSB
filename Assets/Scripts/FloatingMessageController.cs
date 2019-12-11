@@ -10,32 +10,35 @@ public enum FloatingMessageType
 {
     Damage,
     Heal,
-    Text0,
-    Text1
+    KnockBack,
+    Stun
 }
 
 public struct FloatingMessageEvent
 {
     public int id;
     public FloatingMessageType type;
-    public string message;
-    public float duration;
+    //public string message;
+    public int amount;
+    //public float duration;
 
-    public FloatingMessageEvent(int id,FloatingMessageType type, string message, float duration)
+    public FloatingMessageEvent(int id,FloatingMessageType type, int amount)
     {
         this.id = id;
         this.type = type;
-        this.message = message;
-        this.duration = duration;
+        //this.message = message;
+        this.amount = amount;
+        //this.duration = duration;
     }
 
     static FloatingMessageEvent e;
-    public static void Trigger(int id,FloatingMessageType type, string message, float duration)
+    public static void Trigger(int id,FloatingMessageType type,int amount)
     {
         e.id = id;
         e.type = type;
-        e.message = message;
-        e.duration = duration;
+        //e.message = message;
+        e.amount = amount;
+        //e.duration = duration;
         MMEventManager.TriggerEvent(e);
     }
 }
@@ -43,11 +46,12 @@ public struct FloatingMessageEvent
 public class FloatingMessageController : MonoBehaviour, MMEventListener<FloatingMessageEvent>
 {
     private int _id;
-    public Color DamageColor;
-    public Color HealColor;
-    public Color TextColor0;
-    public Color TextColor1;
-    private MMObjectPooler _objectPooler;
+    //public Color DamageColor;
+    //public Color HealColor;
+    //public Color TextColor0;
+    //public Color TextColor1;
+    public GameObject[] FloatingMessagePrefabs;
+    //private MMObjectPooler _objectPooler;
 
     public Vector3 SpawnOffset;
     // Start is called before the first frame update
@@ -58,14 +62,32 @@ public class FloatingMessageController : MonoBehaviour, MMEventListener<Floating
 
     private void Initialization()
     {
-        if (GetComponent<MMSimpleObjectPooler>() != null)
+        /*if (GetComponent<MMSimpleObjectPooler>() != null)
         {
             _objectPooler = GetComponent<MMSimpleObjectPooler>();
-        }
+        }*/
         _id = transform.parent.GetComponent<MSB_Character>().UserNum;
     }
-    
-    protected virtual GameObject SpawnFloatingMessage(FloatingMessageType msgType, string msg, float duration)
+
+    private void ShowFloatingMessage(FloatingMessageType type, int amount)
+    {
+        GameObject floatingMessage;
+        Vector3 randomOffset = RandomOffset();
+        if (amount != 0)
+        {
+            floatingMessage = Instantiate(FloatingMessagePrefabs[(int) type], transform.position + randomOffset,
+                Quaternion.identity);
+            floatingMessage.GetComponent<TextMesh>().text = amount.ToString();
+        }
+        else
+        {
+            floatingMessage = Instantiate(FloatingMessagePrefabs[(int) type], transform.position + randomOffset,
+                Quaternion.identity);
+            floatingMessage.GetComponent<TextMesh>().text = amount.ToString();
+        }
+    }
+
+    /*protected virtual GameObject SpawnFloatingMessage(FloatingMessageType msgType, string msg, float duration)
     {
         Debug.LogWarning("SpawnFloatingMessage Called");
         GameObject nextGameObject = _objectPooler.GetPooledGameObject();
@@ -101,13 +123,13 @@ public class FloatingMessageController : MonoBehaviour, MMEventListener<Floating
                     SpawnOffset = RandomOffset();
                     break;
                 
-                case FloatingMessageType.Text0:
+                case FloatingMessageType.KnockBack:
                     mesh.color = TextColor0;
                     message.SetAnimation(FloatingMessageStartAnimation.Pop,FloatingMessageDestroyAnimation.PopOut);
                     SpawnOffset = Vector3.zero;
                     break;
                 
-                case FloatingMessageType.Text1:
+                case FloatingMessageType.Stun:
                     mesh.color = TextColor1;
                     message.SetAnimation(FloatingMessageStartAnimation.Pop,FloatingMessageDestroyAnimation.PopOut);
                     SpawnOffset = Vector3.zero;
@@ -120,13 +142,13 @@ public class FloatingMessageController : MonoBehaviour, MMEventListener<Floating
         Debug.LogWarning("FloatingMessage Activate");
         
         return nextGameObject;
-    }
+    }*/
     
     private Vector3 RandomOffset()
     {
         Vector3 offset;
         float x = UnityEngine.Random.Range(-0.5f, 0.5f);
-        float y = UnityEngine.Random.Range(0f, 0.25f);
+        float y = UnityEngine.Random.Range(0.5f, 0.75f);
         float z = 0f;
         
         offset = new Vector3(x, y, z);
@@ -136,8 +158,8 @@ public class FloatingMessageController : MonoBehaviour, MMEventListener<Floating
     public void OnMMEvent(FloatingMessageEvent e)
     {
         Debug.LogWarning("FloatingMessageEvent called");
-        if(_id == e.id)
-            SpawnFloatingMessage(e.type, e.message, e.duration);
+        if (_id == e.id)
+            ShowFloatingMessage(e.type, e.amount);
     }
     
     private void OnEnable()

@@ -10,7 +10,6 @@ public enum CausedCCType
     Non,
     KnockBack,
     Stun,
-    Root
 }
 
 public class MSB_DamageOnTouch : DamageOnTouch

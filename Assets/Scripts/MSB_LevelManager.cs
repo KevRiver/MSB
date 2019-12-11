@@ -209,7 +209,8 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         private Health _targetHealth;
         private FloatingMessageController _floatingMessageController;
         private FloatingMessageType _floatingMessageType;
-        private string message = "";
+        //private string message = "";
+        private int amount;
 
         IEnumerator AbilityControl(MSB_Character target, float duration)
         {
@@ -244,19 +245,14 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
                     switch (ccType)
                     {
                         case CausedCCType.KnockBack:
-                            message = "KNOCK BACK";
+                            _floatingMessageType = FloatingMessageType.KnockBack;
                             break;
                         
                         case CausedCCType.Stun:
-                            message = "STUN";
-                            break;
-                        
-                        case CausedCCType.Root:
-                            message = "ROOTED";
+                            _floatingMessageType = FloatingMessageType.Stun;
                             break;
                     }
-                    _floatingMessageType = FloatingMessageType.Text0;
-                    FloatingMessageEvent.Trigger(target.UserNum, _floatingMessageType, message, duration);
+                    FloatingMessageEvent.Trigger(target.UserNum, _floatingMessageType, 0);
                     
                     // apply Crowd-Cotrol
                     target.AbilityControl(false,duration);
@@ -276,11 +272,11 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
             if (_targetHealth != null)
             {
                 previousHealth = _targetHealth.CurrentHealth;
-                message = (health - previousHealth).ToString();
+                amount = (health - previousHealth);
                 _floatingMessageType =
                     (previousHealth > health) ? FloatingMessageType.Damage : FloatingMessageType.Heal;
                 
-                FloatingMessageEvent.Trigger(num, _floatingMessageType, message, 0f);
+                FloatingMessageEvent.Trigger(num, _floatingMessageType, amount);
                 _targetHealth.ChangeHealth(health);
             }
         }

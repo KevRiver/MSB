@@ -1137,7 +1137,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   FollowTargetMode: 2
   InstantiatedOnDeath: {fileID: 0}
-  HealthBarOffset: {x: 0, y: 1.25, z: 0}
+  HealthBarOffset: {x: 0, y: 1, z: 0}
   AlwaysVisible: 1
   DisplayDurationOnHit: 1
   HideBarAtZero: 1

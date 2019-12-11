@@ -133,3 +133,4 @@ MonoBehaviour:
   Duration: 0
   StartAnimationDuration: 0
   DestroyAnimationDuration: 0
+  DestroyDelay: 0

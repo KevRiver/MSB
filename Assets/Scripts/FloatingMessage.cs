@@ -27,9 +27,9 @@ public enum FloatingMessageDestroyAnimation
     FadeOut
 }
 
-public class FloatingMessage : MMPoolableObject
+public class FloatingMessage : MonoBehaviour
 {
-    private Animator _animator;
+    /*private Animator _animator;
     private MMStateMachine<FloatingMessageState.State> _messageState;
     
     public string idleParam;
@@ -49,16 +49,18 @@ public class FloatingMessage : MMPoolableObject
     private List<int> _animationParams { get; set; }
     private int _idleParam;
     private int _startParam;
-    private int _destroyParam;
-    
+    private int _destroyParam;*/
+
+    public float DestroyDelay = 2.0f;
 
     // Start is called before the first frame update
     private void Start()
     {
-        Initialization();
+        Destroy(gameObject, DestroyDelay);
+        //Initialization();
     }
 
-    protected override void OnEnable()
+    /*protected override void OnEnable()
     {
         base.OnEnable();
         _messageState = new MMStateMachine<FloatingMessageState.State>(gameObject,true);
@@ -149,5 +151,5 @@ public class FloatingMessage : MMPoolableObject
             (_messageState.CurrentState == FloatingMessageState.State.Start), _animationParams);
         MMAnimatorExtensions.UpdateAnimatorBool(_animator, _destroyParam,
             (_messageState.CurrentState == FloatingMessageState.State.Destroy), _animationParams);
-    }
+    }*/
 }
