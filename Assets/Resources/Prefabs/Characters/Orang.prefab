@@ -911,7 +911,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AbilityStartFeedbacks: {fileID: 0}
   AbilityStopFeedbacks: {fileID: 0}
-  AbilityPermitted: 1
+  AbilityPermitted: 0
   characterModel: {fileID: 3276147945591988055}
   spinSpeed: -360
   speedMultiplier: 1

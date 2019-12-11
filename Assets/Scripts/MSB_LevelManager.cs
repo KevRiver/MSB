@@ -304,6 +304,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
                 return;
             }
             Debug.LogWarning(target.cUserData.userNick+" is dead");
+            target.AbilityControl(true);
             _targetHealth = target.gameObject.GetComponent<Health>();
             //target.gameObject.SetActive(false);
             if (_targetHealth != null)
