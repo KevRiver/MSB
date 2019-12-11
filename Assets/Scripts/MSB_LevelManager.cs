@@ -306,8 +306,9 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
             Debug.LogWarning(target.cUserData.userNick+" is dead");
             target.AbilityControl(true);
             var model = target.transform.GetChild(0);
-            var outlineRenderer = model.GetComponentInChildren<SpriteRenderer>();
-            outlineRenderer.material.color = Color.white;
+            var outlineRenderer = model.transform.GetChild(1).GetComponentInChildren<SpriteRenderer>();
+            outlineRenderer.material.SetColor("_Color",Color.white);
+            //outlineRenderer.color = Color.white;
             _targetHealth = target.gameObject.GetComponent<Health>();
             //target.gameObject.SetActive(false);
             if (_targetHealth != null)
