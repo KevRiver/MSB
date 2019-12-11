@@ -595,7 +595,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6372443015154303074}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.21, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5114701794871499762}
@@ -1265,6 +1265,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6372443015154303000}
     m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: PoolSize
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 421958123697289677, guid: c85e7d7086449d14480cf6b944561537,
         type: 3}
       propertyPath: m_Name
@@ -1283,7 +1287,7 @@ PrefabInstance:
     - target: {fileID: 7769009116029820061, guid: c85e7d7086449d14480cf6b944561537,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7769009116029820061, guid: c85e7d7086449d14480cf6b944561537,
         type: 3}
@@ -1359,10 +1363,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 5189089032581409711, guid: 5edfc722c84a20642b2f62f60f4824c8,
         type: 3}
-    - target: {fileID: 0}
-      propertyPath: PoolSize
-      value: 10
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c85e7d7086449d14480cf6b944561537, type: 3}
 --- !u!4 &7372566260446421150 stripped

@@ -147,8 +147,8 @@ public class FloatingMessageController : MonoBehaviour, MMEventListener<Floating
     private Vector3 RandomOffset()
     {
         Vector3 offset;
-        float x = UnityEngine.Random.Range(-0.5f, 0.5f);
-        float y = UnityEngine.Random.Range(0.5f, 0.75f);
+        float x = UnityEngine.Random.Range(-0.1f, 0.1f);
+        float y = UnityEngine.Random.Range(0.1f, 0.2f);
         float z = 0f;
         
         offset = new Vector3(x, y, z);
