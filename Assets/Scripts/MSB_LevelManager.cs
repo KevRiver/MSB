@@ -272,7 +272,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
             if (_targetHealth != null)
             {
                 previousHealth = _targetHealth.CurrentHealth;
-                amount = (health - previousHealth);
+                amount = Mathf.Abs(health - previousHealth);
                 _floatingMessageType =
                     (previousHealth > health) ? FloatingMessageType.Damage : FloatingMessageType.Heal;
                 
