@@ -83,7 +83,6 @@ public class FloatingMessageController : MonoBehaviour, MMEventListener<Floating
         {
             floatingMessage = Instantiate(FloatingMessagePrefabs[(int) type], transform.position + randomOffset,
                 Quaternion.identity);
-            floatingMessage.GetComponent<TextMesh>().text = amount.ToString();
         }
     }
 
