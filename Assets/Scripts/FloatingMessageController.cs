@@ -62,11 +62,12 @@ public class FloatingMessageController : MonoBehaviour, MMEventListener<Floating
         {
             _objectPooler = GetComponent<MMSimpleObjectPooler>();
         }
-        _id = GetComponent<MSB_Character>().UserNum;
+        _id = transform.parent.GetComponent<MSB_Character>().UserNum;
     }
     
     protected virtual GameObject SpawnFloatingMessage(FloatingMessageType msgType, string msg, float duration)
     {
+        Debug.LogWarning("SpawnFloatingMessage Called");
         GameObject nextGameObject = _objectPooler.GetPooledGameObject();
 
         // mandatory checks
@@ -116,6 +117,7 @@ public class FloatingMessageController : MonoBehaviour, MMEventListener<Floating
 
         nextGameObject.transform.position = this.transform.position + SpawnOffset;
         nextGameObject.gameObject.SetActive(true);
+        Debug.LogWarning("FloatingMessage Activate");
         
         return nextGameObject;
     }
@@ -133,6 +135,7 @@ public class FloatingMessageController : MonoBehaviour, MMEventListener<Floating
     
     public void OnMMEvent(FloatingMessageEvent e)
     {
+        Debug.LogWarning("FloatingMessageEvent called");
         if(_id == e.id)
             SpawnFloatingMessage(e.type, e.message, e.duration);
     }

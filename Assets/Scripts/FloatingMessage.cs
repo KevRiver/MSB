@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.CorgiEngine;
@@ -52,22 +53,28 @@ public class FloatingMessage : MMPoolableObject
     
 
     // Start is called before the first frame update
+    private void Start()
+    {
+        Initialization();
+    }
+
     protected override void OnEnable()
     {
         base.OnEnable();
-        Initialization();
+        _messageState = new MMStateMachine<FloatingMessageState.State>(gameObject,true);
+        StartCoroutine(ProeccessAnimation(Duration));
     }
 
     private void Initialization()
     {
-        Debug.LogWarning("FloatingMessage Initializing");
+        //Debug.LogWarning("FloatingMessage Initializing");
         if (GetComponent<Animator>() != null)
             _animator = GetComponent<Animator>();
         
-        _messageState = new MMStateMachine<FloatingMessageState.State>(gameObject,true);
+        
         InitializeAnimatorParams();
-        StartCoroutine(ProeccessAnimation(Duration));
-        Debug.LogWarning("FloatingMessage Finished");
+        
+        //Debug.LogWarning("FloatingMessage Finished");
     }
 
     public void SetAnimation(FloatingMessageStartAnimation startType, FloatingMessageDestroyAnimation destroyType)
