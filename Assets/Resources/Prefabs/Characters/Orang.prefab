@@ -1018,8 +1018,8 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   DelayedColor:
     serializedVersion: 2
-    key0: {r: 1, g: 0, b: 0, a: 0.78431374}
-    key1: {r: 1, g: 0.5196552, b: 0, a: 0.39215687}
+    key0: {r: 0.95294124, g: 0.19215688, b: 0.18039216, a: 1}
+    key1: {r: 0.95294124, g: 0.19215688, b: 0.18039216, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
