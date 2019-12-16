@@ -35,8 +35,17 @@ sysinfo.txt
 *.apk
 *.unitypackage
 
-#Ignore CorgiEngine Demos
+#Ignore CorgiEngine 
 Assets/CorgiEngine/Demos/
+Assets/CorgiEngine/Common/Animations/
+Assets/CorgiEngine/Common/Materials/
+Assets/CorgiEngine/Common/PhysicalMaterials/
+Assets/CorgiEngine/Common/Prefabs/
+Assets/CorgiEngine/Common/Resources/
+Assets/CorgiEngine/Common/Scenes/
+Assets/CorgiEngine/Common/Sprites/
+Assets/MMData/
+
 
 #Ignore Scene Folder
 Assets/Scenes/
