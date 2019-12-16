@@ -44,7 +44,7 @@ public class NetworkManager : MonoBehaviour
             }
 
             // load play scene
-            SceneManager.LoadScene("Test");
+            SceneManager.LoadScene("PlayScene");
             yield return null;
         }
     }
