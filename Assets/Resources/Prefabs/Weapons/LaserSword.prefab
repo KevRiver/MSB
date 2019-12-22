@@ -245,10 +245,10 @@ MonoBehaviour:
   InitializeOnStart: 0
   Interruptable: 0
   DamageAreaShape: 0
-  AreaSize: {x: 4, y: 2.4}
-  AreaOffset: {x: 2, y: 0}
+  AreaSize: {x: 4.2, y: 2}
+  AreaOffset: {x: 2.1, y: 0}
   InitialDelay: 0
-  ActiveDuration: 0.5
+  ActiveDuration: 0.4
   TargetLayerMask:
     serializedVersion: 2
     m_Bits: 512
