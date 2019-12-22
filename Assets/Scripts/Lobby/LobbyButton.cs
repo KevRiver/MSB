@@ -62,7 +62,24 @@ public class LobbyButton : MonoBehaviour
         LocalUser.Instance.SetWeaponID(weaponID);
         LocalUser.Instance.SetSkinID(skinID);
 
-        NetworkModule.GetInstance().RequestGameQueue(weaponID, skinID);
+        NetworkModule.GetInstance().RequestGameSoloQueue(weaponID, skinID);
+    }
+
+    public void RequestMultiQueue()
+    {
+        ManageLobbyObject lobbyObj = FindObjectOfType<ManageLobbyObject>();
+        Debug.LogWarning("LobbyObj SkinID : " + lobbyObj.skinID);
+
+        //현재 무기 값이 WeaponID 이고 스킨 값은 SkinID이다 WeaponID = SkinID
+        int weaponID = lobbyObj.weaponID;
+        int skinID = lobbyObj.skinID;
+
+        LocalUser.Instance.localUserData.userWeapon = weaponID;
+        LocalUser.Instance.localUserData.userSkin = skinID;
+        LocalUser.Instance.SetWeaponID(weaponID);
+        LocalUser.Instance.SetSkinID(skinID);
+
+        NetworkModule.GetInstance().RequestGameTeamQueue(weaponID, skinID);
     }
 
     // 큐 버튼에 케릭터 정보 전달 
