@@ -19,10 +19,16 @@ public class ButtonScripts : MonoBehaviour
     {
         localUser.SetWeaponID(index);
     }
-
+/*
     public void RequestSoloMatch()
     {
-        networkModule.RequestGameQueue(localUser.localUserData.userWeapon, localUser.localUserData.userSkin);
+        networkModule.RequestGameSoloQueue(localUser.localUserData.userWeapon, localUser.localUserData.userSkin);
         //Debug.Log("Request Solo Queue");
     }
+
+    public void RequestTeamQueue()
+    {
+        networkModule.RequestGameTeamQueue(localUser.localUserData.userWeapon, localUser.localUserData.userSkin);
+    }
+    */
 }
