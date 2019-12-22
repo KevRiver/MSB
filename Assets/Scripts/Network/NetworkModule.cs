@@ -1,8 +1,9 @@
-﻿//#define NOUNITY // COMMENT IF UNITY
+﻿#define NOUNITY // COMMENT IF UNITY
 #define SYNCUDP // COMMENT IF TCP ONLY
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using Newtonsoft.Json.Linq;
 using Nettention.Proud;
 #if (!NOUNITY)
@@ -423,7 +424,7 @@ namespace MSBNetwork
                 JObject data = new JObject {{"id", _id}, {"pw", _pw}};
                 netC2SProxy.OnLoginRequest(HostID.HostID_Server, RmiContext.ReliableSend, data.ToString());
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("RequestUserLogin ERROR");
@@ -452,7 +453,7 @@ namespace MSBNetwork
                 JObject data = new JObject {{"id", _id}};
                 netC2SProxy.OnStatusRequest(HostID.HostID_Server, RmiContext.ReliableSend, data.ToString());
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("RequestUserStatus ERROR");
@@ -481,7 +482,7 @@ namespace MSBNetwork
                 JObject data = new JObject {{"id", _id}};
                 netC2SProxy.OnSystemRequest(HostID.HostID_Server, RmiContext.ReliableSend, data.ToString());
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("RequestUserSystem ERROR");
@@ -494,30 +495,60 @@ namespace MSBNetwork
         }
 
         /// <summary>
-        /// 서버에 Game Queue 요청을 전송합니다
+        /// 서버에 Game Solo Queue 요청을 전송합니다
         /// 등록된 OnGameMatchedListener 에 서버 응답이 수신됩니다
         /// </summary>
         /// <param name="_weapon">유저 선택 무기</param>
         /// <param name="_skin">유저 선택 스킨</param>
-        public void RequestGameQueue(int _weapon, int _skin)
+        public void RequestGameSoloQueue(int _weapon, int _skin)
         {
             try
             {
 #if (!NOUNITY)
-                Debug.Log("RequestGameQueue");
+                Debug.Log("RequestGameSoloQueue");
 #else
-                Debug.WriteLine("RequestGameQueue");
+                Debug.WriteLine("RequestGameSoloQueue");
 #endif
-                JObject data = new JObject {{"weapon", _weapon}, {"skin", _skin}};
+                JObject data = new JObject {{"mode", 0}, {"weapon", _weapon}, {"skin", _skin}};
                 netC2SProxy.OnGameQueueRequest(HostID.HostID_Server, RmiContext.ReliableSend, data.ToString());
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
-                Debug.LogError("RequestGameQueue ERROR");
+                Debug.LogError("RequestGameSoloQueue ERROR");
                 Debug.LogError(e);
 #else
-                Debug.WriteLine("RequestGameQueue ERROR");
+                Debug.WriteLine("RequestGameSoloQueue ERROR");
+                Debug.WriteLine(e);
+#endif
+            }
+        }
+        
+        /// <summary>
+        /// 서버에 Game Team Queue 요청을 전송합니다
+        /// 등록된 OnGameMatchedListener 에 서버 응답이 수신됩니다
+        /// </summary>
+        /// <param name="_weapon">유저 선택 무기</param>
+        /// <param name="_skin">유저 선택 스킨</param>
+        public void RequestGameTeamQueue(int _weapon, int _skin)
+        {
+            try
+            {
+#if (!NOUNITY)
+                Debug.Log("RequestGameTeamQueue");
+#else
+                Debug.WriteLine("RequestGameTeamQueue");
+#endif
+                JObject data = new JObject {{"mode", 1}, {"weapon", _weapon}, {"skin", _skin}};
+                netC2SProxy.OnGameQueueRequest(HostID.HostID_Server, RmiContext.ReliableSend, data.ToString());
+            }
+            catch (EncoderFallbackException e)
+            {
+#if (!NOUNITY)
+                Debug.LogError("RequestGameTeamQueue ERROR");
+                Debug.LogError(e);
+#else
+                Debug.WriteLine("RequestGameTeamQueue ERROR");
                 Debug.WriteLine(e);
 #endif
             }
@@ -539,7 +570,7 @@ namespace MSBNetwork
 #endif
                 netC2SProxy.OnGameInfoRequest(HostID.HostID_Server, RmiContext.ReliableSend, _gameRoom, string.Empty);
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("RequestGameInfo ERROR");
@@ -572,7 +603,7 @@ namespace MSBNetwork
                 netC2SProxy.OnGameUserMove(HostID.HostID_Server, RmiContext.ReliableSend, _gameRoom, _data);
 #endif
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("RequestGameUserMove ERROR");
@@ -605,7 +636,7 @@ namespace MSBNetwork
                 netC2SProxy.OnGameUserSync(HostID.HostID_Server, RmiContext.ReliableSend, _gameRoom, _data);
 #endif
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("RequestGameUserSync ERROR");
@@ -632,7 +663,7 @@ namespace MSBNetwork
 #endif
                 netC2SProxy.OnGameActionReady(HostID.HostID_Server, RmiContext.ReliableSend, _gameRoom, string.Empty);
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("RequestGameUserActionReady ERROR");
@@ -666,7 +697,7 @@ namespace MSBNetwork
                 data.Add("option", _option);
                 netC2SProxy.OnGameActionDamage(HostID.HostID_Server, RmiContext.ReliableSend, _gameRoom, data.ToString());
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("RequestGameUserActionDamage ERROR");
@@ -698,7 +729,7 @@ namespace MSBNetwork
                 data.Add("amount", _amount);
                 netC2SProxy.OnGameActionObject(HostID.HostID_Server, RmiContext.ReliableSend, _gameRoom, data.ToString());
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("RequestGameUserActionObject ERROR");
@@ -730,7 +761,7 @@ namespace MSBNetwork
                 data.Add("target", _target);
                 netC2SProxy.OnGameActionItem(HostID.HostID_Server, RmiContext.ReliableSend, _gameRoom, data.ToString());
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("RequestGameUserActionItem ERROR");
@@ -772,7 +803,7 @@ namespace MSBNetwork
                     }
                 }
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("OnEventUserLogin ERROR");
@@ -816,7 +847,7 @@ namespace MSBNetwork
                     }
                 }
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("OnEventUserStatus ERROR");
@@ -848,7 +879,7 @@ namespace MSBNetwork
                     }
                 }
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("OnEventSystem ERROR");
@@ -882,7 +913,7 @@ namespace MSBNetwork
                     }
                 }
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("OnEventGameQueue ERROR");
@@ -930,7 +961,7 @@ namespace MSBNetwork
                     }
                 }
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("OnEventGameInfo ERROR");
@@ -962,7 +993,7 @@ namespace MSBNetwork
                     }
                 }
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("OnEventGameStatusCountdown ERROR");
@@ -995,7 +1026,7 @@ namespace MSBNetwork
                     }
                 }
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("OnEventGameStatusTime ERROR");
@@ -1013,7 +1044,7 @@ namespace MSBNetwork
             try
             {
 #if (!NOUNITY)
-                Debug.Log("OnEventGameStatusReady");
+                Debug.Log("OnEventGameStatusReady : " + _data);
 #else
                 Debug.WriteLine("OnEventGameStatusReady");
 #endif
@@ -1025,7 +1056,7 @@ namespace MSBNetwork
                     }
                 }
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("OnEventGameStatusReady ERROR");
@@ -1062,7 +1093,7 @@ namespace MSBNetwork
                     }
                 }
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("OnEventGameStatusScore ERROR");
@@ -1095,7 +1126,7 @@ namespace MSBNetwork
                     }
                 }
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("OnEventGameStatus ERROR");
@@ -1128,7 +1159,7 @@ namespace MSBNetwork
                     }
                 }
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("OnEventGameEventHealth ERROR");
@@ -1163,7 +1194,7 @@ namespace MSBNetwork
                     }
                 }
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("OnEventGameEventDamage ERROR");
@@ -1196,7 +1227,7 @@ namespace MSBNetwork
                     }
                 }
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("OnEventGameEventObject ERROR");
@@ -1230,11 +1261,11 @@ namespace MSBNetwork
                     }
                 }
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("OnEventGameEventItem ERROR");
-                Debug.LogError(e.StackTrace);
+                Debug.LogError(e);
 #else
                 Debug.WriteLine("OnEventGameEventItem ERROR");
                 Debug.WriteLine(e);
@@ -1245,19 +1276,6 @@ namespace MSBNetwork
 
         private static bool OnEventGameEventKill(HostID remote, RmiContext rmiContext, string _data)
         {
-            /*Debug.Log("OnEventGameEventKill");
-            JObject data = JObject.Parse(_data);
-            int from = data.GetValue("from").Value<int>();
-            int to = data.GetValue("to").Value<int>();
-            string option = data.GetValue("option").ToString();
-            if (onGameEventListeners != null && onGameEventListeners.Count > 0)
-            {
-                foreach (OnGameEventListener listener in onGameEventListeners)
-                {
-                    listener?.OnGameEventKill(@from, to, option);
-                }
-            }*/
-            
             try
             {
 #if (!NOUNITY)
@@ -1277,7 +1295,7 @@ namespace MSBNetwork
                     }
                 }
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("OnEventGameEventKill ERROR");
@@ -1310,7 +1328,7 @@ namespace MSBNetwork
                     }
                 }
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("OnEventGameEventRespawn ERROR");
@@ -1342,7 +1360,7 @@ namespace MSBNetwork
                     }
                 }
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("OnEventGameResult ERROR");
@@ -1372,7 +1390,7 @@ namespace MSBNetwork
                 Debug.WriteLine("OnEventGameUserMove");
 #endif
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("OnEventGameUserMove ERROR");
@@ -1402,7 +1420,7 @@ namespace MSBNetwork
                 Debug.WriteLine("OnEventGameUserSync");
 #endif
             }
-            catch (Exception e)
+            catch (EncoderFallbackException e)
             {
 #if (!NOUNITY)
                 Debug.LogError("OnEventGameUserSync ERROR");
