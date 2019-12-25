@@ -21,6 +21,10 @@ public class TitleImageLodaer : MonoBehaviour
     {
 		//canvasObject = gameObject;
 		rectTransform = backgroundObject.GetComponent<RectTransform>();
+		logoObject.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
+		loginObject.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
+		loginImageObject.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
+		loginTextObject.GetComponent<Text>().color = new Color(0.1f, 0.1f, 0.1f, 0f);
 		loadBackgroundSprite();
 	}
 

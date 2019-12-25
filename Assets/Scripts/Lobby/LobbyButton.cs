@@ -65,7 +65,7 @@ public class LobbyButton : MonoBehaviour
         NetworkModule.GetInstance().RequestGameSoloQueue(weaponID, skinID);
     }
 
-    public void RequestMultiQueue()
+    public void RequestTeamQueue()
     {
         ManageLobbyObject lobbyObj = FindObjectOfType<ManageLobbyObject>();
         Debug.LogWarning("LobbyObj SkinID : " + lobbyObj.skinID);

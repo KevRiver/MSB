@@ -18,7 +18,7 @@ public class LobbyCharacter : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log(this);
+        //Debug.Log(this);
         //animator = GetComponent<Animator>();
     }
 

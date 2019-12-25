@@ -25,7 +25,7 @@ public class Item : MonoBehaviour
 
     protected virtual void OnTriggerEnter2D(Collider2D other)
     {
-        
+       
     }
 
     protected virtual void OnEnable()

@@ -9,6 +9,7 @@ public class HealItem : Item
     // Start is called before the first frame update
     protected override void OnTriggerEnter2D(Collider2D other)
     {
+        
         Target = other.gameObject.MMGetComponentNoAlloc<MSB_Character>();
         if (Target == null)
         {
@@ -16,7 +17,8 @@ public class HealItem : Item
             return;
         }
         ItemTakenFeedback?.PlayFeedbacks();
-        NetworkModule.GetInstance().RequestGameUserActionItem(Room, 1, ItemIndex);
+        if(!Target.IsRemote)
+            NetworkModule.GetInstance().RequestGameUserActionItem(Room, 1, ItemIndex);
         gameObject.SetActive(false);
     }
 }

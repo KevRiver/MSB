@@ -18,6 +18,7 @@ public class MSB_Character : Character,MMEventListener<MMGameEvent>
     public int RoomNum { get; set; }
     public int UserNum { get; internal set; }
     public bool IsRemote { get; set; }
+    public bool IsEnemy = false;
 
     public MSB_GameManager.Team team;
 

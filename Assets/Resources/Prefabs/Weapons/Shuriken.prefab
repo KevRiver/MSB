@@ -74,7 +74,7 @@ MonoBehaviour:
   CachedRecycle: 1
   ParticlesPrefab: {fileID: 19839084, guid: a67ce15f50785584d97708026f874d99, type: 3}
   InstantiateParticlesPosition: {fileID: 0}
-  NestParticles: 1
+  NestParticles: 0
 --- !u!1 &7729972403799780788
 GameObject:
   m_ObjectHideFlags: 0
@@ -198,7 +198,7 @@ MonoBehaviour:
   DamageFeedbacks: {fileID: 0}
   FlickerSpriteOnHit: 0
   ImmuneToKnockback: 0
-  DeathFeedbacks: {fileID: 0}
+  DeathFeedbacks: {fileID: 1719785530886626598}
   DestroyOnDeath: 1
   DelayBeforeDestruction: 0
   CollisionsOffOnDeath: 1
@@ -516,7 +516,7 @@ MonoBehaviour:
   isAnimated: 0
   useExportedFrame: 0
   customFrameName: 
-  generatesOnStart: 0
+  generatesOnStart: 1
   generatesOnValidate: 1
 --- !u!114 &7480430145277629427
 MonoBehaviour:

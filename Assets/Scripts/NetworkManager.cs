@@ -13,22 +13,20 @@ using Newtonsoft.Json.Linq;
 public class NetworkManager : MonoBehaviour
 {
     NetworkModule _networkManager;
-    private class OnSoloMatched : NetworkModule.OnGameMatchedListener
+    private class OnGameMatched : NetworkModule.OnGameMatchedListener
     {
         void NetworkModule.OnGameMatchedListener.OnGameMatched(bool _result, int _room, string _message)
         {
-            //Debug.LogWarning("OnSoloMatched Called");
+            Debug.LogWarning("OnGameMatched Called");
             NetworkModule.GetInstance().RequestGameInfo(_room);
-            //Debug.LogWarning("RequestGameInfo");
+            Debug.LogWarning("RequestGameInfo");
         }
     }
     private class OnGameInfo : NetworkModule.OnGameInfoListener
     {
         void NetworkModule.OnGameInfoListener.OnGameInfo(bool _result, int _room, int _mode, LinkedList<UserData> _users, string _message)
         {
-            //Debug.LogWarning("OnGameInfo Called");
-
-            //UnityMainThreadDispatcher.Instance().Enqueue(LoadPlayScene(_room, _users));
+            Debug.LogWarning("OnGameInfo Called");
             UnityMainThreadDispatcher.Instance().Enqueue(LoadScene(_mode, _room, _users));
         }
 
@@ -42,9 +40,13 @@ public class NetworkManager : MonoBehaviour
                 PlayerInfo player = new PlayerInfo(_room, user.userNumber, user.userID, user.userNick, user.userWeapon, user.userSkin);
                 gameInfo.players.Add(player);
             }
-
+            
+            foreach (var player in gameInfo.players)
+            {
+                Debug.LogWarning(player.number + " " + player.id);
+            }
             // load play scene
-            SceneManager.LoadScene("PlayScene");
+            SceneManager.LoadSceneAsync("Scenes/PlayScene");
             yield return null;
         }
     }
@@ -146,7 +148,7 @@ public class NetworkManager : MonoBehaviour
         _networkManager = NetworkModule.GetInstance();        
         _networkManager.Connect("203.250.148.113",9993);
         
-        _networkManager.AddOnEventGameQueue(new OnSoloMatched());
+        _networkManager.AddOnEventGameQueue(new OnGameMatched());
         _networkManager.AddOnEventGameInfo(new OnGameInfo());
         _networkManager.AddOnEventGameStatus(new OnGameStatus());
         //networkManager.AddOnEventGameUserMove(new OnGameUserMove());

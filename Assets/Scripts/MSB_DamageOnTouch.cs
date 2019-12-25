@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using MoreMountains.CorgiEngine;
 using MoreMountains.Tools;
@@ -17,7 +18,8 @@ public class MSB_DamageOnTouch : DamageOnTouch
     public LayerMask[] TargetLayerMasks;
     [Header("MSB Custom")]
     private MSB_Projectile _projectile;
-    
+    public MSB_Character _ownerCharacter;
+
     [Space(10)]
     
     [Header("MSB CC Options")] //caused cc types and duration
@@ -29,8 +31,11 @@ public class MSB_DamageOnTouch : DamageOnTouch
     {
         base.Awake();
         _projectile = GetComponent<MSB_Projectile>();
+        //_ownerCharacter = Owner.GetComponent<MSB_Character>();
         if(_projectile != null)
             IgnoreGameObject(_projectile._owner);
+        
+        
         //Debug.LogError("PlayerLayer : " + LayerMask.NameToLayer("Player"));
         //Debug.LogError("PlatformLayer : " + LayerMask.NameToLayer("Platform"));
         //Debug.LogError("Target LayerMask : " + TargetLayerMask);

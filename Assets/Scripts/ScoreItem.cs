@@ -15,7 +15,9 @@ public class ScoreItem : Item
             Debug.LogWarning("Trigger is not Msb Character");
             return;
         }
-        NetworkModule.GetInstance().RequestGameUserActionItem(Room, 0, ItemIndex);
+        ItemTakenFeedback?.PlayFeedbacks();
+        if(!Target.IsRemote)
+            NetworkModule.GetInstance().RequestGameUserActionItem(Room, 0, ItemIndex);
         gameObject.SetActive(false);
     }
 }

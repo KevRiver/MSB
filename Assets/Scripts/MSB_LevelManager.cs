@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using Cinemachine;
 using UnityEngine;
 using MoreMountains.Tools;
 using MoreMountains.CorgiEngine;
@@ -133,15 +134,23 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
     protected virtual void SpawnPlayers()
     {
         int index = 0;
-        int mid = Spawnpoints.Count - 1;
+        //int mid = Spawnpoints.Count / 2 - 1;
+        //int playerCount = Players.Count;
         MSB_GameManager.Team team = MSB_GameManager.Team.Blue;
         foreach (var character in Players)
         {
-            character.team = team;
+            character.team = (index % 2 == 0)? MSB_GameManager.Team.Blue : MSB_GameManager.Team.Red;
             character.SpawnerIndex = index;
-            Spawnpoints[index].SpawnPlayer(character);
-            team = (index < mid) ? MSB_GameManager.Team.Blue : MSB_GameManager.Team.Red;
+            //team = (index < mid) ? MSB_GameManager.Team.Blue : MSB_GameManager.Team.Red;
             index++;
+        }
+
+        foreach (var player in Players)
+        {
+            Debug.LogWarning("LocalPlayer Team : " + TargetPlayer.team);
+            if (player.team != TargetPlayer.team)
+                player.IsEnemy = true;
+            Spawnpoints[player.SpawnerIndex].SpawnPlayer(player);
         }
     }
     /// <summary>
@@ -178,9 +187,10 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         // Find Spawnpoints which in level and sort by its index (ascending)
         Spawnpoints = FindObjectsOfType<MSB_SpawnPoint>().OrderBy(o=>o.SpawnerIndex).ToList();
         Items = FindObjectsOfType<Item>().OrderBy(o => o.ItemIndex).ToList();
-        //Debug.LogWarning(Items);
+        foreach (var item in Items)
+            Debug.LogWarning("item index : " + item.ItemIndex);
     }
-
+    
     public void RespawnPlayer(int userNum)
     {
         _allPlayersCharacter.TryGetValue(userNum, out MSB_Character target);
@@ -202,6 +212,10 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         public OnGameEvent(MSB_LevelManager levelManager)
         {
             _levelManager = levelManager;
+            /*foreach(KeyValuePair<int,MSB_Character> pair in _levelManager._allPlayersCharacter)
+            {
+                Debug.LogWarning("player num : " + pair.Value.UserNum);
+            }*/
         }
         
         private char[] spliter = {','};
@@ -234,10 +248,22 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
             Debug.LogWarning("Received Damage Data" + ccType + " , " + xForce + " , " + yForce + " , " + duration);
             
             _levelManager._allPlayersCharacter.TryGetValue(to, out MSB_Character target);
+            if (!target)
+            {
+                Debug.LogWarning("DamageEvent target is null");
+                return;
+            }
+
             _targetHealth = target.GetComponent<Health>();
             
             // trigger floating message event
             _floatingMessageController = target.GetComponentInChildren<FloatingMessageController>();
+            if (!_floatingMessageController)
+            {
+                Debug.LogWarning("FMC is null");
+                return;
+            }
+
             if (_floatingMessageController != null && ccType != CausedCCType.Non)
             {
                 if (target._controller != null)
@@ -268,6 +294,11 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         public void OnGameEventHealth(int num, int health)
         {
             _levelManager._allPlayersCharacter.TryGetValue(num, out MSB_Character target);
+            if (!target)
+            {
+                Debug.LogWarning("DamageEvent target is null");
+                return;
+            }
             _targetHealth = target.GetComponent<Health>();
             if (_targetHealth != null)
             {
@@ -286,7 +317,13 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
             Item item;
             //Debug.LogWarning("Item event called");
             //Debug.Log("OnEventItem : " + type +", " + num + "," + action);
-            
+
+            Debug.LogWarning("Item List");
+            foreach (var i in _levelManager.Items)
+            {
+                Debug.LogWarning("item index : " + i.ItemIndex);
+            }
+
             item = _levelManager.Items[num];
             if (action == 0)
             {
@@ -380,4 +417,8 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         this.gameObject.layer = LayerMask.NameToLayer("NoCollision");
     }
 
+    private void OnDestroy()
+    {
+        //NetworkModule.GetInstance().
+    }
 }

@@ -148,7 +148,7 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
         {
             Debug.Log("OnGameUserMove Constructor called");
             //Debug.LogWarning(rc.gameObject.name);
-            this._rc = rc;
+            _rc = rc;
             _userNum = _rc.userNum;
         }
 
@@ -201,7 +201,7 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
             _rot.z = float.Parse(dataArray[3]);
             _rot.w = float.Parse(dataArray[4]);
             _rc.characterModel.rotation = _rot;
-            _rc.weapon.WeaponState.ChangeState(Weapon.WeaponStates.WeaponUse);
+            _rc.weapon?.WeaponState.ChangeState(Weapon.WeaponStates.WeaponUse);
         }
     }
 

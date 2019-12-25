@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using System;
 using MSBNetwork;
+using Random = System.Random;
 
 public class TitleTouch : MonoBehaviour, IPointerClickHandler
 {
@@ -19,13 +20,14 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 
 	public GameObject popup;
 	public GameObject centerPos;
-	public PopupButton nicknameButton;
+	public static PopupButton nicknameButton;
+
+	private static string playerID;
+	private static string playerPW;
+	private static string[] envArguments;
 	Vector2 centerV2;
 
-	public string playerName = "LimeCake";
-	public string playerPassword = "LimeCake";
-
-    class ConnectionCallback : NetworkModule.OnServerConnectListener
+	class ConnectionCallback : NetworkModule.OnServerConnectListener
     {
         public void OnServerConnection(bool result, string message)
         {
@@ -44,6 +46,7 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
     void Awake()
     {
         instance = this;
+        envArguments = Environment.GetCommandLineArgs();
     }
 
     // Start is called before the first frame update
@@ -78,9 +81,36 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 		Invoke("attemptLogin", (float)100 / 1000);
 	}
 
+	public void createRandomAccount()
+	{
+		Random generator = new Random();
+		string st = "abcdefghijklmnopqrstuvwxyz0123456789";
+		char c1 = st[generator.Next(st.Length)];
+		char c2 = st[generator.Next(st.Length)];
+		char c3 = st[generator.Next(st.Length)];
+		char c4 = st[generator.Next(st.Length)];
+		playerID = "T" + c1 + c2 + c3 + c4;
+		playerPW = playerID;
+	}
+	
 	public void attemptLogin()
-    {
-        networkModule.RequestUserLogin(playerName, playerPassword);
+	{
+		if (string.IsNullOrEmpty(playerID) && string.IsNullOrEmpty(playerPW))
+		{
+			playerID = SystemInfo.deviceUniqueIdentifier;
+			if (playerID.Length > 50) playerID = playerID.Substring(0, 50);
+			playerPW = SystemInfo.deviceUniqueIdentifier;
+			if (playerPW.Length > 50) playerPW = playerPW.Substring(0, 50);
+			if (envArguments != null && envArguments.Length >= 4 && envArguments[0].Equals("-id") && envArguments[2].Equals("-pw"))
+			{
+				toastModule.showToast("ID PW 를 가져왔습니다!", ToastAlerter.MESSAGE_TYPE.TYPE_GREEN, 1);
+				Debug.LogWarning("ID : " + envArguments[1]);
+				Debug.LogWarning("PW : " + envArguments[3]);
+				playerID = envArguments[1];
+				playerPW = envArguments[3];
+			}
+		}
+        networkModule.RequestUserLogin(playerID, playerPW);
     }
 
 	public static void loginResult(bool _result, UserData _user, int _game, string _message)
@@ -88,8 +118,7 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 		
 		if (_result)
         {
-            //Debug.LogWarning("OnLoginResult : InitializeLocalUser");
-            LocalUser localUser = LocalUser.Instance;
+	        LocalUser localUser = LocalUser.Instance;
             localUser.localUserData.userID = _user.userID;
             localUser.localUserData.userNick = _user.userNick;
             localUser.localUserData.userNumber = _user.userNumber;
@@ -100,6 +129,12 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 
             localUser.DebugLocalUserData();
 
+            if (_user.userNick == null || _user.userNick.Equals(String.Empty) || _user.userNick.Equals("") || _user.userNick == String.Empty)
+            {
+	            nicknameButton.enterPolicyPopup(playerID);
+	            return;
+            }
+            
             toastModule.showToast("Welcome " + localUser.localUserData.userNick + " !", ToastAlerter.MESSAGE_TYPE.TYPE_GREEN, 1);
             instance.StartCoroutine(switchLobbyScene());
         } else

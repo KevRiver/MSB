@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 //using MoreMountains.Tools;
 using System.Collections;
 using UnityEngine.UI;
@@ -105,7 +106,7 @@ namespace MoreMountains.Tools
 		{
             Initialization();
 		}
-
+		
 		private bool _isRemote = false;
         public virtual void Initialization()
         {
@@ -129,13 +130,16 @@ namespace MoreMountains.Tools
 
             MSB_Character _character;
             _character = gameObject.MMGetComponentNoAlloc<MSB_Character>();
-            if (_character != null)
-	            _isRemote = _character.IsRemote;
+            if (_character == null)
+	            return;
             
             if (HealthBarType == HealthBarTypes.Drawn)
             {
-	            if (_isRemote)
+	            if (_character.IsEnemy)
+	            {
 		            ForegroundColor = OpponentForegroundColor;
+	            }
+
 	            DrawHealthBar();
                 UpdateDrawnColors();
             }

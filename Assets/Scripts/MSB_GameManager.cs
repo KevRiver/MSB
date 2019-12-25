@@ -89,7 +89,12 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
         yield return  new WaitForSeconds(duration);
         SceneManager.LoadScene("Lobby");
     }
-    
+
+    private void ChangeScene()
+    {
+        SceneManager.LoadSceneAsync("Scenes/Lobby");
+    }
+
 
     public int RoomNum { get; set; }
     [Header("Settings")]
@@ -396,7 +401,8 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
                 MSB_GUIManager.Instance.OnGameOver();
                 GameSet(_death,_score);
                 Destroy(GameObject.Find("GameInfo"));
-                StartCoroutine(ChangeScene(5.0f));
+                //StartCoroutine(ChangeScene(5.0f));
+                Invoke("ChangeScene",5.0f);
                 break;
         }
     }

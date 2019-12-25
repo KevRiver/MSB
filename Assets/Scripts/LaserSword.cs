@@ -59,12 +59,12 @@ public class LaserSword : Weapon
     public override void Initialization()
     {
         base.Initialization();
+        
         if (_damageArea == null)
         {
             CreateDamageArea();
             DisableDamageArea();
         }
-        _msbDamageOnTouch.Owner = Owner.gameObject;
     }
 
     /// <summary>
@@ -110,7 +110,16 @@ public class LaserSword : Weapon
         _msbDamageOnTouch.TargetLayerMask = TargetLayerMask;
         _msbDamageOnTouch.CCType = CausedCCType.KnockBack;
         _msbDamageOnTouch.Owner = Owner.gameObject;
-        _msbDamageOnTouch.IgnoreGameObject(Owner.gameObject);
+        _msbDamageOnTouch._ownerCharacter = Owner.GetComponent<MSB_Character>();
+        if (_msbDamageOnTouch._ownerCharacter != null)
+        {
+            foreach (var player in MSB_LevelManager.Instance.Players)
+            {
+                if (player.team == _msbDamageOnTouch._ownerCharacter.team)
+                    _msbDamageOnTouch.IgnoreGameObject(player.gameObject);
+            }
+        }
+
         _msbDamageOnTouch.DamageCaused = DamageCaused;
         _msbDamageOnTouch.DamageCausedKnockbackType = Knockback;
         _msbDamageOnTouch.DamageCausedKnockbackForce = KnockbackForce;

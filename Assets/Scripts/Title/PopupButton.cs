@@ -1,28 +1,31 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using MSBNetwork;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PopupButton : MonoBehaviour
 {
 	public GameObject canvasObject;
-	ToastAlerter toastModule;
-	LoadSplash splashModule;
-	public GameObject popup;
+	static ToastAlerter toastModule;
+	static LoadSplash splashModule;
+	public GameObject popupUI;
 	public GameObject policyUI;
 	public GameObject nickNameUI;
 	public GameObject nickNameInput;
 	public GameObject registerResult;
-	public TitleTouch titleTouchHandler;
-	Vector2 centerPos;
-	Vector2 outsidePos;
+	public static string playerID;
+	public static string playerNICK;
+	static Vector2 centerPos;
+	static Vector2 outsidePos;
 	// Start is called before the first frame update
 	void Start()
 	{
 		toastModule = canvasObject.GetComponent<ToastAlerter>();
 		splashModule = canvasObject.GetComponent<LoadSplash>();
-		outsidePos = popup.transform.position;
-		titleTouchHandler = GameObject.Find("LoginButton").GetComponent<TitleTouch>();
+		centerPos = GameObject.Find("CenterPos").transform.position;
+		outsidePos = GameObject.Find("PolicyUI").transform.position;
 	}
 
 	// Update is called once per frame
@@ -31,9 +34,16 @@ public class PopupButton : MonoBehaviour
 
 	}
 
-	public void policyButtonClick()
+	public void enterPolicyPopup(string _playerID)
 	{
-		centerPos = popup.transform.position;
+		playerID = _playerID;
+		popupUI.transform.position = centerPos;
+		nickNameUI.transform.position = outsidePos;
+		policyUI.transform.position = centerPos;
+	}
+	
+	public void enterNicknameInput()
+	{
 		policyUI.transform.position = outsidePos;
 		nickNameUI.transform.position = centerPos;
 	}
@@ -61,30 +71,38 @@ public class PopupButton : MonoBehaviour
 			toastModule.showToast("닉네임이 너무 깁니다", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 1);
 			return;
 		}
+		playerNICK = userNameInput;
 		Debug.Log("nickname button click! register attempt");
-		// TODO titleTouchHandler.attemptRegister(userNameInput);
+		NetworkModule.GetInstance().AddOnEventSystem(new SystemCallback(this));
+		NetworkModule.GetInstance().RequestUserSystem(PopupButton.playerID, userNameInput);
+	}
+	
+	class SystemCallback : NetworkModule.OnSystemResultListener
+	{
+		private PopupButton instance;
+		public SystemCallback(PopupButton _instance)
+		{
+			instance = _instance;
+		}
+		public void OnSystemResult(bool _result, string _data)
+		{
+			instance.attemptRegisterResult(_result, _data);
+		}
 	}
 
-	public void attemptRegisterResult(int resultCode, string error)
+	public void attemptRegisterResult(bool result, string message)
 	{
 		Debug.Log("attempt register result");
-		switch (resultCode)
+		switch (result)
 		{
-			case 0:
-				popup.transform.position = outsidePos;
-				GameObject.Find("ClickText").GetComponent<Text>().color = new Color(0f, 0f, 0f, 1f);
+			case true:
+				LocalUser localUser = LocalUser.Instance;
+				localUser.localUserData.userNick = playerNICK;
+				SceneManager.LoadScene("Lobby");
 				break;
-			case 1:
-				registerResult.GetComponent<Text>().text = "ID가 이미 존재합니다";
-				toastModule.showToast("ID가 이미 존재합니다", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 1);
-				break;
-			case 2:
-				registerResult.GetComponent<Text>().text = "닉네임이 이미 존재합니다";
-				toastModule.showToast("닉네임이 이미 존재합니다", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 1);
-				break;
-			case 3:
-				registerResult.GetComponent<Text>().text = "에러 : " + error;
-				toastModule.showToast("ERROR: " + error, ToastAlerter.MESSAGE_TYPE.TYPE_RED, 1);
+			case false:
+				registerResult.GetComponent<Text>().text = message;
+				toastModule.showToast(message, ToastAlerter.MESSAGE_TYPE.TYPE_RED, 1);
 				break;
 		}
 	}
