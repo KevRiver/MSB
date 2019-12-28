@@ -13,26 +13,13 @@ public class SpinAnimation : MonoBehaviour
     public RotateDirections RotateDirection;
     public float rotateSpeed;
 
-    private IEnumerator _spinAnim;
-    private Vector3[] _vector = {Vector3.right, Vector3.up, Vector3.forward};
-
-    private void OnEnable()
+    //private IEnumerator _spinAnim;
+    private static Vector3[] _vector = {Vector3.right, Vector3.up, Vector3.forward};
+    private Vector3 _euler;
+    
+    private void Update()
     {
-        _spinAnim = Spin(RotateDirection, rotateSpeed);
-        StartCoroutine(_spinAnim);
-    }
-
-    private void OnDisable()
-    {
-        StopCoroutine(_spinAnim);
-    }
-
-    private IEnumerator Spin(RotateDirections rotDir, float speed)
-    {
-        while (true)
-        {
-            transform.Rotate(_vector[(int) rotDir] * speed );
-            yield return new WaitForSeconds(Time.deltaTime);
-        }
+        _euler = _vector[(int) RotateDirection] * rotateSpeed * Time.deltaTime;
+        transform.Rotate(_euler);
     }
 }
