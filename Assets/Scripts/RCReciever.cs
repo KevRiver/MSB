@@ -45,16 +45,15 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
         characterModel = character.transform.GetChild(0);
         weaponAttachment = characterModel.GetChild(0);
         weapon = weaponAttachment.GetComponentInChildren<Weapon>();
-        health = GetComponent<Health>();
+        //health = GetComponent<Health>();
         
         _targetPos = transform.position;
         _targetRot = transform.rotation;
 
         userNum = character.UserNum;
-        NetworkModule networkModule = NetworkModule.GetInstance();
-        networkModule.AddOnEventGameUserMove(new OnGameUserMove(this));
-        networkModule.AddOnEventGameUserSync(new OnGameUserSync(this));
-        //networkModule.AddOnEventGameEvent(new OnGameEvent(this));
+        
+        NetworkModule.GetInstance().AddOnEventGameUserMove(new OnGameUserMove(this));
+        NetworkModule.GetInstance().AddOnEventGameUserSync(new OnGameUserSync(this));
 
         isInitialized = true;
         Debug.Log("RCReciever Initialized");
@@ -130,11 +129,17 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
         //transform.position = Vector3.Lerp(transform.position, _targetPos, 0.5f);
         //transform.rotation = Quaternion.Lerp(transform.rotation, _targetRot, 0.5f);
     }
-    
+
+    public void AttackSync(Quaternion rot)
+    {
+        characterModel.rotation = rot;
+        weapon.WeaponState.ChangeState(Weapon.WeaponStates.WeaponUse);
+    }
+
     private class OnGameUserMove : NetworkModule.OnGameUserMoveListener
     {
-        private readonly RCReciever _rc;
-        private readonly int _userNum;
+        private RCReciever _rc;
+        private int _userNum;
         private int _targetNum;
         private float _posX;
         private float _posY;
@@ -174,11 +179,11 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
             _rc.SetTargetPos(_posX, _posY, _xSpeed, _ySpeed, _isFacingRight);
         }
     }
-
+    
     private class OnGameUserSync : NetworkModule.OnGameUserSyncListener
     {
-        private readonly RCReciever _rc;
-        private readonly int _userNum;
+        private RCReciever _rc;
+        private int _userNum;
         private int _targetNum;
         private Quaternion _rot;
         public OnGameUserSync(RCReciever rc)
@@ -186,7 +191,7 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
             Debug.Log("OnGameUserSync Constructor called");
             //Debug.LogWarning(rc.gameObject.name);
             _rc = rc;
-            _userNum = this._rc.userNum;
+            _userNum = _rc.userNum;
         }
         
         readonly char[] _delimiterChars = { ',' }; 
@@ -200,8 +205,7 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
             _rot.y = float.Parse(dataArray[2]);
             _rot.z = float.Parse(dataArray[3]);
             _rot.w = float.Parse(dataArray[4]);
-            _rc.characterModel.rotation = _rot;
-            _rc.weapon?.WeaponState.ChangeState(Weapon.WeaponStates.WeaponUse);
+            _rc.AttackSync(_rot);
         }
     }
 

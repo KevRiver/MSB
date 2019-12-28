@@ -91,7 +91,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
                     TargetPlayer = newPlayer;
 
                     RCSender rcSender = RCSender.Instance;
-                    rcSender.Initialize(newPlayer);
+                    rcSender.Initialize(newPlayer, gameInfo.room);
                 }
                 Players.Add(newPlayer);
             }
@@ -212,10 +212,6 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         public OnGameEvent(MSB_LevelManager levelManager)
         {
             _levelManager = levelManager;
-            /*foreach(KeyValuePair<int,MSB_Character> pair in _levelManager._allPlayersCharacter)
-            {
-                Debug.LogWarning("player num : " + pair.Value.UserNum);
-            }*/
         }
         
         private char[] spliter = {','};
@@ -223,7 +219,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         private Health _targetHealth;
         private FloatingMessageController _floatingMessageController;
         private FloatingMessageType _floatingMessageType;
-        //private string message = "";
+        
         private int amount;
 
         IEnumerator AbilityControl(MSB_Character target, float duration)
@@ -333,7 +329,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
 
         public void OnGameEventKill(int from, int to, string option)
         {
-            Debug.LogWarning(to + " slained by" + from);
+            Debug.LogWarning(to + " slained by " + from);
             _levelManager._allPlayersCharacter.TryGetValue(to, out MSB_Character target);
             if (target == null)
             {

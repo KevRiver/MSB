@@ -5,6 +5,7 @@ using MoreMountains.Tools;
 using MoreMountains.CorgiEngine;
 using MoreMountains.InventoryEngine;
 using MoreMountains.Feedbacks;
+using MSBNetwork;
 using UnityEngine.SceneManagement;
 
 
@@ -464,5 +465,8 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
         this.MMEventStopListening<MMGameEvent>();
         this.MMEventStopListening<CorgiEngineEvent>();
         this.MMEventStopListening<CorgiEnginePointsEvent>();
+        NetworkModule.GetInstance().ClearOnEventGameEvent();
+        NetworkModule.GetInstance().ClearOnEventGameUserMove();
+        NetworkModule.GetInstance().ClearOnEventGameUserSync();
     }
 }

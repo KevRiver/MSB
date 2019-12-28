@@ -10,7 +10,7 @@ using UnityEngine.Serialization;
 /// <summary>
 /// 로컬 플레이어와 연결되어 동기화 정보를 보내는 오브젝트
 /// </summary>
-public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>,MMEventListener<MMDamageTakenEvent>
+public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
 {
     private int _room;
 
@@ -42,9 +42,9 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>,MMEven
         gameObject.name = "RCSender";
     }
 
-    public void Initialize(MSB_Character sender)
+    public void Initialize(MSB_Character sender, int room)
     {
-        _room = GameInfo.Instance.room;
+        _room = room;
 
         character = sender;
         _rb = character.GetComponent<Rigidbody2D>();
@@ -105,7 +105,7 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>,MMEven
 
     public void OnMMEvent(MMGameEvent gameEvent)
     {
-        Debug.Log(gameEvent.EventName + " Called");
+        //Debug.Log(gameEvent.EventName + " Called");
         switch (gameEvent.EventName)
         {
             case "GameStart":
@@ -118,6 +118,7 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>,MMEven
         }
     }
 
+    /*
     private int _target;
     private int? _instigator;
     private int _causedDamage;
@@ -136,8 +137,8 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>,MMEven
         _target = ((MSB_Character) (eventType.AffectedCharacter)).UserNum;
         Debug.LogWarning("target is " + _target);
         _causedDamage = (int)(eventType.DamageCaused);
-        NetworkModule.GetInstance().RequestGameUserActionDamage(_room, _target, _causedDamage, "");*/
-    }
+        NetworkModule.GetInstance().RequestGameUserActionDamage(_room, _target, _causedDamage, "");
+    }*/
 
     public void RequestDamage(int target, int damage, string options)
     {
@@ -147,12 +148,12 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>,MMEven
     private void OnEnable()
     {
         this.MMEventStartListening<MMGameEvent>();
-        this.MMEventStartListening<MMDamageTakenEvent>();
+        //this.MMEventStartListening<MMDamageTakenEvent>();
     }
 
     private void OnDisable()
     {
         this.MMEventStopListening<MMGameEvent>();
-        this.MMEventStopListening<MMDamageTakenEvent>();
+        //this.MMEventStopListening<MMDamageTakenEvent>();
     }
 }

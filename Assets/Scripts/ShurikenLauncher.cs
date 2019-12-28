@@ -79,7 +79,7 @@ public class ShurikenLauncher : Weapon
 			base.WeaponUse ();
 			Owner.GetComponent<CharacterSpin>().SetSpinSpeedMultiplier(0.5f);
 			DetermineSpawnPosition ();
-			if(!_isOwnerRemote)
+			if(!_isOwnerRemote) // 공격한 플레이어가 로컬 플레이어라면 RequestUserSync
 				RCSender.Instance.RequestUserSync();
 			for (int i = 0; i < ProjectilesPerShot; i++)
             {
