@@ -1,14 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MoreMountains.CorgiEngine;
 using MoreMountains.Tools;
 using UnityEngine.SceneManagement;
 using MSBNetwork;
-using System.Linq;
-using System.Threading;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 public class NetworkManager : MonoBehaviour
 {
@@ -58,6 +53,7 @@ public class NetworkManager : MonoBehaviour
             if(count == 0)
                 MMGameEvent.Trigger("GameStart");
         }
+        
         /*public void OnGameEventMessage(object _data)
         {
 
@@ -69,15 +65,7 @@ public class NetworkManager : MonoBehaviour
         
         public void OnGameEventReady(string readyData)
         {
-            /*JArray jArray = JArray.Parse(readyData);
-            foreach (var jObject in jArray)
-            {
-                Debug.Log((JObject) jObject);
-                foreach (JProperty prop in jObject)
-                {
-                    //Debug.LogWarning(prop.Name + " : " + prop.Value<bool>());
-                }
-            }*/
+            
         }
 
         public void OnGameEventScore(int blueKill, int blueDeath, int bluePoint, int redKill, int redDeath, int redPoint)
@@ -93,50 +81,6 @@ public class NetworkManager : MonoBehaviour
                 MMGameEvent.Trigger("GameOver");
         }
     }
-
-    /*private class OnGameUserMove : NetworkModule.OnGameUserMoveListener
-    {
-        char[] delimiterChars = { ',' };
-        void NetworkModule.OnGameUserMoveListener.OnGameUserMove(object _data)
-        {
-            //Debug.Log("OnGameUserMove called");
-            //UnityMainThreadDispatcher.Instance().Enqueue(PlayerMove(_data));
-        }
-
-        public IEnumerator PlayerMove(object _data)
-        {
-            string[] dataArray = ((string)_data).Split(delimiterChars);
-            int target = int.Parse(dataArray[0]);
-            float posX = float.Parse(dataArray[1]);
-            float posY = float.Parse(dataArray[2]);
-            float posZ = float.Parse(dataArray[3]);
-            float speedX = float.Parse(dataArray[4]);
-            float speedY = float.Parse(dataArray[5]);
-            //bool isGrounded = bool.Parse(dataArray[6]);
-            bool isFacingRight = bool.Parse(dataArray[6]);
-            float rotZ = float.Parse(dataArray[7]);
-
-            if (LocalUser.Instance.localUserData.userNumber == target)
-            {
-                yield break;
-            }
-            else
-            {
-                foreach (MSB_Character player in MSB_LevelManager.Instance.Players)
-                {
-                    RCReciever rc = player.gameObject.GetComponent<RCReciever>();
-                    if (rc == null)
-                        Debug.Log(player.UserNum + "'s RCReciever null");
-
-                    if (player.UserNum == target)
-                    {
-                        rc.SetTargetPos(posX, posY, speedX, speedY, isFacingRight, rotZ);
-                    }
-                }
-            }
-            yield return null;
-        }
-    }*/
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
@@ -151,10 +95,6 @@ public class NetworkManager : MonoBehaviour
         _networkManager.AddOnEventGameQueue(new OnGameMatched());
         _networkManager.AddOnEventGameInfo(new OnGameInfo());
         _networkManager.AddOnEventGameStatus(new OnGameStatus());
-        //networkManager.AddOnEventGameUserMove(new OnGameUserMove());
-        //networkManager.AddOnEventGameInfo(new OnGameInfo());
-        //networkManager.AddOnEventGameEvent(new OnGameAction());
-        //networkManager.AddOnEventGameUserSync(new OnGameUserSync());              
     }
 
     // Update is called once per frame

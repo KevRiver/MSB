@@ -1542,14 +1542,6 @@ namespace MSBNetwork
         }
 
         /// <summary>
-        /// onGameUserMoveListeners 목록을 초기화한다
-        /// </summary>
-        public void ClearOnEventGameUserMove()
-        {
-            onGameUserMoveListeners.Clear();
-        }
-
-        /// <summary>
         /// 해당 OnGameUserMoveListener 를 콜백 목록에 등록합니다
         /// </summary>
         /// <param name="_listener">OnGameUserMoveListener implemented class</param>
@@ -1575,14 +1567,6 @@ namespace MSBNetwork
         public void AddOnEventGameUserSync(OnGameUserSyncListener _listener)
         {
             onGameUserSyncListeners.Add(_listener);
-        }
-        
-        /// <summary>
-        /// onGameEventUserSync 콜백목록을 초기화한다
-        /// </summary>
-        public void ClearOnEventGameUserSync()
-        {
-            onGameUserSyncListeners.Clear();
         }
 
         /// <summary>
@@ -1640,14 +1624,6 @@ namespace MSBNetwork
         public void AddOnEventGameEvent(OnGameEventListener _listener)
         {
             onGameEventListeners.Add(_listener);
-        }
-
-        /// <summary>
-        /// onGameEventListeners 를 초기화한다
-        /// </summary>
-        public void ClearOnEventGameEvent()
-        {
-            onGameEventListeners.Clear();
         }
 
         /// <summary>

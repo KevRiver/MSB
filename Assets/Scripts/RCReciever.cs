@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
 using MoreMountains.Tools;
 using MSBNetwork;
 using MoreMountains.CorgiEngine;
-using UnityEngine.Serialization;
-using UnityScript.Steps;
 
 public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
 {
@@ -16,17 +12,8 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
     public Transform characterModel;
     public Transform weaponAttachment;
     public Weapon weapon;
-    public Health health;
     public int userNum;
-    // For position sync
-    public float posX = 0;
-    public float posY = 0;
-    public float posZ = 0;
-    public float xSpeed = 0;
-    public float ySpeed = 0;
     // For facing direction sync
-    public bool isFacingRight;
-    public bool isGrounded;
     public bool lastFacing;
 
     private Vector3 _curPos;
@@ -45,8 +32,7 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
         characterModel = character.transform.GetChild(0);
         weaponAttachment = characterModel.GetChild(0);
         weapon = weaponAttachment.GetComponentInChildren<Weapon>();
-        //health = GetComponent<Health>();
-        
+
         _targetPos = transform.position;
         _targetRot = transform.rotation;
 
@@ -91,7 +77,6 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
             onSync = false;
             StopCoroutine(SyncUserPos());
         }
-
         this.MMEventStopListening<MMGameEvent>();
     }
 
@@ -113,7 +98,7 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
         }
     }
 
-    public void SetTargetPos(float targetPosX, float targetPosY, float xSpeed, float ySpeed, bool isFacingRight, float smoothTime = 0.1f)
+    public void MoveSync(float targetPosX, float targetPosY, float xSpeed, float ySpeed, bool isFacingRight, float smoothTime = 0.1f)
     {
         if (lastFacing != isFacingRight)
         {
@@ -125,9 +110,6 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
 
         _speed.x = xSpeed;
         _speed.y = ySpeed;
-        
-        //transform.position = Vector3.Lerp(transform.position, _targetPos, 0.5f);
-        //transform.rotation = Quaternion.Lerp(transform.rotation, _targetRot, 0.5f);
     }
 
     public void AttackSync(Quaternion rot)
@@ -176,7 +158,7 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
             //_rotZ = float.Parse(dataArray[7]);
             
             // Sync User position
-            _rc.SetTargetPos(_posX, _posY, _xSpeed, _ySpeed, _isFacingRight);
+            _rc.MoveSync(_posX, _posY, _xSpeed, _ySpeed, _isFacingRight);
         }
     }
     
@@ -208,57 +190,4 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
             _rc.AttackSync(_rot);
         }
     }
-
-   /* private class OnGameEvent : NetworkModule.OnGameEventListener
-    {
-        private RCReciever _rc;
-        private int _userNum;
-
-        public OnGameEvent(RCReciever rc)
-        {
-            _rc = rc;
-            _userNum = _rc.userNum;
-        }
-
-        public void OnGameEventDamage(int from, int to, int amount, string option)
-        {
-            Debug.LogWarning("DamageEvent Occured - from : " + from + " to : " + to + " damage : " + amount);
-        }
-
-        public void OnGameEventHealth(int num, int health)
-        {
-            if (num != _userNum)
-                return;
-            Debug.LogWarning(num + "'s Health Changed");
-            _rc.health.ChangeHealth(health);
-        }
-
-        public void OnGameEventItem(int type, int num, int action)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnGameEventKill(int from, int to, string option)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnGameEventObject(int num, int health)
-        {
-            if (num != _userNum)
-                return;
-
-            throw new System.NotImplementedException();
-        }
-
-        public void OnGameEventRespawn(int num, int time)
-        {
-            if (num != _userNum)
-                return;
-
-            throw new System.NotImplementedException();
-        }
-    }*/
-
-    
 }
