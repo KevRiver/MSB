@@ -172,7 +172,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Feedbacks:
   - {fileID: 1772866691393095318}
-  InitializationMode: 1
+  InitializationMode: 2
   DebugActive: 0
 --- !u!114 &1772866691393095318
 MonoBehaviour:
