@@ -13,7 +13,8 @@ using UnityEngine.UI;
 public class ManageLobbyObject : MonoBehaviour
 {
     // Lobby UI
-    public GameObject top_ProfileButton;
+    public GameObject top_RankImg;
+    public Text top_RankText;
     public GameObject top_SettingButton;
     public GameObject bot_PlayButton;
     public GameObject bot_ChangeCharacter;
@@ -41,13 +42,16 @@ public class ManageLobbyObject : MonoBehaviour
     public int skinID;
     public int weaponID;
 
+    // Rank
+    public Sprite[] rankSprite = new Sprite[3];
+    public int t1 = 0;
     // Start is called before the first frame update
     void Start()
     {
         string userNick = LocalUser.Instance.localUserData.userNick;
 
         // Lobby UI
-        top_ProfileButton = GameObject.Find("ProfileButton");
+        top_RankImg = GameObject.Find("RankImg");
         // top_Profile_Text = top_Profile.transform.GetChild(0).GetChild(0).gameObject;
         // top_Profile_Text.GetComponent<Text>().text = userNick;
         top_SettingButton = GameObject.Find("SettingButton");
@@ -70,8 +74,7 @@ public class ManageLobbyObject : MonoBehaviour
         centerSlot = t_CenterSlot.gameObject;
         */
 
-        t_HomeButton = transform.Find("HomeButton");
-        homeButton = t_HomeButton.gameObject;
+        homeButton = GameObject.Find("HomeButton");
 
         // Play UI
         soloButton = GameObject.Find("SoloPlayButton");
@@ -79,8 +82,10 @@ public class ManageLobbyObject : MonoBehaviour
 
         // Character
         lobbyCharacter = GameObject.Find("LobbyCharacter");
-    }
 
+        setRank(t1);
+        //setRank(LocalUser.Instance.localUserData.userRank);
+    }
 
     public void getSkinID(int id)
     {
@@ -90,5 +95,25 @@ public class ManageLobbyObject : MonoBehaviour
     public void getWeaponID(int id)
     {
         weaponID = id;
+    }
+
+    void setRank(int rank)
+    {
+        top_RankText.text = rank.ToString();
+        if (rank < 800)
+        {
+            Debug.Log("Bronze");
+            top_RankImg.GetComponent<Image>().sprite = rankSprite[0];
+        }
+        else if(rank >= 800 && rank < 1200)
+        {
+            Debug.Log("Silver");
+            top_RankImg.GetComponent<Image>().sprite = rankSprite[1];
+        }
+        else if(rank >= 1200)
+        {
+            Debug.Log("Gold");
+            top_RankImg.GetComponent<Image>().sprite = rankSprite[2];
+        }
     }
 }

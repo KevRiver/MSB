@@ -48,5 +48,7 @@ public class ManageSelectCharacter : MonoBehaviour
         canvas.skinID = skinID;
         canvas.weaponID = weaponID;
         FindObjectOfType<LobbyCharacter>().changeSprite(skinID);
+
+
     }
 }

@@ -869,6 +869,7 @@
           <e p="link.xml" t="Include" />
         </e>
         <e p="Scripts" t="Include">
+          <e p="BoxColliderGizmo.cs" t="Include" />
           <e p="ButtonScripts.cs" t="Include" />
           <e p="Catcher" t="Include">
             <e p="Catcher.cs" t="Include" />

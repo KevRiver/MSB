@@ -28,6 +28,9 @@ public class LobbyButton : MonoBehaviour
     // Canvas
     ManageLobbyObject canvas;
 
+    // Animation
+    bool characterSelectWindowBool = false;
+
     void Start()
     {
         character = GameObject.Find("LobbyCharacter");
@@ -45,8 +48,7 @@ public class LobbyButton : MonoBehaviour
     {
     }
 
-
-    public void RequestSoloQueue()
+    public void RequestGameQueue(int mode)
     {
         //현재 정보 담고
         //담은 정보로 RequestSoloQueue;
@@ -61,30 +63,14 @@ public class LobbyButton : MonoBehaviour
         LocalUser.Instance.localUserData.userSkin = skinID;
         LocalUser.Instance.SetWeaponID(weaponID);
         LocalUser.Instance.SetSkinID(skinID);
-
-        NetworkModule.GetInstance().RequestGameSoloQueue(weaponID, skinID);
-    }
-
-    public void RequestTeamQueue()
-    {
-        ManageLobbyObject lobbyObj = FindObjectOfType<ManageLobbyObject>();
-        Debug.LogWarning("LobbyObj SkinID : " + lobbyObj.skinID);
-
-        //현재 무기 값이 WeaponID 이고 스킨 값은 SkinID이다 WeaponID = SkinID
-        int weaponID = lobbyObj.weaponID;
-        int skinID = lobbyObj.skinID;
-
-        LocalUser.Instance.localUserData.userWeapon = weaponID;
-        LocalUser.Instance.localUserData.userSkin = skinID;
-        LocalUser.Instance.SetWeaponID(weaponID);
-        LocalUser.Instance.SetSkinID(skinID);
-
-        NetworkModule.GetInstance().RequestGameTeamQueue(weaponID, skinID);
-    }
-
-    // 큐 버튼에 케릭터 정보 전달 
-    void sendCharacterInfo()
-    {
+        if(mode == 0)
+            NetworkModule.GetInstance().RequestGameSoloQueue(weaponID, skinID);
+        else if(mode == 1)
+            NetworkModule.GetInstance().RequestGameTeamQueue(weaponID,skinID);
+        else
+        {
+            Debug.LogWarning("set game mode");
+        }
     }
 
     // 스킨 선택 버튼
@@ -92,60 +78,36 @@ public class LobbyButton : MonoBehaviour
     {
         // Need Animation
         characterSelectTransition();
-
     }
 
     void characterSelectTransition()
     {
-        if(canvas.mainLobby.transform.localPosition.y != 100)
+        if (characterSelectWindowBool)
         {
-            canvas.bot_PlayButton.SetActive(false);
-            canvas.mainLobby.transform.localPosition = new Vector2(0, 100);
+            characterSelectWindowBool = false;
+            canvas.bot_PlayButton.SetActive(true);
+            canvas.GetComponent<Animator>().SetTrigger("CharacterSelectWindowOutTransition");
         }
         else
         {
-            canvas.bot_PlayButton.SetActive(true);
-            canvas.mainLobby.transform.localPosition = new Vector2(0, 0);
+            characterSelectWindowBool = true;
+            canvas.bot_PlayButton.SetActive(false);
+            canvas.GetComponent<Animator>().SetTrigger("CharacterSelectWindowInTransition");
         }
     }
 
-    // 캐릭터 선택시 뒤로가기 버튼
-    public void backLobbyButton()
+    // Home Button
+    void backLobbyButton()
     {
-        canvas.homeButton.SetActive(false);
-
-        if (canvas.playLobby.transform.localPosition.x == 0)
-        {
-            canvas.lobbyCharacter.GetComponent<SpriteRenderer>().enabled = true;
-            canvas.mainLobby.transform.localPosition = new Vector2(0, 0);
-            canvas.playLobby.transform.localPosition = new Vector2(800, 0);
-        }
-        
-
-        // MAKE! select button
-        // MAKE! game start button
-
+        canvas.GetComponent<Animator>().SetTrigger("PlayLobbyOutTransition");
+        canvas.GetComponent<ManageLobbyObject>().lobbyCharacter.GetComponent<SpriteRenderer>().enabled = true;
     }
 
     
-    public void gamePlayButton()
+    void gamePlayButton()
     {
-        //deactiveLobbyUI();
-        //Debug.Log(canvas.playLobby.transform.localPosition);
-        playButton_transition();
-
-        // Deactive Character
+        canvas.GetComponent<Animator>().SetTrigger("PlayLobbyInTransition");
         canvas.lobbyCharacter.GetComponent<SpriteRenderer>().enabled = false;
-
-        canvas.homeButton.SetActive(true);
     }
-
-    void playButton_transition()
-    {
-        canvas.mainLobby.transform.localPosition = new Vector2(-800, 0);
-        canvas.playLobby.transform.localPosition = new Vector2(0, 0);
-    }
-
-
     
 }
