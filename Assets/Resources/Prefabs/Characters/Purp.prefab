@@ -769,6 +769,7 @@ MonoBehaviour:
   _controller: {fileID: 0}
   SpawnerIndex: 0
   bushID: 0
+  IsEnemy: 0
   team: 0
 --- !u!114 &6372443015154303078
 MonoBehaviour:
@@ -823,7 +824,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AbilityStartFeedbacks: {fileID: 0}
   AbilityStopFeedbacks: {fileID: 0}
-  AbilityPermitted: 1
+  AbilityPermitted: 0
   InitialWeapon: {fileID: 1544106584760390544, guid: 33f834833cfbf2d48b58ae6025f7d315,
     type: 3}
   CanPickupWeapons: 1
