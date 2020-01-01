@@ -176,6 +176,7 @@ MonoBehaviour:
   FreezeFramesOnHitDuration: 0
   Owner: {fileID: 0}
   TargetLayerMasks: []
+  _ownerCharacter: {fileID: 0}
   CCType: 1
   stunDuration: 0.5
 --- !u!114 &7729972404493961826
@@ -501,7 +502,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   size: 10
   blurSize: 0
-  color: {r: 1, g: 0.18422438, b: 0, a: 1}
+  color: {r: 1, g: 1, b: 1, a: 1}
   blurAlphaMultiplier: 1
   blurAlphaChoke: 0
   invertBlur: 0
@@ -531,7 +532,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RotateDirection: 2
-  rotateSpeed: 10
+  rotateSpeed: 360
 --- !u!1 &8162848441251870585
 GameObject:
   m_ObjectHideFlags: 0

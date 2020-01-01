@@ -398,6 +398,7 @@ MonoBehaviour:
   _controller: {fileID: 0}
   SpawnerIndex: 0
   bushID: 0
+  IsEnemy: 0
   team: 0
 --- !u!114 &8741214656735043768
 MonoBehaviour:
@@ -413,7 +414,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AbilityStartFeedbacks: {fileID: 0}
   AbilityStopFeedbacks: {fileID: 0}
-  AbilityPermitted: 1
+  AbilityPermitted: 0
   WalkSpeed: 6
   MovementSpeedMultiplier: 1
   PushSpeedMultiplier: 1
@@ -434,7 +435,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AbilityStartFeedbacks: {fileID: 0}
   AbilityStopFeedbacks: {fileID: 0}
-  AbilityPermitted: 1
+  AbilityPermitted: 0
   characterModel: {fileID: 0}
   spinSpeed: -360
   speedMultiplier: 1

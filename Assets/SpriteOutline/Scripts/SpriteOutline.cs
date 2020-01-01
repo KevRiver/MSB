@@ -84,14 +84,14 @@ public class SpriteOutline : MonoBehaviour {
 	public bool generatesOnValidate = true;
 	#endif
 
-	SpriteRenderer spriteRenderer;
-	Image          image;
-	Sprite         sprite;
-	GameObject     outline;
-	SpriteRenderer outlineSpriteRenderer;
-	Image          outlineImage;
-	Material       material;
-	Texture2D      texture;
+	protected SpriteRenderer spriteRenderer;
+	protected Image          image;
+	protected Sprite         sprite;
+	protected GameObject     outline;
+	protected SpriteRenderer outlineSpriteRenderer;
+	protected Image          outlineImage;
+	protected Material       material;
+	protected Texture2D      texture;
 
 	float   _boundsMinX;
 	float   _boundsMinY;
@@ -109,7 +109,7 @@ public class SpriteOutline : MonoBehaviour {
 	Dictionary<int, Vector2> _cachedOutlineAnchors = new Dictionary<int, Vector2> ();
 	int                      _lastSpriteFrameId;
 
-	void Start() {
+	protected  virtual void Start() {
 		#if UNITY_EDITOR
 		if (!Application.isPlaying) {
 			if (generatesOnValidate) {
@@ -126,7 +126,7 @@ public class SpriteOutline : MonoBehaviour {
 		Regenerate ();
 	}
 
-	void TryGetOutline() {
+	protected virtual void TryGetOutline() {
 		Transform outlineTransform = transform.Find ("Outline");
 
 		if (outlineTransform) {
@@ -136,7 +136,7 @@ public class SpriteOutline : MonoBehaviour {
 		}
 	}
 
-	void TryGetSprite() {
+	protected virtual void TryGetSprite() {
 		sprite = null;
 
 		if (!spriteRenderer) spriteRenderer = GetComponent<SpriteRenderer> ();
@@ -161,7 +161,7 @@ public class SpriteOutline : MonoBehaviour {
 		}
 	}
 
-	void LateUpdate() {
+	protected  virtual void LateUpdate() {
 		SortOutline ();
 
 		if (!Application.isPlaying || !isAnimated)
@@ -205,7 +205,7 @@ public class SpriteOutline : MonoBehaviour {
 		_lastSpriteFrameId = spriteFrameId;
 	}
 
-	public void Regenerate() {
+	public virtual void Regenerate() {
 		if (useExportedFrame != _cachedUseExportedFrame) {
 			_shouldRegenerateMaterial = true;
 		}
@@ -376,7 +376,7 @@ public class SpriteOutline : MonoBehaviour {
 		}
 	}
 
-	void SetupTexture() {
+	protected  virtual void SetupTexture() {
 		int padding = (size + buffer) * 2;
 		int width   = Mathf.CeilToInt ((_boundsMaxX - _boundsMinX) * sprite.pixelsPerUnit) + padding;
 		int height  = Mathf.CeilToInt ((_boundsMaxY - _boundsMinY) * sprite.pixelsPerUnit) + padding;
@@ -390,7 +390,7 @@ public class SpriteOutline : MonoBehaviour {
 		}
 	}
 
-	void ClearTexture() {
+	protected  virtual void ClearTexture() {
 		Color32[] pixels      = texture.GetPixels32 ();
 		int       pixelsCount = pixels.Length;
 
@@ -401,7 +401,7 @@ public class SpriteOutline : MonoBehaviour {
 		texture.SetPixels32 (pixels);
 	}
 
-	void FillTexture(GameObject instance, Sprite sprite) {
+	protected  virtual void FillTexture(GameObject instance, Sprite sprite) {
 		if (!ShouldIgnoreSprite (instance, sprite)) {
 			int width  = (int)sprite.rect.width;
 			int height = (int)sprite.rect.height;
@@ -457,19 +457,19 @@ public class SpriteOutline : MonoBehaviour {
 		}
 	}
 
-	int GetOffsetX(GameObject instance, Sprite sprite) {
+	protected int GetOffsetX(GameObject instance, Sprite sprite) {
 		float spriteMinX = instance.transform.position.x / (image ? image.canvas.referencePixelsPerUnit : 1) + sprite.bounds.min.x;
 
 		return size + buffer + Mathf.RoundToInt ((spriteMinX - _boundsMinX) * sprite.pixelsPerUnit);
 	}
 
-	int GetOffsetY(GameObject instance, Sprite sprite) {
+	protected int GetOffsetY(GameObject instance, Sprite sprite) {
 		float spriteMinY = instance.transform.position.y / (image ? image.canvas.referencePixelsPerUnit : 1) + sprite.bounds.min.y;
 
 		return size + buffer + Mathf.RoundToInt ((spriteMinY - _boundsMinY) * sprite.pixelsPerUnit);
 	}
 
-	void SetTransformValues(Vector3 position, Quaternion rotation, Vector3 scale) {
+	protected void SetTransformValues(Vector3 position, Quaternion rotation, Vector3 scale) {
 		transform.position   = position;
 		transform.rotation   = rotation;
 		transform.localScale = scale;
@@ -570,29 +570,29 @@ public class SpriteOutline : MonoBehaviour {
 		Log ("Outline exported to \"{0}\"", texturePath);
 	}
 
-	string GetSanitizedName(string name) {
+	protected string GetSanitizedName(string name) {
 		return string.Concat (name.Split (System.IO.Path.GetInvalidFileNameChars ())).ToLower ();
 	}
 
-	void Log(string message, params object[] args) {
+	protected void Log(string message, params object[] args) {
 		Debug.LogFormat ("{0}: {1}", this, string.Format (message, args));
 	}
 
-	void LogError(string error, params object[] args) {
+	protected void LogError(string error, params object[] args) {
 		Debug.LogErrorFormat ("{0}: {1}", this, string.Format (error, args));
 	}
 
 	#if UNITY_EDITOR
 	bool _shouldRegenerate;
 
-	void OnValidate() {
+	protected void OnValidate() {
 		if (!gameObject.activeInHierarchy || !generatesOnValidate)
 			return;
 
 		_shouldRegenerate = true;
 	}
 
-	void Update() {
+	protected void Update() {
 		if (_shouldRegenerate) {
 			Regenerate ();
 			_shouldRegenerate = false;

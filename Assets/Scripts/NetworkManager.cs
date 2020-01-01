@@ -30,6 +30,7 @@ public class NetworkManager : MonoBehaviour
             // make "gameinfo" object
             GameInfo gameInfo = GameInfo.Instance;
             gameInfo.room = _room;
+            gameInfo.mode = _mode;
             foreach (UserData user in _users)
             {
                 PlayerInfo player = new PlayerInfo(_room, user.userNumber, user.userID, user.userNick, user.userWeapon, user.userSkin);

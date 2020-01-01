@@ -31,7 +31,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
 
     // private stuff
     public List<MSB_Character> Players { get; protected set; }
-    private MSB_Character TargetPlayer;
+    public MSB_Character TargetPlayer;
     public List<MSB_SpawnPoint> Spawnpoints { get; protected set; }
     public List<Item> Items { get; protected set; }
     public Dictionary<int, MSB_Character> _allPlayersCharacter;
@@ -130,15 +130,23 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
 
     protected virtual void SpawnPlayers()
     {
+        const int SOLO = 0;
+        const int TEAM = 1;
         int index = 0;
-        //int mid = Spawnpoints.Count / 2 - 1;
-        //int playerCount = Players.Count;
+        int mode = gameInfo.mode;
         MSB_GameManager.Team team = MSB_GameManager.Team.Blue;
         foreach (var character in Players)
         {
-            character.team = (index % 2 == 0)? MSB_GameManager.Team.Blue : MSB_GameManager.Team.Red;
+            if (mode == SOLO && index == 1)
+            {
+                team = MSB_GameManager.Team.Red;
+                index = 3;
+            }
+            else if (mode == TEAM && index == 3)
+                team = MSB_GameManager.Team.Red;
+            
+            character.team = team;
             character.SpawnerIndex = index;
-            //team = (index < mid) ? MSB_GameManager.Team.Blue : MSB_GameManager.Team.Red;
             index++;
         }
 
@@ -149,6 +157,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
                 player.IsEnemy = true;
             Spawnpoints[player.SpawnerIndex].SpawnPlayer(player);
         }
+        
     }
     /// <summary>
     /// MSB Custom
@@ -337,7 +346,17 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
             target.AbilityControl(true);
             var model = target.transform.GetChild(0);
             var outlineRenderer = model.transform.GetChild(1).GetComponentInChildren<SpriteRenderer>();
-            outlineRenderer.material.SetColor("_Color",Color.white);
+            Color color;
+            if(!target.IsRemote)
+                color = Color.yellow;
+            else if (target.team == MSB_LevelManager.Instance.TargetPlayer.team)
+                color = Color.green;
+            else
+            {
+                color = Color.red;
+            }
+
+            outlineRenderer.material.SetColor("_Color", color);
             //outlineRenderer.color = Color.white;
             _targetHealth = target.gameObject.GetComponent<Health>();
             //target.gameObject.SetActive(false);

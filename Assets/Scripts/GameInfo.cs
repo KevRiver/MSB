@@ -31,6 +31,7 @@ public class GameInfo : PersistentSingleton<GameInfo>
     // PlayScene으로 로드하기전에 네트워크 매니저에 의해 생성된다
     // 
     public int room;
+    public int mode;
     public List<PlayerInfo> players;
     private LocalUser localUser;
 

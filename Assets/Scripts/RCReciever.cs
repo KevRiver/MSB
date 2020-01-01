@@ -16,6 +16,7 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
     // For facing direction sync
     public bool lastFacing;
 
+    private Transform _aimIndicator;
     private Vector3 _curPos;
     private Vector3 _targetPos;
     private Vector2 _speed;
@@ -31,6 +32,7 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
 
         characterModel = character.transform.GetChild(0);
         weaponAttachment = characterModel.GetChild(0);
+        _aimIndicator = weaponAttachment.GetChild(0);
         weapon = weaponAttachment.GetComponentInChildren<Weapon>();
 
         _targetPos = transform.position;
@@ -42,7 +44,9 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
         NetworkModule.GetInstance().AddOnEventGameUserSync(new OnGameUserSync(this));
 
         isInitialized = true;
-        Debug.Log("RCReciever Initialized");
+        
+        if (_aimIndicator != null)
+            _aimIndicator.gameObject.SetActive(false);
     }
 
     public void OnMMEvent(MMGameEvent eventType)
