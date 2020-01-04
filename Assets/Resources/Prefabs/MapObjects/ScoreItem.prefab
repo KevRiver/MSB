@@ -218,6 +218,9 @@ MonoBehaviour:
   ItemSpawnDelay: 0.75
   ItemSpawnFeedback: {fileID: 8874565729927446993}
   ItemTakenFeedback: {fileID: 365065958938448133}
+  ScoreMessagePrefab: {fileID: 5204602565879416034, guid: 20bf1bec2c34f4b48a2a231619ec967e,
+    type: 3}
+  score: 0
 --- !u!58 &3335460524056393120
 CircleCollider2D:
   m_ObjectHideFlags: 0

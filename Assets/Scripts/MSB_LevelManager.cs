@@ -204,6 +204,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         {
             if (!target.gameObject.activeInHierarchy)
             {
+                Spawnpoints[target.SpawnerIndex].SpawnPlayer(target);
                 target.gameObject.SetActive(true);
                 target.GetComponent<MMHealthBar>().Initialization();
             }

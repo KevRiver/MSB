@@ -201,7 +201,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TriggerMode: 0
   DelayBeforeUse: 0
-  DelayBeforeUseReleaseInterruption: 1
+  DelayBeforeUseReleaseInterruption: 0
   TimeBetweenUses: 0.5
   TimeBetweenUsesReleaseInterruption: 0
   MagazineBased: 0
@@ -256,7 +256,8 @@ MonoBehaviour:
   Knockback: 1
   KnockbackForce: {x: 15, y: 0}
   InvincibilityDuration: 0
-  StunDuration: 1
+  StunDuration: 0.5
+  ccType: 1
 --- !u!95 &8409312927696426065
 Animator:
   serializedVersion: 3

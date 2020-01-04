@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 using MoreMountains.CorgiEngine;
 using MoreMountains.Tools;
@@ -10,6 +11,7 @@ using MSBNetwork;
 public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
 {
     private int _room;
+    private bool gameOn;
 
     public MSB_Character character;
     private Rigidbody2D _rb;
@@ -59,6 +61,16 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
         Debug.Log("RCSender Initialized");
     }
 
+    private void FixedUpdate()
+    {
+        if (!gameOn)
+            return;
+        if (!character.gameObject.activeInHierarchy)
+            return;
+        if(_controller.State.IsCollidingBelow || _controller.State.IsCollidingAbove)
+            RequestUserMoveQuick();
+    }
+
     public void StartRequest()
     {
         StartCoroutine(RequestUserMove());
@@ -89,6 +101,22 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
         }
     }
 
+    public void RequestUserMoveQuick()
+    {
+        _pos = character.transform.position;
+        _posX = (_pos.x).ToString();
+        _posY = (_pos.y).ToString();
+        _posZ = (_pos.z).ToString();
+        _speedX = (_controller.Speed.x).ToString();
+        _speedY = (_controller.Speed.y).ToString();
+        _isFacingRight = character.IsFacingRight.ToString();
+        //_rotZ = sender.transform.localRotation.z.ToString();
+
+        string data = _userNum.ToString() + "," + _posX + "," + _posY + "," + _posZ + "," + _speedX + "," + _speedY + "," + _isFacingRight;
+        //Debug.LogWarning(data);
+        NetworkModule.GetInstance().RequestGameUserMove(_room, data);
+    }
+
     public void RequestUserSync()
     {
         _rot = _characterModel.transform.rotation;
@@ -106,10 +134,12 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
         switch (gameEvent.EventName)
         {
             case "GameStart":
+                gameOn = true;
                 StartCoroutine(RequestUserMove());
                 break;
 
             case "GameOver":
+                gameOn = false;
                 StopCoroutine(RequestUserMove());
                 break;
         }

@@ -60,21 +60,18 @@ public class MSB_DamageOnTouch : DamageOnTouch
     {
         if (!this.isActiveAndEnabled)
         {
-            Debug.Log("1");
             return;
         }
 
         // if the object we're colliding with is part of our ignore list, we do nothing and exit
         if (_ignoredGameObjects.Contains(collider.gameObject))
         {
-            Debug.Log("2");
             return;
         }
 
         // if what we're colliding with isn't part of the target layers, we do nothing and exit
         if (!MMLayers.LayerInLayerMask(collider.gameObject.layer,TargetLayerMask))
         {
-            Debug.Log("3");
             return;
         }
         //Debug.LogWarning("DamageOnTouch : " + collider.gameObject);

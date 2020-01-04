@@ -11,7 +11,7 @@ public enum FloatingMessageType
     Damage,
     Heal,
     KnockBack,
-    Stun
+    Stun,
 }
 
 public struct FloatingMessageEvent
@@ -45,13 +45,8 @@ public struct FloatingMessageEvent
 
 public class FloatingMessageController : MonoBehaviour, MMEventListener<FloatingMessageEvent>
 {
-    public int _id;
-    //public Color DamageColor;
-    //public Color HealColor;
-    //public Color TextColor0;
-    //public Color TextColor1;
+    private int _id;
     public GameObject[] FloatingMessagePrefabs;
-    //private MMObjectPooler _objectPooler;
 
     public Vector3 SpawnOffset;
     // Start is called before the first frame update
@@ -62,10 +57,6 @@ public class FloatingMessageController : MonoBehaviour, MMEventListener<Floating
 
     private void Initialization()
     {
-        /*if (GetComponent<MMSimpleObjectPooler>() != null)
-        {
-            _objectPooler = GetComponent<MMSimpleObjectPooler>();
-        }*/
         _id = transform.parent.GetComponent<MSB_Character>().UserNum;
     }
 
@@ -77,6 +68,7 @@ public class FloatingMessageController : MonoBehaviour, MMEventListener<Floating
         {
             floatingMessage = Instantiate(FloatingMessagePrefabs[(int) type], transform.position + randomOffset,
                 Quaternion.identity);
+            
             floatingMessage.GetComponent<TextMesh>().text = amount.ToString();
         }
         else
@@ -85,64 +77,6 @@ public class FloatingMessageController : MonoBehaviour, MMEventListener<Floating
                 Quaternion.identity);
         }
     }
-
-    /*protected virtual GameObject SpawnFloatingMessage(FloatingMessageType msgType, string msg, float duration)
-    {
-        Debug.LogWarning("SpawnFloatingMessage Called");
-        GameObject nextGameObject = _objectPooler.GetPooledGameObject();
-
-        // mandatory checks
-        if (nextGameObject==null)	{ return null; }
-        if (nextGameObject.GetComponent<MMPoolableObject>()==null)
-        {
-            throw new Exception(gameObject.name+" is trying to spawn objects that don't have a PoolableObject component.");		
-        }
-
-        FloatingMessage message = nextGameObject.GetComponent<FloatingMessage>();
-        if (message != null)
-        {
-            message.Duration = duration;
-        }
-
-        TextMesh mesh = message.GetComponent<TextMesh>();
-        if (mesh != null)
-        {
-            mesh.text = msg;
-            switch (msgType)
-            {
-                case FloatingMessageType.Damage:
-                    mesh.color = DamageColor;
-                    message.SetAnimation(FloatingMessageStartAnimation.PopSlideUp,FloatingMessageDestroyAnimation.FadeOut);
-                    SpawnOffset = RandomOffset();
-                    break;
-                
-                case FloatingMessageType.Heal:
-                    mesh.color = HealColor;
-                    message.SetAnimation(FloatingMessageStartAnimation.PopSlideUp,FloatingMessageDestroyAnimation.FadeOut);
-                    SpawnOffset = RandomOffset();
-                    break;
-                
-                case FloatingMessageType.KnockBack:
-                    mesh.color = TextColor0;
-                    message.SetAnimation(FloatingMessageStartAnimation.Pop,FloatingMessageDestroyAnimation.PopOut);
-                    SpawnOffset = Vector3.zero;
-                    break;
-                
-                case FloatingMessageType.Stun:
-                    mesh.color = TextColor1;
-                    message.SetAnimation(FloatingMessageStartAnimation.Pop,FloatingMessageDestroyAnimation.PopOut);
-                    SpawnOffset = Vector3.zero;
-                    break;
-            }
-        }
-
-        nextGameObject.transform.position = this.transform.position + SpawnOffset;
-        nextGameObject.gameObject.SetActive(true);
-        Debug.LogWarning("FloatingMessage Activate");
-        
-        return nextGameObject;
-    }*/
-    
     private Vector3 RandomOffset()
     {
         Vector3 offset;
@@ -156,7 +90,6 @@ public class FloatingMessageController : MonoBehaviour, MMEventListener<Floating
     
     public void OnMMEvent(FloatingMessageEvent e)
     {
-        Debug.LogWarning("FloatingMessageEvent called");
         if (_id == e.id)
             ShowFloatingMessage(e.type, e.amount);
     }

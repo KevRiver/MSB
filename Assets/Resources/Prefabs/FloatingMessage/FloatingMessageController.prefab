@@ -43,6 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fccb43cee64ea8429506d7e6cf33206, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _id: 0
   FloatingMessagePrefabs:
   - {fileID: 2051821644220395779, guid: d1db73f941bf7f949ab842ea25b33d84, type: 3}
   - {fileID: 8212156996202939217, guid: 42cd6b2532969844ca671729258953f7, type: 3}

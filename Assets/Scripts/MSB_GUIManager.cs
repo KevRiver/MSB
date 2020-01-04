@@ -22,9 +22,6 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
     // 타이머
     // 중앙 메세지 박스
     // 스코어 전광판
-
-    
-
     public int initialTime;
     private int _curTime;
     public List<string> msgSequence;
@@ -43,6 +40,8 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
     public Text MessageBox2;
     public Text MessageBox3;
     public Text MessageBoxSmall;
+    public Text YoureBlueTeam;
+    public Text YoureRedTeam;
     public Image Joystick;
     public Image AttackButton;
 
@@ -85,6 +84,8 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
         _uiContainer.Add(ScoreSign.gameObject);
         _uiContainer.Add(Joystick.gameObject);
         _uiContainer.Add(AttackButton.gameObject);
+
+       
     }
 
     public void OnGameOver()
@@ -168,6 +169,16 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
         _messageBoxes[(int) style].text = "";
     }
 
+    private void SetPlayerTeamSign(MSB_GameManager.Team team)
+    {
+        if(team == MSB_GameManager.Team.Blue)
+            YoureBlueTeam.gameObject.SetActive(true);
+        else if (team == MSB_GameManager.Team.Red)
+        {
+            YoureRedTeam.gameObject.SetActive(true);
+        }
+    }
+
     private void OnEnable()
     {
         this.MMEventStartListening();
@@ -183,6 +194,7 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
         switch (eventType.EventName)
         {
             case "GameStart":
+                SetPlayerTeamSign(MSB_LevelManager.Instance.TargetPlayer.team);
                 break;
             
             case "HurryUp":

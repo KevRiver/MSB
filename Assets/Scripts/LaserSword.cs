@@ -49,9 +49,11 @@ public class LaserSword : Weapon
     protected Vector3 _gizmoOffset;
     protected DamageOnTouch _damageOnTouch;
     protected MSB_DamageOnTouch _msbDamageOnTouch;
+    public CausedCCType ccType;
     protected GameObject _damageArea;
 
     private bool _isOwnerRemote = false;
+    private Transform _aimIndicator;
 
     /// <summary>
     /// Initialization
@@ -59,7 +61,9 @@ public class LaserSword : Weapon
     public override void Initialization()
     {
         base.Initialization();
-        
+        _aimIndicator = transform.parent.GetChild(0);
+        if (!_aimIndicator.gameObject.activeInHierarchy)
+            _aimIndicator = null;
         if (_damageArea == null)
         {
             CreateDamageArea();
@@ -97,18 +101,9 @@ public class LaserSword : Weapon
         Rigidbody2D rigidBody = _damageArea.AddComponent<Rigidbody2D>();
         rigidBody.isKinematic = true;
 
-        /*_damageOnTouch = _damageArea.AddComponent<DamageOnTouch>();
-        _damageOnTouch.TargetLayerMask = TargetLayerMask;
-        _damageOnTouch.Owner = Owner.gameObject;
-        _damageOnTouch.IgnoreGameObject(Owner.gameObject);
-        _damageOnTouch.DamageCaused = DamageCaused;
-        _damageOnTouch.DamageCausedKnockbackType = Knockback;
-        _damageOnTouch.DamageCausedKnockbackForce = KnockbackForce;
-        _damageOnTouch.InvincibilityDuration = InvincibilityDuration;*/
-        
         _msbDamageOnTouch = _damageArea.AddComponent<MSB_DamageOnTouch>();
         _msbDamageOnTouch.TargetLayerMask = TargetLayerMask;
-        _msbDamageOnTouch.CCType = CausedCCType.KnockBack;
+        _msbDamageOnTouch.CCType = ccType;
         _msbDamageOnTouch.Owner = Owner.gameObject;
         _msbDamageOnTouch._ownerCharacter = Owner.GetComponent<MSB_Character>();
         if (_msbDamageOnTouch._ownerCharacter != null)
@@ -144,6 +139,22 @@ public class LaserSword : Weapon
         if(!_isOwnerRemote)
             RCSender.Instance.RequestUserSync();
         StartCoroutine(MeleeWeaponAttack());
+    }
+
+    protected override void CaseWeaponIdle()
+    {
+        base.CaseWeaponIdle();
+        if (!_aimIndicator)
+            return;
+        _aimIndicator.gameObject.SetActive(true);
+    }
+
+    protected override void CaseWeaponUse()
+    {
+        base.CaseWeaponUse();
+        if (!_aimIndicator)
+            return;
+        _aimIndicator.gameObject.SetActive(false);
     }
 
     public override void TurnWeaponOff()
