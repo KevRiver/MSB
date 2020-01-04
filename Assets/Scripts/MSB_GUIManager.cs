@@ -187,7 +187,7 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
             
             case "HurryUp":
                 ChangeTimerColor(Color.red);
-                UpdateMessageBox(MessageBoxStyles.Small,"게임이 10초 남았습니다",2.5f);
+                UpdateMessageBox(MessageBoxStyles.Small,"Game over in 10 seconds",2.0f);
                 break;
             
             case "GameOver":

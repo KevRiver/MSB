@@ -254,7 +254,7 @@ MonoBehaviour:
     m_Bits: 512
   DamageCaused: 20
   Knockback: 1
-  KnockbackForce: {x: 30, y: 0}
+  KnockbackForce: {x: 15, y: 0}
   InvincibilityDuration: 0
   StunDuration: 1
 --- !u!95 &8409312927696426065

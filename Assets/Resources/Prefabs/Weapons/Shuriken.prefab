@@ -159,7 +159,7 @@ MonoBehaviour:
   TargetLayerMask:
     serializedVersion: 2
     m_Bits: 768
-  DamageCaused: 10
+  DamageCaused: 20
   DamageCausedKnockbackType: 1
   DamageCausedKnockbackDirection: 0
   DamageCausedKnockbackForce: {x: 5, y: 0}
@@ -177,8 +177,8 @@ MonoBehaviour:
   Owner: {fileID: 0}
   TargetLayerMasks: []
   _ownerCharacter: {fileID: 0}
-  CCType: 1
-  stunDuration: 0.5
+  CCType: 2
+  stunDuration: 1
 --- !u!114 &7729972404493961826
 MonoBehaviour:
   m_ObjectHideFlags: 0
