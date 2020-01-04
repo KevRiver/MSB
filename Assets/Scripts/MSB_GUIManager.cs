@@ -44,6 +44,7 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
     public Text YoureRedTeam;
     public Image Joystick;
     public Image AttackButton;
+    public Image Cover;
 
     private List<GameObject> _uiContainer;
     private List<Text> _messageBoxes;
@@ -163,10 +164,20 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
         MessageBox.text = "";
     }
 
+    private void MessageBoxReset(MessageBoxStyles type)
+    {
+        _messageBoxes[(int) type].text = "";
+    }
+
     private IEnumerator MessageBoxReset(MessageBoxStyles style,float duration)
     {
         yield return new WaitForSeconds(duration);
         _messageBoxes[(int) style].text = "";
+    }
+
+    public void ChangeMessageBoxColor(MessageBoxStyles type, Color color)
+    {
+        _messageBoxes[(int) type].color = color;
     }
 
     private void SetPlayerTeamSign(MSB_GameManager.Team team)
@@ -194,15 +205,18 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
         switch (eventType.EventName)
         {
             case "GameStart":
+                Cover.gameObject.SetActive(false);
                 SetPlayerTeamSign(MSB_LevelManager.Instance.TargetPlayer.team);
+                MessageBoxReset(MessageBoxStyles.Small);
                 break;
             
             case "HurryUp":
                 ChangeTimerColor(Color.red);
-                UpdateMessageBox(MessageBoxStyles.Small,"Game over in 10 seconds",2.0f);
+                UpdateMessageBox(MessageBoxStyles.Small,"Game over in 10 seconds",1.5f);
                 break;
             
             case "GameOver":
+                Cover.gameObject.SetActive(true);
                 break;
         }
     }
