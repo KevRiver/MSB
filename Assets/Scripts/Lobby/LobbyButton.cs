@@ -12,6 +12,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using MSBNetwork;
@@ -28,6 +29,9 @@ public class LobbyButton : MonoBehaviour
     // Canvas
     ManageLobbyObject canvas;
 
+    // Lobby Character
+    LobbyCharacter lobbyCharacter;
+
     // Animation
     bool characterSelectWindowBool = false;
 
@@ -36,28 +40,67 @@ public class LobbyButton : MonoBehaviour
         character = GameObject.Find("LobbyCharacter");
 
         canvas = FindObjectOfType<ManageLobbyObject>();
+        lobbyCharacter = FindObjectOfType<LobbyCharacter>();
     }
 
     // 큐 로딩 화면 띄워주기
-    void activeLoading()
+    public void activeLoading(int _mode)
     {
+        canvas.queueLoading = true;
+
+        canvas.homeButton.GetComponent<Image>().sprite = canvas.backButtonSprite;
+
+        canvas.soloButton.SetActive(false);
+        canvas.multiButton.SetActive(false);
+
+        canvas.background.GetComponent<Animator>().SetTrigger("QueueLoading");
+        canvas.loadingCharacter.SetActive(true);
+        if(_mode == 0)
+        {
+            canvas.loadingCharacter.GetComponent<Animator>().SetTrigger("Solo");
+        }
+        else
+        {
+            canvas.loadingCharacter.GetComponent<Animator>().SetTrigger("Multi");
+        }
     }
 
     // 큐 로딩 화면 끄기
     void deactiveLoading()
     {
+        canvas.queueLoading = false;
+
+        canvas.homeButton.GetComponent<Image>().sprite = canvas.homeButtonSprite;
+
+        canvas.soloButton.SetActive(true);
+        canvas.multiButton.SetActive(true);
+
+        canvas.background.GetComponent<Animator>().SetTrigger("Lobby");
+        canvas.loadingCharacter.SetActive(false);
     }
+
+    // 큐 잡힘 애니메이션 추려
+    public void matchedLoading(int _room)
+    {
+        canvas.homeButton.SetActive(false);
+        
+        canvas.loadingCharacter.GetComponent<QueueLoadingObject>().getRoom(_room);
+        canvas.loadingCharacter.GetComponent<Animator>().SetTrigger("Finish");
+    }
+
 
     public void RequestGameQueue(int mode)
     {
+        activeLoading(mode);
+        canvas.networkManager.getLobbyButton(this);
+
         //현재 정보 담고
         //담은 정보로 RequestSoloQueue;
-        ManageLobbyObject lobbyObj = FindObjectOfType<ManageLobbyObject>();
-        Debug.LogWarning("LobbyObj SkinID : " + lobbyObj.skinID);
+        Debug.LogWarning("Canvas SkinID : " + canvas.skinID);
 
         //현재 무기 값이 WeaponID 이고 스킨 값은 SkinID이다 WeaponID = SkinID
-        int weaponID = lobbyObj.weaponID;
-        int skinID = lobbyObj.skinID;
+        int weaponID = canvas.weaponID;
+        int skinID = canvas.skinID;
 
         LocalUser.Instance.localUserData.userWeapon = weaponID;
         LocalUser.Instance.localUserData.userSkin = skinID;
@@ -99,15 +142,28 @@ public class LobbyButton : MonoBehaviour
     // Home Button
     void backLobbyButton()
     {
-        canvas.GetComponent<Animator>().SetTrigger("PlayLobbyOutTransition");
-        canvas.GetComponent<ManageLobbyObject>().lobbyCharacter.GetComponent<SpriteRenderer>().enabled = true;
-    }
+        if (canvas.queueLoading)
+        {
+            deactiveLoading();
+        }
+        else
+        {
+            canvas.GetComponent<Animator>().SetTrigger("PlayLobbyOutTransition");
+        }
 
-    
+    }
+        
     void gamePlayButton()
     {
         canvas.GetComponent<Animator>().SetTrigger("PlayLobbyInTransition");
-        canvas.lobbyCharacter.GetComponent<SpriteRenderer>().enabled = false;
+        lobbyCharacter.GetComponent<SpriteRenderer>().enabled = false;
+
+        lobbyCharacter.orangStop();
+    }
+
+    public void endPlayLobbyOutTransition()
+    {
+        lobbyCharacter.GetComponent<SpriteRenderer>().enabled = true;
     }
     
 }

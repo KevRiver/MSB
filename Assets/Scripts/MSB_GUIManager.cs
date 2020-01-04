@@ -14,9 +14,10 @@ public enum MessageBoxStyles
     Plain,
     Blue,
     Red,
-    Green
+    Green,
+    Small
 }
-public class MSB_GUIManager : Singleton<MSB_GUIManager>
+public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEvent>
 {
     // 타이머
     // 중앙 메세지 박스
@@ -41,60 +42,12 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>
     public Text MessageBox1;
     public Text MessageBox2;
     public Text MessageBox3;
+    public Text MessageBoxSmall;
     public Image Joystick;
     public Image AttackButton;
 
     private List<GameObject> _uiContainer;
     private List<Text> _messageBoxes;
-    /*private class OnGameStatus : NetworkModule.OnGameStatusListener
-    {
-        public void OnGameEventCount(int count)
-        {
-            Debug.LogWarning("OnGameStatus Count : " + count);
-        }
-
-        public void OnGameEventTime(int time)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        private int playerCount;
-        public int expectedPlayers = 2;
-        private bool PlayerReady;
-        private int userNum;
-        public void OnGameEventReady(string readyData)
-        {
-            JArray jArray = JArray.Parse(readyData);
-            playerCount = 0;
-            userNum = 0;
-            foreach (var jObject in jArray)
-            {
-                PlayerReady = (bool)((JObject)jObject).GetValue((++userNum).ToString());
-                if(!PlayerReady)
-                    continue;
-                playerCount++;
-            }
-
-            if (playerCount < expectedPlayers)
-                Debug.LogWarning("Waiting another player loading");
-            else if (playerCount > expectedPlayers)
-                Debug.LogWarning("More Player Loaded than expected");
-            else
-            {
-                Debug.Log("All Players Ready");
-            }
-        }
-
-        public void OnGameEventScore(int blueKill, int blueDeath, int bluePoint, int redKill, int redDeath, int redPoint)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnGameEventMessage(int type, string message)
-        {
-            throw new System.NotImplementedException();
-        }
-    }*/
 
     protected  override  void Awake()
     {
@@ -123,6 +76,7 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>
         _messageBoxes.Add(MessageBox1);
         _messageBoxes.Add(MessageBox2);
         _messageBoxes.Add(MessageBox3);
+        _messageBoxes.Add(MessageBoxSmall);
         
         // MessageBox를 제외한 UI 들을 저장
         _uiContainer = new List<GameObject>();
@@ -163,6 +117,12 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>
         _secString = (_sec >= 10) ? _sec.ToString() : "0" + _sec.ToString();
         Timer.text = _minString + ":" + _secString;
     }
+
+    public void ChangeTimerColor(Color color)
+    {
+        Timer.color = color;
+    }
+
     public void UpdateMessageBox(int _seq)
     {
         MessageBox.text = msgSequence[_seq];
@@ -192,23 +152,46 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>
             messagebox.enabled = true;
 
         messagebox.text = message;
-        if(duration>0)
-            Invoke("MessageBoxReset",duration);
+        if (duration > 0)
+            StartCoroutine(MessageBoxReset(style,duration));
+
     }
 
     private void MessageBoxReset()
     {
         MessageBox.text = "";
     }
-    /*public void OnMMEvent(MMGameEvent eventType)
+
+    private IEnumerator MessageBoxReset(MessageBoxStyles style,float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        _messageBoxes[(int) style].text = "";
+    }
+
+    private void OnEnable()
+    {
+        this.MMEventStartListening();
+    }
+
+    private void OnDisable()
+    {
+        this.MMEventStopListening();
+    }
+
+    public void OnMMEvent(MMGameEvent eventType)
     {
         switch (eventType.EventName)
         {
             case "GameStart":
                 break;
             
-            case "GameOver"
+            case "HurryUp":
+                ChangeTimerColor(Color.red);
+                UpdateMessageBox(MessageBoxStyles.Small,"게임이 10초 남았습니다",2.5f);
+                break;
+            
+            case "GameOver":
                 break;
         }
-    }*/
+    }
 }

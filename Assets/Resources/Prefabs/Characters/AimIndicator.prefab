@@ -94,14 +94,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d0e230e81a2f3148b6986fcb2c57e81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 10
-  blurSize: 6
+  size: 15
+  blurSize: 5
   color: {r: 1, g: 1, b: 1, a: 1}
   blurAlphaMultiplier: 0.7
   blurAlphaChoke: 1
   invertBlur: 0
   alphaThreshold: 1
-  buffer: 3
+  buffer: 0
   includeChildren: 0
   childLayers:
     serializedVersion: 2
@@ -187,7 +187,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.62, y: 4.26}
+  m_Size: {x: 1.78, y: 4.42}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0

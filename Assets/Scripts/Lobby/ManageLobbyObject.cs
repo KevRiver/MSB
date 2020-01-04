@@ -12,6 +12,9 @@ using UnityEngine.UI;
 
 public class ManageLobbyObject : MonoBehaviour
 {
+    //Network Manager
+    public NetworkManager networkManager;
+
     // Lobby UI
     public GameObject top_RankImg;
     public Text top_RankText;
@@ -34,7 +37,6 @@ public class ManageLobbyObject : MonoBehaviour
     public GameObject playLobby;
     public GameObject settingLobby;
 
-
     // Character
     public GameObject lobbyCharacter;
 
@@ -44,47 +46,69 @@ public class ManageLobbyObject : MonoBehaviour
 
     // Rank
     public Sprite[] rankSprite = new Sprite[3];
-    public int t1 = 0;
+
+    // Queue Loading
+    public bool queueLoading;
+    public Sprite backButtonSprite;
+    public Sprite homeButtonSprite;
+    public GameObject loadingCharacter;
+
+    public GameObject background;
+
+    public GameObject mainCamera;
+
     // Start is called before the first frame update
     void Start()
     {
         string userNick = LocalUser.Instance.localUserData.userNick;
 
+        // NetworkManager
+        networkManager = FindObjectOfType<NetworkManager>();
+
         // Lobby UI
-        top_RankImg = GameObject.Find("RankImg");
-        // top_Profile_Text = top_Profile.transform.GetChild(0).GetChild(0).gameObject;
-        // top_Profile_Text.GetComponent<Text>().text = userNick;
-        top_SettingButton = GameObject.Find("SettingButton");
-
-
-
         mainLobby = GameObject.Find("MainLobby");
-        playLobby = GameObject.Find("PlayLobby");
 
-
+        top_RankImg = GameObject.Find("RankImg");
+        top_SettingButton = GameObject.Find("SettingButton");
 
         bot_PlayButton = GameObject.Find("PlayButton");
 
         bot_ChangeCharacter = GameObject.Find("Button_Character");
-        /*
-        // Scroll View UI
-        t_Sv_Skin = transform.Find("Scroll View_Skin");
-        t_CenterSlot = transform.Find("CenterSlot");
-        sv_Skin = t_Sv_Skin.gameObject;
-        centerSlot = t_CenterSlot.gameObject;
-        */
 
         homeButton = GameObject.Find("HomeButton");
 
         // Play UI
+        playLobby = GameObject.Find("PlayLobby");
         soloButton = GameObject.Find("SoloPlayButton");
         multiButton = GameObject.Find("MultiPlayButton");
 
         // Character
         lobbyCharacter = GameObject.Find("LobbyCharacter");
 
-        setRank(t1);
-        //setRank(LocalUser.Instance.localUserData.userRank);
+        // Get Rank
+        setRank(LocalUser.Instance.localUserData.userRank);
+
+        // Queue Loading
+        queueLoading = false;
+        loadingCharacter = GameObject.Find("QueueLoading");
+        loadingCharacter.SetActive(false);
+
+        // Background
+        background = GameObject.Find("Background");
+
+        // Main Camera
+        mainCamera = GameObject.Find("Main Camera");
+
+        Debug.Log(Screen.width); // 3040
+        Debug.Log(Screen.height); // 1440
+
+        if(Screen.width > 2200)
+        {
+            Debug.Log(background);
+            float num = Screen.width / ((2200f * Screen.height) / 1080f);
+            Debug.Log(num);
+            background.transform.localScale = new Vector3(num, num, 1);
+        }
     }
 
     public void getSkinID(int id)
@@ -115,5 +139,15 @@ public class ManageLobbyObject : MonoBehaviour
             Debug.Log("Gold");
             top_RankImg.GetComponent<Image>().sprite = rankSprite[2];
         }
+    }
+
+    public void loadScene(int _room)
+    {
+        networkManager.loadScene(_room);
+    }
+
+    public void endPlayLobbyOutTransition()
+    {
+        lobbyCharacter.GetComponent<SpriteRenderer>().enabled = true;
     }
 }

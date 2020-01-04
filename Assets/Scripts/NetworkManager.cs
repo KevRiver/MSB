@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using MoreMountains.CorgiEngine;
 using UnityEngine;
 using MoreMountains.Tools;
 using UnityEngine.SceneManagement;
@@ -8,12 +9,17 @@ using MSBNetwork;
 public class NetworkManager : MonoBehaviour
 {
     NetworkModule _networkManager;
+    OnGameMatched gameMatchedListener;
+
+
     private class OnGameMatched : NetworkModule.OnGameMatchedListener
     {
+        public LobbyButton lobbyButton;
+
         void NetworkModule.OnGameMatchedListener.OnGameMatched(bool _result, int _room, string _message)
         {
             Debug.LogWarning("OnGameMatched Called");
-            NetworkModule.GetInstance().RequestGameInfo(_room);
+            lobbyButton.matchedLoading(_room);
             Debug.LogWarning("RequestGameInfo");
         }
     }
@@ -36,7 +42,7 @@ public class NetworkManager : MonoBehaviour
                 PlayerInfo player = new PlayerInfo(_room, user.userNumber, user.userID, user.userNick, user.userWeapon, user.userSkin);
                 gameInfo.players.Add(player);
             }
-            
+
             foreach (var player in gameInfo.players)
             {
                 Debug.LogWarning(player.number + " " + player.id);
@@ -47,14 +53,14 @@ public class NetworkManager : MonoBehaviour
         }
     }
     private class OnGameStatus : NetworkModule.OnGameStatusListener
-    {       
+    {
         public void OnGameEventCount(int count)
         {
             MSB_GUIManager.Instance.UpdateMessageBox(count);
-            if(count == 0)
+            if (count == 0)
                 MMGameEvent.Trigger("GameStart");
         }
-        
+
         /*public void OnGameEventMessage(object _data)
         {
 
@@ -63,22 +69,25 @@ public class NetworkManager : MonoBehaviour
         public void OnGameEventMessage(int type, string message)
         {
         }
-        
+
         public void OnGameEventReady(string readyData)
         {
-            
+
         }
 
         public void OnGameEventScore(int blueKill, int blueDeath, int bluePoint, int redKill, int redDeath, int redPoint)
         {
-            MSB_GameManager.Instance.ScoreUpdate(blueDeath,redDeath,bluePoint, redPoint);
+            MSB_GameManager.Instance.ScoreUpdate(blueDeath, redDeath, bluePoint, redPoint);
             Debug.LogWarning("Event Score - blue : " + bluePoint + " red : " + redPoint);
 
         }
         public void OnGameEventTime(int time)
         {
             MSB_GUIManager.Instance.UpdateTimer(time);
-            if(time == 0)
+            
+            if(time == 10)
+                MMGameEvent.Trigger("HurryUp");
+            if (time == 0)
                 MMGameEvent.Trigger("GameOver");
         }
     }
@@ -86,14 +95,15 @@ public class NetworkManager : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
     }
-    
+
     // Start is called before the first frame update
     void Start()
     {
-        _networkManager = NetworkModule.GetInstance();        
-        _networkManager.Connect("203.250.148.113",9993);
-        
-        _networkManager.AddOnEventGameQueue(new OnGameMatched());
+        _networkManager = NetworkModule.GetInstance();
+        _networkManager.Connect("203.250.148.113", 9993);
+
+        gameMatchedListener = new OnGameMatched();
+        _networkManager.AddOnEventGameQueue(gameMatchedListener);
         _networkManager.AddOnEventGameInfo(new OnGameInfo());
         _networkManager.AddOnEventGameStatus(new OnGameStatus());
     }
@@ -107,5 +117,15 @@ public class NetworkManager : MonoBehaviour
     private void OnDestroy()
     {
         _networkManager.Disconnect();
+    }
+
+    public void loadScene(int _room)
+    {
+        NetworkModule.GetInstance().RequestGameInfo(_room);
+    }
+
+    public void getLobbyButton(LobbyButton _lobbyButton)
+    {
+        gameMatchedListener.lobbyButton = _lobbyButton;
     }
 }

@@ -198,7 +198,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   size: 10
-  blurSize: 4
+  blurSize: 7
   color: {r: 1, g: 1, b: 1, a: 1}
   blurAlphaMultiplier: 0.7
   blurAlphaChoke: 1
@@ -1394,6 +1394,21 @@ PrefabInstance:
     - target: {fileID: 641636922648853620, guid: 73aaa0efb92c45640b2d91db9cbde46c,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1029982620259146164, guid: 73aaa0efb92c45640b2d91db9cbde46c,
+        type: 3}
+      propertyPath: blurSize
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1029982620259146164, guid: 73aaa0efb92c45640b2d91db9cbde46c,
+        type: 3}
+      propertyPath: size
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 1029982620259146164, guid: 73aaa0efb92c45640b2d91db9cbde46c,
+        type: 3}
+      propertyPath: buffer
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 558177693664805386, guid: 73aaa0efb92c45640b2d91db9cbde46c,

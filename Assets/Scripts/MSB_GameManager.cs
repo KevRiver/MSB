@@ -36,47 +36,41 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
         int blueDeath = death[0];
         int redDeath = death[1]; 
         Debug.LogWarning("BlueDeath : " + blueDeath + " RedDeath : " + redDeath);
-       if (blueDeath == TRUE && redDeath == TRUE)
-       {
-           Debug.LogWarning("Have some error");
-           return;
-       }
 
-       int blueScore = score[0];
+        int blueScore = score[0];
        int redScore = score[1];
        string message = "";
        MessageBoxStyles messageBoxStyle;
+       Team _team;
+
+       _team = MSB_LevelManager.Instance.TargetPlayer.team;
        
-       const float duration = 5.0f;
-       if (blueDeath == TRUE)
-       {
-           messageBoxStyle = MessageBoxStyles.Red;
-           message = "RED TEAM\nWIN";
-       }
-       else if (redDeath == TRUE)
+       if (blueScore > redScore)
        {
            messageBoxStyle = MessageBoxStyles.Blue;
-           message = "BLUE TEAM\nWIN";
+           message = "YOU WIN";
+           if (_team == Team.Red)
+           {
+               messageBoxStyle = MessageBoxStyles.Red;
+               message = "YOU LOSE";
+           }
+       }
+       else if (blueScore == redScore)
+       {
+           messageBoxStyle = MessageBoxStyles.Green;
+           message = "DRAW";
        }
        else
        {
-           if (blueScore > redScore)
-           {
-               messageBoxStyle = MessageBoxStyles.Blue;
-               message = "BLUE TEAM\nWIN";
-           }
-           else if (blueScore == redScore)
-           {
-               messageBoxStyle = MessageBoxStyles.Green;
-               message = "DRAW";
-           }
-           else
+           messageBoxStyle = MessageBoxStyles.Blue;
+           message = "YOU LOSE";
+           if (_team == Team.Red)
            {
                messageBoxStyle = MessageBoxStyles.Red;
-               message = "RED TEAM\nWIN";
+               message = "YOU WIN";
            }
-       }
-
+        }
+       
        MSB_GUIManager.Instance.UpdateMessageBox(messageBoxStyle, message, 0);
     }
 

@@ -119,11 +119,13 @@ public class TitleTouch : MonoBehaviour, IPointerClickHandler
 		if (_result)
         {
 	        LocalUser localUser = LocalUser.Instance;
-            localUser.localUserData.userID = _user.userID;
+	        localUser.localUserData = new ClientUserData();
+	        localUser.localUserData.userID = _user.userID;
             localUser.localUserData.userNick = _user.userNick;
             localUser.localUserData.userNumber = _user.userNumber;
             localUser.localUserData.userMoney = _user.userMoney;
             localUser.localUserData.userCash = _user.userCash;
+            localUser.localUserData.userRank = _user.userRank;
             localUser.localUserData.userWeapon = _user.userWeapon;
             localUser.localUserData.userSkin = _user.userSkin;
 

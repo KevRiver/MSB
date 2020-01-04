@@ -31,7 +31,7 @@ public class AlphaAnimation : MonoBehaviour
             return;
         }
         _outlineRenderer = GetComponent<SpriteRenderer>();
-        if (!_outlineRenderer || !_spriteOutline)
+        if (!_outlineRenderer)
         {
             Debug.LogWarning("AlphaAnimation.cs : Outline doesn't have <SpriteRenderer>");
             return;

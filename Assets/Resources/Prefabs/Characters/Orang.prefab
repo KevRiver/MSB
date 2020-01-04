@@ -481,7 +481,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   size: 10
-  blurSize: 4
+  blurSize: 7
   color: {r: 1, g: 1, b: 1, a: 1}
   blurAlphaMultiplier: 0.7
   blurAlphaChoke: 1

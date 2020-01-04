@@ -11,10 +11,10 @@ public class TitleImageLodaer : MonoBehaviour
 	public GameObject loginTextObject;
 	public GameObject backgroundObject;
 	public GameObject titleBackground;
-	public Sprite[] sprites = new Sprite[10];
+	public Sprite[] sprites = new Sprite[9];
 
 	RectTransform rectTransform;
-	GameObject[] backgrounds = new GameObject[10];
+	GameObject[] backgrounds = new GameObject[9];
 
     // Start is called before the first frame update
     void Start()
@@ -44,7 +44,6 @@ public class TitleImageLodaer : MonoBehaviour
 		StartCoroutine(handleBackgroundSprite(6, 0.30f));
 		StartCoroutine(handleBackgroundSprite(7, 0.35f));
 		StartCoroutine(handleBackgroundSprite(8, 0.40f));
-		StartCoroutine(handleBackgroundSprite(9, 0.45f));
 		StartCoroutine(showMainLogo(0.70f));
 		StartCoroutine(showMainText(1.00f));
 	}

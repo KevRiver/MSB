@@ -19,36 +19,60 @@ public class ManageSelectCharacter : MonoBehaviour
     public Sprite colorCharacter;
     public Sprite greyCharacter;
 
+    public bool selected;
+
+    Animator selectAnimator;
+
+    // Lobby Character
+    LobbyCharacter lobbyCharacter;
+
     // Start is called before the first frame update
     void Start()
     {
         canvas = FindObjectOfType<ManageLobbyObject>();
 
-        if(skinID == canvas.skinID)
-        {
-            GetComponent<Image>().sprite = colorCharacter;
-        }
+        lobbyCharacter = FindObjectOfType<LobbyCharacter>();
 
-        Debug.Log(skinID);
+        selected = false;
+
+        selectAnimator = GetComponent<Animator>();
+
+        if (skinID == canvas.skinID)
+        {
+            selected = true;
+        }
+        else
+        {
+            selectAnimator.SetTrigger("UnSelected");
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (skinID != canvas.skinID && GetComponent<Image>().sprite != greyCharacter)
+        if (skinID != canvas.skinID && selected)
         {
-            //Debug.Log("yq");
-            GetComponent<Image>().sprite = greyCharacter;
+            selected = false;
+            selectAnimator.SetTrigger("UnSelected");
         }
     }
 
     public void characterSelectButton()
     {
-        GetComponent<Image>().sprite = colorCharacter;
-        canvas.skinID = skinID;
-        canvas.weaponID = weaponID;
-        FindObjectOfType<LobbyCharacter>().changeSprite(skinID);
+        lobbyCharacter.orangStop();
+        if (!selected)
+        {
+            selected = true;
+            selectCharacterAnimation();
 
+            canvas.skinID = skinID;
+            canvas.weaponID = weaponID;
+            FindObjectOfType<LobbyCharacter>().changeSprite(skinID);
+        }
+    }
 
+    void selectCharacterAnimation()
+    {
+        selectAnimator.SetTrigger("Select");
     }
 }
