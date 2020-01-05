@@ -25,7 +25,9 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
     public int initialTime;
     private int _curTime;
     public List<string> msgSequence;
-    
+
+    public Canvas rootCanvas;
+    private CanvasScaler scaler;
     public Text Timer;
     public Image TimerImage;
     private bool _timeStop;
@@ -49,10 +51,22 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
     private List<GameObject> _uiContainer;
     private List<Text> _messageBoxes;
 
+    private int screenWidth;
+    private int screenHeight;
+
+    private float multiplier;
     protected  override  void Awake()
     {
         base.Awake();
         gameObject.name = "GUIManager";
+        screenWidth = Screen.width;
+        screenHeight = Screen.height;
+        multiplier = DetermineScreenMultiplier();
+        if (!rootCanvas)
+            return;
+        scaler = rootCanvas.GetComponent<CanvasScaler>();
+        ScreenRescale(multiplier);
+        JoyStickResize();
     }
     
     void Start()
@@ -87,6 +101,35 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
         _uiContainer.Add(AttackButton.gameObject);
 
        
+    }
+
+    private float DetermineScreenMultiplier()
+    {
+        if (screenWidth < 1300)
+            return 1;
+
+        if (screenWidth < 2000)
+            return 1.5f;
+
+        if (screenWidth < 2600)
+            return 2.5f;
+        return 2.8f;
+    }
+
+    private void ScreenRescale(float multiplier)
+    {
+        if (!scaler)
+            return;
+        scaler.scaleFactor = multiplier;
+    }
+
+    private void JoyStickResize()
+    {
+        var joystickRt = Joystick.GetComponent<RectTransform>();
+        if (!joystickRt)
+            return;
+        joystickRt.SetLeft(-(screenWidth/(4*multiplier)));
+        joystickRt.SetBottom(-(screenHeight * (0.8f / multiplier)));
     }
 
     public void OnGameOver()
