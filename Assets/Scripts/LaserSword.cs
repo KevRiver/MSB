@@ -36,6 +36,8 @@ public class LaserSword : Weapon
     /// The duration of the invincibility frames after the hit (in seconds)
     public float InvincibilityDuration = 0.5f;
 
+    public float StunDuration;
+
     protected Collider2D _damageAreaCollider;
     protected bool _attackInProgress = false;
 
@@ -46,7 +48,12 @@ public class LaserSword : Weapon
     protected BoxCollider2D _boxCollider2D;
     protected Vector3 _gizmoOffset;
     protected DamageOnTouch _damageOnTouch;
+    protected MSB_DamageOnTouch _msbDamageOnTouch;
+    public CausedCCType ccType;
     protected GameObject _damageArea;
+
+    private bool _isOwnerRemote = false;
+    private Transform _aimIndicator;
 
     /// <summary>
     /// Initialization
@@ -54,12 +61,14 @@ public class LaserSword : Weapon
     public override void Initialization()
     {
         base.Initialization();
+        _aimIndicator = transform.parent.GetChild(0);
+        if (!_aimIndicator.gameObject.activeInHierarchy)
+            _aimIndicator = null;
         if (_damageArea == null)
         {
             CreateDamageArea();
             DisableDamageArea();
         }
-        _damageOnTouch.Owner = Owner.gameObject;
     }
 
     /// <summary>
@@ -92,12 +101,32 @@ public class LaserSword : Weapon
         Rigidbody2D rigidBody = _damageArea.AddComponent<Rigidbody2D>();
         rigidBody.isKinematic = true;
 
-        _damageOnTouch = _damageArea.AddComponent<DamageOnTouch>();
-        _damageOnTouch.TargetLayerMask = TargetLayerMask;
-        _damageOnTouch.DamageCaused = DamageCaused;
-        _damageOnTouch.DamageCausedKnockbackType = Knockback;
-        _damageOnTouch.DamageCausedKnockbackForce = KnockbackForce;
-        _damageOnTouch.InvincibilityDuration = InvincibilityDuration;
+        _msbDamageOnTouch = _damageArea.AddComponent<MSB_DamageOnTouch>();
+        _msbDamageOnTouch.TargetLayerMask = TargetLayerMask;
+        _msbDamageOnTouch.CCType = ccType;
+        _msbDamageOnTouch.Owner = Owner.gameObject;
+        _msbDamageOnTouch._ownerCharacter = Owner.GetComponent<MSB_Character>();
+        if (_msbDamageOnTouch._ownerCharacter != null)
+        {
+            foreach (var player in MSB_LevelManager.Instance.Players)
+            {
+                if (player.team == _msbDamageOnTouch._ownerCharacter.team)
+                    _msbDamageOnTouch.IgnoreGameObject(player.gameObject);
+            }
+        }
+
+        _msbDamageOnTouch.DamageCaused = DamageCaused;
+        _msbDamageOnTouch.DamageCausedKnockbackType = Knockback;
+        _msbDamageOnTouch.DamageCausedKnockbackForce = KnockbackForce;
+        _msbDamageOnTouch.InvincibilityDuration = InvincibilityDuration;
+        _msbDamageOnTouch.stunDuration = StunDuration;
+    }
+
+    public override void SetOwner(Character newOwner, CharacterHandleWeapon handleWeapon)
+    {
+        if (((MSB_Character) newOwner).IsRemote)
+            _isOwnerRemote = true;
+        base.SetOwner(newOwner,handleWeapon);
     }
 
     /// <summary>
@@ -105,18 +134,33 @@ public class LaserSword : Weapon
     /// </summary>
     protected override void WeaponUse()
     {
+        Owner.GetComponent<CharacterSpin>().SetSpinSpeedMultiplier(0.1f);
         base.WeaponUse();
+        if(!_isOwnerRemote)
+            RCSender.Instance.RequestUserSync();
         StartCoroutine(MeleeWeaponAttack());
     }
 
-    public override void FlipWeapon()
+    protected override void CaseWeaponIdle()
     {
-        //base.FlipWeapon();
+        base.CaseWeaponIdle();
+        if (!_aimIndicator)
+            return;
+        _aimIndicator.gameObject.SetActive(true);
     }
 
-    public override void FlipWeaponModel()
+    protected override void CaseWeaponUse()
     {
-        //base.FlipWeaponModel();
+        base.CaseWeaponUse();
+        if (!_aimIndicator)
+            return;
+        _aimIndicator.gameObject.SetActive(false);
+    }
+
+    public override void TurnWeaponOff()
+    {
+        Owner.GetComponent<CharacterSpin>().ResetSpinSpeedMultiplier();
+        base.TurnWeaponOff();
     }
 
     /// <summary>
@@ -126,7 +170,6 @@ public class LaserSword : Weapon
     protected virtual IEnumerator MeleeWeaponAttack()
     {
         if (_attackInProgress) { yield break; }
-
         _attackInProgress = true;
         yield return new WaitForSeconds(InitialDelay);
         EnableDamageArea();
@@ -149,6 +192,17 @@ public class LaserSword : Weapon
     protected virtual void DisableDamageArea()
     {
         _damageAreaCollider.enabled = false;
+    }
+
+    public override void FlipWeapon()
+    {
+        //Debug.LogWarning("LaserSword Flip");
+    }
+
+    public override void FlipWeaponModel()
+    {
+        //Debug.LogWarning("LaserSword Flip Model");
+        transform.localScale = Vector3.Scale (transform.localScale, FlipValue);		
     }
 
     protected virtual void DrawGizmos()

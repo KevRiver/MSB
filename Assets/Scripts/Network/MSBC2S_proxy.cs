@@ -7,20 +7,18 @@
 // Do not modify this file, but modify the source .pidl file.
 
 using System;
-using System.Net;
 
 namespace MSBC2S
 {
 	internal class Proxy:Nettention.Proud.RmiProxy
 	{
-public bool OnLoginRequest(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, String id, String pw)
+public bool OnLoginRequest(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, String data)
 {
 	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
 		__msg.SimplePacketMode = core.IsSimplePacketMode();
 		Nettention.Proud.RmiID __msgid= Common.OnLoginRequest;
 		__msg.Write(__msgid);
-		Nettention.Proud.Marshaler.Write(__msg, id);
-		Nettention.Proud.Marshaler.Write(__msg, pw);
+		Nettention.Proud.Marshaler.Write(__msg, data);
 		
 	Nettention.Proud.HostID[] __list = new Nettention.Proud.HostID[1];
 	__list[0] = remote;
@@ -29,55 +27,24 @@ public bool OnLoginRequest(Nettention.Proud.HostID remote,Nettention.Proud.RmiCo
 		RmiName_OnLoginRequest, Common.OnLoginRequest);
 }
 
-public bool OnLoginRequest(Nettention.Proud.HostID[] remotes,Nettention.Proud.RmiContext rmiContext, String id, String pw)
+public bool OnLoginRequest(Nettention.Proud.HostID[] remotes,Nettention.Proud.RmiContext rmiContext, String data)
 {
 	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
 __msg.SimplePacketMode = core.IsSimplePacketMode();
 Nettention.Proud.RmiID __msgid= Common.OnLoginRequest;
 __msg.Write(__msgid);
-Nettention.Proud.Marshaler.Write(__msg, id);
-Nettention.Proud.Marshaler.Write(__msg, pw);
+Nettention.Proud.Marshaler.Write(__msg, data);
 		
 	return RmiSend(remotes,rmiContext,__msg,
 		RmiName_OnLoginRequest, Common.OnLoginRequest);
 }
-public bool OnRegisterRequest(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, String id, String pw, String nick)
-{
-	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
-		__msg.SimplePacketMode = core.IsSimplePacketMode();
-		Nettention.Proud.RmiID __msgid= Common.OnRegisterRequest;
-		__msg.Write(__msgid);
-		Nettention.Proud.Marshaler.Write(__msg, id);
-		Nettention.Proud.Marshaler.Write(__msg, pw);
-		Nettention.Proud.Marshaler.Write(__msg, nick);
-		
-	Nettention.Proud.HostID[] __list = new Nettention.Proud.HostID[1];
-	__list[0] = remote;
-		
-	return RmiSend(__list,rmiContext,__msg,
-		RmiName_OnRegisterRequest, Common.OnRegisterRequest);
-}
-
-public bool OnRegisterRequest(Nettention.Proud.HostID[] remotes,Nettention.Proud.RmiContext rmiContext, String id, String pw, String nick)
-{
-	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
-__msg.SimplePacketMode = core.IsSimplePacketMode();
-Nettention.Proud.RmiID __msgid= Common.OnRegisterRequest;
-__msg.Write(__msgid);
-Nettention.Proud.Marshaler.Write(__msg, id);
-Nettention.Proud.Marshaler.Write(__msg, pw);
-Nettention.Proud.Marshaler.Write(__msg, nick);
-		
-	return RmiSend(remotes,rmiContext,__msg,
-		RmiName_OnRegisterRequest, Common.OnRegisterRequest);
-}
-public bool OnStatusRequest(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, String id)
+public bool OnStatusRequest(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, String data)
 {
 	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
 		__msg.SimplePacketMode = core.IsSimplePacketMode();
 		Nettention.Proud.RmiID __msgid= Common.OnStatusRequest;
 		__msg.Write(__msgid);
-		Nettention.Proud.Marshaler.Write(__msg, id);
+		Nettention.Proud.Marshaler.Write(__msg, data);
 		
 	Nettention.Proud.HostID[] __list = new Nettention.Proud.HostID[1];
 	__list[0] = remote;
@@ -86,104 +53,77 @@ public bool OnStatusRequest(Nettention.Proud.HostID remote,Nettention.Proud.RmiC
 		RmiName_OnStatusRequest, Common.OnStatusRequest);
 }
 
-public bool OnStatusRequest(Nettention.Proud.HostID[] remotes,Nettention.Proud.RmiContext rmiContext, String id)
+public bool OnStatusRequest(Nettention.Proud.HostID[] remotes,Nettention.Proud.RmiContext rmiContext, String data)
 {
 	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
 __msg.SimplePacketMode = core.IsSimplePacketMode();
 Nettention.Proud.RmiID __msgid= Common.OnStatusRequest;
 __msg.Write(__msgid);
-Nettention.Proud.Marshaler.Write(__msg, id);
+Nettention.Proud.Marshaler.Write(__msg, data);
 		
 	return RmiSend(remotes,rmiContext,__msg,
 		RmiName_OnStatusRequest, Common.OnStatusRequest);
 }
-public bool OnSoloQueueRequest(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int weapon, int skin)
+public bool OnSystemRequest(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, String data)
 {
 	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
 		__msg.SimplePacketMode = core.IsSimplePacketMode();
-		Nettention.Proud.RmiID __msgid= Common.OnSoloQueueRequest;
+		Nettention.Proud.RmiID __msgid= Common.OnSystemRequest;
 		__msg.Write(__msgid);
-		Nettention.Proud.Marshaler.Write(__msg, weapon);
-		Nettention.Proud.Marshaler.Write(__msg, skin);
+		Nettention.Proud.Marshaler.Write(__msg, data);
 		
 	Nettention.Proud.HostID[] __list = new Nettention.Proud.HostID[1];
 	__list[0] = remote;
 		
 	return RmiSend(__list,rmiContext,__msg,
-		RmiName_OnSoloQueueRequest, Common.OnSoloQueueRequest);
+		RmiName_OnSystemRequest, Common.OnSystemRequest);
 }
 
-public bool OnSoloQueueRequest(Nettention.Proud.HostID[] remotes,Nettention.Proud.RmiContext rmiContext, int weapon, int skin)
+public bool OnSystemRequest(Nettention.Proud.HostID[] remotes,Nettention.Proud.RmiContext rmiContext, String data)
 {
 	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
 __msg.SimplePacketMode = core.IsSimplePacketMode();
-Nettention.Proud.RmiID __msgid= Common.OnSoloQueueRequest;
+Nettention.Proud.RmiID __msgid= Common.OnSystemRequest;
 __msg.Write(__msgid);
-Nettention.Proud.Marshaler.Write(__msg, weapon);
-Nettention.Proud.Marshaler.Write(__msg, skin);
+Nettention.Proud.Marshaler.Write(__msg, data);
 		
 	return RmiSend(remotes,rmiContext,__msg,
-		RmiName_OnSoloQueueRequest, Common.OnSoloQueueRequest);
+		RmiName_OnSystemRequest, Common.OnSystemRequest);
 }
-public bool OnTeamQueueRequest(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int weapon, int skin)
+public bool OnGameQueueRequest(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, String data)
 {
 	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
 		__msg.SimplePacketMode = core.IsSimplePacketMode();
-		Nettention.Proud.RmiID __msgid= Common.OnTeamQueueRequest;
+		Nettention.Proud.RmiID __msgid= Common.OnGameQueueRequest;
 		__msg.Write(__msgid);
-		Nettention.Proud.Marshaler.Write(__msg, weapon);
-		Nettention.Proud.Marshaler.Write(__msg, skin);
+		Nettention.Proud.Marshaler.Write(__msg, data);
 		
 	Nettention.Proud.HostID[] __list = new Nettention.Proud.HostID[1];
 	__list[0] = remote;
 		
 	return RmiSend(__list,rmiContext,__msg,
-		RmiName_OnTeamQueueRequest, Common.OnTeamQueueRequest);
+		RmiName_OnGameQueueRequest, Common.OnGameQueueRequest);
 }
 
-public bool OnTeamQueueRequest(Nettention.Proud.HostID[] remotes,Nettention.Proud.RmiContext rmiContext, int weapon, int skin)
+public bool OnGameQueueRequest(Nettention.Proud.HostID[] remotes,Nettention.Proud.RmiContext rmiContext, String data)
 {
 	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
 __msg.SimplePacketMode = core.IsSimplePacketMode();
-Nettention.Proud.RmiID __msgid= Common.OnTeamQueueRequest;
+Nettention.Proud.RmiID __msgid= Common.OnGameQueueRequest;
 __msg.Write(__msgid);
-Nettention.Proud.Marshaler.Write(__msg, weapon);
-Nettention.Proud.Marshaler.Write(__msg, skin);
+Nettention.Proud.Marshaler.Write(__msg, data);
 		
 	return RmiSend(remotes,rmiContext,__msg,
-		RmiName_OnTeamQueueRequest, Common.OnTeamQueueRequest);
+		RmiName_OnGameQueueRequest, Common.OnGameQueueRequest);
 }
-public bool OnQuitQueueRequest(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext)
-{
-	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
-		__msg.SimplePacketMode = core.IsSimplePacketMode();
-		Nettention.Proud.RmiID __msgid= Common.OnQuitQueueRequest;
-		__msg.Write(__msgid);
-		
-	Nettention.Proud.HostID[] __list = new Nettention.Proud.HostID[1];
-	__list[0] = remote;
-		
-	return RmiSend(__list,rmiContext,__msg,
-		RmiName_OnQuitQueueRequest, Common.OnQuitQueueRequest);
-}
-
-public bool OnQuitQueueRequest(Nettention.Proud.HostID[] remotes,Nettention.Proud.RmiContext rmiContext)
-{
-	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
-__msg.SimplePacketMode = core.IsSimplePacketMode();
-Nettention.Proud.RmiID __msgid= Common.OnQuitQueueRequest;
-__msg.Write(__msgid);
-		
-	return RmiSend(remotes,rmiContext,__msg,
-		RmiName_OnQuitQueueRequest, Common.OnQuitQueueRequest);
-}
-public bool OnGameInfoRequest(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room)
+public bool OnGameInfoRequest(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, String data)
 {
 	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
 		__msg.SimplePacketMode = core.IsSimplePacketMode();
 		Nettention.Proud.RmiID __msgid= Common.OnGameInfoRequest;
 		__msg.Write(__msgid);
 		Nettention.Proud.Marshaler.Write(__msg, room);
+		Nettention.Proud.Marshaler.Write(__msg, data);
 		
 	Nettention.Proud.HostID[] __list = new Nettention.Proud.HostID[1];
 	__list[0] = remote;
@@ -192,24 +132,26 @@ public bool OnGameInfoRequest(Nettention.Proud.HostID remote,Nettention.Proud.Rm
 		RmiName_OnGameInfoRequest, Common.OnGameInfoRequest);
 }
 
-public bool OnGameInfoRequest(Nettention.Proud.HostID[] remotes,Nettention.Proud.RmiContext rmiContext, int room)
+public bool OnGameInfoRequest(Nettention.Proud.HostID[] remotes,Nettention.Proud.RmiContext rmiContext, int room, String data)
 {
 	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
 __msg.SimplePacketMode = core.IsSimplePacketMode();
 Nettention.Proud.RmiID __msgid= Common.OnGameInfoRequest;
 __msg.Write(__msgid);
 Nettention.Proud.Marshaler.Write(__msg, room);
+Nettention.Proud.Marshaler.Write(__msg, data);
 		
 	return RmiSend(remotes,rmiContext,__msg,
 		RmiName_OnGameInfoRequest, Common.OnGameInfoRequest);
 }
-public bool OnGameActionReady(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room)
+public bool OnGameActionReady(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, String data)
 {
 	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
 		__msg.SimplePacketMode = core.IsSimplePacketMode();
 		Nettention.Proud.RmiID __msgid= Common.OnGameActionReady;
 		__msg.Write(__msgid);
 		Nettention.Proud.Marshaler.Write(__msg, room);
+		Nettention.Proud.Marshaler.Write(__msg, data);
 		
 	Nettention.Proud.HostID[] __list = new Nettention.Proud.HostID[1];
 	__list[0] = remote;
@@ -218,27 +160,26 @@ public bool OnGameActionReady(Nettention.Proud.HostID remote,Nettention.Proud.Rm
 		RmiName_OnGameActionReady, Common.OnGameActionReady);
 }
 
-public bool OnGameActionReady(Nettention.Proud.HostID[] remotes,Nettention.Proud.RmiContext rmiContext, int room)
+public bool OnGameActionReady(Nettention.Proud.HostID[] remotes,Nettention.Proud.RmiContext rmiContext, int room, String data)
 {
 	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
 __msg.SimplePacketMode = core.IsSimplePacketMode();
 Nettention.Proud.RmiID __msgid= Common.OnGameActionReady;
 __msg.Write(__msgid);
 Nettention.Proud.Marshaler.Write(__msg, room);
+Nettention.Proud.Marshaler.Write(__msg, data);
 		
 	return RmiSend(remotes,rmiContext,__msg,
 		RmiName_OnGameActionReady, Common.OnGameActionReady);
 }
-public bool OnGameActionDamage(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, int num, int amount, String option)
+public bool OnGameActionDamage(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, String data)
 {
 	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
 		__msg.SimplePacketMode = core.IsSimplePacketMode();
 		Nettention.Proud.RmiID __msgid= Common.OnGameActionDamage;
 		__msg.Write(__msgid);
 		Nettention.Proud.Marshaler.Write(__msg, room);
-		Nettention.Proud.Marshaler.Write(__msg, num);
-		Nettention.Proud.Marshaler.Write(__msg, amount);
-		Nettention.Proud.Marshaler.Write(__msg, option);
+		Nettention.Proud.Marshaler.Write(__msg, data);
 		
 	Nettention.Proud.HostID[] __list = new Nettention.Proud.HostID[1];
 	__list[0] = remote;
@@ -247,29 +188,26 @@ public bool OnGameActionDamage(Nettention.Proud.HostID remote,Nettention.Proud.R
 		RmiName_OnGameActionDamage, Common.OnGameActionDamage);
 }
 
-public bool OnGameActionDamage(Nettention.Proud.HostID[] remotes,Nettention.Proud.RmiContext rmiContext, int room, int num, int amount, String option)
+public bool OnGameActionDamage(Nettention.Proud.HostID[] remotes,Nettention.Proud.RmiContext rmiContext, int room, String data)
 {
 	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
 __msg.SimplePacketMode = core.IsSimplePacketMode();
 Nettention.Proud.RmiID __msgid= Common.OnGameActionDamage;
 __msg.Write(__msgid);
 Nettention.Proud.Marshaler.Write(__msg, room);
-Nettention.Proud.Marshaler.Write(__msg, num);
-Nettention.Proud.Marshaler.Write(__msg, amount);
-Nettention.Proud.Marshaler.Write(__msg, option);
+Nettention.Proud.Marshaler.Write(__msg, data);
 		
 	return RmiSend(remotes,rmiContext,__msg,
 		RmiName_OnGameActionDamage, Common.OnGameActionDamage);
 }
-public bool OnGameActionObject(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, int num, int amount)
+public bool OnGameActionObject(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, String data)
 {
 	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
 		__msg.SimplePacketMode = core.IsSimplePacketMode();
 		Nettention.Proud.RmiID __msgid= Common.OnGameActionObject;
 		__msg.Write(__msgid);
 		Nettention.Proud.Marshaler.Write(__msg, room);
-		Nettention.Proud.Marshaler.Write(__msg, num);
-		Nettention.Proud.Marshaler.Write(__msg, amount);
+		Nettention.Proud.Marshaler.Write(__msg, data);
 		
 	Nettention.Proud.HostID[] __list = new Nettention.Proud.HostID[1];
 	__list[0] = remote;
@@ -278,28 +216,26 @@ public bool OnGameActionObject(Nettention.Proud.HostID remote,Nettention.Proud.R
 		RmiName_OnGameActionObject, Common.OnGameActionObject);
 }
 
-public bool OnGameActionObject(Nettention.Proud.HostID[] remotes,Nettention.Proud.RmiContext rmiContext, int room, int num, int amount)
+public bool OnGameActionObject(Nettention.Proud.HostID[] remotes,Nettention.Proud.RmiContext rmiContext, int room, String data)
 {
 	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
 __msg.SimplePacketMode = core.IsSimplePacketMode();
 Nettention.Proud.RmiID __msgid= Common.OnGameActionObject;
 __msg.Write(__msgid);
 Nettention.Proud.Marshaler.Write(__msg, room);
-Nettention.Proud.Marshaler.Write(__msg, num);
-Nettention.Proud.Marshaler.Write(__msg, amount);
+Nettention.Proud.Marshaler.Write(__msg, data);
 		
 	return RmiSend(remotes,rmiContext,__msg,
 		RmiName_OnGameActionObject, Common.OnGameActionObject);
 }
-public bool OnGameActionItem(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, int type, int num)
+public bool OnGameActionItem(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, String data)
 {
 	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
 		__msg.SimplePacketMode = core.IsSimplePacketMode();
 		Nettention.Proud.RmiID __msgid= Common.OnGameActionItem;
 		__msg.Write(__msgid);
 		Nettention.Proud.Marshaler.Write(__msg, room);
-		Nettention.Proud.Marshaler.Write(__msg, type);
-		Nettention.Proud.Marshaler.Write(__msg, num);
+		Nettention.Proud.Marshaler.Write(__msg, data);
 		
 	Nettention.Proud.HostID[] __list = new Nettention.Proud.HostID[1];
 	__list[0] = remote;
@@ -308,15 +244,14 @@ public bool OnGameActionItem(Nettention.Proud.HostID remote,Nettention.Proud.Rmi
 		RmiName_OnGameActionItem, Common.OnGameActionItem);
 }
 
-public bool OnGameActionItem(Nettention.Proud.HostID[] remotes,Nettention.Proud.RmiContext rmiContext, int room, int type, int num)
+public bool OnGameActionItem(Nettention.Proud.HostID[] remotes,Nettention.Proud.RmiContext rmiContext, int room, String data)
 {
 	Nettention.Proud.Message __msg=new Nettention.Proud.Message();
 __msg.SimplePacketMode = core.IsSimplePacketMode();
 Nettention.Proud.RmiID __msgid= Common.OnGameActionItem;
 __msg.Write(__msgid);
 Nettention.Proud.Marshaler.Write(__msg, room);
-Nettention.Proud.Marshaler.Write(__msg, type);
-Nettention.Proud.Marshaler.Write(__msg, num);
+Nettention.Proud.Marshaler.Write(__msg, data);
 		
 	return RmiSend(remotes,rmiContext,__msg,
 		RmiName_OnGameActionItem, Common.OnGameActionItem);
@@ -381,11 +316,9 @@ Nettention.Proud.Marshaler.Write(__msg, data);
 // RMI name declaration.
 // It is the unique pointer that indicates RMI name such as RMI profiler.
 public const string RmiName_OnLoginRequest="OnLoginRequest";
-public const string RmiName_OnRegisterRequest="OnRegisterRequest";
 public const string RmiName_OnStatusRequest="OnStatusRequest";
-public const string RmiName_OnSoloQueueRequest="OnSoloQueueRequest";
-public const string RmiName_OnTeamQueueRequest="OnTeamQueueRequest";
-public const string RmiName_OnQuitQueueRequest="OnQuitQueueRequest";
+public const string RmiName_OnSystemRequest="OnSystemRequest";
+public const string RmiName_OnGameQueueRequest="OnGameQueueRequest";
 public const string RmiName_OnGameInfoRequest="OnGameInfoRequest";
 public const string RmiName_OnGameActionReady="OnGameActionReady";
 public const string RmiName_OnGameActionDamage="OnGameActionDamage";
@@ -399,11 +332,9 @@ public const string RmiName_First = RmiName_OnLoginRequest;
 // RMI name declaration.
 // It is the unique pointer that indicates RMI name such as RMI profiler.
 public const string RmiName_OnLoginRequest="";
-public const string RmiName_OnRegisterRequest="";
 public const string RmiName_OnStatusRequest="";
-public const string RmiName_OnSoloQueueRequest="";
-public const string RmiName_OnTeamQueueRequest="";
-public const string RmiName_OnQuitQueueRequest="";
+public const string RmiName_OnSystemRequest="";
+public const string RmiName_OnGameQueueRequest="";
 public const string RmiName_OnGameInfoRequest="";
 public const string RmiName_OnGameActionReady="";
 public const string RmiName_OnGameActionDamage="";

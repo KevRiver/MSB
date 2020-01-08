@@ -12,32 +12,30 @@ using UnityEngine.UI;
 
 public class ManageLobbyObject : MonoBehaviour
 {
+    //Network Manager
+    public NetworkManager networkManager;
+
     // Lobby UI
-    public GameObject top_Coin;
-    public GameObject top_Cash;
-    public GameObject top_Profile;
-    public GameObject top_Profile_Text;
-    public GameObject mid_Left;
-    public GameObject mid_Right;
-    public GameObject bot_Store;
-    public GameObject bot_Setting;
+    public GameObject top_RankImg;
+    public Text top_RankText;
+    public GameObject top_SettingButton;
+    public GameObject bot_PlayButton;
+    public GameObject bot_ChangeCharacter;
 
     // ScrollView UI
-    Transform t_Sv_Weapon;
-	public GameObject sv_Weapon;
-    Transform t_Sv_Skin;
-    public GameObject sv_Skin;
+    Transform t_ChangeCharacterView;
+    public GameObject changeCharacterView;
     Transform t_HomeButton;
     public GameObject homeButton;
-    Transform t_CenterSlot;
-    public GameObject centerSlot;
 
     // Play UI
-    Transform middle;
-    Transform t_Single_Button;
-    public GameObject single_Button;
-    Transform t_Multi_Button;
-    public GameObject multi_Button;
+    public GameObject soloButton;
+    public GameObject multiButton;
+
+    // Lobby
+    public GameObject mainLobby;
+    public GameObject playLobby;
+    public GameObject settingLobby;
 
     // Character
     public GameObject lobbyCharacter;
@@ -46,46 +44,72 @@ public class ManageLobbyObject : MonoBehaviour
     public int skinID;
     public int weaponID;
 
+    // Rank
+    public Sprite[] rankSprite = new Sprite[3];
+
+    // Queue Loading
+    public bool queueLoading;
+    public Sprite backButtonSprite;
+    public Sprite homeButtonSprite;
+    public GameObject loadingCharacter;
+
+    public GameObject background;
+
+    public GameObject mainCamera;
+
     // Start is called before the first frame update
     void Start()
     {
         string userNick = LocalUser.Instance.localUserData.userNick;
 
+        // NetworkManager
+        networkManager = FindObjectOfType<NetworkManager>();
+
         // Lobby UI
-        top_Coin = GameObject.Find("Coin");
-        top_Cash = GameObject.Find("Cash");
-        top_Profile = GameObject.Find("ProfileButton");
-        top_Profile_Text = top_Profile.transform.GetChild(0).GetChild(0).gameObject;
-        top_Profile_Text.GetComponent<Text>().text = userNick;
-               
-        mid_Left = GameObject.Find("MiddleLeft");
-        mid_Right = GameObject.Find("RightButton");
-        bot_Setting = GameObject.Find("SettingButton");
-        bot_Store = GameObject.Find("StoreButton");
+        mainLobby = GameObject.Find("MainLobby");
 
-        // Scroll View UI
-        t_Sv_Weapon = transform.Find("Scroll View_Weapon");
-        t_Sv_Skin = transform.Find("Scroll View_Skin");
-        t_CenterSlot = transform.Find("CenterSlot");
-        sv_Weapon = t_Sv_Weapon.gameObject;
-        sv_Skin = t_Sv_Skin.gameObject;
-        centerSlot = t_CenterSlot.gameObject;
+        top_RankImg = GameObject.Find("RankImg");
+        top_SettingButton = GameObject.Find("SettingButton");
 
+        bot_PlayButton = GameObject.Find("PlayButton");
 
-        t_HomeButton = transform.Find("HomeButton");
-        homeButton = t_HomeButton.gameObject;
+        bot_ChangeCharacter = GameObject.Find("Button_Character");
+
+        homeButton = GameObject.Find("HomeButton");
 
         // Play UI
-        middle = transform.Find("Middle");
-        t_Single_Button = middle.Find("SinglePlayButton");
-        single_Button = t_Single_Button.gameObject;
-        t_Multi_Button = middle.Find("MultiPlayButton");
-        multi_Button = t_Multi_Button.gameObject;
+        playLobby = GameObject.Find("PlayLobby");
+        soloButton = GameObject.Find("SoloPlayButton");
+        multiButton = GameObject.Find("MultiPlayButton");
 
         // Character
         lobbyCharacter = GameObject.Find("LobbyCharacter");
-    }
 
+        // Get Rank
+        setRank(LocalUser.Instance.localUserData.userRank);
+
+        // Queue Loading
+        queueLoading = false;
+        loadingCharacter = GameObject.Find("QueueLoading");
+        loadingCharacter.SetActive(false);
+
+        // Background
+        background = GameObject.Find("Background");
+
+        // Main Camera
+        mainCamera = GameObject.Find("Main Camera");
+
+        Debug.Log(Screen.width); // 3040
+        Debug.Log(Screen.height); // 1440
+
+        if(Screen.width > 2200)
+        {
+            Debug.Log(background);
+            float num = Screen.width / ((2200f * Screen.height) / 1080f);
+            Debug.Log(num);
+            background.transform.localScale = new Vector3(num, num, 1);
+        }
+    }
 
     public void getSkinID(int id)
     {
@@ -95,5 +119,35 @@ public class ManageLobbyObject : MonoBehaviour
     public void getWeaponID(int id)
     {
         weaponID = id;
+    }
+
+    void setRank(int rank)
+    {
+        top_RankText.text = rank.ToString();
+        if (rank < 800)
+        {
+            Debug.Log("Bronze");
+            top_RankImg.GetComponent<Image>().sprite = rankSprite[0];
+        }
+        else if(rank >= 800 && rank < 1200)
+        {
+            Debug.Log("Silver");
+            top_RankImg.GetComponent<Image>().sprite = rankSprite[1];
+        }
+        else if(rank >= 1200)
+        {
+            Debug.Log("Gold");
+            top_RankImg.GetComponent<Image>().sprite = rankSprite[2];
+        }
+    }
+
+    public void loadScene(int _room)
+    {
+        networkManager.loadScene(_room);
+    }
+
+    public void endPlayLobbyOutTransition()
+    {
+        lobbyCharacter.GetComponent<SpriteRenderer>().enabled = true;
     }
 }

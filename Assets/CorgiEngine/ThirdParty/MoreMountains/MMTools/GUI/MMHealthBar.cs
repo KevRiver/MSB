@@ -1,7 +1,9 @@
-﻿using UnityEngine;
-using MoreMountains.Tools;
+﻿using System;
+using UnityEngine;
+//using MoreMountains.Tools;
 using System.Collections;
 using UnityEngine.UI;
+//using MoreMountains.Tools;
 
 namespace MoreMountains.Tools
 {	
@@ -33,6 +35,7 @@ namespace MoreMountains.Tools
 		public Vector2 Size = new Vector2(1f,0.2f);
 		/// if the healthbar is drawn, the padding to apply to the foreground, in world units
 		public Vector2 BackgroundPadding = new Vector2(0.01f,0.01f);
+		
 		/// if the healthbar is drawn, the color of its foreground
 		public Gradient ForegroundColor;
 		/// if the healthbar is drawn, the color of its delayed bar
@@ -99,12 +102,13 @@ namespace MoreMountains.Tools
 		{
             Initialization();
 		}
-
+		
         public virtual void Initialization()
         {
             if (_progressBar != null)
             {
-                _progressBar.gameObject.SetActive(true);
+	            _foregroundImage.color = ForegroundColor.Evaluate(1);
+	            _progressBar.gameObject.SetActive(true);
                 return;
             }
 
@@ -122,7 +126,7 @@ namespace MoreMountains.Tools
 
             if (HealthBarType == HealthBarTypes.Drawn)
             {
-                DrawHealthBar();
+	            DrawHealthBar();
                 UpdateDrawnColors();
             }
 
@@ -233,7 +237,7 @@ namespace MoreMountains.Tools
 			UpdateDrawnColors();
             
 			if (AlwaysVisible)	
-			{ 
+			{
 				return; 
 			}
 

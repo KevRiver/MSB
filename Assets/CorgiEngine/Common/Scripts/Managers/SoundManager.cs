@@ -62,7 +62,7 @@ namespace MoreMountains.CorgiEngine
 			// we set the loop setting to true, the music will loop forever
 			_backgroundMusic.loop=true;
 			// we start playing the background music
-			_backgroundMusic.Play();		
+			_backgroundMusic.Play();
 		}
 
         /// <summary>

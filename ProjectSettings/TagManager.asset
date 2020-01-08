@@ -53,6 +53,15 @@ TagManager:
   - name: Platforms
     uniqueID: 600026165
     locked: 0
+  - name: MapObject
+    uniqueID: 1820194523
+    locked: 0
+  - name: InGameUI
+    uniqueID: 2439575615
+    locked: 0
+  - name: Weapon
+    uniqueID: 3512413707
+    locked: 0
   - name: Player
     uniqueID: 2666359821
     locked: 0

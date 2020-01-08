@@ -2,28 +2,30 @@
 using System.Collections.Generic;
 using MoreMountains.Tools;
 using UnityEngine;
-using MSBNetwork;
 
 public class LocalUser : PersistentSingleton<LocalUser>
 {
     public ClientUserData localUserData;
 
     protected override void Awake()
-    {       
-        localUserData = new ClientUserData();
+    {
+        //Debug.Log("LocalUser Awake");
+        base.Awake();
+        _instance.name = "LocalUser";
+        //localUserData = new ClientUserData();
     }
-   
+
     public void DebugLocalUserData()
     {
-        Debug.Log("DebugLocalUserData called");
-        Debug.Log(localUserData.userID);
-        Debug.Log(localUserData.userNick);
-        Debug.Log(localUserData.userNumber);
-        Debug.Log(localUserData.userMoney);
-        Debug.Log(localUserData.userCash);
-        Debug.Log(localUserData.userRank);
-        Debug.Log(localUserData.userWeapon);
-        Debug.Log(localUserData.userSkin);
+        //Debug.Log("DebugLocalUserData called");
+        Debug.Log("ID : " + localUserData.userID);
+        Debug.Log("Nick : " + localUserData.userNick);
+        Debug.Log("Num : " + localUserData.userNumber);
+        Debug.Log("Money : " + localUserData.userMoney);
+        Debug.Log("Cash : " + localUserData.userCash);
+        Debug.Log("Rank : " + localUserData.userRank);
+        Debug.Log("Weapon : " + localUserData.userWeapon);
+        Debug.Log("Skin : " + localUserData.userSkin);
     }
 
     public void SetWeaponID(int _weaponID)

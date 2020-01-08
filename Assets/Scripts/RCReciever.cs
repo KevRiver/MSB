@@ -1,107 +1,197 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.Tools;
 using MSBNetwork;
 using MoreMountains.CorgiEngine;
 
-namespace MoreMountains.CorgiEngine
+public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
 {
-    public struct MSBActionEvent
-    {
-        public int userNumber;
-        public Vector3 shootAngle;
+    private bool isInitialized = false;
+    public MSB_Character character;
+    private CorgiController _controller;
+    public Transform characterModel;
+    public Transform weaponAttachment;
+    public Weapon weapon;
+    public int userNum;
+    // For facing direction sync
+    public bool lastFacing;
 
-        public MSBActionEvent(int _userNumber,Vector3 _shootAngle)
-        {
-            userNumber = _userNumber;
-            shootAngle = _shootAngle;
-        }
-
-        static MSBActionEvent e;
-        public static void Trigger(int _userNumber, Vector3 _shootAngle)
-        {
-            e.userNumber = _userNumber;
-            e.shootAngle = _shootAngle;
-            MMEventManager.TriggerEvent(e);
-        }
-    }
-}
-
-public class RCReciever : MonoBehaviour,
-                            NetworkModule.OnGameUserMoveListener,
-                            NetworkModule.OnGameUserSyncListener
-
-{
-    MSB_Character character;
-    Transform weaponAttachment;
-    Weapon weapon;
-
-    private int userNum;
-
-    // Sync frequency
-    const float smoothTime = 0.1f;
-
-    // For position synchronizing
-    Vector3 targetPos;
-    float xSpeed;
-    float ySpeed;
-    private bool isGrounded;
-    private bool isFacingRight;
-
-    // Start is called before the first frame update
+    private Transform _aimIndicator;
+    private Vector3 _curPos;
+    private Vector3 _targetPos;
+    private Vector2 _speed;
+    private Quaternion _targetRot;
+    private bool onSync = false;
     void Start()
     {
-        character = GetComponent<MSB_Character>();
-        weaponAttachment = character.transform.GetChild(0);
+        if (!(character = GetComponent<MSB_Character>()))
+            Debug.Log("MSB_Character is null");
+
+        if (!(_controller = GetComponent<CorgiController>()))
+            Debug.Log("CorgiController is null");
+
+        characterModel = character.transform.GetChild(0);
+        weaponAttachment = characterModel.GetChild(0);
+        _aimIndicator = weaponAttachment.GetChild(0);
         weapon = weaponAttachment.GetComponentInChildren<Weapon>();
 
+        _targetPos = transform.position;
+        _targetRot = transform.rotation;
+
         userNum = character.UserNum;
-        Debug.Log("User number : " + userNum);
-        //Debug.Log("Weapon name : " + weapon.gameObject.name);
+        
+        NetworkModule.GetInstance().AddOnEventGameUserMove(new OnGameUserMove(this));
+        NetworkModule.GetInstance().AddOnEventGameUserSync(new OnGameUserSync(this));
+
+        isInitialized = true;
+        
+        if (_aimIndicator != null)
+            _aimIndicator.gameObject.SetActive(false);
     }
 
-    private void SyncUserPos()
+    public void OnMMEvent(MMGameEvent eventType)
     {
-        float newPosX = Mathf.SmoothDamp(transform.position.x, targetPos.x, ref xSpeed, smoothTime);
-        float newPosY = Mathf.SmoothDamp(transform.position.y, targetPos.y, ref ySpeed, smoothTime);
-
-        transform.position = new Vector3(newPosX, newPosY);
+        switch (eventType.EventName)
+        {
+            case "GameStart":
+                StartCoroutine(SyncUserPos());
+                onSync = true;
+                break;
+            
+            case "GameOver":
+                StopCoroutine(SyncUserPos());
+                onSync = false;
+                break;
+        }
     }
-
-    char[] delimiterChars = { ',' };
-    public void OnGameUserMove(object _data)
+    
+    private void OnEnable()
     {
-        string[] dataArray = ((string)_data).Split(delimiterChars);
-        int targetNum = int.Parse(dataArray[0]);
-
-        //  If this is not target object return
-        if (userNum != targetNum)
+        this.MMEventStartListening<MMGameEvent>();
+        if (!isInitialized)
             return;
-
-        // Allocates recieved data
-        float _posX = float.Parse(dataArray[1]);
-        float _posY = float.Parse(dataArray[2]);
-        float _posZ = float.Parse(dataArray[3]);
-        targetPos = new Vector3(_posX, _posY, _posZ);
-
-        float _xSpeed = float.Parse(dataArray[4]);
-        float _ySpeed = float.Parse(dataArray[5]);
-        xSpeed = _xSpeed;
-        ySpeed = _ySpeed;
-
-        bool _isGrounded = bool.Parse(dataArray[6]);
-        isGrounded = _isGrounded;
-
-        bool _isFacingRight = bool.Parse(dataArray[7]);
-        isFacingRight = _isGrounded;
-
-        // Sync user position
-        SyncUserPos();
+        onSync = true;
+        StartCoroutine(SyncUserPos());
+    }
+    
+    private void OnDisable()
+    {
+        if (onSync)
+        {
+            onSync = false;
+            StopCoroutine(SyncUserPos());
+        }
+        this.MMEventStopListening<MMGameEvent>();
     }
 
-    public void OnGameUserSync(object _data)
+    private float _newPosX;
+    private float _newPosY;
+    private IEnumerator SyncUserPos()
     {
-        throw new System.NotImplementedException();
+        while (true)
+        {
+            _curPos = transform.position;
+            _newPosX = Mathf.SmoothDamp(_curPos.x, _targetPos.x, ref _speed.x, 0.1f);
+            _newPosY = Mathf.SmoothDamp(_curPos.y, _targetPos.y, ref _speed.y, 0.1f);
+            
+            /*if(_controller.State.IsGrounded)
+                _controller.SetVerticalForce(0f);*/
+            transform.position = new Vector3(_newPosX, _curPos.y);
+            _controller.SetVerticalForce(_speed.y);
+            yield return null;
+        }
+    }
+
+    public void MoveSync(float targetPosX, float targetPosY, float xSpeed, float ySpeed, bool isFacingRight, float smoothTime = 0.1f)
+    {
+        if (lastFacing != isFacingRight)
+        {
+            lastFacing = !lastFacing;
+            character.Flip();
+        }
+        _targetPos.x = targetPosX;
+        _targetPos.y = targetPosY;
+
+        _speed.x = xSpeed;
+        _speed.y = ySpeed;
+    }
+
+    public void AttackSync(Quaternion rot)
+    {
+        characterModel.rotation = rot;
+        weapon.WeaponState.ChangeState(Weapon.WeaponStates.WeaponUse);
+    }
+
+    private class OnGameUserMove : NetworkModule.OnGameUserMoveListener
+    {
+        private RCReciever _rc;
+        private int _userNum;
+        private int _targetNum;
+        private float _posX;
+        private float _posY;
+        private float _posZ;
+        private float _xSpeed;
+        private float _ySpeed;
+        private bool _isFacingRight;
+        private float _rotZ;
+
+        public OnGameUserMove(RCReciever rc)
+        {
+            Debug.Log("OnGameUserMove Constructor called");
+            //Debug.LogWarning(rc.gameObject.name);
+            _rc = rc;
+            _userNum = _rc.userNum;
+        }
+
+        readonly char[] _delimiterChars = { ',' };
+        void NetworkModule.OnGameUserMoveListener.OnGameUserMove(object data)
+        {
+            //Debug.Log("Recieved : " + data);
+            string[] dataArray = ((string)data).Split(_delimiterChars);
+            _targetNum = int.Parse(dataArray[0]);            
+            //  If this is not target object, return
+            if (_userNum != _targetNum)
+                return;
+            // Allocates recieved data
+            _posX = float.Parse(dataArray[1]);
+            _posY = float.Parse(dataArray[2]);
+            _posZ = float.Parse(dataArray[3]);
+            _xSpeed = float.Parse(dataArray[4]);
+            _ySpeed = float.Parse(dataArray[5]);
+            _isFacingRight = bool.Parse(dataArray[6]);
+            //_rotZ = float.Parse(dataArray[7]);
+            
+            // Sync User position
+            _rc.MoveSync(_posX, _posY, _xSpeed, _ySpeed, _isFacingRight);
+        }
+    }
+    
+    private class OnGameUserSync : NetworkModule.OnGameUserSyncListener
+    {
+        private RCReciever _rc;
+        private int _userNum;
+        private int _targetNum;
+        private Quaternion _rot;
+        public OnGameUserSync(RCReciever rc)
+        {
+            Debug.Log("OnGameUserSync Constructor called");
+            //Debug.LogWarning(rc.gameObject.name);
+            _rc = rc;
+            _userNum = _rc.userNum;
+        }
+        
+        readonly char[] _delimiterChars = { ',' }; 
+        void NetworkModule.OnGameUserSyncListener.OnGameUserSync(object data)
+        {
+            string[] dataArray = ((string)data).Split(_delimiterChars);
+            _targetNum = int.Parse(dataArray[0]);
+            if (_userNum != _targetNum)
+                return;
+            _rot.x = float.Parse(dataArray[1]);
+            _rot.y = float.Parse(dataArray[2]);
+            _rot.z = float.Parse(dataArray[3]);
+            _rot.w = float.Parse(dataArray[4]);
+            _rc.AttackSync(_rot);
+        }
     }
 }

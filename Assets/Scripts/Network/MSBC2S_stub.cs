@@ -7,7 +7,6 @@
 // Do not modify this file, but modify the source .pidl file.
 
 using System;
-using System.Net;	     
 
 namespace MSBC2S
 {
@@ -16,58 +15,48 @@ namespace MSBC2S
 public AfterRmiInvocationDelegate AfterRmiInvocation = delegate(Nettention.Proud.AfterRmiSummary summary) {};
 public BeforeRmiInvocationDelegate BeforeRmiInvocation = delegate(Nettention.Proud.BeforeRmiSummary summary) {};
 
-		public delegate bool OnLoginRequestDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, String id, String pw);  
-		public OnLoginRequestDelegate OnLoginRequest = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, String id, String pw)
+		public delegate bool OnLoginRequestDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, String data);  
+		public OnLoginRequestDelegate OnLoginRequest = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, String data)
 		{ 
 			return false;
 		};
-		public delegate bool OnRegisterRequestDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, String id, String pw, String nick);  
-		public OnRegisterRequestDelegate OnRegisterRequest = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, String id, String pw, String nick)
+		public delegate bool OnStatusRequestDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, String data);  
+		public OnStatusRequestDelegate OnStatusRequest = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, String data)
 		{ 
 			return false;
 		};
-		public delegate bool OnStatusRequestDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, String id);  
-		public OnStatusRequestDelegate OnStatusRequest = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, String id)
+		public delegate bool OnSystemRequestDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, String data);  
+		public OnSystemRequestDelegate OnSystemRequest = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, String data)
 		{ 
 			return false;
 		};
-		public delegate bool OnSoloQueueRequestDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int weapon, int skin);  
-		public OnSoloQueueRequestDelegate OnSoloQueueRequest = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int weapon, int skin)
+		public delegate bool OnGameQueueRequestDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, String data);  
+		public OnGameQueueRequestDelegate OnGameQueueRequest = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, String data)
 		{ 
 			return false;
 		};
-		public delegate bool OnTeamQueueRequestDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int weapon, int skin);  
-		public OnTeamQueueRequestDelegate OnTeamQueueRequest = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int weapon, int skin)
+		public delegate bool OnGameInfoRequestDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, String data);  
+		public OnGameInfoRequestDelegate OnGameInfoRequest = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, String data)
 		{ 
 			return false;
 		};
-		public delegate bool OnQuitQueueRequestDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext);  
-		public OnQuitQueueRequestDelegate OnQuitQueueRequest = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext)
+		public delegate bool OnGameActionReadyDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, String data);  
+		public OnGameActionReadyDelegate OnGameActionReady = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, String data)
 		{ 
 			return false;
 		};
-		public delegate bool OnGameInfoRequestDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room);  
-		public OnGameInfoRequestDelegate OnGameInfoRequest = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room)
+		public delegate bool OnGameActionDamageDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, String data);  
+		public OnGameActionDamageDelegate OnGameActionDamage = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, String data)
 		{ 
 			return false;
 		};
-		public delegate bool OnGameActionReadyDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room);  
-		public OnGameActionReadyDelegate OnGameActionReady = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room)
+		public delegate bool OnGameActionObjectDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, String data);  
+		public OnGameActionObjectDelegate OnGameActionObject = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, String data)
 		{ 
 			return false;
 		};
-		public delegate bool OnGameActionDamageDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, int num, int amount, String option);  
-		public OnGameActionDamageDelegate OnGameActionDamage = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, int num, int amount, String option)
-		{ 
-			return false;
-		};
-		public delegate bool OnGameActionObjectDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, int num, int amount);  
-		public OnGameActionObjectDelegate OnGameActionObject = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, int num, int amount)
-		{ 
-			return false;
-		};
-		public delegate bool OnGameActionItemDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, int type, int num);  
-		public OnGameActionItemDelegate OnGameActionItem = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, int type, int num)
+		public delegate bool OnGameActionItemDelegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, String data);  
+		public OnGameActionItemDelegate OnGameActionItem = delegate(Nettention.Proud.HostID remote,Nettention.Proud.RmiContext rmiContext, int room, String data)
 		{ 
 			return false;
 		};
@@ -100,20 +89,14 @@ public BeforeRmiInvocationDelegate BeforeRmiInvocation = delegate(Nettention.Pro
         case Common.OnLoginRequest:
             ProcessReceivedMessage_OnLoginRequest(__msg, pa, hostTag, remote);
             break;
-        case Common.OnRegisterRequest:
-            ProcessReceivedMessage_OnRegisterRequest(__msg, pa, hostTag, remote);
-            break;
         case Common.OnStatusRequest:
             ProcessReceivedMessage_OnStatusRequest(__msg, pa, hostTag, remote);
             break;
-        case Common.OnSoloQueueRequest:
-            ProcessReceivedMessage_OnSoloQueueRequest(__msg, pa, hostTag, remote);
+        case Common.OnSystemRequest:
+            ProcessReceivedMessage_OnSystemRequest(__msg, pa, hostTag, remote);
             break;
-        case Common.OnTeamQueueRequest:
-            ProcessReceivedMessage_OnTeamQueueRequest(__msg, pa, hostTag, remote);
-            break;
-        case Common.OnQuitQueueRequest:
-            ProcessReceivedMessage_OnQuitQueueRequest(__msg, pa, hostTag, remote);
+        case Common.OnGameQueueRequest:
+            ProcessReceivedMessage_OnGameQueueRequest(__msg, pa, hostTag, remote);
             break;
         case Common.OnGameInfoRequest:
             ProcessReceivedMessage_OnGameInfoRequest(__msg, pa, hostTag, remote);
@@ -155,14 +138,12 @@ __fail:
         ctx.encryptMode = pa.EncryptMode;
         ctx.compressMode = pa.CompressMode;
 
-        String id; Nettention.Proud.Marshaler.Read(__msg,out id);	
-String pw; Nettention.Proud.Marshaler.Read(__msg,out pw);	
+        String data; Nettention.Proud.Marshaler.Read(__msg,out data);	
 core.PostCheckReadMessage(__msg, RmiName_OnLoginRequest);
         if(enableNotifyCallFromStub==true)
         {
         string parameterString = "";
-        parameterString+=id.ToString()+",";
-parameterString+=pw.ToString()+",";
+        parameterString+=data.ToString()+",";
         NotifyCallFromStub(Common.OnLoginRequest, RmiName_OnLoginRequest,parameterString);
         }
 
@@ -179,7 +160,7 @@ parameterString+=pw.ToString()+",";
         long t0 = Nettention.Proud.PreciseCurrentTime.GetTimeMs();
 
         // Call this method.
-        bool __ret =OnLoginRequest (remote,ctx , id, pw );
+        bool __ret =OnLoginRequest (remote,ctx , data );
 
         if(__ret==false)
         {
@@ -198,60 +179,6 @@ parameterString+=pw.ToString()+",";
         AfterRmiInvocation(summary);
         }
     }
-    void ProcessReceivedMessage_OnRegisterRequest(Nettention.Proud.Message __msg, Nettention.Proud.ReceivedMessage pa, Object hostTag, Nettention.Proud.HostID remote)
-    {
-        Nettention.Proud.RmiContext ctx = new Nettention.Proud.RmiContext();
-        ctx.sentFrom=pa.RemoteHostID;
-        ctx.relayed=pa.IsRelayed;
-        ctx.hostTag=hostTag;
-        ctx.encryptMode = pa.EncryptMode;
-        ctx.compressMode = pa.CompressMode;
-
-        String id; Nettention.Proud.Marshaler.Read(__msg,out id);	
-String pw; Nettention.Proud.Marshaler.Read(__msg,out pw);	
-String nick; Nettention.Proud.Marshaler.Read(__msg,out nick);	
-core.PostCheckReadMessage(__msg, RmiName_OnRegisterRequest);
-        if(enableNotifyCallFromStub==true)
-        {
-        string parameterString = "";
-        parameterString+=id.ToString()+",";
-parameterString+=pw.ToString()+",";
-parameterString+=nick.ToString()+",";
-        NotifyCallFromStub(Common.OnRegisterRequest, RmiName_OnRegisterRequest,parameterString);
-        }
-
-        if(enableStubProfiling)
-        {
-        Nettention.Proud.BeforeRmiSummary summary = new Nettention.Proud.BeforeRmiSummary();
-        summary.rmiID = Common.OnRegisterRequest;
-        summary.rmiName = RmiName_OnRegisterRequest;
-        summary.hostID = remote;
-        summary.hostTag = hostTag;
-        BeforeRmiInvocation(summary);
-        }
-
-        long t0 = Nettention.Proud.PreciseCurrentTime.GetTimeMs();
-
-        // Call this method.
-        bool __ret =OnRegisterRequest (remote,ctx , id, pw, nick );
-
-        if(__ret==false)
-        {
-        // Error: RMI function that a user did not create has been called. 
-        core.ShowNotImplementedRmiWarning(RmiName_OnRegisterRequest);
-        }
-
-        if(enableStubProfiling)
-        {
-        Nettention.Proud.AfterRmiSummary summary = new Nettention.Proud.AfterRmiSummary();
-        summary.rmiID = Common.OnRegisterRequest;
-        summary.rmiName = RmiName_OnRegisterRequest;
-        summary.hostID = remote;
-        summary.hostTag = hostTag;
-        summary.elapsedTime = Nettention.Proud.PreciseCurrentTime.GetTimeMs()-t0;
-        AfterRmiInvocation(summary);
-        }
-    }
     void ProcessReceivedMessage_OnStatusRequest(Nettention.Proud.Message __msg, Nettention.Proud.ReceivedMessage pa, Object hostTag, Nettention.Proud.HostID remote)
     {
         Nettention.Proud.RmiContext ctx = new Nettention.Proud.RmiContext();
@@ -261,12 +188,12 @@ parameterString+=nick.ToString()+",";
         ctx.encryptMode = pa.EncryptMode;
         ctx.compressMode = pa.CompressMode;
 
-        String id; Nettention.Proud.Marshaler.Read(__msg,out id);	
+        String data; Nettention.Proud.Marshaler.Read(__msg,out data);	
 core.PostCheckReadMessage(__msg, RmiName_OnStatusRequest);
         if(enableNotifyCallFromStub==true)
         {
         string parameterString = "";
-        parameterString+=id.ToString()+",";
+        parameterString+=data.ToString()+",";
         NotifyCallFromStub(Common.OnStatusRequest, RmiName_OnStatusRequest,parameterString);
         }
 
@@ -283,7 +210,7 @@ core.PostCheckReadMessage(__msg, RmiName_OnStatusRequest);
         long t0 = Nettention.Proud.PreciseCurrentTime.GetTimeMs();
 
         // Call this method.
-        bool __ret =OnStatusRequest (remote,ctx , id );
+        bool __ret =OnStatusRequest (remote,ctx , data );
 
         if(__ret==false)
         {
@@ -302,7 +229,7 @@ core.PostCheckReadMessage(__msg, RmiName_OnStatusRequest);
         AfterRmiInvocation(summary);
         }
     }
-    void ProcessReceivedMessage_OnSoloQueueRequest(Nettention.Proud.Message __msg, Nettention.Proud.ReceivedMessage pa, Object hostTag, Nettention.Proud.HostID remote)
+    void ProcessReceivedMessage_OnSystemRequest(Nettention.Proud.Message __msg, Nettention.Proud.ReceivedMessage pa, Object hostTag, Nettention.Proud.HostID remote)
     {
         Nettention.Proud.RmiContext ctx = new Nettention.Proud.RmiContext();
         ctx.sentFrom=pa.RemoteHostID;
@@ -311,22 +238,20 @@ core.PostCheckReadMessage(__msg, RmiName_OnStatusRequest);
         ctx.encryptMode = pa.EncryptMode;
         ctx.compressMode = pa.CompressMode;
 
-        int weapon; Nettention.Proud.Marshaler.Read(__msg,out weapon);	
-int skin; Nettention.Proud.Marshaler.Read(__msg,out skin);	
-core.PostCheckReadMessage(__msg, RmiName_OnSoloQueueRequest);
+        String data; Nettention.Proud.Marshaler.Read(__msg,out data);	
+core.PostCheckReadMessage(__msg, RmiName_OnSystemRequest);
         if(enableNotifyCallFromStub==true)
         {
         string parameterString = "";
-        parameterString+=weapon.ToString()+",";
-parameterString+=skin.ToString()+",";
-        NotifyCallFromStub(Common.OnSoloQueueRequest, RmiName_OnSoloQueueRequest,parameterString);
+        parameterString+=data.ToString()+",";
+        NotifyCallFromStub(Common.OnSystemRequest, RmiName_OnSystemRequest,parameterString);
         }
 
         if(enableStubProfiling)
         {
         Nettention.Proud.BeforeRmiSummary summary = new Nettention.Proud.BeforeRmiSummary();
-        summary.rmiID = Common.OnSoloQueueRequest;
-        summary.rmiName = RmiName_OnSoloQueueRequest;
+        summary.rmiID = Common.OnSystemRequest;
+        summary.rmiName = RmiName_OnSystemRequest;
         summary.hostID = remote;
         summary.hostTag = hostTag;
         BeforeRmiInvocation(summary);
@@ -335,26 +260,26 @@ parameterString+=skin.ToString()+",";
         long t0 = Nettention.Proud.PreciseCurrentTime.GetTimeMs();
 
         // Call this method.
-        bool __ret =OnSoloQueueRequest (remote,ctx , weapon, skin );
+        bool __ret =OnSystemRequest (remote,ctx , data );
 
         if(__ret==false)
         {
         // Error: RMI function that a user did not create has been called. 
-        core.ShowNotImplementedRmiWarning(RmiName_OnSoloQueueRequest);
+        core.ShowNotImplementedRmiWarning(RmiName_OnSystemRequest);
         }
 
         if(enableStubProfiling)
         {
         Nettention.Proud.AfterRmiSummary summary = new Nettention.Proud.AfterRmiSummary();
-        summary.rmiID = Common.OnSoloQueueRequest;
-        summary.rmiName = RmiName_OnSoloQueueRequest;
+        summary.rmiID = Common.OnSystemRequest;
+        summary.rmiName = RmiName_OnSystemRequest;
         summary.hostID = remote;
         summary.hostTag = hostTag;
         summary.elapsedTime = Nettention.Proud.PreciseCurrentTime.GetTimeMs()-t0;
         AfterRmiInvocation(summary);
         }
     }
-    void ProcessReceivedMessage_OnTeamQueueRequest(Nettention.Proud.Message __msg, Nettention.Proud.ReceivedMessage pa, Object hostTag, Nettention.Proud.HostID remote)
+    void ProcessReceivedMessage_OnGameQueueRequest(Nettention.Proud.Message __msg, Nettention.Proud.ReceivedMessage pa, Object hostTag, Nettention.Proud.HostID remote)
     {
         Nettention.Proud.RmiContext ctx = new Nettention.Proud.RmiContext();
         ctx.sentFrom=pa.RemoteHostID;
@@ -363,22 +288,20 @@ parameterString+=skin.ToString()+",";
         ctx.encryptMode = pa.EncryptMode;
         ctx.compressMode = pa.CompressMode;
 
-        int weapon; Nettention.Proud.Marshaler.Read(__msg,out weapon);	
-int skin; Nettention.Proud.Marshaler.Read(__msg,out skin);	
-core.PostCheckReadMessage(__msg, RmiName_OnTeamQueueRequest);
+        String data; Nettention.Proud.Marshaler.Read(__msg,out data);	
+core.PostCheckReadMessage(__msg, RmiName_OnGameQueueRequest);
         if(enableNotifyCallFromStub==true)
         {
         string parameterString = "";
-        parameterString+=weapon.ToString()+",";
-parameterString+=skin.ToString()+",";
-        NotifyCallFromStub(Common.OnTeamQueueRequest, RmiName_OnTeamQueueRequest,parameterString);
+        parameterString+=data.ToString()+",";
+        NotifyCallFromStub(Common.OnGameQueueRequest, RmiName_OnGameQueueRequest,parameterString);
         }
 
         if(enableStubProfiling)
         {
         Nettention.Proud.BeforeRmiSummary summary = new Nettention.Proud.BeforeRmiSummary();
-        summary.rmiID = Common.OnTeamQueueRequest;
-        summary.rmiName = RmiName_OnTeamQueueRequest;
+        summary.rmiID = Common.OnGameQueueRequest;
+        summary.rmiName = RmiName_OnGameQueueRequest;
         summary.hostID = remote;
         summary.hostTag = hostTag;
         BeforeRmiInvocation(summary);
@@ -387,67 +310,19 @@ parameterString+=skin.ToString()+",";
         long t0 = Nettention.Proud.PreciseCurrentTime.GetTimeMs();
 
         // Call this method.
-        bool __ret =OnTeamQueueRequest (remote,ctx , weapon, skin );
+        bool __ret =OnGameQueueRequest (remote,ctx , data );
 
         if(__ret==false)
         {
         // Error: RMI function that a user did not create has been called. 
-        core.ShowNotImplementedRmiWarning(RmiName_OnTeamQueueRequest);
+        core.ShowNotImplementedRmiWarning(RmiName_OnGameQueueRequest);
         }
 
         if(enableStubProfiling)
         {
         Nettention.Proud.AfterRmiSummary summary = new Nettention.Proud.AfterRmiSummary();
-        summary.rmiID = Common.OnTeamQueueRequest;
-        summary.rmiName = RmiName_OnTeamQueueRequest;
-        summary.hostID = remote;
-        summary.hostTag = hostTag;
-        summary.elapsedTime = Nettention.Proud.PreciseCurrentTime.GetTimeMs()-t0;
-        AfterRmiInvocation(summary);
-        }
-    }
-    void ProcessReceivedMessage_OnQuitQueueRequest(Nettention.Proud.Message __msg, Nettention.Proud.ReceivedMessage pa, Object hostTag, Nettention.Proud.HostID remote)
-    {
-        Nettention.Proud.RmiContext ctx = new Nettention.Proud.RmiContext();
-        ctx.sentFrom=pa.RemoteHostID;
-        ctx.relayed=pa.IsRelayed;
-        ctx.hostTag=hostTag;
-        ctx.encryptMode = pa.EncryptMode;
-        ctx.compressMode = pa.CompressMode;
-
-        core.PostCheckReadMessage(__msg, RmiName_OnQuitQueueRequest);
-        if(enableNotifyCallFromStub==true)
-        {
-        string parameterString = "";
-                NotifyCallFromStub(Common.OnQuitQueueRequest, RmiName_OnQuitQueueRequest,parameterString);
-        }
-
-        if(enableStubProfiling)
-        {
-        Nettention.Proud.BeforeRmiSummary summary = new Nettention.Proud.BeforeRmiSummary();
-        summary.rmiID = Common.OnQuitQueueRequest;
-        summary.rmiName = RmiName_OnQuitQueueRequest;
-        summary.hostID = remote;
-        summary.hostTag = hostTag;
-        BeforeRmiInvocation(summary);
-        }
-
-        long t0 = Nettention.Proud.PreciseCurrentTime.GetTimeMs();
-
-        // Call this method.
-        bool __ret =OnQuitQueueRequest (remote,ctx  );
-
-        if(__ret==false)
-        {
-        // Error: RMI function that a user did not create has been called. 
-        core.ShowNotImplementedRmiWarning(RmiName_OnQuitQueueRequest);
-        }
-
-        if(enableStubProfiling)
-        {
-        Nettention.Proud.AfterRmiSummary summary = new Nettention.Proud.AfterRmiSummary();
-        summary.rmiID = Common.OnQuitQueueRequest;
-        summary.rmiName = RmiName_OnQuitQueueRequest;
+        summary.rmiID = Common.OnGameQueueRequest;
+        summary.rmiName = RmiName_OnGameQueueRequest;
         summary.hostID = remote;
         summary.hostTag = hostTag;
         summary.elapsedTime = Nettention.Proud.PreciseCurrentTime.GetTimeMs()-t0;
@@ -464,11 +339,13 @@ parameterString+=skin.ToString()+",";
         ctx.compressMode = pa.CompressMode;
 
         int room; Nettention.Proud.Marshaler.Read(__msg,out room);	
+String data; Nettention.Proud.Marshaler.Read(__msg,out data);	
 core.PostCheckReadMessage(__msg, RmiName_OnGameInfoRequest);
         if(enableNotifyCallFromStub==true)
         {
         string parameterString = "";
         parameterString+=room.ToString()+",";
+parameterString+=data.ToString()+",";
         NotifyCallFromStub(Common.OnGameInfoRequest, RmiName_OnGameInfoRequest,parameterString);
         }
 
@@ -485,7 +362,7 @@ core.PostCheckReadMessage(__msg, RmiName_OnGameInfoRequest);
         long t0 = Nettention.Proud.PreciseCurrentTime.GetTimeMs();
 
         // Call this method.
-        bool __ret =OnGameInfoRequest (remote,ctx , room );
+        bool __ret =OnGameInfoRequest (remote,ctx , room, data );
 
         if(__ret==false)
         {
@@ -514,11 +391,13 @@ core.PostCheckReadMessage(__msg, RmiName_OnGameInfoRequest);
         ctx.compressMode = pa.CompressMode;
 
         int room; Nettention.Proud.Marshaler.Read(__msg,out room);	
+String data; Nettention.Proud.Marshaler.Read(__msg,out data);	
 core.PostCheckReadMessage(__msg, RmiName_OnGameActionReady);
         if(enableNotifyCallFromStub==true)
         {
         string parameterString = "";
         parameterString+=room.ToString()+",";
+parameterString+=data.ToString()+",";
         NotifyCallFromStub(Common.OnGameActionReady, RmiName_OnGameActionReady,parameterString);
         }
 
@@ -535,7 +414,7 @@ core.PostCheckReadMessage(__msg, RmiName_OnGameActionReady);
         long t0 = Nettention.Proud.PreciseCurrentTime.GetTimeMs();
 
         // Call this method.
-        bool __ret =OnGameActionReady (remote,ctx , room );
+        bool __ret =OnGameActionReady (remote,ctx , room, data );
 
         if(__ret==false)
         {
@@ -564,17 +443,13 @@ core.PostCheckReadMessage(__msg, RmiName_OnGameActionReady);
         ctx.compressMode = pa.CompressMode;
 
         int room; Nettention.Proud.Marshaler.Read(__msg,out room);	
-int num; Nettention.Proud.Marshaler.Read(__msg,out num);	
-int amount; Nettention.Proud.Marshaler.Read(__msg,out amount);	
-String option; Nettention.Proud.Marshaler.Read(__msg,out option);	
+String data; Nettention.Proud.Marshaler.Read(__msg,out data);	
 core.PostCheckReadMessage(__msg, RmiName_OnGameActionDamage);
         if(enableNotifyCallFromStub==true)
         {
         string parameterString = "";
         parameterString+=room.ToString()+",";
-parameterString+=num.ToString()+",";
-parameterString+=amount.ToString()+",";
-parameterString+=option.ToString()+",";
+parameterString+=data.ToString()+",";
         NotifyCallFromStub(Common.OnGameActionDamage, RmiName_OnGameActionDamage,parameterString);
         }
 
@@ -591,7 +466,7 @@ parameterString+=option.ToString()+",";
         long t0 = Nettention.Proud.PreciseCurrentTime.GetTimeMs();
 
         // Call this method.
-        bool __ret =OnGameActionDamage (remote,ctx , room, num, amount, option );
+        bool __ret =OnGameActionDamage (remote,ctx , room, data );
 
         if(__ret==false)
         {
@@ -620,15 +495,13 @@ parameterString+=option.ToString()+",";
         ctx.compressMode = pa.CompressMode;
 
         int room; Nettention.Proud.Marshaler.Read(__msg,out room);	
-int num; Nettention.Proud.Marshaler.Read(__msg,out num);	
-int amount; Nettention.Proud.Marshaler.Read(__msg,out amount);	
+String data; Nettention.Proud.Marshaler.Read(__msg,out data);	
 core.PostCheckReadMessage(__msg, RmiName_OnGameActionObject);
         if(enableNotifyCallFromStub==true)
         {
         string parameterString = "";
         parameterString+=room.ToString()+",";
-parameterString+=num.ToString()+",";
-parameterString+=amount.ToString()+",";
+parameterString+=data.ToString()+",";
         NotifyCallFromStub(Common.OnGameActionObject, RmiName_OnGameActionObject,parameterString);
         }
 
@@ -645,7 +518,7 @@ parameterString+=amount.ToString()+",";
         long t0 = Nettention.Proud.PreciseCurrentTime.GetTimeMs();
 
         // Call this method.
-        bool __ret =OnGameActionObject (remote,ctx , room, num, amount );
+        bool __ret =OnGameActionObject (remote,ctx , room, data );
 
         if(__ret==false)
         {
@@ -674,15 +547,13 @@ parameterString+=amount.ToString()+",";
         ctx.compressMode = pa.CompressMode;
 
         int room; Nettention.Proud.Marshaler.Read(__msg,out room);	
-int type; Nettention.Proud.Marshaler.Read(__msg,out type);	
-int num; Nettention.Proud.Marshaler.Read(__msg,out num);	
+String data; Nettention.Proud.Marshaler.Read(__msg,out data);	
 core.PostCheckReadMessage(__msg, RmiName_OnGameActionItem);
         if(enableNotifyCallFromStub==true)
         {
         string parameterString = "";
         parameterString+=room.ToString()+",";
-parameterString+=type.ToString()+",";
-parameterString+=num.ToString()+",";
+parameterString+=data.ToString()+",";
         NotifyCallFromStub(Common.OnGameActionItem, RmiName_OnGameActionItem,parameterString);
         }
 
@@ -699,7 +570,7 @@ parameterString+=num.ToString()+",";
         long t0 = Nettention.Proud.PreciseCurrentTime.GetTimeMs();
 
         // Call this method.
-        bool __ret =OnGameActionItem (remote,ctx , room, type, num );
+        bool __ret =OnGameActionItem (remote,ctx , room, data );
 
         if(__ret==false)
         {
@@ -826,11 +697,9 @@ parameterString+=data.ToString()+",";
 // RMI name declaration.
 // It is the unique pointer that indicates RMI name such as RMI profiler.
 public const string RmiName_OnLoginRequest="OnLoginRequest";
-public const string RmiName_OnRegisterRequest="OnRegisterRequest";
 public const string RmiName_OnStatusRequest="OnStatusRequest";
-public const string RmiName_OnSoloQueueRequest="OnSoloQueueRequest";
-public const string RmiName_OnTeamQueueRequest="OnTeamQueueRequest";
-public const string RmiName_OnQuitQueueRequest="OnQuitQueueRequest";
+public const string RmiName_OnSystemRequest="OnSystemRequest";
+public const string RmiName_OnGameQueueRequest="OnGameQueueRequest";
 public const string RmiName_OnGameInfoRequest="OnGameInfoRequest";
 public const string RmiName_OnGameActionReady="OnGameActionReady";
 public const string RmiName_OnGameActionDamage="OnGameActionDamage";
@@ -844,11 +713,9 @@ public const string RmiName_First = RmiName_OnLoginRequest;
 // RMI name declaration.
 // It is the unique pointer that indicates RMI name such as RMI profiler.
 public const string RmiName_OnLoginRequest="";
-public const string RmiName_OnRegisterRequest="";
 public const string RmiName_OnStatusRequest="";
-public const string RmiName_OnSoloQueueRequest="";
-public const string RmiName_OnTeamQueueRequest="";
-public const string RmiName_OnQuitQueueRequest="";
+public const string RmiName_OnSystemRequest="";
+public const string RmiName_OnGameQueueRequest="";
 public const string RmiName_OnGameInfoRequest="";
 public const string RmiName_OnGameActionReady="";
 public const string RmiName_OnGameActionDamage="";

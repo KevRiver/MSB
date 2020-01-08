@@ -1,61 +1,57 @@
-﻿//#define NOUNITY // COMMENT IF UNITY
+﻿#define NOUNITY // COMMENT IF UNITY
 #define SYNCUDP // COMMENT IF TCP ONLY
 using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading;
+using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json.Linq;
 using Nettention.Proud;
-
 #if (!NOUNITY)
 using UnityEngine;
 #else
 using System.Diagnostics;
 #endif
 
-/// <summary>
-/// MSB Network Module
-/// 190819
-/// </summary>
+// MSB Network Module
+// 191101
+// ReSharper disable once CheckNamespace
 namespace MSBNetwork
 {
     /// <summary>
     /// User Data Class
     /// Use for only network encrypt, decrypt
     /// </summary>
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class UserData
     {
         public int userNumber;
         public string userID;
         public string userNick;
         public int userRank;
-        public int userMoney = 0;
-        public int userCash = 0;
-        public int userWeapon = 0;
-        public int userSkin = 0;
+        public int userMoney;
+        public int userCash;
+        public int userWeapon;
+        public int userSkin;
 
         public UserData(int _userNUM, string _userID, string _userNICK, int _userRank, int _userWeapon, int _userSkin)
         {
-            this.userNumber = _userNUM;
-            this.userID = _userID;
-            this.userNick = _userNICK;
-            this.userRank = _userRank;
-            this.userWeapon = _userWeapon;
-            this.userSkin = _userSkin;
+            userNumber = _userNUM;
+            userID = _userID;
+            userNick = _userNICK;
+            userRank = _userRank;
+            userWeapon = _userWeapon;
+            userSkin = _userSkin;
         }
 
         public UserData(int _userNUM, string _userID, string _userNICK, int _userRank, int _userMoney, int _userCash, int _userWeapon, int _userSkin)
         {
-            this.userNumber = _userNUM;
-            this.userID = _userID;
-            this.userNick = _userNICK;
-            this.userRank = _userRank;
-            this.userMoney = _userMoney;
-            this.userCash = _userCash;
-            this.userWeapon = _userWeapon;
-            this.userSkin = _userSkin;
+            userNumber = _userNUM;
+            userID = _userID;
+            userNick = _userNICK;
+            userRank = _userRank;
+            userMoney = _userMoney;
+            userCash = _userCash;
+            userWeapon = _userWeapon;
+            userSkin = _userSkin;
         }
     }
 
@@ -77,6 +73,7 @@ namespace MSBNetwork
     /// Network Module
     /// Singleton
     /// </summary>
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class NetworkModule
     {
         private static NetworkModule INSTANCE;
@@ -103,16 +100,6 @@ namespace MSBNetwork
             void OnLoginResult(bool _result, UserData _user, int _game, string _message);
         }
 
-        public interface OnRegisterResultListener
-        {
-            /// <summary>
-            /// 서버에서 회원가입 결과를 받습니다
-            /// </summary>
-            /// <param name="_result">회원가입 성공여부</param>
-            /// <param name="_message">회원가입 메시지</param>
-            void OnRegisterResult(bool _result, string _message);
-        }
-
         public interface OnStatusResultListener
         {
             /// <summary>
@@ -124,27 +111,26 @@ namespace MSBNetwork
             /// <param name="_message">회원정보 메시지</param>
             void OnStatusResult(bool _result, UserData _user, int _game, string _message);
         }
-
-        public interface OnSoloMatchedListener
+        
+        public interface OnSystemResultListener
         {
             /// <summary>
-            /// 서버에서 솔로 매칭이 되었을 때 이벤트를 받습니다
+            /// 서버에서 시스템 데이터를 받습니다
             /// </summary>
-            /// <param name="_result">솔로 매칭 여부</param>
-            /// <param name="_room">게임방 인덱스</param>
-            /// <param name="_message">솔로 매칭 메시지</param>
-            void OnSoloMatched(bool _result, int _room, string _message);
+            /// <param name="_result">시스템 성공여부</param>
+            /// <param name="_data">시스템 결과 데이터</param>
+            void OnSystemResult(bool _result, string _data);
         }
 
-        public interface OnTeamMatchedListener
+        public interface OnGameMatchedListener
         {
             /// <summary>
-            /// 서버에서 팀전 매칭이 되었을 때 이벤트를 받습니다
+            /// 서버에서 게임 매칭이 되었을 때 이벤트를 받습니다
             /// </summary>
-            /// <param name="_result">팀전 매칭 여부</param>
+            /// <param name="_result">게임 매칭 여부</param>
             /// <param name="_room">게임방 인덱스</param>
-            /// <param name="_message">팀전 매칭 메시지</param>
-            void OnTeamMatched(bool _result, int _room, string _message);
+            /// <param name="_message">게임 매칭 메시지</param>
+            void OnGameMatched(bool _result, int _room, string _message);
         }
 
         public interface OnGameUserMoveListener
@@ -189,7 +175,7 @@ namespace MSBNetwork
             /// <summary>
             /// 서버에서 게임방에 대한 시간 이벤트를 받습니다
             /// </summary>
-            /// <param name="_data">시간 초</param>
+            /// <param name="time">시간 초</param>
             void OnGameEventTime(int time);
 
             /// <summary>
@@ -233,7 +219,7 @@ namespace MSBNetwork
             /// <param name="to">데미지를 받은 유저</param>
             /// <param name="amount">데미지량</param>
             /// <param name="option">기타 데이터</param>
-            void OnGameEventDamage(int from, int to, int amount, String option);
+            void OnGameEventDamage(int from, int to, int amount, string option);
 
             /// <summary>
             /// 서버에서 게임방에 대한 오브젝트 이벤트를 받습니다
@@ -256,7 +242,7 @@ namespace MSBNetwork
             /// <param name="from">처치자</param>
             /// <param name="to">사망자</param>
             /// <param name="option">기타 데이터</param>
-            void OnGameEventKill(int from, int to, String option);
+            void OnGameEventKill(int from, int to, string option);
 
             /// <summary>
             /// 서버에서 게임방에 대한 리스폰 이벤트를 받습니다
@@ -272,15 +258,14 @@ namespace MSBNetwork
             /// 서버에서 게임 결과 이벤트를 받습니다
             /// </summary>
             /// <param name="data">이벤트 데이터</param>
-            void OnGameResult(String data);
+            void OnGameResult(string data);
         }
 
         private static List<OnServerConnectListener> onServerConnectListeners;
         private static List<OnLoginResultListener> onLoginResultListeners;
-        private static List<OnRegisterResultListener> onRegisterResultListeners;
         private static List<OnStatusResultListener> onStatusResultListeners;
-        private static List<OnSoloMatchedListener> onSoloMatchedListeners;
-        private static List<OnTeamMatchedListener> onTeamMatchedListeners;
+        private static List<OnSystemResultListener> onSystemResultListeners;
+        private static List<OnGameMatchedListener> onGameMatchedListeners;
         private static List<OnGameUserMoveListener> onGameUserMoveListeners;
         private static List<OnGameUserSyncListener> onGameUserSyncListeners;
         private static List<OnGameInfoListener> onGameInfoListeners;
@@ -292,10 +277,9 @@ namespace MSBNetwork
         {
             onServerConnectListeners = new List<OnServerConnectListener>();
             onLoginResultListeners = new List<OnLoginResultListener>();
-            onRegisterResultListeners = new List<OnRegisterResultListener>();
             onStatusResultListeners = new List<OnStatusResultListener>();
-            onSoloMatchedListeners = new List<OnSoloMatchedListener>();
-            onTeamMatchedListeners = new List<OnTeamMatchedListener>();
+            onSystemResultListeners = new List<OnSystemResultListener>();
+            onGameMatchedListeners = new List<OnGameMatchedListener>();
             onGameUserMoveListeners = new List<OnGameUserMoveListener>();
             onGameUserSyncListeners = new List<OnGameUserSyncListener>();
             onGameInfoListeners = new List<OnGameInfoListener>();
@@ -310,36 +294,16 @@ namespace MSBNetwork
             return INSTANCE;
         }
 
-        public class StateObject
-        {
-            public Socket socket = null;
-            public const int BufferSize = 256;
-            public byte[] buffer = new byte[BufferSize];
-            public StringBuilder sb = new StringBuilder();
-        }
-
-        public static string NETWORK_TAG_END = "<EOF>";
-
         private const string DEFAULT_SERVER_IP = "127.0.0.1";
         private const int DEFAULT_SERVER_PORT = 8888;
         private static string SERVER_IP;
         private static int SERVER_PORT;
         private System.Guid guidVersion = new System.Guid("{0x27ad1634,0x381e,0x4228,{0x98,0xa,0xda,0xc8,0xeb,0x5f,0x4e,0x83}}");
 
-        private enum NetworkState {
-            STATE_STANDBY,
-            STATE_CONNECTING,
-            STATE_ONLINE,
-            STATE_FAILED
-        }
-
-        private NetworkState networkState = NetworkState.STATE_STANDBY;
         NetClient networkClient = new NetClient();
 
         internal MSBC2S.Proxy netC2SProxy = new MSBC2S.Proxy();
         internal MSBS2C.Stub netS2CStub = new MSBS2C.Stub();
-
-        private static readonly ManualResetEvent connectDone = new ManualResetEvent(false);
 
         /// <summary>
         /// 서버에 접속합니다
@@ -359,23 +323,21 @@ namespace MSBNetwork
             networkClient.AttachProxy(netC2SProxy);
             networkClient.AttachStub(netS2CStub);
 
-            networkClient.JoinServerCompleteHandler = (ErrorInfo errorInfo, ByteArray reply) =>
+            networkClient.JoinServerCompleteHandler = (errorInfo, reply) =>
             {
                 if (errorInfo.errorType == ErrorType.Ok)
                 {
-                    networkState = NetworkState.STATE_ONLINE;
                     if (onServerConnectListeners != null && onServerConnectListeners.Count > 0)
                     {
                         foreach (OnServerConnectListener listener in onServerConnectListeners)
                         {
                             if (listener == null) continue;
-                            listener.OnServerConnection(true, String.Empty);
+                            listener.OnServerConnection(true, string.Empty);
                         }
                     }
                 }
                 else
                 {
-                    networkState = NetworkState.STATE_FAILED;
                     if (onServerConnectListeners != null && onServerConnectListeners.Count > 0)
                     {
                         foreach (OnServerConnectListener listener in onServerConnectListeners)
@@ -387,9 +349,8 @@ namespace MSBNetwork
                 }
             };
 
-            networkClient.LeaveServerHandler = (ErrorInfo errorInfo) =>
+            networkClient.LeaveServerHandler = errorInfo =>
             {
-                networkState = NetworkState.STATE_FAILED;
                 if (onServerConnectListeners != null && onServerConnectListeners.Count > 0)
                 {
                     foreach (OnServerConnectListener listener in onServerConnectListeners)
@@ -425,10 +386,9 @@ namespace MSBNetwork
         private void InitializeListeners()
         {
             netS2CStub.OnLoginResult = OnEventUserLogin;
-            netS2CStub.OnRegisterResult = OnEventUserRegister;
             netS2CStub.OnStatusResult = OnEventUserStatus;
-            netS2CStub.OnSoloMatched = OnEventSoloQueue;
-            netS2CStub.OnTeamMatched = OnEventTeamQueue;
+            netS2CStub.OnSystemResult = OnEventSystem;
+            netS2CStub.OnGameMatched = OnEventGameQueue;
             netS2CStub.OnGameInfo = OnEventGameInfo;
             netS2CStub.OnGameStatusCountdown = OnEventGameStatusCountdown;
             netS2CStub.OnGameStatusTime = OnEventGameStatusTime;
@@ -461,7 +421,8 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("RequestUserLogin");
 #endif
-                netC2SProxy.OnLoginRequest(HostID.HostID_Server, RmiContext.ReliableSend, _id, _pw);
+                JObject data = new JObject {{"id", _id}, {"pw", _pw}};
+                netC2SProxy.OnLoginRequest(HostID.HostID_Server, RmiContext.ReliableSend, data.ToString());
             }
             catch (Exception e)
             {
@@ -470,36 +431,6 @@ namespace MSBNetwork
                 Debug.LogError(e);
 #else
                 Debug.WriteLine("RequestUserLogin ERROR");
-                Debug.WriteLine(e);
-#endif
-            }
-        }
-
-        /// <summary>
-        /// 서버에 Register 요청을 전송합니다
-        /// 등록된 OnRegisterResultListener 에 서버 응답이 수신됩니다
-        /// </summary>
-        /// <param name="_id">유저 아이디</param>
-        /// <param name="_pw">유저 비밀번호</param>
-        /// <param name="_nick">유저 닉네임</param>
-        public void RequestUserRegister(string _id, string _pw, string _nick)
-        {
-            try
-            {
-#if (!NOUNITY)
-                Debug.Log("RequestUserRegister");
-#else
-                Debug.WriteLine("RequestUserRegister");
-#endif
-                netC2SProxy.OnRegisterRequest(HostID.HostID_Server, RmiContext.ReliableSend, _id, _pw, _nick);
-            }
-            catch (Exception e)
-            {
-#if (!NOUNITY)
-                Debug.LogError("RequestUserRegister ERROR");
-                Debug.LogError(e);
-#else
-                Debug.WriteLine("RequestUserRegister ERROR");
                 Debug.WriteLine(e);
 #endif
             }
@@ -519,7 +450,8 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("RequestUserStatus");
 #endif
-                netC2SProxy.OnStatusRequest(HostID.HostID_Server, RmiContext.ReliableSend, _id);
+                JObject data = new JObject {{"id", _id}};
+                netC2SProxy.OnStatusRequest(HostID.HostID_Server, RmiContext.ReliableSend, data.ToString());
             }
             catch (Exception e)
             {
@@ -532,86 +464,93 @@ namespace MSBNetwork
 #endif
             }
         }
-
+        
         /// <summary>
-        /// 서버에 Solo Queue 요청을 전송합니다
-        /// 등록된 OnSoloMatchedListener 에 서버 응답이 수신됩니다
+        /// 서버에 닉네임 변경 요청을 전송합니다
+        /// 등록된 OnSystemResultListener 에 서버 응답이 수신됩니다
         /// </summary>
-        /// <param name="_weapon">유저 선택 무기</param>
-        /// <param name="_skin">유저 선택 스킨</param>
-        public void RequestSoloQueue(int _weapon, int _skin)
+        /// <param name="_id">유저 아이디</param>
+        /// <param name="_nickname">유저 닉네임</param>
+        public void RequestUserSystem(string _id, String _nickname)
         {
             try
             {
 #if (!NOUNITY)
-                Debug.Log("RequestSoloQueue");
+                Debug.Log("RequestUserSystem");
 #else
-                Debug.WriteLine("RequestSoloQueue");
+                Debug.WriteLine("RequestUserSystem");
 #endif
-                netC2SProxy.OnSoloQueueRequest(HostID.HostID_Server, RmiContext.ReliableSend, _weapon, _skin);
+                JObject data = new JObject {{"id", _id}, {"nickname", _nickname}};
+                netC2SProxy.OnSystemRequest(HostID.HostID_Server, RmiContext.ReliableSend, data.ToString());
             }
             catch (Exception e)
             {
 #if (!NOUNITY)
-                Debug.LogError("RequestSoloQueue ERROR");
+                Debug.LogError("RequestUserSystem ERROR");
                 Debug.LogError(e);
 #else
-                Debug.WriteLine("RequestSoloQueue ERROR");
+                Debug.WriteLine("RequestUserSystem ERROR");
                 Debug.WriteLine(e);
 #endif
             }
         }
 
         /// <summary>
-        /// 서버에 Team Queue 요청을 전송합니다
-        /// 등록된 OnTeamMatchedListener 에 서버 응답이 수신됩니다
+        /// 서버에 Game Solo Queue 요청을 전송합니다
+        /// 등록된 OnGameMatchedListener 에 서버 응답이 수신됩니다
         /// </summary>
         /// <param name="_weapon">유저 선택 무기</param>
         /// <param name="_skin">유저 선택 스킨</param>
-        public void RequestTeamQueue(int _weapon, int _skin)
+        public void RequestGameSoloQueue(int _weapon, int _skin)
         {
             try
             {
 #if (!NOUNITY)
-                Debug.Log("RequestTeamQueue");
+                Debug.Log("RequestGameSoloQueue");
 #else
-                Debug.WriteLine("RequestTeamQueue");
+                        
+                Debug.WriteLine("RequestGameSoloQueue");
 #endif
-                netC2SProxy.OnTeamQueueRequest(HostID.HostID_Server, RmiContext.ReliableSend, _weapon, _skin);
+                JObject data = new JObject {{"mode", 0}, {"weapon", _weapon}, {"skin", _skin}};
+                netC2SProxy.OnGameQueueRequest(HostID.HostID_Server, RmiContext.ReliableSend, data.ToString());
             }
             catch (Exception e)
             {
 #if (!NOUNITY)
-                Debug.LogError("RequestTeamQueue ERROR");
+                Debug.LogError("RequestGameSoloQueue ERROR");
                 Debug.LogError(e);
 #else
-                Debug.WriteLine("RequestTeamQueue ERROR");
+                Debug.WriteLine("RequestGameSoloQueue ERROR");
                 Debug.WriteLine(e);
 #endif
             }
         }
-
+        
         /// <summary>
-        /// 서버에 Quit Queue 요청을 전송합니다
+        /// 서버에 Game Team Queue 요청을 전송합니다
+        /// 등록된 OnGameMatchedListener 에 서버 응답이 수신됩니다
         /// </summary>
-        public void RequestQuitQueue()
+        /// <param name="_weapon">유저 선택 무기</param>
+        /// <param name="_skin">유저 선택 스킨</param>
+        public void RequestGameTeamQueue(int _weapon, int _skin)
         {
             try
             {
 #if (!NOUNITY)
-                Debug.Log("RequestQuitQueue");
+                Debug.Log("RequestGameTeamQueue");
 #else
-                Debug.WriteLine("RequestQuitQueue");
+                Debug.WriteLine("RequestGameTeamQueue");
 #endif
-                netC2SProxy.OnQuitQueueRequest(HostID.HostID_Server, RmiContext.ReliableSend);
+                JObject data = new JObject {{"mode", 1}, {"weapon", _weapon}, {"skin", _skin}};
+                netC2SProxy.OnGameQueueRequest(HostID.HostID_Server, RmiContext.ReliableSend, data.ToString());
             }
             catch (Exception e)
             {
 #if (!NOUNITY)
-                Debug.LogError("RequestQuitQueue ERROR");
+                Debug.LogError("RequestGameTeamQueue ERROR");
                 Debug.LogError(e);
 #else
-                Debug.WriteLine("RequestQuitQueue ERROR");
+                Debug.WriteLine("RequestGameTeamQueue ERROR");
                 Debug.WriteLine(e);
 #endif
             }
@@ -631,7 +570,7 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("RequestGameInfo");
 #endif
-                netC2SProxy.OnGameInfoRequest(HostID.HostID_Server, RmiContext.ReliableSend, _gameRoom);
+                netC2SProxy.OnGameInfoRequest(HostID.HostID_Server, RmiContext.ReliableSend, _gameRoom, string.Empty);
             }
             catch (Exception e)
             {
@@ -724,7 +663,7 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("RequestGameUserActionReady");
 #endif
-                netC2SProxy.OnGameActionReady(HostID.HostID_Server, RmiContext.ReliableSend, _gameRoom);
+                netC2SProxy.OnGameActionReady(HostID.HostID_Server, RmiContext.ReliableSend, _gameRoom, string.Empty);
             }
             catch (Exception e)
             {
@@ -754,7 +693,11 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("RequestGameUserActionDamage");
 #endif
-                netC2SProxy.OnGameActionDamage(HostID.HostID_Server, RmiContext.ReliableSend, _gameRoom, _target, _amount, _option);
+                JObject data = new JObject();
+                data.Add("target", _target);
+                data.Add("amount", _amount);
+                data.Add("option", _option);
+                netC2SProxy.OnGameActionDamage(HostID.HostID_Server, RmiContext.ReliableSend, _gameRoom, data.ToString());
             }
             catch (Exception e)
             {
@@ -783,7 +726,10 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("RequestGameUserActionObject");
 #endif
-                netC2SProxy.OnGameActionObject(HostID.HostID_Server, RmiContext.ReliableSend, _gameRoom, _target, _amount);
+                JObject data = new JObject();
+                data.Add("target", _target);
+                data.Add("amount", _amount);
+                netC2SProxy.OnGameActionObject(HostID.HostID_Server, RmiContext.ReliableSend, _gameRoom, data.ToString());
             }
             catch (Exception e)
             {
@@ -812,7 +758,10 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("RequestGameUserActionItem");
 #endif
-                netC2SProxy.OnGameActionItem(HostID.HostID_Server, RmiContext.ReliableSend, _gameRoom, _type, _target);
+                JObject data = new JObject();
+                data.Add("type", _type);
+                data.Add("target", _target);
+                netC2SProxy.OnGameActionItem(HostID.HostID_Server, RmiContext.ReliableSend, _gameRoom, data.ToString());
             }
             catch (Exception e)
             {
@@ -826,7 +775,7 @@ namespace MSBNetwork
             }
         }
 
-        private static bool OnEventUserLogin(Nettention.Proud.HostID remote, Nettention.Proud.RmiContext rmiContext, int result, int num, String id, String nick, int rank, int money, int cash, int weapon, int skin, int game, String message)
+        private static bool OnEventUserLogin(HostID remote, RmiContext rmiContext, string _data)
         {
             try
             {
@@ -835,13 +784,24 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventUserLogin");
 #endif
-                UserData dataUser = new UserData(num, id, nick, rank, money, cash, weapon, skin);
+                JObject data = JObject.Parse(_data);
+                int result = data.GetValue("result").Value<int>();
+                int user_num = data.GetValue("num").Value<int>();
+                string user_id = data.GetValue("id").ToString();
+                string user_nick = data.GetValue("nick").ToString();
+                int user_rank = data.GetValue("rank").Value<int>();
+                int user_money = data.GetValue("money").Value<int>();
+                int user_cash = data.GetValue("cash").Value<int>();
+                int user_weapon = data.GetValue("weapon").Value<int>();
+                int user_skin = data.GetValue("skin").Value<int>();
+                int game = data.GetValue("game").Value<int>();
+                string message = data.GetValue("message").ToString();
+                UserData dataUser = new UserData(user_num, user_id, user_nick, user_rank, user_money, user_cash, user_weapon, user_skin);
                 if (onLoginResultListeners != null && onLoginResultListeners.Count > 0)
                 {
                     foreach (OnLoginResultListener listener in onLoginResultListeners)
                     {
-                        if (listener == null) continue;
-                        listener.OnLoginResult(result == 1, dataUser, game, message);
+                        listener?.OnLoginResult(result == 1, dataUser, game, message);
                     }
                 }
             }
@@ -858,53 +818,34 @@ namespace MSBNetwork
             return true;
         }
 
-        private static bool OnEventUserRegister(Nettention.Proud.HostID remote, Nettention.Proud.RmiContext rmiContext, int result, String message)
-        {
-            try
-            {
-#if (!NOUNITY)
-                Debug.Log("OnEventUserRegister");
-#else
-                Debug.WriteLine("OnEventUserRegister");
-#endif
-                if (onRegisterResultListeners != null && onRegisterResultListeners.Count > 0)
-                {
-                    foreach (OnRegisterResultListener listener in onRegisterResultListeners)
-                    {
-                        if (listener == null) continue;
-                        listener.OnRegisterResult(result == 1, message);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-#if (!NOUNITY)
-                Debug.LogError("OnEventUserRegister ERROR");
-                Debug.LogError(e);
-#else
-                Debug.WriteLine("OnEventUserRegister ERROR");
-                Debug.WriteLine(e);
-#endif
-            }
-            return true;
-        }
-
-        private static bool OnEventUserStatus(Nettention.Proud.HostID remote, Nettention.Proud.RmiContext rmiContext, int result, int num, String id, String nick, int rank, int money, int cash, int weapon, int skin, int game, String message)
+        private static bool OnEventUserStatus(HostID remote, RmiContext rmiContext, string _data)
         {
             try
             {
 #if (!NOUNITY)
                 Debug.Log("OnEventUserStatus");
+                Debug.Log(_data);
 #else
                 Debug.WriteLine("OnEventUserStatus");
 #endif
-                UserData dataUser = new UserData(num, id, nick, rank, money, cash, weapon, skin);
+                JObject data = JObject.Parse(_data);
+                int result = data.GetValue("result").Value<int>();
+                int user_num = data.GetValue("num").Value<int>();
+                string user_id = data.GetValue("id").ToString();
+                string user_nick = data.GetValue("nick").ToString();
+                int user_rank = data.GetValue("rank").Value<int>();
+                int user_money = data.GetValue("money").Value<int>();
+                int user_cash = data.GetValue("cash").Value<int>();
+                int user_weapon = data.GetValue("weapon").Value<int>();
+                int user_skin = data.GetValue("skin").Value<int>();
+                int game = data.GetValue("game").Value<int>();
+                string message = data.GetValue("message").ToString();
+                UserData dataUser = new UserData(user_num, user_id, user_nick, user_rank, user_money, user_cash, user_weapon, user_skin);
                 if (onStatusResultListeners != null && onStatusResultListeners.Count > 0)
                 {
                     foreach (OnStatusResultListener listener in onStatusResultListeners)
                     {
-                        if (listener == null) continue;
-                        listener.OnStatusResult(result == 1, dataUser, game, message);
+                        listener?.OnStatusResult(result == 1, dataUser, game, message);
                     }
                 }
             }
@@ -920,70 +861,76 @@ namespace MSBNetwork
             }
             return true;
         }
-
-        private static bool OnEventSoloQueue(Nettention.Proud.HostID remote, Nettention.Proud.RmiContext rmiContext, int result, int room, String message)
+        
+        private static bool OnEventSystem(HostID remote, RmiContext rmiContext, string _data)
         {
             try
             {
 #if (!NOUNITY)
-                Debug.Log("OnEventSoloQueue");
+                Debug.Log("OnEventSystem");
+                Debug.Log(_data);
 #else
-                Debug.WriteLine("OnEventSoloQueue");
+                Debug.WriteLine("OnEventSystem");
 #endif
-                if (onSoloMatchedListeners != null && onSoloMatchedListeners.Count > 0)
+                JObject data = JObject.Parse(_data);
+                int result = data.GetValue("result").Value<int>();
+                string message = data.GetValue("data").Value<string>();
+                if (onSystemResultListeners != null && onSystemResultListeners.Count > 0)
                 {
-                    foreach (OnSoloMatchedListener listener in onSoloMatchedListeners)
+                    foreach (OnSystemResultListener listener in onSystemResultListeners)
                     {
-                        if (listener == null) continue;
-                        listener.OnSoloMatched(result == 1, room, message);
+                        listener?.OnSystemResult(result == 1, message);
                     }
                 }
             }
             catch (Exception e)
             {
 #if (!NOUNITY)
-                Debug.LogError("OnEventSoloQueue ERROR");
+                Debug.LogError("OnEventSystem ERROR");
                 Debug.LogError(e);
 #else
-                Debug.WriteLine("OnEventSoloQueue ERROR");
+                Debug.WriteLine("OnEventSystem ERROR");
                 Debug.WriteLine(e);
 #endif
             }
             return true;
         }
 
-        private static bool OnEventTeamQueue(Nettention.Proud.HostID remote, Nettention.Proud.RmiContext rmiContext, int result, int room, String message)
+        private static bool OnEventGameQueue(HostID remote, RmiContext rmiContext, string _data)
         {
             try
             {
 #if (!NOUNITY)
-                Debug.Log("OnEventTeamQueue");
+                Debug.Log("OnEventGameQueue");
 #else
-                Debug.WriteLine("OnEventTeamQueue");
+                Debug.WriteLine("OnEventGameQueue");
 #endif
-                if (onTeamMatchedListeners != null && onTeamMatchedListeners.Count > 0)
+                JObject data = JObject.Parse(_data);
+                int result = data.GetValue("result").Value<int>();
+                int room = data.GetValue("room").Value<int>();
+                string message = data.GetValue("message").ToString();
+                if (onGameMatchedListeners != null && onGameMatchedListeners.Count > 0)
                 {
-                    foreach (OnTeamMatchedListener listener in onTeamMatchedListeners)
+                    foreach (OnGameMatchedListener listener in onGameMatchedListeners)
                     {
-                        if (listener == null) continue;
-                        listener.OnTeamMatched(result == 1, room, message);
+                        listener?.OnGameMatched(result == 1, room, message);
                     }
                 }
             }
             catch (Exception e)
             {
 #if (!NOUNITY)
-                Debug.LogError("OnEventTeamQueue ERROR");
+                Debug.LogError("OnEventGameQueue ERROR");
                 Debug.LogError(e);
 #else
-                Debug.WriteLine("OnEventTeamQueue ERROR");
+                Debug.WriteLine("OnEventGameQueue ERROR");
                 Debug.WriteLine(e);
 #endif
             }
             return true;
         }
 
-        private static bool OnEventGameInfo(Nettention.Proud.HostID remote, Nettention.Proud.RmiContext rmiContext, int result, int room, int mode, String users)
+        private static bool OnEventGameInfo(HostID remote, RmiContext rmiContext, string _data)
         {
             try
             {
@@ -992,10 +939,15 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameInfo");
 #endif
-                JArray dataUsersRaw = JArray.Parse(users);
+                JObject data = JObject.Parse(_data);
+                int result = data.GetValue("result").Value<int>();
+                int room = data.GetValue("room").Value<int>();
+                int mode = data.GetValue("mode").Value<int>();
+                JArray dataUsersRaw = JArray.Parse(data.GetValue("users").ToString());
                 LinkedList<UserData> dataUsers = new LinkedList<UserData>();
-                foreach (JObject dataUserRaw in dataUsersRaw)
+                foreach (var jToken in dataUsersRaw)
                 {
+                    var dataUserRaw = (JObject) jToken;
                     int dataNum = (int) dataUserRaw.GetValue(OnGameInfo.TAG_USER_NUM);
                     string dataID = (string) dataUserRaw.GetValue(OnGameInfo.TAG_USER_ID);
                     string dataNick = (string) dataUserRaw.GetValue(OnGameInfo.TAG_USER_NICK);
@@ -1009,8 +961,7 @@ namespace MSBNetwork
                 {
                     foreach (OnGameInfoListener listener in onGameInfoListeners)
                     {
-                        if (listener == null) continue;
-                        listener.OnGameInfo(result == 1, room, mode, dataUsers, String.Empty);
+                        listener?.OnGameInfo(result == 1, room, mode, dataUsers, string.Empty);
                     }
                 }
             }
@@ -1027,7 +978,7 @@ namespace MSBNetwork
             return true;
         }
 
-        private static bool OnEventGameStatusCountdown(Nettention.Proud.HostID remote, Nettention.Proud.RmiContext rmiContext, int count)
+        private static bool OnEventGameStatusCountdown(HostID remote, RmiContext rmiContext, string _data)
         {
             try
             {
@@ -1036,12 +987,13 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameStatusCountdown");
 #endif
+                JObject data = JObject.Parse(_data);
+                int count = data.GetValue("count").Value<int>();
                 if (onGameStatusListeners != null && onGameStatusListeners.Count > 0)
                 {
                     foreach (OnGameStatusListener listener in onGameStatusListeners)
                     {
-                        if (listener == null) continue;
-                        listener.OnGameEventCount(count);
+                        listener?.OnGameEventCount(count);
                     }
                 }
             }
@@ -1058,7 +1010,7 @@ namespace MSBNetwork
             return true;
         }
 
-        private static bool OnEventGameStatusTime(Nettention.Proud.HostID remote, Nettention.Proud.RmiContext rmiContext, int time)
+        private static bool OnEventGameStatusTime(HostID remote, RmiContext rmiContext, string _data)
         {
             try
             {
@@ -1067,6 +1019,8 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameStatusTime");
 #endif
+                JObject data = JObject.Parse(_data);
+                int time = data.GetValue("time").Value<int>();
                 if (onGameStatusListeners != null && onGameStatusListeners.Count > 0)
                 {
                     foreach (OnGameStatusListener listener in onGameStatusListeners)
@@ -1089,12 +1043,12 @@ namespace MSBNetwork
             return true;
         }
 
-        private static bool OnEventGameStatusReady(Nettention.Proud.HostID remote, Nettention.Proud.RmiContext rmiContext, String data)
+        private static bool OnEventGameStatusReady(HostID remote, RmiContext rmiContext, string _data)
         {
             try
             {
 #if (!NOUNITY)
-                Debug.Log("OnEventGameStatusReady");
+                Debug.Log("OnEventGameStatusReady : " + _data);
 #else
                 Debug.WriteLine("OnEventGameStatusReady");
 #endif
@@ -1102,8 +1056,7 @@ namespace MSBNetwork
                 {
                     foreach (OnGameStatusListener listener in onGameStatusListeners)
                     {
-                        if (listener == null) continue;
-                        listener.OnGameEventReady(data);
+                        listener?.OnGameEventReady(_data);
                     }
                 }
             }
@@ -1120,7 +1073,7 @@ namespace MSBNetwork
             return true;
         }
 
-        private static bool OnEventGameStatusScore(Nettention.Proud.HostID remote, Nettention.Proud.RmiContext rmiContext, int blueKill, int blueDeath, int bluePoint, int redKill, int redDeath, int redPoint)
+        private static bool OnEventGameStatusScore(HostID remote, RmiContext rmiContext, string _data)
         {
             try
             {
@@ -1129,12 +1082,18 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameStatusScore");
 #endif
+                JObject data = JObject.Parse(_data);
+                int blueKill = data.GetValue("blueKill").Value<int>();
+                int blueDeath = data.GetValue("blueDeath").Value<int>();
+                int bluePoint = data.GetValue("bluePoint").Value<int>();
+                int redKill = data.GetValue("redKill").Value<int>();
+                int redDeath = data.GetValue("redDeath").Value<int>();
+                int redPoint = data.GetValue("redPoint").Value<int>();
                 if (onGameStatusListeners != null && onGameStatusListeners.Count > 0)
                 {
                     foreach (OnGameStatusListener listener in onGameStatusListeners)
                     {
-                        if (listener == null) continue;
-                        listener.OnGameEventScore(blueKill, blueDeath, bluePoint, redKill, redDeath, redPoint);
+                        listener?.OnGameEventScore(blueKill, blueDeath, bluePoint, redKill, redDeath, redPoint);
                     }
                 }
             }
@@ -1151,7 +1110,7 @@ namespace MSBNetwork
             return true;
         }
 
-        private static bool OnEventGameStatusMessage(Nettention.Proud.HostID remote, Nettention.Proud.RmiContext rmiContext, int type, String message)
+        private static bool OnEventGameStatusMessage(HostID remote, RmiContext rmiContext, string _data)
         {
             try
             {
@@ -1160,12 +1119,14 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameStatus");
 #endif
+                JObject data = JObject.Parse(_data);
+                int type = data.GetValue("type").Value<int>();
+                string message = data.GetValue("message").ToString();
                 if (onGameStatusListeners != null && onGameStatusListeners.Count > 0)
                 {
                     foreach (OnGameStatusListener listener in onGameStatusListeners)
                     {
-                        if (listener == null) continue;
-                        listener.OnGameEventMessage(type, message);
+                        listener?.OnGameEventMessage(type, message);
                     }
                 }
             }
@@ -1182,7 +1143,7 @@ namespace MSBNetwork
             return true;
         }
 
-        private static bool OnEventGameEventHealth(Nettention.Proud.HostID remote, Nettention.Proud.RmiContext rmiContext, int num, int health)
+        private static bool OnEventGameEventHealth(HostID remote, RmiContext rmiContext, string _data)
         {
             try
             {
@@ -1191,12 +1152,14 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameEventHealth");
 #endif
+                JObject data = JObject.Parse(_data);
+                int num = data.GetValue("num").Value<int>();
+                int health = data.GetValue("health").Value<int>();
                 if (onGameEventListeners != null && onGameEventListeners.Count > 0)
                 {
                     foreach (OnGameEventListener listener in onGameEventListeners)
                     {
-                        if (listener == null) continue;
-                        listener.OnGameEventHealth(num,health);
+                        listener?.OnGameEventHealth(num,health);
                     }
                 }
             }
@@ -1213,7 +1176,7 @@ namespace MSBNetwork
             return true;
         }
 
-        private static bool OnEventGameEventDamage(Nettention.Proud.HostID remote, Nettention.Proud.RmiContext rmiContext, int from, int to, int amount, String option)
+        private static bool OnEventGameEventDamage(HostID remote, RmiContext rmiContext, string _data)
         {
             try
             {
@@ -1222,12 +1185,16 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameEventDamage");
 #endif
+                JObject data = JObject.Parse(_data);
+                int from = data.GetValue("from").Value<int>();
+                int to = data.GetValue("to").Value<int>();
+                int amount = data.GetValue("amount").Value<int>();
+                string option = data.GetValue("option").ToString();
                 if (onGameEventListeners != null && onGameEventListeners.Count > 0)
                 {
                     foreach (OnGameEventListener listener in onGameEventListeners)
                     {
-                        if (listener == null) continue;
-                        listener.OnGameEventDamage(from, to, amount, option);
+                        listener?.OnGameEventDamage(@from, to, amount, option);
                     }
                 }
             }
@@ -1244,7 +1211,7 @@ namespace MSBNetwork
             return true;
         }
 
-        private static bool OnEventGameEventObject(Nettention.Proud.HostID remote, Nettention.Proud.RmiContext rmiContext, int num, int health)
+        private static bool OnEventGameEventObject(HostID remote, RmiContext rmiContext, string _data)
         {
             try
             {
@@ -1253,12 +1220,14 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameEventObject");
 #endif
+                JObject data = JObject.Parse(_data);
+                int num = data.GetValue("num").Value<int>();
+                int health = data.GetValue("health").Value<int>();
                 if (onGameEventListeners != null && onGameEventListeners.Count > 0)
                 {
                     foreach (OnGameEventListener listener in onGameEventListeners)
                     {
-                        if (listener == null) continue;
-                        listener.OnGameEventObject(num, health);
+                        listener?.OnGameEventObject(num, health);
                     }
                 }
             }
@@ -1275,7 +1244,7 @@ namespace MSBNetwork
             return true;
         }
 
-        private static bool OnEventGameEventItem(Nettention.Proud.HostID remote, Nettention.Proud.RmiContext rmiContext, int type, int num, int action)
+        private static bool OnEventGameEventItem(HostID remote, RmiContext rmiContext, string _data)
         {
             try
             {
@@ -1284,12 +1253,15 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameEventItem");
 #endif
+                JObject data = JObject.Parse(_data);
+                int type = data.GetValue("type").Value<int>();
+                int num = data.GetValue("num").Value<int>();
+                int action = data.GetValue("action").Value<int>();
                 if (onGameEventListeners != null && onGameEventListeners.Count > 0)
                 {
                     foreach (OnGameEventListener listener in onGameEventListeners)
                     {
-                        if (listener == null) continue;
-                        listener.OnGameEventItem(type, num, action);
+                        listener?.OnGameEventItem(type, num, action);
                     }
                 }
             }
@@ -1306,7 +1278,7 @@ namespace MSBNetwork
             return true;
         }
 
-        private static bool OnEventGameEventKill(Nettention.Proud.HostID remote, Nettention.Proud.RmiContext rmiContext, int from, int to, String option)
+        private static bool OnEventGameEventKill(HostID remote, RmiContext rmiContext, string _data)
         {
             try
             {
@@ -1315,12 +1287,15 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameEventKill");
 #endif
+                JObject data = JObject.Parse(_data);
+                int from = data.GetValue("from").Value<int>();
+                int to = data.GetValue("to").Value<int>();
+                string option = data.GetValue("option").ToString();
                 if (onGameEventListeners != null && onGameEventListeners.Count > 0)
                 {
                     foreach (OnGameEventListener listener in onGameEventListeners)
                     {
-                        if (listener == null) continue;
-                        listener.OnGameEventKill(from, to, option);
+                        listener?.OnGameEventKill(@from, to, option);
                     }
                 }
             }
@@ -1337,7 +1312,7 @@ namespace MSBNetwork
             return true;
         }
 
-        private static bool OnEventGameEventRespawn(Nettention.Proud.HostID remote, Nettention.Proud.RmiContext rmiContext, int num, int time)
+        private static bool OnEventGameEventRespawn(HostID remote, RmiContext rmiContext, string _data)
         {
             try
             {
@@ -1346,12 +1321,14 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameEventRespawn");
 #endif
+                JObject data = JObject.Parse(_data);
+                int num = data.GetValue("num").Value<int>();
+                int time = data.GetValue("time").Value<int>();
                 if (onGameEventListeners != null && onGameEventListeners.Count > 0)
                 {
                     foreach (OnGameEventListener listener in onGameEventListeners)
                     {
-                        if (listener == null) continue;
-                        listener.OnGameEventRespawn(num, time);
+                        listener?.OnGameEventRespawn(num, time);
                     }
                 }
             }
@@ -1368,7 +1345,7 @@ namespace MSBNetwork
             return true;
         }
 
-        private static bool OnEventGameResult(Nettention.Proud.HostID remote, Nettention.Proud.RmiContext rmiContext, String data)
+        private static bool OnEventGameResult(HostID remote, RmiContext rmiContext, string _data)
         {
             try
             {
@@ -1377,12 +1354,13 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameResult");
 #endif
+                JObject data = JObject.Parse(_data);
+                string resultData = data.GetValue("resultData").ToString();
                 if (onGameResultListeners != null && onGameResultListeners.Count > 0)
                 {
                     foreach (OnGameResultListener listener in onGameResultListeners)
                     {
-                        if (listener == null) continue;
-                        listener.OnGameResult(data);
+                        listener?.OnGameResult(resultData);
                     }
                 }
             }
@@ -1399,7 +1377,7 @@ namespace MSBNetwork
             return true;
         }
 
-        private static bool OnEventGameUserMove(Nettention.Proud.HostID remote, Nettention.Proud.RmiContext rmiContext, String data)
+        private static bool OnEventGameUserMove(HostID remote, RmiContext rmiContext, string data)
         {
             try
             {
@@ -1407,8 +1385,7 @@ namespace MSBNetwork
                 {
                     foreach (OnGameUserMoveListener listener in onGameUserMoveListeners)
                     {
-                        if (listener == null) continue;
-                        listener.OnGameUserMove(data);
+                        listener?.OnGameUserMove(data);
                     }
                 }
 #if (!NOUNITY)
@@ -1430,7 +1407,7 @@ namespace MSBNetwork
             return true;
         }
 
-        private static bool OnEventGameUserSync(Nettention.Proud.HostID remote, Nettention.Proud.RmiContext rmiContext, String data)
+        private static bool OnEventGameUserSync(HostID remote, RmiContext rmiContext, string data)
         {
             try
             {
@@ -1438,8 +1415,7 @@ namespace MSBNetwork
                 {
                     foreach (OnGameUserSyncListener listener in onGameUserSyncListeners)
                     {
-                        if (listener == null) continue;
-                        listener.OnGameUserSync(data);
+                        listener?.OnGameUserSync(data);
                     }
                 }
 #if (!NOUNITY)
@@ -1500,25 +1476,6 @@ namespace MSBNetwork
         }
 
         /// <summary>
-        /// 해당 OnRegisterResultListener 를 유일한 콜백으로 등록합니다
-        /// </summary>
-        /// <param name="_listener">OnRegisterResultListener implemented class</param>
-        public void SetOnEventUserRegister(OnRegisterResultListener _listener)
-        {
-            onRegisterResultListeners.Clear();
-            AddOnEventUserRegister(_listener);
-        }
-
-        /// <summary>
-        /// 해당 OnRegisterResultListener 를 콜백 목록에 등록합니다
-        /// </summary>
-        /// <param name="_listener">OnRegisterResultListener implemented class</param>
-        public void AddOnEventUserRegister(OnRegisterResultListener _listener)
-        {
-            onRegisterResultListeners.Add(_listener);
-        }
-
-        /// <summary>
         /// 해당 OnStatusResultListener 를 유일한 콜백으로 등록합니다
         /// </summary>
         /// <param name="_listener">OnStatusResultListener implemented class</param>
@@ -1536,43 +1493,43 @@ namespace MSBNetwork
         {
             onStatusResultListeners.Add(_listener);
         }
-
+        
         /// <summary>
-        /// 해당 OnSoloMatchedListener 를 유일한 콜백으로 등록합니다
+        /// 해당 OnSystemResultListener 를 유일한 콜백으로 등록합니다
         /// </summary>
-        /// <param name="_listener">OnSoloMatchedListener implemented class</param>
-        public void SetOnEventSoloQueue(OnSoloMatchedListener _listener)
+        /// <param name="_listener">OnSystemResultListener implemented class</param>
+        public void SetOnEventSystem(OnSystemResultListener _listener)
         {
-            onSoloMatchedListeners.Clear();
-            AddOnEventSoloQueue(_listener);
+            onSystemResultListeners.Clear();
+            AddOnEventSystem(_listener);
         }
 
         /// <summary>
-        /// 해당 OnSoloMatchedListener 를 콜백 목록에 등록합니다
+        /// 해당 OnSystemResultListener 를 콜백 목록에 등록합니다
         /// </summary>
-        /// <param name="_listener">OnSoloMatchedListener implemented class</param>
-        public void AddOnEventSoloQueue(OnSoloMatchedListener _listener)
+        /// <param name="_listener">OnSystemResultListener implemented class</param>
+        public void AddOnEventSystem(OnSystemResultListener _listener)
         {
-            onSoloMatchedListeners.Add(_listener);
+            onSystemResultListeners.Add(_listener);
         }
 
         /// <summary>
-        /// 해당 OnTeamMatchedListener 를 유일한 콜백으로 등록합니다
+        /// 해당 OnGameMatchedListener 를 유일한 콜백으로 등록합니다
         /// </summary>
-        /// <param name="_listener">OnTeamMatchedListener implemented class</param>
-        public void SetOnEventTeamQueue(OnTeamMatchedListener _listener)
+        /// <param name="_listener">OnGameMatchedListener implemented class</param>
+        public void SetOnEventGameQueue(OnGameMatchedListener _listener)
         {
-            onTeamMatchedListeners.Clear();
-            AddOnEventTeamQueue(_listener);
+            onGameMatchedListeners.Clear();
+            AddOnEventGameQueue(_listener);
         }
 
         /// <summary>
-        /// 해당 OnTeamMatchedListener 를 콜백 목록에 등록합니다
+        /// 해당 OnGameMatchedListener 를 콜백 목록에 등록합니다
         /// </summary>
-        /// <param name="_listener">OnTeamMatchedListener implemented class</param>
-        public void AddOnEventTeamQueue(OnTeamMatchedListener _listener)
+        /// <param name="_listener">OnGameMatchedListener implemented class</param>
+        public void AddOnEventGameQueue(OnGameMatchedListener _listener)
         {
-            onTeamMatchedListeners.Add(_listener);
+            onGameMatchedListeners.Add(_listener);
         }
 
         /// <summary>
@@ -1679,7 +1636,7 @@ namespace MSBNetwork
             onGameResultListeners.Clear();
             AddOnEventGameResult(_listener);
         }
-
+        
         /// <summary>
         /// 해당 OnGameResultListener 를 콜백 목록에 등록합니다
         /// </summary>

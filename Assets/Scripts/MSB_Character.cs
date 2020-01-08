@@ -3,22 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.CorgiEngine;
 using MoreMountains.Tools;
-using MSBNetwork;
 using UnityEngine.UI;
+using MSBNetwork;
+using UnityEngine.Serialization;
 
-public class MSB_Character : Character
+public class MSB_Character : Character,MMEventListener<MMGameEvent>
 {
-    [Header("MSB Custom")]
-    public ClientUserData c_userData;
+    [FormerlySerializedAs("c_userData")] [Header("MSB Custom")]
+    public ClientUserData cUserData;
+
+    public int SpawnerIndex;
     public int bushID = 0;
+
+    public int RoomNum { get; set; }
     public int UserNum { get; internal set; }
-    private InputManager inputManager;
+    public bool IsRemote { get; set; }
+    public bool IsEnemy = false;
+
+    public MSB_GameManager.Team team;
+
+    private InputManager _inputManager;
 
     protected override void Initialization()
     {
         MovementState = new MMStateMachine<CharacterStates.MovementStates>(gameObject, SendStateChangeEvents);
         ConditionState = new MMStateMachine<CharacterStates.CharacterConditions>(gameObject, SendStateChangeEvents);
-        inputManager = InputManager.Instance;
+        _inputManager = InputManager.Instance;
 
         if (InitialFacingDirection == FacingDirections.Left)
         {
@@ -40,7 +50,7 @@ public class MSB_Character : Character
         _cameraTargetInitialPosition = CameraTarget.transform.localPosition;
 
         // we get the current input manager
-        SetInputManager(inputManager);
+        SetInputManager(_inputManager);
         // we get the main camera
         if (Camera.main != null)
         {
@@ -54,6 +64,7 @@ public class MSB_Character : Character
         _health = GetComponent<Health>();
         _damageOnTouch = GetComponent<DamageOnTouch>();
         CanFlip = true;
+        IsRemote = false;
 
         AssignAnimator();
 
@@ -62,31 +73,92 @@ public class MSB_Character : Character
         ForceSpawnDirection();
     }
 
+    public override void Face(FacingDirections facingDirection)
+    {
+        if (!CanFlip)
+        {
+            return;
+        }
+
+        // Flips the character horizontally
+        if (facingDirection == FacingDirections.Right)
+        {
+            if (!IsFacingRight)
+            {
+                Flip();
+            }
+        }
+        else
+        {
+            if (IsFacingRight)
+            {
+                Flip();
+            }
+        }
+    }
+
     public override void AssignAnimator()
     {
         if (CharacterAnimator == null)
             return;
 
         base.AssignAnimator();
-    }
+    } 
 
     protected override void OnEnable()
     {
         base.OnEnable();
-        Color col = _spriteRenderer.color;
-        col.a = 1.0f;
-        _spriteRenderer.color = col;
+        this.MMEventStartListening();
+        
+        //Color col = _spriteRenderer.color;
+        //col.a = 1.0f;
+        //_spriteRenderer.color = col;
     }
 
     protected override void OnDisable()
     {
         base.OnDisable();
+        this.MMEventStopListening();
     }
 
-    private void OnDestroy()
+    private void ControllerReset()
     {
+        _controller.SetForce(Vector2.zero);
+    }
+    public virtual void AbilityControl(bool active, float duration = 0)
+    {
+        foreach (var ability in _characterAbilities)
+        {
+            ability.AbilityPermitted = active;
+        }
 
+        if (!active && duration > 0)
+            StartCoroutine(AbilityTempDeny(duration));
     }
 
+    public IEnumerator AbilityTempDeny(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        foreach (var ability in _characterAbilities)
+        {
+            ability.AbilityPermitted = true;
+        }
+    }
     
+    
+
+    public void OnMMEvent(MMGameEvent eventType)
+    {
+        switch (eventType.EventName)
+        {
+            case "GameStart":
+                AbilityControl(true);
+                break;
+            
+            case "GameOver":
+                ControllerReset();
+                AbilityControl(false);
+                break;
+        }
+    }
 }

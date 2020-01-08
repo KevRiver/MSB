@@ -127,7 +127,7 @@ namespace MoreMountains.CorgiEngine
 
         protected override void Awake()
         {
-            Debug.Log("InputManager Awake");
+            //Debug.Log("InputManager Awake");
             base.Awake();
         }
 

@@ -552,7 +552,8 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		protected virtual void WeaponUse()
 		{
-            Owner.GetComponent<CharacterSpin>().speedMultiplier = 0.1f;
+            //Owner.GetComponent<CharacterSpin>().speedMultiplier = 0.1f;
+            //Debug.Log(Owner.gameObject.name +"'s rotation : " + Owner.transform.GetChild(0).rotation);
 			TriggerWeaponUsedFeedback();
 		}
 
@@ -573,8 +574,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public virtual void TurnWeaponOff()
         {
-            Owner.GetComponent<CharacterSpin>().speedMultiplier = 1.0f;
-            if (_characterHorizontalMovement != null)
+	        if (_characterHorizontalMovement != null)
             {
                 _characterHorizontalMovement.MovementSpeedMultiplier = _permanentMovementMultiplierStorage;
             }            
@@ -652,7 +652,7 @@ namespace MoreMountains.CorgiEngine
 		/// </summary>
 		public virtual void FlipWeapon()
         {
-            Flipped = !Flipped;
+	        Flipped = !Flipped;
 
             if (_comboWeapon != null)
             {
@@ -664,7 +664,7 @@ namespace MoreMountains.CorgiEngine
 		/// Flips the weapon model.
 		/// </summary>
 		public virtual void FlipWeaponModel()
-		{	
+		{
 			if (_spriteRenderer != null)
 			{
 				_spriteRenderer.flipX = !_spriteRenderer.flipX;
