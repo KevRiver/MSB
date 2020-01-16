@@ -64,7 +64,22 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
                 break;
         }
     }
-    
+
+    public void StartMoveSync()
+    {
+        onSync = true;
+        StartCoroutine(SyncUserPos());
+    }
+
+    public void StopMoveSync()
+    {
+        if (onSync)
+        {
+            onSync = false;
+            StopCoroutine(SyncUserPos());
+        }
+    }
+
     private void OnEnable()
     {
         this.MMEventStartListening<MMGameEvent>();
@@ -119,6 +134,15 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
     public void AttackSync(Quaternion rot)
     {
         characterModel.rotation = rot;
+        weapon.WeaponState.ChangeState(Weapon.WeaponStates.WeaponUse);
+    }
+
+    private Vector3 _faceRight = new Vector3(1,1,1);
+    private Vector3 _faceLeft = new Vector3(-1,1,1);
+    public void AttackSync(Quaternion rot, bool faceRight)
+    {
+        characterModel.rotation = rot;
+        characterModel.localScale = faceRight ? _faceRight : _faceLeft;
         weapon.WeaponState.ChangeState(Weapon.WeaponStates.WeaponUse);
     }
 
