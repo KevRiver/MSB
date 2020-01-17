@@ -1201,15 +1201,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AbilityStartFeedbacks: {fileID: 0}
   AbilityStopFeedbacks: {fileID: 0}
-  AbilityPermitted: 1
+  AbilityPermitted: 0
   DashDistance: 3
-  DashForce: 40
+  DashForce: 20
   ResetForcesOnExit: 0
-  Aim:
-    AimControl: 0
-    RotationMode: 0
-    MinimumAngle: -180
-    MaximumAngle: 180
   MinimumInputThreshold: 0.1
   FlipCharacterIfNeeded: 1
   AutoCorrectTrajectory: 1

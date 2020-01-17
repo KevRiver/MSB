@@ -22,8 +22,6 @@ public class MSB_CharacterDash : CharacterAbility
         public bool ResetForcesOnExit = false;
 
         [Header("Direction")]
-        /// the dash's aim properties
-        public MMAim Aim;
         /// the minimum amount of input required to apply a direction to the dash
         public float MinimumInputThreshold = 0.1f;
         /// if this is true, the character will flip when dashing and facing the dash's opposite direction
@@ -44,7 +42,8 @@ public class MSB_CharacterDash : CharacterAbility
 		protected float _slopeAngleSave = 0f;
 		protected bool _dashEndedNaturally = true;
         protected IEnumerator _dashCoroutine;
-        protected CharacterDive _characterDive;
+        private Transform _characterModel;
+
 
         // animation parameters
         protected const string _dashingAnimationParameterName = "Dashing";
@@ -68,8 +67,8 @@ public class MSB_CharacterDash : CharacterAbility
 	        _movement = _character.MovementState;
 	        _condition = _character.ConditionState;
 	        _abilityInitialized = true;
-            Aim.Initialization();
-            _characterDive = this.gameObject.GetComponent<CharacterDive>();
+	        _characterModel = transform.GetChild(0);
+	        Debug.LogWarning("_characterModel : " + _characterModel.gameObject.name);
         }
 
         /// <summary>
@@ -77,6 +76,7 @@ public class MSB_CharacterDash : CharacterAbility
         /// </summary>
         protected override void HandleInput()
 		{
+			// 공격 버튼을 누르면 대시 시작
 			if (_inputManager.ShootButton.State.CurrentState == MMInput.ButtonStates.ButtonDown)
 			{
 				StartDash();
@@ -116,14 +116,6 @@ public class MSB_CharacterDash : CharacterAbility
                 || (_movement.CurrentState == CharacterStates.MovementStates.Gripping))
 				return;		
 			
-			// If the user presses the dash button and is not aiming down
-            if (_characterDive != null)
-            {
-                if (_verticalInput < -_inputManager.Threshold.y)
-                {
-                    return;
-                }
-            }
 
             // if the character is allowed to dash
             if (_cooldownTimeStamp <= Time.time)
@@ -168,22 +160,39 @@ public class MSB_CharacterDash : CharacterAbility
         /// </summary>
         protected virtual void ComputeDashDirection()
         {
-	        // we compute our direction
-            Aim.PrimaryMovement = _character.LinkedInputManager.PrimaryMovement;
-            Aim.SecondaryMovement = _character.LinkedInputManager.SecondaryMovement;
-            Aim.CurrentPosition = this.transform.position;
-            _dashDirection = Aim.GetCurrentAim();
+	        // 현재 캐릭터가 바라보고 있는 방향 계산
+	        _dashDirection = Deg2Vec2(_characterModel.eulerAngles.z, _characterModel.localScale.x);
 
-            CheckAutoCorrectTrajectory();
+	        CheckAutoCorrectTrajectory();
             
             if (_dashDirection.magnitude < MinimumInputThreshold)
             {
+	            Debug.LogWarning("_dashDirection : " + _dashDirection);
                 _dashDirection = _character.IsFacingRight ? Vector2.right : Vector2.left;
             }
             else
             {
                 _dashDirection = _dashDirection.normalized;
             }
+        }
+
+        /// <summary>
+        /// 캐릭터 모델이 바라보고 있는 방향의 Vector2 반환
+        /// </summary>
+        /// <param name="z"> _characterModel's eulerAngles.z</param>
+        /// <param name="sx">_characterModel's localScale.x </param>
+        /// <returns></returns>
+        private Vector2 Deg2Vec2(float z, float sx)
+        {
+	        Debug.LogWarning("Deg2Vec2 z : " + z + " sx : " + sx);
+	        var rad = z * Mathf.Deg2Rad;
+	        var cz = Mathf.Cos(rad);
+	        var sz = Mathf.Sin(rad);
+	        sx = sx < 0 ? -1 : 1;
+	        cz *= sx;
+	        sz *= sx;
+	        Debug.LogWarning("Dash Direction : " + "( " + cz*sx + ", " + sz + ")");
+	        return new Vector2(cz,sz);
         }
 
         /// <summary>
