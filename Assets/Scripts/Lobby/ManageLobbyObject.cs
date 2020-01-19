@@ -60,7 +60,19 @@ public class ManageLobbyObject : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        string userNick = LocalUser.Instance.localUserData.userNick;
+        try
+        {
+            string userNick = LocalUser.Instance.localUserData.userNick;
+
+            // Get Rank
+            setRank(LocalUser.Instance.localUserData.userRank);
+
+        }
+        catch
+        {
+
+        };
+        
 
         // NetworkManager
         networkManager = FindObjectOfType<NetworkManager>();
@@ -85,9 +97,7 @@ public class ManageLobbyObject : MonoBehaviour
         // Character
         lobbyCharacter = GameObject.Find("LobbyCharacter");
 
-        // Get Rank
-        setRank(LocalUser.Instance.localUserData.userRank);
-
+        
         // Queue Loading
         queueLoading = false;
         loadingCharacter = GameObject.Find("QueueLoading");

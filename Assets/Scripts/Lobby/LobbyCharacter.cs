@@ -40,7 +40,7 @@ public class LobbyCharacter : MonoBehaviour
     }
 
     private void FixedUpdate()
-    {
+    {/*
         if (shuriken[0].active)
         {
             shuriken[0].transform.position = new Vector3(speed * -26, 1f + speed * -6, -0.5f);
@@ -60,6 +60,7 @@ public class LobbyCharacter : MonoBehaviour
             speed = 0;
         }
         speed += 0.01f;
+        */
     }
 
 
