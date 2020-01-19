@@ -1203,12 +1203,25 @@ MonoBehaviour:
   AbilityStopFeedbacks: {fileID: 0}
   AbilityPermitted: 0
   DashDistance: 3
-  DashForce: 20
+  DashForce: 40
   ResetForcesOnExit: 0
   MinimumInputThreshold: 0.1
   FlipCharacterIfNeeded: 1
   AutoCorrectTrajectory: 1
   DashCooldown: 1
+  DashThresholdX: 0.3
+  InitialDelay: 0
+  AreaOffset: {x: 0, y: 0, z: 0}
+  CausedDamage: 20
+  KnockbackForce: {x: 5, y: 0}
+  TargetLayerMask:
+    serializedVersion: 2
+    m_Bits: 512
+  KnockbackDirection: 0
+  KnockbackStyle: 1
+  ccType: 2
+  ccDuration: 1
+  radius: 1.25
 --- !u!1 &8139616880024436170
 GameObject:
   m_ObjectHideFlags: 0

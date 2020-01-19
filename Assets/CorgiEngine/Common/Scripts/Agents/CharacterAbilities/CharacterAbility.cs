@@ -99,6 +99,11 @@ namespace MoreMountains.CorgiEngine
 
 		}
 
+		public virtual void StartAbility()
+		{
+			
+		}
+
 		/// <summary>
 		/// Internal method to check if an input manager is present or not
 		/// </summary>

@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.CorgiEngine;
+using MoreMountains.Feedbacks;
 using MoreMountains.Tools;
 using UnityEngine.XR;
 
@@ -31,7 +33,27 @@ public class MSB_CharacterDash : CharacterAbility
 
         [Header("Cooldown")]
         /// the duration of the cooldown between 2 dashes (in seconds)
-		public float DashCooldown = 1f;	
+		public float DashCooldown = 1f;
+
+        [Header("Dash Setting")]
+        public float DashThresholdX = 0.05f;
+
+        [Header("Damage Setting")] 
+        public float InitialDelay;
+        //public float ActiveDuration;
+        public Vector3 AreaOffset;
+        public int CausedDamage;
+        public Vector2 KnockbackForce;
+        public LayerMask TargetLayerMask;
+        public DamageOnTouch.KnockbackDirections KnockbackDirection;
+        public DamageOnTouch.KnockbackStyles KnockbackStyle;
+        public CausedCCType ccType;
+        public float ccDuration;
+        public float radius = 1;
+        private CircleCollider2D _circleCollider2D;
+        private MSB_DamageOnTouch _damageOnTouch;
+        private GameObject _damageArea;
+        
 
 		protected float _cooldownTimeStamp = 0;
 		protected float _startTime ;
@@ -43,6 +65,7 @@ public class MSB_CharacterDash : CharacterAbility
 		protected bool _dashEndedNaturally = true;
         protected IEnumerator _dashCoroutine;
         private Transform _characterModel;
+        private RCReciever _rcReciever;
 
 
         // animation parameters
@@ -69,6 +92,56 @@ public class MSB_CharacterDash : CharacterAbility
 	        _abilityInitialized = true;
 	        _characterModel = transform.GetChild(0);
 	        Debug.LogWarning("_characterModel : " + _characterModel.gameObject.name);
+	        _rcReciever = GetComponent<RCReciever>();
+	        CreateDamageArea();
+	        DisableDamageArea();
+        }
+
+        private void CreateDamageArea()
+        {
+	        _damageArea = new GameObject();
+	        _damageArea.name = this.name + "DamageArea";
+	        _damageArea.transform.position = this.transform.position;
+	        _damageArea.transform.rotation = this.transform.rotation;
+	        _damageArea.transform.SetParent(this.transform);
+	        
+	        _circleCollider2D = _damageArea.AddComponent<CircleCollider2D>();
+	        _circleCollider2D.transform.position = this.transform.position + this.transform.rotation * AreaOffset;
+	        _circleCollider2D.radius = radius;
+	        _circleCollider2D.isTrigger = true;
+	        
+	        Rigidbody2D rigidBody = _damageArea.AddComponent<Rigidbody2D>();
+	        rigidBody.isKinematic = true;
+	        
+	        _damageOnTouch = _damageArea.AddComponent<MSB_DamageOnTouch>();
+	        _damageOnTouch.TargetLayerMask = TargetLayerMask;
+	        _damageOnTouch.CCType = ccType;
+	        _damageOnTouch.Owner = gameObject;
+	        _damageOnTouch._ownerCharacter = gameObject.GetComponent<MSB_Character>();
+	        if (_damageOnTouch._ownerCharacter != null)
+	        {
+		        foreach (var player in MSB_LevelManager.Instance.Players)
+		        {
+			        if (player.team == _damageOnTouch._ownerCharacter.team)
+				        _damageOnTouch.IgnoreGameObject(player.gameObject);
+		        }
+	        }
+
+	        _damageOnTouch.DamageCaused = CausedDamage;
+	        _damageOnTouch.DamageCausedKnockbackType = KnockbackStyle;
+	        _damageOnTouch.DamageCausedKnockbackDirection = KnockbackDirection;
+	        _damageOnTouch.DamageCausedKnockbackForce = KnockbackForce;
+	        _damageOnTouch.stunDuration = ccDuration;
+        }
+
+        private void EnableDamageArea()
+        {
+	        _circleCollider2D.enabled = true;
+        }
+
+        private void DisableDamageArea()
+        {
+	        _circleCollider2D.enabled = false;
         }
 
         /// <summary>
@@ -83,7 +156,12 @@ public class MSB_CharacterDash : CharacterAbility
 			}
 		}
 
-		/// <summary>
+        public override void StartAbility()
+        {
+	        StartDash();
+        }
+
+        /// <summary>
 		/// The second of the 3 passes you can have in your ability. Think of it as Update()
 		/// </summary>
 		public override void ProcessAbility()
@@ -120,7 +198,9 @@ public class MSB_CharacterDash : CharacterAbility
             // if the character is allowed to dash
             if (_cooldownTimeStamp <= Time.time)
             {
-                InitiateDash();
+	            if(_character != null && !(((MSB_Character)_character).IsRemote))
+		            RCSender.Instance.RequestUserSync();
+	            InitiateDash();
             }
         }
 
@@ -148,7 +228,7 @@ public class MSB_CharacterDash : CharacterAbility
             _controller.Parameters.MaximumSlopeAngle = 0;
 
             ComputeDashDirection();
-            CheckFlipCharacter();
+            //CheckFlipCharacter();
 
             // we launch the boost corountine with the right parameters
             _dashCoroutine = Dash();
@@ -225,8 +305,13 @@ public class MSB_CharacterDash : CharacterAbility
 		/// Coroutine used to move the player in a direction over time
 		/// </summary>
 		protected virtual IEnumerator Dash()
-        {
-            // if the character is not in a position where it can move freely, we do nothing.
+		{
+			if (_rcReciever != null)
+				_rcReciever.StopMoveSync();
+			
+			EnableDamageArea();
+			
+			// if the character is not in a position where it can move freely, we do nothing.
             if ( !AbilityPermitted
 				|| (_condition.CurrentState != CharacterStates.CharacterConditions.Normal))
 			{
@@ -243,11 +328,26 @@ public class MSB_CharacterDash : CharacterAbility
 				// if we collide with something on our left or right (wall, slope), we stop dashing, otherwise we apply horizontal force
 				if (_controller.State.IsCollidingLeft 
                     || _controller.State.IsCollidingRight 
-                    || _controller.State.IsCollidingAbove 
-                    || (_controller.State.IsCollidingBelow && _dashDirection.y < 0f))
+                    || _controller.State.IsCollidingAbove)
 				{
 					_shouldKeepDashing = false;
 					_controller.SetForce (Vector2.zero);
+				}
+				else if (_controller.State.IsCollidingBelow && _dashDirection.y < 0f)
+				{
+					//땅에 닿고 dashDirection.y가 0보다 작을 때
+					// dashDirection.x 유지 ,dashDirection.y = 0 
+					if (_dashDirection.x <= DashThresholdX)
+					{
+						// 대시 방향의 x 값이 문턱을 넘지 않을경우 캐릭터가 보고 있는 방향으로 방향 설정
+						float xDirection = _character.IsFacingRight ? 1 : -1;
+						_dashDirection = new Vector2(xDirection, 0);
+					}
+					else
+					{
+						_dashDirection = Vector2.Scale(_dashDirection, Vector2.right);
+					}
+					
 				}
 				else
 				{
@@ -256,7 +356,12 @@ public class MSB_CharacterDash : CharacterAbility
 				}
 				yield return null;
 			}
-            StopDash();				
+            StopDash();
+            DisableDamageArea();
+
+            if(_rcReciever!=null)
+	            _rcReciever.StartMoveSync();
+            
 		}
 
         /// <summary>
@@ -305,4 +410,13 @@ public class MSB_CharacterDash : CharacterAbility
             MMAnimatorExtensions.UpdateAnimatorBool(_animator, _dashingAnimationParameter, (_movement.CurrentState == CharacterStates.MovementStates.Dashing), _character._animatorParameters);
 		}
 
+		private void DrawGizmo()
+		{
+			
+		}
+		private void OnDrawGizmos()
+		{
+			Gizmos.color = Color.red;
+			Gizmos.DrawWireSphere(this.transform.position + AreaOffset, radius);
+		}
 }

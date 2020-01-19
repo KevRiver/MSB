@@ -480,7 +480,7 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("RequestUserSystem");
 #endif
-                JObject data = new JObject {{"id", _id}, {"nickname", _nickname}};
+                JObject data = new JObject {{"id", _id}, {"nickname", _nickname}, {"type", "nick"}};
                 netC2SProxy.OnSystemRequest(HostID.HostID_Server, RmiContext.ReliableSend, data.ToString());
             }
             catch (Exception e)

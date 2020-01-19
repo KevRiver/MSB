@@ -22,6 +22,7 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
     private Vector2 _speed;
     private Quaternion _targetRot;
     private bool onSync = false;
+    private CharacterAbility _ability;
     void Start()
     {
         if (!(character = GetComponent<MSB_Character>()))
@@ -34,6 +35,7 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
         weaponAttachment = characterModel.GetChild(0);
         _aimIndicator = weaponAttachment.GetChild(0);
         weapon = weaponAttachment.GetComponentInChildren<Weapon>();
+        _ability = GetComponent<MSB_CharacterDash>();
 
         _targetPos = transform.position;
         _targetRot = transform.rotation;
@@ -143,7 +145,10 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
     {
         characterModel.rotation = rot;
         characterModel.localScale = faceRight ? _faceRight : _faceLeft;
-        weapon.WeaponState.ChangeState(Weapon.WeaponStates.WeaponUse);
+        if (weapon != null)
+            weapon.WeaponState.ChangeState(Weapon.WeaponStates.WeaponUse);
+        if(_ability != null)
+            _ability.StartAbility();
     }
 
     private class OnGameUserMove : NetworkModule.OnGameUserMoveListener
