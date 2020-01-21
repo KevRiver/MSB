@@ -534,7 +534,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5003421664875723934}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.8280053, y: 0.7655662, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6628133687085393678}
@@ -747,7 +747,7 @@ MonoBehaviour:
   AbilityStopFeedbacks: {fileID: 0}
   AbilityPermitted: 0
   characterModel: {fileID: 88475607405551134}
-  spinSpeed: -360
+  spinSpeed: -480
   speedMultiplier: 1
 --- !u!114 &5003421664875723932
 MonoBehaviour:
@@ -764,7 +764,7 @@ MonoBehaviour:
   AbilityStartFeedbacks: {fileID: 0}
   AbilityStopFeedbacks: {fileID: 0}
   AbilityPermitted: 0
-  InitialWeapon: {fileID: 1544106584760390544, guid: 33f834833cfbf2d48b58ae6025f7d315,
+  InitialWeapon: {fileID: 8157225758954831789, guid: e81e4a483aec11642b76751530237d96,
     type: 3}
   CanPickupWeapons: 1
   WeaponAttachment: {fileID: 5003421665267960738}

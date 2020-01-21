@@ -37,6 +37,7 @@ public class MSB_CharacterDash : CharacterAbility
 
         [Header("Dash Setting")]
         public float DashThresholdX = 0.05f;
+        public GameObject DashTrail;
 
         [Header("Damage Setting")] 
         public float InitialDelay;
@@ -93,6 +94,8 @@ public class MSB_CharacterDash : CharacterAbility
 	        _characterModel = transform.GetChild(0);
 	        Debug.LogWarning("_characterModel : " + _characterModel.gameObject.name);
 	        _rcReciever = GetComponent<RCReciever>();
+	        if(DashTrail.activeInHierarchy)
+		        DashTrail.SetActive(false);
 	        CreateDamageArea();
 	        DisableDamageArea();
         }
@@ -213,6 +216,7 @@ public class MSB_CharacterDash : CharacterAbility
 			_movement.ChangeState(CharacterStates.MovementStates.Dashing);
 
             // we start our sounds
+            DashTrail.SetActive(true);
             PlayAbilityStartFeedbacks();
 
             // we initialize our various counters and checks
@@ -384,6 +388,7 @@ public class MSB_CharacterDash : CharacterAbility
             }
 
             // we play our exit sound
+            DashTrail.SetActive(false);
             StopStartFeedbacks();
             PlayAbilityStopFeedbacks();
 

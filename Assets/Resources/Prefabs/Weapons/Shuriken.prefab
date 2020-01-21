@@ -178,7 +178,7 @@ MonoBehaviour:
   TargetLayerMasks: []
   _ownerCharacter: {fileID: 0}
   CCType: 2
-  stunDuration: 1.5
+  stunDuration: 1.25
 --- !u!114 &7729972404493961826
 MonoBehaviour:
   m_ObjectHideFlags: 0

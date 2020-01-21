@@ -136,7 +136,10 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
     public void AttackSync(Quaternion rot)
     {
         characterModel.rotation = rot;
-        weapon.WeaponState.ChangeState(Weapon.WeaponStates.WeaponUse);
+        if (weapon != null)
+            weapon.WeaponState.ChangeState(Weapon.WeaponStates.WeaponUse);
+        if(_ability != null)
+            _ability.StartAbility();
     }
 
     private Vector3 _faceRight = new Vector3(1,1,1);
