@@ -20,7 +20,6 @@ public class ManageLobbyObject : MonoBehaviour
     public Text top_RankText;
     public GameObject top_SettingButton;
     public GameObject bot_PlayButton;
-    public GameObject bot_ChangeCharacter;
 
     // ScrollView UI
     Transform t_ChangeCharacterView;
@@ -37,8 +36,11 @@ public class ManageLobbyObject : MonoBehaviour
     public GameObject playLobby;
     public GameObject settingLobby;
 
-    // Character
+    // CharacterSelect
+    public GameObject characterSelectButton;
     public GameObject lobbyCharacter;
+    public GameObject statsPanel;
+    public GameObject explainPanel;
 
     // CharacterID
     public int skinID;
@@ -60,7 +62,7 @@ public class ManageLobbyObject : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        string userNick = LocalUser.Instance.localUserData.userNick;
+        //string userNick = LocalUser.Instance.localUserData.userNick;
 
         // NetworkManager
         networkManager = FindObjectOfType<NetworkManager>();
@@ -73,8 +75,7 @@ public class ManageLobbyObject : MonoBehaviour
 
         bot_PlayButton = GameObject.Find("PlayButton");
 
-        bot_ChangeCharacter = GameObject.Find("Button_Character");
-
+        
         homeButton = GameObject.Find("HomeButton");
 
         // Play UI
@@ -82,11 +83,19 @@ public class ManageLobbyObject : MonoBehaviour
         soloButton = GameObject.Find("SoloPlayButton");
         multiButton = GameObject.Find("MultiPlayButton");
 
-        // Character
+        // CharacterSelect
+        characterSelectButton = GameObject.Find("CharacterSelectButton");
         lobbyCharacter = GameObject.Find("LobbyCharacter");
+        statsPanel = GameObject.Find("StatsPanel");
+        explainPanel = GameObject.Find("ExplainPanel");
+
+
+        statsPanel.SetActive(false);
+        explainPanel.SetActive(false);
+
 
         // Get Rank
-        setRank(LocalUser.Instance.localUserData.userRank);
+        //setRank(LocalUser.Instance.localUserData.userRank);
 
         // Queue Loading
         queueLoading = false;
@@ -149,5 +158,15 @@ public class ManageLobbyObject : MonoBehaviour
     public void endPlayLobbyOutTransition()
     {
         lobbyCharacter.GetComponent<SpriteRenderer>().enabled = true;
+    }
+
+    void playButtonOn()
+    {
+        bot_PlayButton.SetActive(true);
+    }
+
+    void playButtonOff()
+    {
+        bot_PlayButton.SetActive(false);
     }
 }

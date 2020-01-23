@@ -128,13 +128,16 @@ public class LobbyButton : MonoBehaviour
         if (characterSelectWindowBool)
         {
             characterSelectWindowBool = false;
-            canvas.bot_PlayButton.SetActive(true);
+            //canvas.statsPanel.SetActive(false);
+            //canvas.explainPanel.SetActive(false);
             canvas.GetComponent<Animator>().SetTrigger("CharacterSelectWindowOutTransition");
         }
         else
         {
             characterSelectWindowBool = true;
-            canvas.bot_PlayButton.SetActive(false);
+            //canvas.bot_PlayButton.SetActive(false);
+            canvas.statsPanel.SetActive(true);
+            canvas.explainPanel.SetActive(true);
             canvas.GetComponent<Animator>().SetTrigger("CharacterSelectWindowInTransition");
         }
     }
