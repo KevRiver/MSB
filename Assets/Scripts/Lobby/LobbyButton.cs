@@ -53,7 +53,8 @@ public class LobbyButton : MonoBehaviour
         canvas.soloButton.SetActive(false);
         canvas.multiButton.SetActive(false);
 
-        canvas.background.GetComponent<Animator>().SetTrigger("QueueLoading");
+
+        canvas.planet.SetActive(false);
         canvas.loadingCharacter.SetActive(true);
         if(_mode == 0)
         {
@@ -74,8 +75,7 @@ public class LobbyButton : MonoBehaviour
 
         canvas.soloButton.SetActive(true);
         canvas.multiButton.SetActive(true);
-
-        canvas.background.GetComponent<Animator>().SetTrigger("Lobby");
+        canvas.planet.SetActive(true);
         canvas.loadingCharacter.SetActive(false);
     }
 
@@ -160,13 +160,24 @@ public class LobbyButton : MonoBehaviour
     {
         canvas.GetComponent<Animator>().SetTrigger("PlayLobbyInTransition");
         lobbyCharacter.GetComponent<SpriteRenderer>().enabled = false;
+        canvas.statsPanel.SetActive(false);
+        canvas.explainPanel.SetActive(false);
 
         lobbyCharacter.orangStop();
     }
 
-    public void endPlayLobbyOutTransition()
+    public void onClickLeaderBoardButton()
     {
-        lobbyCharacter.GetComponent<SpriteRenderer>().enabled = true;
+        canvas.GetComponent<Animator>().SetTrigger("LeaderBoardLobbyInTransition");
+        lobbyCharacter.GetComponent<SpriteRenderer>().enabled = false;
+        canvas.statsPanel.SetActive(false);
+        canvas.explainPanel.SetActive(false);
+        lobbyCharacter.orangStop();
     }
-    
+
+    public void onClickHomeButton_inLeaderBoardLobby()
+    {
+        canvas.GetComponent<Animator>().SetTrigger("LeaderBoardLobbyOutTransition");
+    }
+
 }

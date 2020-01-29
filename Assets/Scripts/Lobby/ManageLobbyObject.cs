@@ -56,6 +56,7 @@ public class ManageLobbyObject : MonoBehaviour
     public GameObject loadingCharacter;
 
     public GameObject background;
+    public GameObject planet;
 
     public GameObject mainCamera;
 
@@ -104,6 +105,7 @@ public class ManageLobbyObject : MonoBehaviour
 
         // Background
         background = GameObject.Find("Background");
+        planet = GameObject.Find("Planet");
 
         // Main Camera
         mainCamera = GameObject.Find("Main Camera");
@@ -155,7 +157,7 @@ public class ManageLobbyObject : MonoBehaviour
         networkManager.loadScene(_room);
     }
 
-    public void endPlayLobbyOutTransition()
+    public void showMainCharacter()
     {
         lobbyCharacter.GetComponent<SpriteRenderer>().enabled = true;
     }
