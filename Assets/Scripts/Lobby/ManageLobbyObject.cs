@@ -7,6 +7,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using MSBNetwork;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,7 +21,6 @@ public class ManageLobbyObject : MonoBehaviour
     public Text top_RankText;
     public GameObject top_SettingButton;
     public GameObject bot_PlayButton;
-    public GameObject bot_ChangeCharacter;
 
     // ScrollView UI
     Transform t_ChangeCharacterView;
@@ -37,8 +37,11 @@ public class ManageLobbyObject : MonoBehaviour
     public GameObject playLobby;
     public GameObject settingLobby;
 
-    // Character
+    // CharacterSelect
+    public GameObject characterSelectButton;
     public GameObject lobbyCharacter;
+    public GameObject statsPanel;
+    public GameObject explainPanel;
 
     // CharacterID
     public int skinID;
@@ -54,13 +57,44 @@ public class ManageLobbyObject : MonoBehaviour
     public GameObject loadingCharacter;
 
     public GameObject background;
+    public GameObject planet;
 
     public GameObject mainCamera;
+
+    // LeaderBoard Lobby
+    public RankManager leaderBoardLobby;
+
+    // Stat Bar
+    public Image[] statBar = new Image[4];
+
+    // Explain Text
+    public GameObject[] characterText = new GameObject[3];
+
+    private class UserStatusListener : MSBNetwork.NetworkModule.OnStatusResultListener
+    {
+        private ManageLobbyObject instance;
+        public UserStatusListener(ManageLobbyObject _instance)
+        {
+            instance = _instance;
+        }
+        public void OnStatusResult(bool _result, UserData _user, int _game, string _message)
+        {
+            if (instance == null) return;
+            instance.OnStatusRenewed(_user);
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        string userNick = LocalUser.Instance.localUserData.userNick;
+        UserStatusListener userStatusListener = new UserStatusListener(this);
+        MSBNetwork.NetworkModule.GetInstance().AddOnEventUserStatus(userStatusListener);
+        NetworkModule.GetInstance().RequestUserStatus(LocalUser.Instance.localUserData.userID);
+
+        leaderBoardLobby = GameObject.Find("LeaderBoardLobby").GetComponent<RankManager>();
+        leaderBoardLobby.RequestRank();
+
+        //string userNick = LocalUser.Instance.localUserData.userNick;
 
         // NetworkManager
         networkManager = FindObjectOfType<NetworkManager>();
@@ -73,8 +107,7 @@ public class ManageLobbyObject : MonoBehaviour
 
         bot_PlayButton = GameObject.Find("PlayButton");
 
-        bot_ChangeCharacter = GameObject.Find("Button_Character");
-
+        
         homeButton = GameObject.Find("HomeButton");
 
         // Play UI
@@ -82,11 +115,19 @@ public class ManageLobbyObject : MonoBehaviour
         soloButton = GameObject.Find("SoloPlayButton");
         multiButton = GameObject.Find("MultiPlayButton");
 
-        // Character
+        // CharacterSelect
+        characterSelectButton = GameObject.Find("CharacterSelectButton");
         lobbyCharacter = GameObject.Find("LobbyCharacter");
+        statsPanel = GameObject.Find("StatsPanel");
+        explainPanel = GameObject.Find("ExplainPanel");
+
+
+        statsPanel.SetActive(false);
+        explainPanel.SetActive(false);
+
 
         // Get Rank
-        setRank(LocalUser.Instance.localUserData.userRank);
+        //setRank(LocalUser.Instance.localUserData.userRank);
 
         // Queue Loading
         queueLoading = false;
@@ -95,9 +136,12 @@ public class ManageLobbyObject : MonoBehaviour
 
         // Background
         background = GameObject.Find("Background");
+        planet = GameObject.Find("Planet");
 
         // Main Camera
         mainCamera = GameObject.Find("Main Camera");
+
+        
 
         Debug.Log(Screen.width); // 3040
         Debug.Log(Screen.height); // 1440
@@ -109,6 +153,11 @@ public class ManageLobbyObject : MonoBehaviour
             Debug.Log(num);
             background.transform.localScale = new Vector3(num, num, 1);
         }
+    }
+
+    public void OnStatusRenewed(UserData user)
+    {
+        setRank(user.userRank);
     }
 
     public void getSkinID(int id)
@@ -146,8 +195,18 @@ public class ManageLobbyObject : MonoBehaviour
         networkManager.loadScene(_room);
     }
 
-    public void endPlayLobbyOutTransition()
+    public void showMainCharacter()
     {
         lobbyCharacter.GetComponent<SpriteRenderer>().enabled = true;
+    }
+
+    void playButtonOn()
+    {
+        bot_PlayButton.SetActive(true);
+    }
+
+    void playButtonOff()
+    {
+        bot_PlayButton.SetActive(false);
     }
 }

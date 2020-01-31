@@ -307,11 +307,5 @@ MonoBehaviour:
   medal2: {fileID: 21300000, guid: 3a94d0bcf186fd84386e416fd7de845f, type: 3}
   medal3: {fileID: 21300000, guid: d296b99d5eade4b4e8474859af4980b1, type: 3}
   medal4: {fileID: 21300000, guid: ea33c505e0dd33449a1c760bd7987ddd, type: 3}
-  medal5: {fileID: 21300000, guid: 38aff0bb1e1997244814bf30977ea3d2, type: 3}
-  medal6: {fileID: 21300000, guid: 821ed6df3bc94ca439a643841ca900f7, type: 3}
-  medal7: {fileID: 21300000, guid: 1c6b75cad4814064e9700b5be07e8c19, type: 3}
-  medal8: {fileID: 21300000, guid: 6d6f01064fdaf754986d73b0eb5a28bd, type: 3}
-  medal9: {fileID: 21300000, guid: 90567bf3275d6de4cb4b0ac7d8668169, type: 3}
-  medal10: {fileID: 21300000, guid: 842c5471d93ff9e4d820e5f0c7fd3624, type: 3}
-  medal11: {fileID: 21300000, guid: 194a1702546360142b7f7c77cac3d79e, type: 3}
-  medal12: {fileID: 21300000, guid: 51722b7123ef06f47841788eb92c0256, type: 3}
+  medalAtt: {fileID: 21300000, guid: 78fe7f64cc86ac147a2ef05849815c04, type: 3}
+  medalDef: {fileID: 21300000, guid: fa586e293f27b1545b9bd6f2c1ea4b88, type: 3}

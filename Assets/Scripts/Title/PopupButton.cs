@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using MSBNetwork;
 using UnityEngine;
@@ -41,7 +41,7 @@ public class PopupButton : MonoBehaviour
 		nickNameUI.transform.position = outsidePos;
 		policyUI.transform.position = centerPos;
 	}
-	
+
 	public void enterNicknameInput()
 	{
 		policyUI.transform.position = outsidePos;
@@ -74,9 +74,9 @@ public class PopupButton : MonoBehaviour
 		playerNICK = userNameInput;
 		Debug.Log("nickname button click! register attempt");
 		NetworkModule.GetInstance().AddOnEventSystem(new SystemCallback(this));
-		NetworkModule.GetInstance().RequestUserSystem(PopupButton.playerID, userNameInput);
+		NetworkModule.GetInstance().RequestUserSystemNick(PopupButton.playerID, userNameInput);
 	}
-	
+
 	class SystemCallback : NetworkModule.OnSystemResultListener
 	{
 		private PopupButton instance;
@@ -84,9 +84,15 @@ public class PopupButton : MonoBehaviour
 		{
 			instance = _instance;
 		}
-		public void OnSystemResult(bool _result, string _data)
+
+		public void OnSystemNickResult(bool _result, string _data)
 		{
 			instance.attemptRegisterResult(_result, _data);
+		}
+
+		public void OnSystemRankResult(bool _result, string _data)
+		{
+
 		}
 	}
 

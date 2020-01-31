@@ -68,6 +68,40 @@ public class ManageSelectCharacter : MonoBehaviour
             canvas.skinID = skinID;
             canvas.weaponID = weaponID;
             FindObjectOfType<LobbyCharacter>().changeSprite(skinID);
+
+            switch (skinID)
+            {
+                case 0:
+                    canvas.statBar[0].fillAmount = 0.5f;
+                    canvas.statBar[1].fillAmount = 0.3f;
+                    canvas.statBar[2].fillAmount = 0.8f;
+                    canvas.statBar[3].fillAmount = 0.3f;
+                    canvas.characterText[0].SetActive(true);
+                    canvas.characterText[1].SetActive(false);
+                    canvas.characterText[2].SetActive(false);
+                    Debug.Log("0");
+                    break;
+                case 1:
+                    canvas.statBar[0].fillAmount = 0.3f;
+                    canvas.statBar[1].fillAmount = 0.5f;
+                    canvas.statBar[2].fillAmount = 0.6f;
+                    canvas.statBar[3].fillAmount = 0.5f;
+                    canvas.characterText[0].SetActive(false);
+                    canvas.characterText[1].SetActive(true);
+                    canvas.characterText[2].SetActive(false);
+                    Debug.Log("1");
+                    break;
+                case 2:
+                    canvas.statBar[0].fillAmount = 0.6f;
+                    canvas.statBar[1].fillAmount = 0.7f;
+                    canvas.statBar[2].fillAmount = 1.0f;
+                    canvas.statBar[3].fillAmount = 0.9f;
+                    canvas.characterText[0].SetActive(false);
+                    canvas.characterText[1].SetActive(false);
+                    canvas.characterText[2].SetActive(true);
+                    Debug.Log("2");
+                    break;
+            }
         }
     }
 

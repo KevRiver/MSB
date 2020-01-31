@@ -14,8 +14,9 @@ public class KillMessageHandler : MonoBehaviour
     public GameObject messageUserBImage;
     public GameObject messageText;
 
-    public Sprite swordHead;
-    public Sprite shurikenHead;
+    public Sprite purpHead;
+    public Sprite jamonHead;
+    public Sprite titanyanHead;
 
     private class OnGameStatus : NetworkModule.OnGameStatusListener
     {
@@ -105,20 +106,28 @@ public class KillMessageHandler : MonoBehaviour
         messageUserA.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.75f);
         messageUserB.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.75f);
         messageText.GetComponent<Text>().color = new Color(1f, 1f, 1f, 1f);
-        if (killUser.cUserData.userWeapon == 0)
+        if (killUser.cUserData.userWeapon == 0) // PURP
         {
-            messageUserAImage.GetComponent<Image>().sprite = swordHead;
-        } else
+            messageUserAImage.GetComponent<Image>().sprite = purpHead;
+        } else if (killUser.cUserData.userWeapon == 1) // TITANYAN
         {
-            messageUserAImage.GetComponent<Image>().sprite = shurikenHead;
+            messageUserAImage.GetComponent<Image>().sprite = titanyanHead;
+        }
+        else // JAMON
+        {
+            messageUserAImage.GetComponent<Image>().sprite = jamonHead;
         }
         messageUserAImage.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
         if (deadUser.cUserData.userWeapon == 0)
         {
-            messageUserBImage.GetComponent<Image>().sprite = swordHead;
-        } else
+            messageUserBImage.GetComponent<Image>().sprite = purpHead;
+        } else if (deadUser.cUserData.userWeapon == 1)
         {
-            messageUserBImage.GetComponent<Image>().sprite = shurikenHead;
+            messageUserBImage.GetComponent<Image>().sprite = titanyanHead;
+        }
+        else
+        {
+            messageUserBImage.GetComponent<Image>().sprite = jamonHead;
         }
         messageUserBImage.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
         messageText.GetComponent<Text>().text = displayMessage;

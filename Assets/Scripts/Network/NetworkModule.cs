@@ -1,4 +1,4 @@
-﻿#define NOUNITY // COMMENT IF UNITY
+#define NOUNITY // COMMENT IF UNITY
 #define SYNCUDP // COMMENT IF TCP ONLY
 using System;
 using System.Collections.Generic;
@@ -111,7 +111,7 @@ namespace MSBNetwork
             /// <param name="_message">회원정보 메시지</param>
             void OnStatusResult(bool _result, UserData _user, int _game, string _message);
         }
-        
+
         public interface OnSystemResultListener
         {
             /// <summary>
@@ -119,7 +119,8 @@ namespace MSBNetwork
             /// </summary>
             /// <param name="_result">시스템 성공여부</param>
             /// <param name="_data">시스템 결과 데이터</param>
-            void OnSystemResult(bool _result, string _data);
+            void OnSystemNickResult(bool _result, string _data);
+            void OnSystemRankResult(bool _result, string _data);
         }
 
         public interface OnGameMatchedListener
@@ -464,32 +465,61 @@ namespace MSBNetwork
 #endif
             }
         }
-        
+
         /// <summary>
         /// 서버에 닉네임 변경 요청을 전송합니다
         /// 등록된 OnSystemResultListener 에 서버 응답이 수신됩니다
         /// </summary>
         /// <param name="_id">유저 아이디</param>
         /// <param name="_nickname">유저 닉네임</param>
-        public void RequestUserSystem(string _id, String _nickname)
+        public void RequestUserSystemNick(string _id, String _nickname)
         {
             try
             {
 #if (!NOUNITY)
-                Debug.Log("RequestUserSystem");
+                Debug.Log("RequestUserSystemNick");
 #else
-                Debug.WriteLine("RequestUserSystem");
+                Debug.WriteLine("RequestUserSystemNick");
 #endif
-                JObject data = new JObject {{"id", _id}, {"nickname", _nickname}, {"type", "nick"}};
+                JObject data = new JObject { { "type", "nick" }, { "id", _id }, { "nickname", _nickname } };
                 netC2SProxy.OnSystemRequest(HostID.HostID_Server, RmiContext.ReliableSend, data.ToString());
             }
             catch (Exception e)
             {
 #if (!NOUNITY)
-                Debug.LogError("RequestUserSystem ERROR");
+                Debug.LogError("RequestUserSystemNick ERROR");
                 Debug.LogError(e);
 #else
-                Debug.WriteLine("RequestUserSystem ERROR");
+                Debug.WriteLine("RequestUserSystemNick ERROR");
+                Debug.WriteLine(e);
+#endif
+            }
+        }
+
+        /// <summary>
+        /// 서버에 리더보드 요청을 전송합니다
+        /// 등록된 OnSystemResultListener 에 서버 응답이 수신됩니다
+        /// </summary>
+        /// <param name="_id">유저 아이디</param>
+        public void RequestUserSystemRank(string _id)
+        {
+            try
+            {
+#if (!NOUNITY)
+                Debug.Log("RequestUserSystemRank");
+#else
+                Debug.WriteLine("RequestUserSystemRank");
+#endif
+                JObject data = new JObject { { "type", "rank" }, { "id", _id } };
+                netC2SProxy.OnSystemRequest(HostID.HostID_Server, RmiContext.ReliableSend, data.ToString());
+            }
+            catch (Exception e)
+            {
+#if (!NOUNITY)
+                Debug.LogError("RequestUserSystemRank ERROR");
+                Debug.LogError(e);
+#else
+                Debug.WriteLine("RequestUserSystemRank ERROR");
                 Debug.WriteLine(e);
 #endif
             }
@@ -508,7 +538,7 @@ namespace MSBNetwork
 #if (!NOUNITY)
                 Debug.Log("RequestGameSoloQueue");
 #else
-                        
+
                 Debug.WriteLine("RequestGameSoloQueue");
 #endif
                 JObject data = new JObject {{"mode", 0}, {"weapon", _weapon}, {"skin", _skin}};
@@ -525,7 +555,7 @@ namespace MSBNetwork
 #endif
             }
         }
-        
+
         /// <summary>
         /// 서버에 Game Team Queue 요청을 전송합니다
         /// 등록된 OnGameMatchedListener 에 서버 응답이 수신됩니다
@@ -861,7 +891,7 @@ namespace MSBNetwork
             }
             return true;
         }
-        
+
         private static bool OnEventSystem(HostID remote, RmiContext rmiContext, string _data)
         {
             try
@@ -874,12 +904,21 @@ namespace MSBNetwork
 #endif
                 JObject data = JObject.Parse(_data);
                 int result = data.GetValue("result").Value<int>();
+                string type = data.GetValue("type").Value<string>();
                 string message = data.GetValue("data").Value<string>();
                 if (onSystemResultListeners != null && onSystemResultListeners.Count > 0)
                 {
                     foreach (OnSystemResultListener listener in onSystemResultListeners)
                     {
-                        listener?.OnSystemResult(result == 1, message);
+                        if (type != null && type.Equals("nick"))
+                        {
+                            listener?.OnSystemNickResult(result == 1, message);
+                        }
+
+                        if (type != null && type.Equals("rank"))
+                        {
+                            listener?.OnSystemRankResult(result == 1, message);
+                        }
                     }
                 }
             }
@@ -1493,7 +1532,7 @@ namespace MSBNetwork
         {
             onStatusResultListeners.Add(_listener);
         }
-        
+
         /// <summary>
         /// 해당 OnSystemResultListener 를 유일한 콜백으로 등록합니다
         /// </summary>
@@ -1636,7 +1675,7 @@ namespace MSBNetwork
             onGameResultListeners.Clear();
             AddOnEventGameResult(_listener);
         }
-        
+
         /// <summary>
         /// 해당 OnGameResultListener 를 콜백 목록에 등록합니다
         /// </summary>

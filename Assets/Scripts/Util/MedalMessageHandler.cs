@@ -16,14 +16,8 @@ public class MedalMessageHandler : MonoBehaviour
     public Sprite medal2;
     public Sprite medal3;
     public Sprite medal4;
-    public Sprite medal5;
-    public Sprite medal6;
-    public Sprite medal7;
-    public Sprite medal8;
-    public Sprite medal9;
-    public Sprite medal10;
-    public Sprite medal11;
-    public Sprite medal12;
+    public Sprite medalAtt;
+    public Sprite medalDef;
 
     private class OnGameStatus : NetworkModule.OnGameStatusListener
     {
@@ -88,62 +82,62 @@ public class MedalMessageHandler : MonoBehaviour
             case 1:
                 messageImage.GetComponent<Image>().sprite = medal1;
                 medalTitle = "선취점";
-                medalText = "더할 나위 없는 스타트!";
+                //medalText = "더할 나위 없는 스타트!";
                 break;
             case 2:
-                messageImage.GetComponent<Image>().sprite = medal2;
+                messageImage.GetComponent<Image>().sprite = medal4;
                 medalTitle = "연파";
-                medalText = "5초면 충분합니다";
+                //medalText = "5초면 충분합니다";
                 break;
             case 3:
-                messageImage.GetComponent<Image>().sprite = medal3;
+                messageImage.GetComponent<Image>().sprite = medal1;
                 medalTitle = "눈에는 눈, 이에는 이";
-                medalText = "복수";
+                //medalText = "복수";
                 break;
             case 4:
-                messageImage.GetComponent<Image>().sprite = medal4;
+                messageImage.GetComponent<Image>().sprite = medal2;
                 medalTitle = "금강불괴";
-                medalText = "내가 이렇게까지 게임합니다";
+                //medalText = "내가 이렇게까지 게임합니다";
                 break;
             case 5:
-                messageImage.GetComponent<Image>().sprite = medal5;
+                messageImage.GetComponent<Image>().sprite = null;
                 medalTitle = "나는 미치지 않았어";
-                medalText = "이건 좋은 훈장일까요?";
+                //medalText = "이건 좋은 훈장일까요?";
                 break;
             case 6:
-                messageImage.GetComponent<Image>().sprite = medal6;
+                messageImage.GetComponent<Image>().sprite = null;
                 medalTitle = "어시스트";
-                medalText = "솔직히 0.9킬";
+                //medalText = "솔직히 0.9킬";
                 break;
             case 7:
-                messageImage.GetComponent<Image>().sprite = medal7;
+                messageImage.GetComponent<Image>().sprite = medalAtt;
                 medalTitle = "화력의 증표 : 동";
-                medalText = "완전히 날아다녔습니다";
+                //medalText = "완전히 날아다녔습니다";
                 break;
             case 8:
-                messageImage.GetComponent<Image>().sprite = medal8;
+                messageImage.GetComponent<Image>().sprite = medalAtt;
                 medalTitle = "화력의 증표 : 은";
-                medalText = "게임을 완전히 지배했습니다";
+                //medalText = "게임을 완전히 지배했습니다";
                 break;
             case 9:
-                messageImage.GetComponent<Image>().sprite = medal9;
+                messageImage.GetComponent<Image>().sprite = medalAtt;
                 medalTitle = "화력의 증표 : 금";
-                medalText = "이 게임은 당신을 위해 존재합니다";
+                //medalText = "이 게임은 당신을 위해 존재합니다";
                 break;
             case 10:
-                messageImage.GetComponent<Image>().sprite = medal10;
+                messageImage.GetComponent<Image>().sprite = medalDef;
                 medalTitle = "수호의 증표 : 동";
-                medalText = "이 판 내가 혼자 다 했습니다";
+                //medalText = "이 판 내가 혼자 다 했습니다";
                 break;
             case 11:
-                messageImage.GetComponent<Image>().sprite = medal11;
+                messageImage.GetComponent<Image>().sprite = medalDef;
                 medalTitle = "수호의 증표 : 은";
-                medalText = "팀원들덕에 내가 이렇게까지 게임합니다";
+                //medalText = "팀원들덕에 내가 이렇게까지 게임합니다";
                 break;
             case 12:
-                messageImage.GetComponent<Image>().sprite = medal12;
+                messageImage.GetComponent<Image>().sprite = medalDef;
                 medalTitle = "수호의 증표 : 금";
-                medalText = "솔직히, 이정도면 팀원들에게 공을 돌립니다";
+                //medalText = "솔직히, 이정도면 팀원들에게 공을 돌립니다";
                 break;
         }
 
