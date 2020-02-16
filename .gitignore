@@ -37,6 +37,8 @@ sysinfo.txt
 
 #Ignore
 Assets/CorgiEngine/
+Assets/Epic Toon FX/
+Assets/SpriteOutline/
 Assets/CorgiEngine/Demos/
 Assets/CorgiEngine/Common/Animations/
 Assets/CorgiEngine/Common/Materials/
