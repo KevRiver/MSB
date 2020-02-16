@@ -36,6 +36,7 @@ sysinfo.txt
 *.unitypackage
 
 #Ignore
+Assets/CorgiEngine/
 Assets/CorgiEngine/Demos/
 Assets/CorgiEngine/Common/Animations/
 Assets/CorgiEngine/Common/Materials/
