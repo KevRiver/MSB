@@ -63,6 +63,9 @@ public class ManageLobbyObject : MonoBehaviour
 
     // LeaderBoard Lobby
     public RankManager leaderBoardLobby;
+    
+    // Medal Lobby
+    public MedalManager medalLobby;
 
     // Stat Bar
     public Image[] statBar = new Image[4];
@@ -93,6 +96,9 @@ public class ManageLobbyObject : MonoBehaviour
 
         leaderBoardLobby = GameObject.Find("LeaderBoardLobby").GetComponent<RankManager>();
         leaderBoardLobby.RequestRank();
+
+        medalLobby = GameObject.Find("MedalLobby").GetComponent<MedalManager>();
+        medalLobby.RequestMedal();
 
         //string userNick = LocalUser.Instance.localUserData.userNick;
 

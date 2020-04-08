@@ -94,6 +94,11 @@ public class PopupButton : MonoBehaviour
 		{
 
 		}
+
+		public void OnSystemMedalResult(bool _result, string _data)
+		{
+			
+		}
 	}
 
 	public void attemptRegisterResult(bool result, string message)

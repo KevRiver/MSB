@@ -89,7 +89,11 @@ public class RankManager : MonoBehaviour
                 instance.OnRankResult(_data);
             }
         }
-        
+
+        public void OnSystemMedalResult(bool _result, string _data)
+        {
+            
+        }
     }
     
     void Start()

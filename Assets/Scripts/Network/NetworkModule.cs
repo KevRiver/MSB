@@ -1,4 +1,4 @@
-#define NOUNITY // COMMENT IF UNITY
+//#define NOUNITY // COMMENT IF UNITY
 #define SYNCUDP // COMMENT IF TCP ONLY
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ using System.Diagnostics;
 #endif
 
 // MSB Network Module
-// 191101
+// V 002
 // ReSharper disable once CheckNamespace
 namespace MSBNetwork
 {
@@ -121,6 +121,7 @@ namespace MSBNetwork
             /// <param name="_data">시스템 결과 데이터</param>
             void OnSystemNickResult(bool _result, string _data);
             void OnSystemRankResult(bool _result, string _data);
+            void OnSystemMedalResult(bool _result, string _data);
         }
 
         public interface OnGameMatchedListener
@@ -524,6 +525,35 @@ namespace MSBNetwork
 #endif
             }
         }
+        
+        /// <summary>
+        /// 서버에 업적 현황 요청을 전송합니다
+        /// 등록된 OnSystemResultListener 에 서버 응답이 수신됩니다
+        /// </summary>
+        /// <param name="_userIndex">유저 인덱스</param>
+        public void RequestUserSystemMedal(int _userIndex)
+        {
+            try
+            {
+#if (!NOUNITY)
+                Debug.Log("RequestUserSystemMedal");
+#else
+                Debug.WriteLine("RequestUserSystemMedal");
+#endif
+                JObject data = new JObject { { "type", "medal" }, { "index", _userIndex } };
+                netC2SProxy.OnSystemRequest(HostID.HostID_Server, RmiContext.ReliableSend, data.ToString());
+            }
+            catch (Exception e)
+            {
+#if (!NOUNITY)
+                Debug.LogError("RequestUserSystemMedal ERROR");
+                Debug.LogError(e);
+#else
+                Debug.WriteLine("RequestUserSystemMedal ERROR");
+                Debug.WriteLine(e);
+#endif
+            }
+        }
 
         /// <summary>
         /// 서버에 Game Solo Queue 요청을 전송합니다
@@ -918,6 +948,11 @@ namespace MSBNetwork
                         if (type != null && type.Equals("rank"))
                         {
                             listener?.OnSystemRankResult(result == 1, message);
+                        }
+
+                        if (type != null && type.Equals("medal"))
+                        {
+                            listener?.OnSystemMedalResult(result == 1, message);
                         }
                     }
                 }
