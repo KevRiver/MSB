@@ -29,17 +29,33 @@ public class RankManager : MonoBehaviour
     public GameObject myRankPosition;
     public GameObject myRankHelper;
     public GameObject myCharacter;
-    public GameObject myDamageBar;
-    public GameObject myDamageBarIndicator;
     public GameObject myRankSub;
     public GameObject myNick;
     public GameObject myRankBadge;
     public GameObject myRankScore;
-    public GameObject myStatusKill;
-    public GameObject myStatusDeath;
-    public GameObject myStatusText;
-    public GameObject myStatusWinrate;
-    
+
+    public GameObject miniStatArea;
+    public GameObject miniStatusKill;
+    public GameObject miniStatusDeath;
+    public GameObject miniStatusText;
+    public GameObject miniStatusWinrate;
+    public GameObject miniDamageBar;
+    public GameObject miniDamageBarIndicator;
+    public GameObject miniRankPosition;
+    public GameObject miniRankHelper;
+    public GameObject miniMyRankSub;
+    public GameObject miniMyNick;
+    public GameObject miniMyRankBadge;
+    public GameObject miniMyRankScore;
+    public GameObject miniWinnerRankSub;
+    public GameObject miniWinnerNick;
+    public GameObject miniWinnerRankBadge;
+    public GameObject miniWinnerRankScore;
+    public GameObject miniLoserRankSub;
+    public GameObject miniLoserNick;
+    public GameObject miniLoserRankBadge;
+    public GameObject miniLoserRankScore;
+
     public Sprite BADGE_GOLD;
     public Sprite BADGE_SILVER;
     public Sprite BADGE_BRONZE;
@@ -73,7 +89,11 @@ public class RankManager : MonoBehaviour
                 instance.OnRankResult(_data);
             }
         }
-        
+
+        public void OnSystemMedalResult(bool _result, string _data)
+        {
+            
+        }
     }
     
     void Start()
@@ -262,8 +282,11 @@ public class RankManager : MonoBehaviour
             if (rankPosition == 2) rankPositionHelper = "nd";
             if (rankPosition == 3) rankPositionHelper = "rd";
             myRankPosition.GetComponent<Text>().text = rankPosition.ToString();
+            miniRankPosition.GetComponent<Text>().text = rankPosition.ToString();
             myRankSub.GetComponent<Text>().text = rankPosition.ToString();
+            miniMyRankSub.GetComponent<Text>().text = rankPosition.ToString();
             myRankHelper.GetComponent<Text>().text = rankPositionHelper;
+            miniRankHelper.GetComponent<Text>().text = rankPositionHelper;
             int characterA = myJSON.GetValue("user_character_1").Value<int>();
             int characterB = myJSON.GetValue("user_character_2").Value<int>();
             int characterC = myJSON.GetValue("user_character_3").Value<int>();
@@ -289,35 +312,41 @@ public class RankManager : MonoBehaviour
             {
                 totalDamageRatio = (float) totalDamageGive / (float) totalDamageTake;
             }
-            int damageBarLength = (int) myDamageBar.GetComponent<RectTransform>().sizeDelta.x;
+            int damageBarLength = (int) miniDamageBar.GetComponent<RectTransform>().sizeDelta.x;
             Debug.LogWarning("damageBarLength : " + damageBarLength);
-            if (totalDamageRatio <= 0f) totalDamageRatio = 0f;
-            if (totalDamageRatio >= 2f) totalDamageRatio = 2f;
+            if (totalDamageRatio <= 0f) totalDamageRatio = 0.1f;
+            if (totalDamageRatio >= 2f) totalDamageRatio = 1.9f;
             Debug.LogWarning("totalDamageRatio : " + totalDamageRatio);
             int amountX = (int) (damageBarLength / 2 * totalDamageRatio) - (damageBarLength / 2);
             Debug.LogWarning("amountX : " + amountX);
-            myDamageBarIndicator.GetComponent<RectTransform>().localPosition += new Vector3(amountX, 0);
+            miniDamageBarIndicator.GetComponent<RectTransform>().localPosition += new Vector3(amountX, 0);
             string nickname = myJSON.GetValue("user_nick").Value<string>();
             myNick.GetComponent<Text>().text = nickname;
+            miniMyNick.GetComponent<Text>().text = nickname;
             int rank = myJSON.GetValue("user_rank").Value<int>();
             if (rank < 800)
             {
                 myRankBadge.GetComponent<Image>().sprite = BADGE_BRONZE;
+                miniMyRankBadge.GetComponent<Image>().sprite = BADGE_BRONZE;
             }
             if(rank >= 800 && rank < 1200)
             {
                 myRankBadge.GetComponent<Image>().sprite = BADGE_SILVER;
+                miniMyRankBadge.GetComponent<Image>().sprite = BADGE_SILVER;
             }
             if(rank >= 1200)
             {
                 myRankBadge.GetComponent<Image>().sprite = BADGE_GOLD;
+                miniMyRankBadge.GetComponent<Image>().sprite = BADGE_GOLD;
             }
 
+            
             myRankScore.GetComponent<Text>().text = rank.ToString();
+            miniMyRankScore.GetComponent<Text>().text = rank.ToString();
             int killCount = myJSON.GetValue("user_kill").Value<int>();
-            myStatusKill.GetComponent<Text>().text = killCount.ToString();
+            miniStatusKill.GetComponent<Text>().text = killCount.ToString();
             int deathCount = myJSON.GetValue("user_death").Value<int>();
-            myStatusDeath.GetComponent<Text>().text = deathCount.ToString();
+            miniStatusDeath.GetComponent<Text>().text = deathCount.ToString();
             int totalGame = myJSON.GetValue("user_played").Value<int>();
             int winGame = myJSON.GetValue("user_win").Value<int>();
             int loseGame = myJSON.GetValue("user_lose").Value<int>();
@@ -327,8 +356,58 @@ public class RankManager : MonoBehaviour
             {
                 winRate = (float) winGame / (float) totalGame * 100;
             }
-            myStatusText.GetComponent<Text>().text = String.Format("{0}승 {1}무 {2}패", winGame, drawGame , loseGame);
-            myStatusWinrate.GetComponent<Text>().text = String.Format("{0:F1}%", winRate);
+            else
+            {
+                winRate = 50f;
+            }
+            miniStatusText.GetComponent<Text>().text = String.Format("{0}승 {1}무 {2}패", winGame, drawGame , loseGame);
+            miniStatusWinrate.GetComponent<Text>().text = String.Format("{0:F1}%", winRate);
+            int winnerRanking = rankPosition - 1;
+            int loserRanking = rankPosition + 1;
+            int winnerRank = myJSON.GetValue("winner_rank").Value<int>();
+            int loserRank = myJSON.GetValue("loser_rank").Value<int>();
+            string winnerNick = myJSON.GetValue("winner_nick").Value<string>();
+            string loserNick = myJSON.GetValue("loser_nick").Value<string>();
+            int winnerCharacter1 = myJSON.GetValue("winner_character_1").Value<int>();
+            int winnerCharacter2 = myJSON.GetValue("winner_character_2").Value<int>();
+            int winnerCharacter3 = myJSON.GetValue("winner_character_3").Value<int>();
+            int loserCharacter1 = myJSON.GetValue("loser_character_1").Value<int>();
+            int loserCharacter2 = myJSON.GetValue("loser_character_2").Value<int>();
+            int loserCharacter3 = myJSON.GetValue("loser_character_3").Value<int>();
+            miniWinnerRankSub.GetComponent<Text>().text = winnerRanking.ToString();
+            miniLoserRankSub.GetComponent<Text>().text = loserRanking.ToString();
+            Debug.LogWarning("RankManager DEBUG : WINNER NICK : " + winnerNick);
+            Debug.LogWarning("RankManager DEBUG : LOSER NICK : " + loserNick);
+            if (winnerNick == null || winnerNick.Trim().Length == 0) miniWinnerNick.GetComponent<Text>().text = "NONAME";
+            else miniWinnerNick.GetComponent<Text>().text = winnerNick;
+            if (loserNick == null || loserNick.Trim().Length == 0) miniLoserNick.GetComponent<Text>().text = "NONAME";
+            else miniLoserNick.GetComponent<Text>().text = loserNick;
+            if (winnerRank < 800)
+            {
+                miniWinnerRankBadge.GetComponent<Image>().sprite = BADGE_BRONZE;
+            }
+            if(winnerRank >= 800 && winnerRank < 1200)
+            {
+                miniWinnerRankBadge.GetComponent<Image>().sprite = BADGE_SILVER;
+            }
+            if(winnerRank >= 1200)
+            {
+                miniWinnerRankBadge.GetComponent<Image>().sprite = BADGE_GOLD;
+            }
+            if (loserRank < 800)
+            {
+                miniLoserRankBadge.GetComponent<Image>().sprite = BADGE_BRONZE;
+            }
+            if(loserRank >= 800 && loserRank < 1200)
+            {
+                miniLoserRankBadge.GetComponent<Image>().sprite = BADGE_SILVER;
+            }
+            if(loserRank >= 1200)
+            {
+                miniLoserRankBadge.GetComponent<Image>().sprite = BADGE_GOLD;
+            }
+            miniWinnerRankScore.GetComponent<Text>().text = winnerRank.ToString();
+            miniLoserRankScore.GetComponent<Text>().text = loserRank.ToString();
         }
         catch (Exception e)
         {
