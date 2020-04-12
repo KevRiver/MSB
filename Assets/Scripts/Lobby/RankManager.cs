@@ -363,56 +363,73 @@ public class RankManager : MonoBehaviour
             miniStatusText.GetComponent<Text>().text = String.Format("{0}승 {1}무 {2}패", winGame, drawGame , loseGame);
             miniStatusWinrate.GetComponent<Text>().text = String.Format("{0:F1}%", winRate);
             int winnerRanking = rankPosition - 1;
-            int loserRanking = rankPosition + 1;
             int winnerRank = myJSON.GetValue("winner_rank").Value<int>();
-            int loserRank = myJSON.GetValue("loser_rank").Value<int>();
             string winnerNick = myJSON.GetValue("winner_nick").Value<string>();
-            string loserNick = myJSON.GetValue("loser_nick").Value<string>();
             int winnerCharacter1 = myJSON.GetValue("winner_character_1").Value<int>();
             int winnerCharacter2 = myJSON.GetValue("winner_character_2").Value<int>();
             int winnerCharacter3 = myJSON.GetValue("winner_character_3").Value<int>();
+            if (winnerRank == -1) // NO WINNER
+            {
+                miniWinnerRankBadge.SetActive(false);
+            }
+            else
+            {
+                miniWinnerRankSub.GetComponent<Text>().text = winnerRanking.ToString();
+                Debug.LogWarning("RankManager DEBUG : WINNER NICK : " + winnerNick);
+                if (winnerNick == null || winnerNick.Trim().Length == 0) miniWinnerNick.GetComponent<Text>().text = "NONAME";
+                else miniWinnerNick.GetComponent<Text>().text = winnerNick;
+                miniWinnerRankBadge.SetActive(true);
+                if (winnerRank < 800)
+                {
+                    miniWinnerRankBadge.GetComponent<Image>().sprite = BADGE_BRONZE;
+                }
+                if(winnerRank >= 800 && winnerRank < 1200)
+                {
+                    miniWinnerRankBadge.GetComponent<Image>().sprite = BADGE_SILVER;
+                }
+                if(winnerRank >= 1200)
+                {
+                    miniWinnerRankBadge.GetComponent<Image>().sprite = BADGE_GOLD;
+                }
+                miniWinnerRankScore.GetComponent<Text>().text = winnerRank.ToString();
+            }
+
+            int loserRanking = rankPosition + 1;
+            int loserRank = myJSON.GetValue("loser_rank").Value<int>();
+            string loserNick = myJSON.GetValue("loser_nick").Value<string>();
             int loserCharacter1 = myJSON.GetValue("loser_character_1").Value<int>();
             int loserCharacter2 = myJSON.GetValue("loser_character_2").Value<int>();
             int loserCharacter3 = myJSON.GetValue("loser_character_3").Value<int>();
-            miniWinnerRankSub.GetComponent<Text>().text = winnerRanking.ToString();
-            miniLoserRankSub.GetComponent<Text>().text = loserRanking.ToString();
-            Debug.LogWarning("RankManager DEBUG : WINNER NICK : " + winnerNick);
-            Debug.LogWarning("RankManager DEBUG : LOSER NICK : " + loserNick);
-            if (winnerNick == null || winnerNick.Trim().Length == 0) miniWinnerNick.GetComponent<Text>().text = "NONAME";
-            else miniWinnerNick.GetComponent<Text>().text = winnerNick;
-            if (loserNick == null || loserNick.Trim().Length == 0) miniLoserNick.GetComponent<Text>().text = "NONAME";
-            else miniLoserNick.GetComponent<Text>().text = loserNick;
-            if (winnerRank < 800)
+            if (loserRank == -1) // NO LOSER
             {
-                miniWinnerRankBadge.GetComponent<Image>().sprite = BADGE_BRONZE;
+                miniLoserRankBadge.SetActive(false);
             }
-            if(winnerRank >= 800 && winnerRank < 1200)
+            else
             {
-                miniWinnerRankBadge.GetComponent<Image>().sprite = BADGE_SILVER;
+                miniLoserRankSub.GetComponent<Text>().text = loserRanking.ToString();
+                Debug.LogWarning("RankManager DEBUG : LOSER NICK : " + loserNick);
+                if (loserNick == null || loserNick.Trim().Length == 0) miniLoserNick.GetComponent<Text>().text = "NONAME";
+                else miniLoserNick.GetComponent<Text>().text = loserNick;
+                miniLoserRankBadge.SetActive(true);
+                if (loserRank < 800)
+                {
+                    miniLoserRankBadge.GetComponent<Image>().sprite = BADGE_BRONZE;
+                }
+                if(loserRank >= 800 && loserRank < 1200)
+                {
+                    miniLoserRankBadge.GetComponent<Image>().sprite = BADGE_SILVER;
+                }
+                if(loserRank >= 1200)
+                {
+                    miniLoserRankBadge.GetComponent<Image>().sprite = BADGE_GOLD;
+                }
+                miniLoserRankScore.GetComponent<Text>().text = loserRank.ToString();
             }
-            if(winnerRank >= 1200)
-            {
-                miniWinnerRankBadge.GetComponent<Image>().sprite = BADGE_GOLD;
-            }
-            if (loserRank < 800)
-            {
-                miniLoserRankBadge.GetComponent<Image>().sprite = BADGE_BRONZE;
-            }
-            if(loserRank >= 800 && loserRank < 1200)
-            {
-                miniLoserRankBadge.GetComponent<Image>().sprite = BADGE_SILVER;
-            }
-            if(loserRank >= 1200)
-            {
-                miniLoserRankBadge.GetComponent<Image>().sprite = BADGE_GOLD;
-            }
-            miniWinnerRankScore.GetComponent<Text>().text = winnerRank.ToString();
-            miniLoserRankScore.GetComponent<Text>().text = loserRank.ToString();
         }
         catch (Exception e)
         {
-            Debug.LogWarning("RankManager ERROR : " + e.Message);
-            Debug.LogWarning(_data);
+            Debug.LogError("RankManager ERROR : " + e.Message);
+            Debug.LogError(_data);
         }
     }
     

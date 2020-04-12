@@ -36,7 +36,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: -0.000022888, y: -170.62}
-  m_SizeDelta: {x: 586.2, y: 32}
+  m_SizeDelta: {x: 586.2, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6393759031230256871
 CanvasRenderer:
@@ -67,7 +67,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: 6cf2ca0b3d475b445a72357b36b20184, type: 3}
     m_FontSize: 24
     m_FontStyle: 0
     m_BestFit: 0
@@ -130,7 +130,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: -0.000022888, y: -77.31}
-  m_SizeDelta: {x: 167.42, y: 154.62}
+  m_SizeDelta: {x: 140, y: 140}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6393759031580556096
 CanvasRenderer:
@@ -236,7 +236,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: f550b4235d2a3144f8c62f4135b099fc, type: 3}
     m_FontSize: 0
     m_FontStyle: 0
     m_BestFit: 0
@@ -307,5 +307,11 @@ MonoBehaviour:
   medal2: {fileID: 21300000, guid: 3a94d0bcf186fd84386e416fd7de845f, type: 3}
   medal3: {fileID: 21300000, guid: d296b99d5eade4b4e8474859af4980b1, type: 3}
   medal4: {fileID: 21300000, guid: ea33c505e0dd33449a1c760bd7987ddd, type: 3}
-  medalAtt: {fileID: 21300000, guid: 78fe7f64cc86ac147a2ef05849815c04, type: 3}
-  medalDef: {fileID: 21300000, guid: fa586e293f27b1545b9bd6f2c1ea4b88, type: 3}
+  medal5: {fileID: 21300000, guid: 63ce001f6a0c29147a4ccdb2d30b680b, type: 3}
+  medal6: {fileID: 21300000, guid: cc78f21a46804114b82443a4ecb3199b, type: 3}
+  medalAtt1: {fileID: 21300000, guid: af6dcc958219559419d86be4243f8bf3, type: 3}
+  medalAtt2: {fileID: 21300000, guid: 506b62bb0a53215419b01ef7bfb4a7de, type: 3}
+  medalAtt3: {fileID: 21300000, guid: c53db2c489806644e88dd2b6e28c02a9, type: 3}
+  medalDef1: {fileID: 21300000, guid: aa02904f98251944da16b561bc17524c, type: 3}
+  medalDef2: {fileID: 21300000, guid: 2a035c8c813380b4690efcce36b57e5c, type: 3}
+  medalDef3: {fileID: 21300000, guid: 307f8f3a70085ca48b085b7f673b67bc, type: 3}
