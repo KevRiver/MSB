@@ -426,7 +426,7 @@ public class MedalManager : MonoBehaviour
                 break;
             case 5: // 나는 미치지 않았어
                 medalDetailImage.GetComponent<Image>().sprite = MEDAL_5_ON;
-                medalDetailText.GetComponent<Text>().text = "나는 미치지 않았어";
+                medalDetailText.GetComponent<Text>().text = "평화주의자";
                 medalDetailMessage.GetComponent<Text>().text = "게임 종료 시 0킬";
                 break;
             case 6: // 어시스트

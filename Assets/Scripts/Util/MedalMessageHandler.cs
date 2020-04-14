@@ -107,7 +107,7 @@ public class MedalMessageHandler : MonoBehaviour
                 break;
             case 5:
                 messageImage.GetComponent<Image>().sprite = medal5;
-                medalTitle = "나는 미치지 않았어";
+                medalTitle = "평화주의자";
                 //medalText = "이건 좋은 훈장일까요?";
                 break;
             case 6:
