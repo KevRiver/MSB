@@ -100,7 +100,6 @@ public class NetworkManager : MonoBehaviour
     void Start()
     {
         _networkManager = NetworkModule.GetInstance();
-        _networkManager.Connect("203.250.148.113", 9993);
 
         gameMatchedListener = new OnGameMatched();
         _networkManager.AddOnEventGameQueue(gameMatchedListener);
@@ -112,6 +111,11 @@ public class NetworkManager : MonoBehaviour
     void Update()
     {
         _networkManager.OnUpdate();
+    }
+
+    public void connectServer()
+    {
+        _networkManager.Connect("203.250.148.113", 9993);
     }
 
     private void OnDestroy()

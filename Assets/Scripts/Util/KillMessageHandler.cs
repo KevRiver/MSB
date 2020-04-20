@@ -1,5 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Xml;
 using MSBNetwork;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -65,8 +68,10 @@ public class KillMessageHandler : MonoBehaviour
         messageBackground.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
         messageUserA.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
         messageUserAImage.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
+        messageUserAImage.GetComponent<Image>().preserveAspect = true;
         messageUserB.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
         messageUserBImage.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
+        messageUserBImage.GetComponent<Image>().preserveAspect = true;
         messageText.GetComponent<Text>().color = new Color(1f, 1f, 1f, 0f);
         
         NetworkModule.GetInstance().AddOnEventGameStatus(new OnGameStatus(this));
@@ -81,8 +86,8 @@ public class KillMessageHandler : MonoBehaviour
     public void DisplayKillMessage(int type, string message)
     {
         JObject killObject = JObject.Parse(message);
-        int killMakerIndex = killObject.GetValue("KillMaker").Value<int>();
-        int killTargetIndex = killObject.GetValue("KillTarget").Value<int>();
+        int killMakerIndex = killObject.GetValue("killMaker").Value<Int32>();
+        int killTargetIndex = killObject.GetValue("killTarget").Value<int>();
         int killCount = killObject.GetValue("killCount").Value<int>();
         int deathCount = killObject.GetValue("deathCount").Value<int>();
         MSB_Character killUser = null;
