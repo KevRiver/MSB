@@ -176,6 +176,21 @@ public class RCReciever : MonoBehaviour, MMEventListener<MMGameEvent>
 
     private IEnumerator SyncUserPos()
     {
+        if (!onSync)
+        {
+            // 플레이어 막 리스폰 시 target, follower 초기화
+            var initial_p = new Nettention.Proud.Vector3();
+            var initial_v = new Nettention.Proud.Vector3();
+            var pos = transform.position;
+            var vel = _controller.Speed;
+            initial_p.x = pos.x;
+            initial_p.y = pos.y;
+            initial_v.x = vel.x;
+            initial_v.y = vel.y;
+            _positionFollower.SetTarget(initial_p,initial_v);
+            _positionFollower.SetFollower(initial_p,initial_v);
+        }
+
         while (true)
         {
             _positionFollower.FrameMove(Time.deltaTime);
