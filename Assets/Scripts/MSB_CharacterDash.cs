@@ -310,9 +310,6 @@ public class MSB_CharacterDash : CharacterAbility
 		/// </summary>
 		protected virtual IEnumerator Dash()
 		{
-			if (_rcReciever != null)
-				_rcReciever.StopMoveSync();
-			
 			EnableDamageArea();
 			
 			// if the character is not in a position where it can move freely, we do nothing.
@@ -363,9 +360,6 @@ public class MSB_CharacterDash : CharacterAbility
             StopDash();
             DisableDamageArea();
 
-            if(_rcReciever!=null)
-	            _rcReciever.StartMoveSync();
-            
 		}
 
         /// <summary>

@@ -35,28 +35,35 @@ public class VectorPad : Jumper
 
     public Directions direction;
     private MSB_Character _character;
+    
+    public float FeedBackPlayDelay = 0.5f;
+    public float curTime = 0;
+    private bool _IsFeedBackEnable = true;
 
-    /*protected override void LateUpdate()
+    protected override void OnTriggerEnter2D(Collider2D collider)
     {
-        if (_controllers.Count != 0)
+        _controller = collider.GetComponent<CorgiController>();
+        if (_controller == null)
         {
-            foreach (var controller in _controllers)
-            {
-                _character = controller.gameObject.GetComponent<MSB_Character>();
-                _characterJump = controller.gameObject.MMGetComponentNoAlloc<CharacterJump>();
-                if (_character != null && !_character.IsRemote)
-                {
-                    controller.SetForce(_vector[(int) direction] *
-                                        Mathf.Sqrt(2f * JumpPlatformBoost * -_controller.Parameters.Gravity));
-                    if (_characterJump != null)
-                        _characterJump.CanJumpStop = false;
-                }
+            return;
+        }		
+        _controller.ContactWithVectorPad = true;
+        _controller.ContactVectorPadForce = _vector[(int) direction] * Mathf.Sqrt(2f * JumpPlatformBoost * Mathf.Abs(_controller.Parameters.Gravity));
+    }
 
-                ActivationFeedback?.PlayFeedbacks();
+    protected override void OnTriggerExit2D(Collider2D collider)
+    {
+        if (_controller != null)
+        {
+            if (collider.gameObject == _controller.gameObject)
+            {
+                _controller.ContactWithVectorPad = false;
+                _controller.ContactVectorPadForce = Vector2.zero;
+                _controller = null;
             }
         }
-    }*/
-    
+    }
+
     protected override void LateUpdate()
     {
         if (_controller != null)

@@ -1,10 +1,20 @@
-﻿using System.Collections;
+﻿//#define RCRECIEVER_LOG_ON
+using System;
+using System.Collections;
+using System.Collections.Specialized;
 using UnityEngine;
 using MoreMountains.Tools;
 using MSBNetwork;
 using MoreMountains.CorgiEngine;
+using Nettention.Proud;
+using Vector3 = UnityEngine.Vector3;
 
-public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
+public static class GlobalData
+{
+    public static int logCnt = 0;
+}
+
+public class RCReciever : MonoBehaviour, MMEventListener<MMGameEvent>
 {
     private bool isInitialized = false;
     public MSB_Character character;
@@ -12,24 +22,40 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
     public Transform characterModel;
     public Transform weaponAttachment;
     public Weapon weapon;
+
     public int userNum;
+
     // For facing direction sync
     public bool lastFacing;
 
     private Transform _aimIndicator;
     private Vector3 _curPos;
-    private Vector3 _targetPos;
-    private Vector2 _speed;
     private Quaternion _targetRot;
     private bool onSync = false;
     private CharacterAbility _ability;
+    private CharacterSpin _characterSpin;
+    private PositionFollower _positionFollower;
+    private float _bounceSpeed;
+
     void Start()
     {
         if (!(character = GetComponent<MSB_Character>()))
-            Debug.Log("MSB_Character is null");
+        {
+#if RCRECIEVER_LOG_ON
+        Debug.Log("MSB_Character is null");
+#endif
+        }
 
         if (!(_controller = GetComponent<CorgiController>()))
-            Debug.Log("CorgiController is null");
+        {
+#if RCRECIEVER_LOG_ON
+        Debug.Log("CorgiController is null");
+#endif
+        }
+
+        _controller.IsRemote = true;
+        _positionFollower = new PositionFollower();
+        _positionFollower.Gravity = new Nettention.Proud.Vector3(0f, _controller.Parameters.Gravity, 0f);
 
         characterModel = character.transform.GetChild(0);
         weaponAttachment = characterModel.GetChild(0);
@@ -37,18 +63,65 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
         weapon = weaponAttachment.GetComponentInChildren<Weapon>();
         _ability = GetComponent<MSB_CharacterDash>();
 
-        _targetPos = transform.position;
-        _targetRot = transform.rotation;
-
         userNum = character.UserNum;
-        
+
         NetworkModule.GetInstance().AddOnEventGameUserMove(new OnGameUserMove(this));
         NetworkModule.GetInstance().AddOnEventGameUserSync(new OnGameUserSync(this));
 
         isInitialized = true;
-        
+
         if (_aimIndicator != null)
             _aimIndicator.gameObject.SetActive(false);
+    }
+
+    private enum MSBCollision
+    {
+        Above,
+        Below,
+        Left,
+        Right,
+        None
+    }
+
+    private MSBCollision CheckCollision()
+    {
+        if (_controller.State.IsCollidingBelow)
+            return MSBCollision.Below;
+        else if (_controller.State.IsCollidingAbove)
+            return MSBCollision.Above;
+        else if (_controller.State.IsCollidingLeft)
+            return MSBCollision.Left;
+        else if (_controller.State.IsCollidingRight)
+            return MSBCollision.Right;
+        return MSBCollision.None;
+    }
+
+    private void ImmediatelyModifyPositionFollower(MSBCollision collisionCheck)
+    {
+        var p = new Nettention.Proud.Vector3(transform.position.x, transform.position.y, 0f);
+        var v = new Nettention.Proud.Vector3(_controller.Speed.x, _controller.Speed.y, 0f);
+        if (collisionCheck.Equals(MSBCollision.None))
+            return;
+        switch (collisionCheck)
+        {
+            case MSBCollision.Above:
+                p.y = _controller.PositionLimitAbove;
+                break;
+            case MSBCollision.Below:
+                p.y = _controller.PositionLimitBelow;
+                break;
+            case MSBCollision.Left:
+                p.x = _controller.PositionLimitLeft;
+                break;
+            case MSBCollision.Right:
+                p.x = _controller.PositionLimitRight;
+                break;
+        }
+        _positionFollower.SetFollower(p, v);
+        _positionFollower.SetTarget(p, v);
+#if RCRECIEVER_LOG_ON
+        Debug.LogFormat("ImmediatelyModifyPositionFollower:: {0} {1}, {2}, {3}, {4}", ++(GlobalData.logCnt), p.x, p.y, v.x, v.y);
+#endif
     }
 
     public void OnMMEvent(MMGameEvent eventType)
@@ -59,7 +132,7 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
                 StartCoroutine(SyncUserPos());
                 onSync = true;
                 break;
-            
+
             case "GameOver":
                 StopCoroutine(SyncUserPos());
                 onSync = false;
@@ -87,50 +160,43 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
         this.MMEventStartListening<MMGameEvent>();
         if (!isInitialized)
             return;
-        onSync = true;
         StartCoroutine(SyncUserPos());
+        onSync = true;
     }
-    
+
     private void OnDisable()
     {
         if (onSync)
         {
-            onSync = false;
             StopCoroutine(SyncUserPos());
         }
+        onSync = false;
         this.MMEventStopListening<MMGameEvent>();
     }
 
-    private float _newPosX;
-    private float _newPosY;
     private IEnumerator SyncUserPos()
     {
         while (true)
         {
-            _curPos = transform.position;
-            _newPosX = Mathf.SmoothDamp(_curPos.x, _targetPos.x, ref _speed.x, 0.1f);
-            _newPosY = Mathf.SmoothDamp(_curPos.y, _targetPos.y, ref _speed.y, 0.1f);
-            
-            /*if(_controller.State.IsGrounded)
-                _controller.SetVerticalForce(0f);*/
-            transform.position = new Vector3(_newPosX, _curPos.y);
-            _controller.SetVerticalForce(_speed.y);
+            _positionFollower.FrameMove(Time.deltaTime);
+
+            var p = new Nettention.Proud.Vector3();
+            var v = new Nettention.Proud.Vector3();
+            MSBCollision collisionCheck = CheckCollision();
+            if (collisionCheck != MSBCollision.None)
+                ImmediatelyModifyPositionFollower(collisionCheck);
+            _positionFollower.GetFollower(ref p, ref v);
+            transform.position = new Vector3((float) p.x, (float) p.y, (float) p.z);
+
+#if RCRECIEVER_LOG_ON
+            Debug.LogFormat("NewPosition:: {0},{1}", p.x, p.y);
+            var targetPosition = _positionFollower.TargetPosition;
+            var targetVelocity = _positionFollower.TargetVelocity;
+            Debug.LogFormat("TargetPositionData:: {0}, {1}, {2}, {3}", targetPosition.x, targetPosition.y, targetVelocity.x,
+            targetVelocity.y);
+#endif
             yield return null;
         }
-    }
-
-    public void MoveSync(float targetPosX, float targetPosY, float xSpeed, float ySpeed, bool isFacingRight, float smoothTime = 0.1f)
-    {
-        if (lastFacing != isFacingRight)
-        {
-            lastFacing = !lastFacing;
-            character.Flip();
-        }
-        _targetPos.x = targetPosX;
-        _targetPos.y = targetPosY;
-
-        _speed.x = xSpeed;
-        _speed.y = ySpeed;
     }
 
     public void AttackSync(Quaternion rot)
@@ -138,22 +204,10 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
         characterModel.rotation = rot;
         if (weapon != null)
             weapon.WeaponState.ChangeState(Weapon.WeaponStates.WeaponUse);
-        if(_ability != null)
+        if (_ability != null)
             _ability.StartAbility();
     }
-
-    private Vector3 _faceRight = new Vector3(1,1,1);
-    private Vector3 _faceLeft = new Vector3(-1,1,1);
-    public void AttackSync(Quaternion rot, bool faceRight)
-    {
-        characterModel.rotation = rot;
-        characterModel.localScale = faceRight ? _faceRight : _faceLeft;
-        if (weapon != null)
-            weapon.WeaponState.ChangeState(Weapon.WeaponStates.WeaponUse);
-        if(_ability != null)
-            _ability.StartAbility();
-    }
-
+    
     private class OnGameUserMove : NetworkModule.OnGameUserMoveListener
     {
         private RCReciever _rc;
@@ -165,7 +219,6 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
         private float _xSpeed;
         private float _ySpeed;
         private bool _isFacingRight;
-        private float _rotZ;
 
         public OnGameUserMove(RCReciever rc)
         {
@@ -175,47 +228,61 @@ public class RCReciever : MonoBehaviour,MMEventListener<MMGameEvent>
             _userNum = _rc.userNum;
         }
 
-        readonly char[] _delimiterChars = { ',' };
+        readonly char[] _delimiterChars = {','};
+
         void NetworkModule.OnGameUserMoveListener.OnGameUserMove(object data)
         {
-            //Debug.Log("Recieved : " + data);
-            string[] dataArray = ((string)data).Split(_delimiterChars);
-            _targetNum = int.Parse(dataArray[0]);            
-            //  If this is not target object, return
+            // if received data's latency is over the threshold ignore it
+            string[] dataArray = ((string) data).Split(_delimiterChars);
+            _targetNum = int.Parse(dataArray[0]);
             if (_userNum != _targetNum)
                 return;
-            // Allocates recieved data
             _posX = float.Parse(dataArray[1]);
             _posY = float.Parse(dataArray[2]);
             _posZ = float.Parse(dataArray[3]);
             _xSpeed = float.Parse(dataArray[4]);
             _ySpeed = float.Parse(dataArray[5]);
             _isFacingRight = bool.Parse(dataArray[6]);
-            //_rotZ = float.Parse(dataArray[7]);
-            
-            // Sync User position
-            _rc.MoveSync(_posX, _posY, _xSpeed, _ySpeed, _isFacingRight);
+#if RCRECIEVER_LOG_ON
+            Debug.LogFormat("ReceivedData:: {0} {1}, {2}, {3}, {4}", ++(GlobalData.logCnt),_posX, _posY, _xSpeed, _ySpeed);
+#endif
+            Nettention.Proud.Vector3 pos = new Nettention.Proud.Vector3();
+            pos.x = _posX;
+            pos.y = _posY;
+            pos.z = _posZ;
+            Nettention.Proud.Vector3 vel = new Nettention.Proud.Vector3();
+            vel.x = _xSpeed;
+            vel.y = _ySpeed;
+            vel.z = 0f;
+            _rc._positionFollower.SetTarget(pos, vel);
+            if (_rc.lastFacing != _isFacingRight)
+            {
+                _rc.lastFacing = !_rc.lastFacing;
+                _rc.character.Flip();
+            }
         }
     }
-    
+
     private class OnGameUserSync : NetworkModule.OnGameUserSyncListener
     {
         private RCReciever _rc;
         private int _userNum;
         private int _targetNum;
         private Quaternion _rot;
+
         public OnGameUserSync(RCReciever rc)
         {
+#if RCRECIEVER_LOG_ON
             Debug.Log("OnGameUserSync Constructor called");
-            //Debug.LogWarning(rc.gameObject.name);
+#endif
             _rc = rc;
             _userNum = _rc.userNum;
         }
-        
-        readonly char[] _delimiterChars = { ',' }; 
+
+        readonly char[] _delimiterChars = {','};
         void NetworkModule.OnGameUserSyncListener.OnGameUserSync(object data)
         {
-            string[] dataArray = ((string)data).Split(_delimiterChars);
+            string[] dataArray = ((string) data).Split(_delimiterChars);
             _targetNum = int.Parse(dataArray[0]);
             if (_userNum != _targetNum)
                 return;
