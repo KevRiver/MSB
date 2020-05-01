@@ -1,4 +1,4 @@
-//#define NOUNITY // COMMENT IF UNITY
+#define NOUNITY // COMMENT IF UNITY
 #define SYNCUDP // COMMENT IF TCP ONLY
 using System;
 using System.Collections.Generic;
