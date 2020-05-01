@@ -6,9 +6,6 @@ using UnityEngine.UI;
 public class TitleImageLodaer : MonoBehaviour
 {
 	public GameObject logoObject;
-	public GameObject loginObject;
-	public GameObject loginImageObject;
-	public GameObject loginTextObject;
 	public GameObject backgroundObject;
 	public GameObject titleBackground;
 	public Sprite[] sprites = new Sprite[9];
@@ -22,9 +19,6 @@ public class TitleImageLodaer : MonoBehaviour
 		//canvasObject = gameObject;
 		rectTransform = backgroundObject.GetComponent<RectTransform>();
 		logoObject.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
-		loginObject.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
-		loginImageObject.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
-		loginTextObject.GetComponent<Text>().color = new Color(0.1f, 0.1f, 0.1f, 0f);
 		loadBackgroundSprite();
 	}
 
@@ -58,9 +52,6 @@ public class TitleImageLodaer : MonoBehaviour
 	IEnumerator showMainText(float delayTime)
 	{
 		yield return new WaitForSeconds(delayTime);
-		loginObject.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
-        loginImageObject.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
-        loginTextObject.GetComponent<Text>().color = new Color(0.1f, 0.1f, 0.1f, 1f);
 
         //yield return scaleInSprite(logoObject, true, true, 2.00f);
     }

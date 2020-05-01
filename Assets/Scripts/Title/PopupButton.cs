@@ -59,13 +59,13 @@ public class PopupButton : MonoBehaviour
 			toastModule.showToast("닉네임을 입력하세요", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 1);
 			return;
 		}
-		if (userNameInput.Length < 4)
+		if (userNameInput.Length < 2)
 		{
 			registerResult.GetComponent<Text>().text = "닉네임이 너무 짧습니다";
 			toastModule.showToast("닉네임이 너무 짧습니다", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 1);
 			return;
 		}
-		if (userNameInput.Length > 8)
+		if (userNameInput.Length > 10)
 		{
 			registerResult.GetComponent<Text>().text = "닉네임이 너무 깁니다";
 			toastModule.showToast("닉네임이 너무 깁니다", ToastAlerter.MESSAGE_TYPE.TYPE_ORANGE, 1);

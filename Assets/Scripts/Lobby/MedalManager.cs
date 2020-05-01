@@ -64,6 +64,52 @@ public class MedalManager : MonoBehaviour
     public Sprite MEDAL_12_ON;
     public Sprite MEDAL_12_OFF;
 
+    public GameObject achievementProgressBackground;
+    public GameObject achievementProgressForeground;
+    public GameObject achievementProgressText;
+    
+    public GameObject achievementSelectedImage;
+    public GameObject achievementSelectedTitle;
+    public GameObject achievementSelectedContent;
+    public GameObject achievementSelectedPercentage;
+    
+    public GameObject achievementHolder1;
+    public GameObject achievementHolder2;
+    public GameObject achievementHolder3;
+    public GameObject achievementHolder4;
+    public GameObject achievementHolder5;
+    public GameObject achievementHolder6;
+    public GameObject achievementHolder7;
+    public GameObject achievementHolder8;
+    public GameObject achievementHolder9;
+    public GameObject achievementContent1;
+    public GameObject achievementContent2;
+    public GameObject achievementContent3;
+    public GameObject achievementContent4;
+    public GameObject achievementContent5;
+    public GameObject achievementContent6;
+    public GameObject achievementContent7;
+    public GameObject achievementContent8;
+    public GameObject achievementContent9;
+    public GameObject achievementPercentage1;
+    public GameObject achievementPercentage2;
+    public GameObject achievementPercentage3;
+    public GameObject achievementPercentage4;
+    public GameObject achievementPercentage5;
+    public GameObject achievementPercentage6;
+    public GameObject achievementPercentage7;
+    public GameObject achievementPercentage8;
+    public GameObject achievementPercentage9;
+
+    public Sprite ACHIEVEMENT_CLEAR;
+    public Sprite ACHIEVEMENT_UNCLEAR;
+    public Sprite ACHIEVEMENT_BRONZE;
+    public Sprite ACHIEVEMENT_SILVER;
+    public Sprite ACHIEVEMENT_GOLD;
+
+    public GameObject blinkTextMedal;
+    public GameObject blinkTextAchievement;
+
     private JObject medalJSON;
 
     public class MedalListener : NetworkModule.OnSystemResultListener
@@ -212,6 +258,138 @@ public class MedalManager : MonoBehaviour
                         break;
                 }
             }
+            
+            int user_played = medalData.GetValue("user_played").Value<int>();
+            int user_win = medalData.GetValue("user_win").Value<int>();
+            int user_kill = medalData.GetValue("user_kill").Value<int>();
+            int user_death = medalData.GetValue("user_death").Value<int>();
+            int user_assist = medalData.GetValue("user_assist").Value<int>();
+            int user_damage_give = medalData.GetValue("user_damage_give").Value<int>();
+            int user_damage_take = medalData.GetValue("user_damage_take").Value<int>();
+            int user_character_1 = medalData.GetValue("user_character_1").Value<int>();
+            int user_character_2 = medalData.GetValue("user_character_2").Value<int>();
+            int user_character_3 = medalData.GetValue("user_character_3").Value<int>();
+            int user_character_1_win = medalData.GetValue("user_character_1_win").Value<int>();
+            int user_character_2_win = medalData.GetValue("user_character_2_win").Value<int>();
+            int user_character_3_win = medalData.GetValue("user_character_3_win").Value<int>();
+
+            int successCount = 0;
+            
+            if (user_character_1_win >= 5)
+            {
+                achievementHolder7.GetComponent<Image>().sprite = ACHIEVEMENT_CLEAR;
+                achievementContent7.GetComponent<Text>().color = Color.white;
+                successCount++;
+            }
+            else
+            {
+                int percent = user_character_1_win * 100 / 5;
+                achievementPercentage7.GetComponent<Text>().text = percent + "%";
+            }
+            
+            if (user_character_1_win >= 20)
+            {
+                achievementHolder8.GetComponent<Image>().sprite = ACHIEVEMENT_CLEAR;
+                achievementContent8.GetComponent<Text>().color = Color.white;
+                successCount++;
+            }
+            else
+            {
+                int percent = user_character_1_win * 100 / 20;
+                achievementPercentage8.GetComponent<Text>().text = percent + "%";
+            }
+            
+            if (user_character_1_win >= 50)
+            {
+                achievementHolder9.GetComponent<Image>().sprite = ACHIEVEMENT_CLEAR;
+                achievementContent9.GetComponent<Text>().color = Color.white;
+                successCount++;
+            }
+            else
+            {
+                int percent = user_character_1_win * 100 / 50;
+                achievementPercentage9.GetComponent<Text>().text = percent + "%";
+            }
+            
+            if (user_character_2_win >= 5)
+            {
+                achievementHolder4.GetComponent<Image>().sprite = ACHIEVEMENT_CLEAR;
+                achievementContent4.GetComponent<Text>().color = Color.white;
+                successCount++;
+            }
+            else
+            {
+                int percent = user_character_2_win * 100 / 5;
+                achievementPercentage4.GetComponent<Text>().text = percent + "%";
+            }
+            
+            if (user_character_2_win >= 20)
+            {
+                achievementHolder5.GetComponent<Image>().sprite = ACHIEVEMENT_CLEAR;
+                achievementContent5.GetComponent<Text>().color = Color.white;
+                successCount++;
+            }
+            else
+            {
+                int percent = user_character_2_win * 100 / 20;
+                achievementPercentage5.GetComponent<Text>().text = percent + "%";
+            }
+            
+            if (user_character_2_win >= 50)
+            {
+                achievementHolder6.GetComponent<Image>().sprite = ACHIEVEMENT_CLEAR;
+                achievementContent6.GetComponent<Text>().color = Color.white;
+                successCount++;
+            }
+            else
+            {
+                int percent = user_character_2_win * 100 / 50;
+                achievementPercentage6.GetComponent<Text>().text = percent + "%";
+            }
+            
+            if (user_character_3_win >= 5)
+            {
+                achievementHolder1.GetComponent<Image>().sprite = ACHIEVEMENT_CLEAR;
+                achievementContent1.GetComponent<Text>().color = Color.white;
+                successCount++;
+            }
+            else
+            {
+                int percent = user_character_3_win * 100 / 5;
+                achievementPercentage1.GetComponent<Text>().text = percent + "%";
+            }
+            
+            if (user_character_3_win >= 20)
+            {
+                achievementHolder2.GetComponent<Image>().sprite = ACHIEVEMENT_CLEAR;
+                achievementContent2.GetComponent<Text>().color = Color.white;
+                successCount++;
+            }
+            else
+            {
+                int percent = user_character_3_win * 100 / 20;
+                achievementPercentage2.GetComponent<Text>().text = percent + "%";
+            }
+            
+            if (user_character_3_win >= 50)
+            {
+                achievementHolder3.GetComponent<Image>().sprite = ACHIEVEMENT_CLEAR;
+                achievementContent3.GetComponent<Text>().color = Color.white;
+                successCount++;
+            }
+            else
+            {
+                int percent = user_character_3_win * 100 / 50;
+                achievementPercentage3.GetComponent<Text>().text = percent + "%";
+            }
+
+            int totalPercentage = successCount * 100 / 9;
+            float progressWidth = achievementProgressBackground.GetComponent<RectTransform>().rect.width;
+            float foregroundWidth = progressWidth * totalPercentage / 100;
+            achievementProgressForeground.GetComponent<RectTransform>().sizeDelta = new Vector2(foregroundWidth, 1);
+            achievementProgressText.GetComponent<Text>().text = totalPercentage + "%";
+            
+            selectAchievement(1);
         }
         catch (Exception e)
         {
@@ -248,7 +426,7 @@ public class MedalManager : MonoBehaviour
                 break;
             case 5: // 나는 미치지 않았어
                 medalDetailImage.GetComponent<Image>().sprite = MEDAL_5_ON;
-                medalDetailText.GetComponent<Text>().text = "나는 미치지 않았어";
+                medalDetailText.GetComponent<Text>().text = "평화주의자";
                 medalDetailMessage.GetComponent<Text>().text = "게임 종료 시 0킬";
                 break;
             case 6: // 어시스트
@@ -259,32 +437,32 @@ public class MedalManager : MonoBehaviour
             case 7: // 화력의 증표 : 동
                 medalDetailImage.GetComponent<Image>().sprite = MEDAL_7_ON;
                 medalDetailText.GetComponent<Text>().text = "화력의 증표 : 동";
-                medalDetailMessage.GetComponent<Text>().text = "(3vs3 전용)\n자신의 총 데미지가 게임 총 데미지의 25% 이상";
+                medalDetailMessage.GetComponent<Text>().text = "[1vs1]\n자신의 총 데미지가 게임 총 데미지의 60% 이상\n[3vs3]\n자신의 총 데미지가 게임 총 데미지의 25% 이상";
                 break;
             case 8: // 화력의 증표 : 은
                 medalDetailImage.GetComponent<Image>().sprite = MEDAL_8_ON;
                 medalDetailText.GetComponent<Text>().text = "화력의 증표 : 은";
-                medalDetailMessage.GetComponent<Text>().text = "(3vs3 전용)\n자신의 총 데미지가 게임 총 데미지의 35% 이상";
+                medalDetailMessage.GetComponent<Text>().text = "[1vs1]\n자신의 총 데미지가 게임 총 데미지의 70% 이상\n[3vs3]\n자신의 총 데미지가 게임 총 데미지의 35% 이상";
                 break;
             case 9: // 화력의 증표 : 금
                 medalDetailImage.GetComponent<Image>().sprite = MEDAL_9_ON;
                 medalDetailText.GetComponent<Text>().text = "화력의 증표 : 금";
-                medalDetailMessage.GetComponent<Text>().text = "(3vs3 전용)\n자신의 총 데미지가 게임 총 데미지의 50% 이상";
+                medalDetailMessage.GetComponent<Text>().text = "[1vs1]\n자신의 총 데미지가 게임 총 데미지의 80% 이상\n[3vs3]\n자신의 총 데미지가 게임 총 데미지의 50% 이상";
                 break;
             case 10: // 수호의 증표 : 동
                 medalDetailImage.GetComponent<Image>().sprite = MEDAL_10_ON;
                 medalDetailText.GetComponent<Text>().text = "수호의 증표 : 동";
-                medalDetailMessage.GetComponent<Text>().text = "(3vs3 전용)\n자신이 받은 데미지가 게임 총 데미지의 25% 이상";
+                medalDetailMessage.GetComponent<Text>().text = "[1vs1]\n자신이 받은 데미지가 게임 총 데미지의 60% 이상\n[3vs3]\n자신이 받은 데미지가 게임 총 데미지의 25% 이상";
                 break;
             case 11: // 수호의 증표 : 은
                 medalDetailImage.GetComponent<Image>().sprite = MEDAL_11_ON;
                 medalDetailText.GetComponent<Text>().text = "수호의 증표 : 은";
-                medalDetailMessage.GetComponent<Text>().text = "(3vs3 전용)\n자신이 받은 데미지가 게임 총 데미지의 35% 이상";
+                medalDetailMessage.GetComponent<Text>().text = "[1vs1]\n자신이 받은 데미지가 게임 총 데미지의 70% 이상\n[3vs3]\n자신이 받은 데미지가 게임 총 데미지의 35% 이상";
                 break;
             case 12: // 수호의 증표 : 금
                 medalDetailImage.GetComponent<Image>().sprite = MEDAL_12_ON;
                 medalDetailText.GetComponent<Text>().text = "수호의 증표 : 금";
-                medalDetailMessage.GetComponent<Text>().text = "(3vs3 전용)\n자신이 받은 데미지가 게임 총 데미지의 50% 이상";
+                medalDetailMessage.GetComponent<Text>().text = "[1vs1]\n자신이 받은 데미지가 게임 총 데미지의 80% 이상\n[3vs3]\n자신이 받은 데미지가 게임 총 데미지의 50% 이상";
                 break;
             default:
                 break;
@@ -294,6 +472,69 @@ public class MedalManager : MonoBehaviour
     public void hideDetailPanel()
     {
         medalDetailPanel.SetActive(false);
+    }
+
+    public void selectAchievement(int index)
+    {
+        switch (index)
+        {
+            case 1:
+                achievementSelectedImage.GetComponent<Image>().sprite = ACHIEVEMENT_BRONZE;
+                achievementSelectedTitle.GetComponent<Text>().text = "견습닌자";
+                achievementSelectedContent.GetComponent<Text>().text = "자몽으로 5회 승리";
+                achievementSelectedPercentage.GetComponent<Text>().text = achievementPercentage1.GetComponent<Text>().text;
+                break;
+            case 2:
+                achievementSelectedImage.GetComponent<Image>().sprite = ACHIEVEMENT_SILVER;
+                achievementSelectedTitle.GetComponent<Text>().text = "숙련닌자";
+                achievementSelectedContent.GetComponent<Text>().text = "자몽으로 20회 승리";
+                achievementSelectedPercentage.GetComponent<Text>().text = achievementPercentage2.GetComponent<Text>().text;
+                break;
+            case 3:
+                achievementSelectedImage.GetComponent<Image>().sprite = ACHIEVEMENT_GOLD;
+                achievementSelectedTitle.GetComponent<Text>().text = "장인닌자";
+                achievementSelectedContent.GetComponent<Text>().text = "자몽으로 50회 승리";
+                achievementSelectedPercentage.GetComponent<Text>().text = achievementPercentage3.GetComponent<Text>().text;
+                break;
+            case 4:
+                achievementSelectedImage.GetComponent<Image>().sprite = ACHIEVEMENT_BRONZE;
+                achievementSelectedTitle.GetComponent<Text>().text = "아깽이";
+                achievementSelectedContent.GetComponent<Text>().text = "티타냥으로 5회 승리";
+                achievementSelectedPercentage.GetComponent<Text>().text = achievementPercentage4.GetComponent<Text>().text;
+                break;
+            case 5:
+                achievementSelectedImage.GetComponent<Image>().sprite = ACHIEVEMENT_SILVER;
+                achievementSelectedTitle.GetComponent<Text>().text = "캣초딩";
+                achievementSelectedContent.GetComponent<Text>().text = "티타냥으로 20회 승리";
+                achievementSelectedPercentage.GetComponent<Text>().text = achievementPercentage5.GetComponent<Text>().text;
+                break;
+            case 6:
+                achievementSelectedImage.GetComponent<Image>().sprite = ACHIEVEMENT_GOLD;
+                achievementSelectedTitle.GetComponent<Text>().text = "냥아치";
+                achievementSelectedContent.GetComponent<Text>().text = "티타냥으로 50회 승리";
+                achievementSelectedPercentage.GetComponent<Text>().text = achievementPercentage6.GetComponent<Text>().text;
+                break;
+            case 7:
+                achievementSelectedImage.GetComponent<Image>().sprite = ACHIEVEMENT_BRONZE;
+                achievementSelectedTitle.GetComponent<Text>().text = "퍼프 MK.I";
+                achievementSelectedContent.GetComponent<Text>().text = "퍼프로 5회 승리";
+                achievementSelectedPercentage.GetComponent<Text>().text = achievementPercentage7.GetComponent<Text>().text;
+                break;
+            case 8:
+                achievementSelectedImage.GetComponent<Image>().sprite = ACHIEVEMENT_SILVER;
+                achievementSelectedTitle.GetComponent<Text>().text = "퍼프 MK.IV";
+                achievementSelectedContent.GetComponent<Text>().text = "퍼프로 20회 승리";
+                achievementSelectedPercentage.GetComponent<Text>().text = achievementPercentage8.GetComponent<Text>().text;
+                break;
+            case 9:
+                achievementSelectedImage.GetComponent<Image>().sprite = ACHIEVEMENT_GOLD;
+                achievementSelectedTitle.GetComponent<Text>().text = "퍼프 MK.IX";
+                achievementSelectedContent.GetComponent<Text>().text = "퍼프로 50회 승리";
+                achievementSelectedPercentage.GetComponent<Text>().text = achievementPercentage9.GetComponent<Text>().text;
+                break;
+            default:
+                break;
+        }
     }
     
 }
