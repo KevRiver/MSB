@@ -21,6 +21,10 @@ public class ManageLobbyObject : MonoBehaviour
     public Text top_RankText;
     public GameObject top_SettingButton;
     public GameObject bot_PlayButton;
+    public GameObject mid_LeaderBoard;
+    public GameObject mid_StatBoard;
+
+
 
     // ScrollView UI
     Transform t_ChangeCharacterView;
@@ -113,7 +117,10 @@ public class ManageLobbyObject : MonoBehaviour
 
         bot_PlayButton = GameObject.Find("PlayButton");
 
-        
+        mid_LeaderBoard = GameObject.Find("RankArea");
+        mid_StatBoard = GameObject.Find("StatArea");
+
+
         homeButton = GameObject.Find("HomeButton");
 
         // Play UI

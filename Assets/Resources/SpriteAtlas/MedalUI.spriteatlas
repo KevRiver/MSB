@@ -1,0 +1,129 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: MedalUI
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 4096
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 0
+      enableTightPacking: 0
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: 44ee24899832d1e4c89d0f74c92272f7, type: 3}
+    - {fileID: 2800000, guid: a6c7ef47bf41f3841a401fe8101ac157, type: 3}
+    - {fileID: 2800000, guid: 3a94d0bcf186fd84386e416fd7de845f, type: 3}
+    - {fileID: 2800000, guid: fbe1e1db07f77e544b6b0a9cefb6d6b3, type: 3}
+    - {fileID: 2800000, guid: d296b99d5eade4b4e8474859af4980b1, type: 3}
+    - {fileID: 2800000, guid: 274fbcf76d59236409a878716d8df6fc, type: 3}
+    - {fileID: 2800000, guid: ea33c505e0dd33449a1c760bd7987ddd, type: 3}
+    - {fileID: 2800000, guid: 5a65e41cf1c6da6488d9f4b10e5f643c, type: 3}
+    - {fileID: 2800000, guid: 63ce001f6a0c29147a4ccdb2d30b680b, type: 3}
+    - {fileID: 2800000, guid: b68ca128b5695eb46a89f8c92d1970bd, type: 3}
+    - {fileID: 2800000, guid: cc78f21a46804114b82443a4ecb3199b, type: 3}
+    - {fileID: 2800000, guid: c85c092ad5c4d524a90064c00517d8aa, type: 3}
+    - {fileID: 2800000, guid: 78fe7f64cc86ac147a2ef05849815c04, type: 3}
+    - {fileID: 2800000, guid: af6dcc958219559419d86be4243f8bf3, type: 3}
+    - {fileID: 2800000, guid: bfd35117c320abd45810befd55b9f00d, type: 3}
+    - {fileID: 2800000, guid: c53db2c489806644e88dd2b6e28c02a9, type: 3}
+    - {fileID: 2800000, guid: 098558cdf49fb0447b3eaeaf0e083740, type: 3}
+    - {fileID: 2800000, guid: 506b62bb0a53215419b01ef7bfb4a7de, type: 3}
+    - {fileID: 2800000, guid: e728f59e642e2a74e98b35c195974a2d, type: 3}
+    - {fileID: 2800000, guid: fa586e293f27b1545b9bd6f2c1ea4b88, type: 3}
+    - {fileID: 2800000, guid: aa02904f98251944da16b561bc17524c, type: 3}
+    - {fileID: 2800000, guid: 4a5a756ae76c43e4fb12fbd92dbc3f49, type: 3}
+    - {fileID: 2800000, guid: 307f8f3a70085ca48b085b7f673b67bc, type: 3}
+    - {fileID: 2800000, guid: e1ee45e665d14b245bfa99a2fd0f2183, type: 3}
+    - {fileID: 2800000, guid: 2a035c8c813380b4690efcce36b57e5c, type: 3}
+    - {fileID: 2800000, guid: 14495bcc99db7bd4d802a4e5eb228f2f, type: 3}
+    totalSpriteSurfaceArea: 5082575
+    bindAsDefault: 1
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 78fe7f64cc86ac147a2ef05849815c04, type: 3}
+  - {fileID: 21300000, guid: c53db2c489806644e88dd2b6e28c02a9, type: 3}
+  - {fileID: 21300000, guid: ea33c505e0dd33449a1c760bd7987ddd, type: 3}
+  - {fileID: 21300000, guid: af6dcc958219559419d86be4243f8bf3, type: 3}
+  - {fileID: 21300000, guid: e1ee45e665d14b245bfa99a2fd0f2183, type: 3}
+  - {fileID: 21300000, guid: bfd35117c320abd45810befd55b9f00d, type: 3}
+  - {fileID: 21300000, guid: a6c7ef47bf41f3841a401fe8101ac157, type: 3}
+  - {fileID: 21300000, guid: 274fbcf76d59236409a878716d8df6fc, type: 3}
+  - {fileID: 21300000, guid: b68ca128b5695eb46a89f8c92d1970bd, type: 3}
+  - {fileID: 21300000, guid: fa586e293f27b1545b9bd6f2c1ea4b88, type: 3}
+  - {fileID: 21300000, guid: 44ee24899832d1e4c89d0f74c92272f7, type: 3}
+  - {fileID: 21300000, guid: cc78f21a46804114b82443a4ecb3199b, type: 3}
+  - {fileID: 21300000, guid: c85c092ad5c4d524a90064c00517d8aa, type: 3}
+  - {fileID: 21300000, guid: 307f8f3a70085ca48b085b7f673b67bc, type: 3}
+  - {fileID: 21300000, guid: 4a5a756ae76c43e4fb12fbd92dbc3f49, type: 3}
+  - {fileID: 21300000, guid: 506b62bb0a53215419b01ef7bfb4a7de, type: 3}
+  - {fileID: 21300000, guid: fbe1e1db07f77e544b6b0a9cefb6d6b3, type: 3}
+  - {fileID: 21300000, guid: 5a65e41cf1c6da6488d9f4b10e5f643c, type: 3}
+  - {fileID: 21300000, guid: 2a035c8c813380b4690efcce36b57e5c, type: 3}
+  - {fileID: 21300000, guid: 3a94d0bcf186fd84386e416fd7de845f, type: 3}
+  - {fileID: 21300000, guid: 14495bcc99db7bd4d802a4e5eb228f2f, type: 3}
+  - {fileID: 21300000, guid: d296b99d5eade4b4e8474859af4980b1, type: 3}
+  - {fileID: 21300000, guid: 098558cdf49fb0447b3eaeaf0e083740, type: 3}
+  - {fileID: 21300000, guid: e728f59e642e2a74e98b35c195974a2d, type: 3}
+  - {fileID: 21300000, guid: 63ce001f6a0c29147a4ccdb2d30b680b, type: 3}
+  - {fileID: 21300000, guid: aa02904f98251944da16b561bc17524c, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - medal_att
+  - medal_att_gold
+  - medal_4
+  - medal_att_bronze
+  - medal_def_gold_off
+  - medal_att_bronze_off
+  - medal_1_off
+  - medal_3_off
+  - medal_5_off
+  - medal_def
+  - medal_1
+  - medal_6
+  - medal_6_off
+  - medal_def_gold
+  - medal_def_bronze_off
+  - medal_att_silver
+  - medal_2_off
+  - medal_4_off
+  - medal_def_silver
+  - medal_2
+  - medal_def_silver_off
+  - medal_3
+  - medal_att_gold_off
+  - medal_att_silver_off
+  - medal_5
+  - medal_def_bronze
+  m_Tag: MedalUI
+  m_IsVariant: 0

@@ -1,0 +1,120 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: LobbyLeaderBoardUI
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 4096
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 0
+      enableTightPacking: 0
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: 1999e513508804af3a07d43beb045705, type: 3}
+    - {fileID: 2800000, guid: 790a623136a144849bca79b6374fd977, type: 3}
+    - {fileID: 2800000, guid: d31ec0c14c5be49838395d12db5ceba2, type: 3}
+    - {fileID: 2800000, guid: c4f0f6ab35cdc4aa2adda9a3eea18cb4, type: 3}
+    - {fileID: 2800000, guid: 37914d718895e4eae97337b3113c4e45, type: 3}
+    - {fileID: 2800000, guid: 6cdc58a79fb604bbd8465a6855e1c72e, type: 3}
+    - {fileID: 2800000, guid: 054d0f834e0df4be2b7e27d83d2f7892, type: 3}
+    - {fileID: 2800000, guid: fa9ae7bcc35636445a8421a101266d6a, type: 3}
+    - {fileID: 2800000, guid: 8ca9507bb688f427393be62d27584774, type: 3}
+    - {fileID: 2800000, guid: 3fa22cbdffefced4fbde0aec6ec8cb5f, type: 3}
+    - {fileID: 2800000, guid: 4490b63d95734624f873f2ee0a72bdb2, type: 3}
+    - {fileID: 2800000, guid: ddd508d782f338d4ca5cdc00668ba944, type: 3}
+    - {fileID: 2800000, guid: 3ab57b9b13367f7499978f9f5c126bdd, type: 3}
+    - {fileID: 2800000, guid: 96d9e454a6dda794c9fb04307f8b3dc6, type: 3}
+    - {fileID: 2800000, guid: ea7b2c52e7833d141af6a0c52fe5a5cb, type: 3}
+    - {fileID: 2800000, guid: 5a484e168481e604b8304d438ca39443, type: 3}
+    - {fileID: 2800000, guid: fc5eacb9de001124ba1177c2b8d6aa82, type: 3}
+    - {fileID: 2800000, guid: 2eb8c447f53d418418a90261905d2ee5, type: 3}
+    - {fileID: 2800000, guid: 2b12b730b8f4fe9498b0e7d25bd757ac, type: 3}
+    - {fileID: 2800000, guid: e13542c60cd760b4789091c74493ec5e, type: 3}
+    - {fileID: 2800000, guid: 4998ecd1b38089e40a8d70cc65d385a9, type: 3}
+    - {fileID: 2800000, guid: 9f3c79b4a694b3e47a591b0886c955c0, type: 3}
+    - {fileID: 2800000, guid: 0df101f65905fe14ba2cd5b114d702c0, type: 3}
+    totalSpriteSurfaceArea: 4516489
+    bindAsDefault: 1
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 2b12b730b8f4fe9498b0e7d25bd757ac, type: 3}
+  - {fileID: 21300000, guid: 790a623136a144849bca79b6374fd977, type: 3}
+  - {fileID: 21300000, guid: 37914d718895e4eae97337b3113c4e45, type: 3}
+  - {fileID: 21300000, guid: d31ec0c14c5be49838395d12db5ceba2, type: 3}
+  - {fileID: 21300000, guid: 4998ecd1b38089e40a8d70cc65d385a9, type: 3}
+  - {fileID: 21300000, guid: ea7b2c52e7833d141af6a0c52fe5a5cb, type: 3}
+  - {fileID: 21300000, guid: 1999e513508804af3a07d43beb045705, type: 3}
+  - {fileID: 21300000, guid: 054d0f834e0df4be2b7e27d83d2f7892, type: 3}
+  - {fileID: 21300000, guid: 96d9e454a6dda794c9fb04307f8b3dc6, type: 3}
+  - {fileID: 21300000, guid: 9f3c79b4a694b3e47a591b0886c955c0, type: 3}
+  - {fileID: 21300000, guid: 5a484e168481e604b8304d438ca39443, type: 3}
+  - {fileID: 21300000, guid: e13542c60cd760b4789091c74493ec5e, type: 3}
+  - {fileID: 21300000, guid: 0df101f65905fe14ba2cd5b114d702c0, type: 3}
+  - {fileID: 21300000, guid: 2eb8c447f53d418418a90261905d2ee5, type: 3}
+  - {fileID: 21300000, guid: 6cdc58a79fb604bbd8465a6855e1c72e, type: 3}
+  - {fileID: 21300000, guid: ddd508d782f338d4ca5cdc00668ba944, type: 3}
+  - {fileID: 21300000, guid: fc5eacb9de001124ba1177c2b8d6aa82, type: 3}
+  - {fileID: 21300000, guid: 8ca9507bb688f427393be62d27584774, type: 3}
+  - {fileID: 21300000, guid: 3ab57b9b13367f7499978f9f5c126bdd, type: 3}
+  - {fileID: 21300000, guid: c4f0f6ab35cdc4aa2adda9a3eea18cb4, type: 3}
+  - {fileID: 21300000, guid: fa9ae7bcc35636445a8421a101266d6a, type: 3}
+  - {fileID: 21300000, guid: 4490b63d95734624f873f2ee0a72bdb2, type: 3}
+  - {fileID: 21300000, guid: 3fa22cbdffefced4fbde0aec6ec8cb5f, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - triangle
+  - bar
+  - character_explain
+  - blue_ribbon
+  - ui_badges
+  - medal_silver
+  - 123_flag
+  - damage_bar
+  - medal_gold
+  - ui_clear
+  - popup_kda
+  - ui_achievement
+  - ui_unclear
+  - ranking
+  - character_totalpanel
+  - line
+  - rank
+  - flag_shadow
+  - medal_bronze
+  - character_bg_halfcircle
+  - death_icon
+  - kill_icon
+  - icon_home
+  m_Tag: LobbyLeaderBoardUI
+  m_IsVariant: 0
