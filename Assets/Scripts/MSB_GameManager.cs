@@ -82,7 +82,7 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
 
     private void ChangeScene()
     {
-        SceneManager.LoadSceneAsync("Scenes/Lobby");
+        SceneManager.LoadScene("Scenes/Lobby");
     }
 
 
@@ -131,9 +131,21 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
                 MSB_GUIManager.Instance.OnGameOver();
                 GameSet(_death,_score);
                 Destroy(GameObject.Find("GameInfo"));
-                Invoke("ChangeScene",5.0f);
+                Invoke("ChangeScene",3.0f);
                 break;
         }
+    }
+
+    IEnumerator WaitForChangeScene(float delay)
+    {
+        float time = 0f;
+        while (time < delay)
+        {
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        ChangeScene();
     }
 
     /// <summary>

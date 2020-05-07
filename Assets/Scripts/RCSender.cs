@@ -102,8 +102,6 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
         _speedX = _controller.Speed.x;
         _speedY = _controller.Speed.y;
         _isFacingRight = character.IsFacingRight;
-        _angleZ = _characterModel.rotation.eulerAngles.z;
-        _angleVelocity = _characterSpin.spinSpeed * _characterSpin.speedMultiplier;
 
         _stringBuilder.Append(_userNum);
         _stringBuilder.Append(",");
@@ -120,29 +118,49 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
         _stringBuilder.Append(_isFacingRight);
 
         string data = _stringBuilder.ToString();
-        #if RCSENDER_LOG_ON
-        Debug.Log(data);
+        #if RCSENDER_LOG_ON && UNITY_EDITOR
+        Debug.LogFormat("SendPositionData:: {0} {1}, {2}, {3}, {4}", ++(GlobalData.logCnt), _userNum, _posX, _posY,
+            _speedX, _speedY);
         #endif
         NetworkModule.GetInstance().RequestGameUserMove(roomNum, data);
         _stringBuilder.Clear();
     }
 
+    public float ImmediatePositionDataSendThreshold = 256f; // 15^2
     IEnumerator RequestUserMove()
     {
+        int frameForSendCnt = 3;
+        CorgiControllerState controllerState = _controller.State;
+        // if character is active in hierachy, send message
         while (true)
-        {
-            SendMoveData(_room);
-            yield return new WaitForSeconds(0.1f);
-        }
-    }
-
-    private float SpeedThreshold = 400;
-    IEnumerator ImmediateRequestUserMove()
-    {
-        while (_controller.Speed.sqrMagnitude > SpeedThreshold)
-        {
-            SendMoveData(_room);
-            yield return null;
+        { 
+            float sendDelay = 0f;
+            if (!character.gameObject.activeInHierarchy)
+            {
+                // if character gameobject is not active in hierachy don't send data
+                yield return null;
+            }
+            else
+            {
+                bool controllerColliding = (controllerState.IsCollidingBelow || controllerState.IsCollidingAbove ||
+                                            controllerState.IsCollidingLeft || controllerState.IsCollidingRight);
+                SendMoveData(_room);
+                if (controllerColliding)
+                {
+#if RCSENDER_LOG_ON && UNITY_EDITOR
+                    Debug.Log("RCSender::colliding");
+#endif
+                    // if controller colliding with object, immediately send next two frames' position data
+                    sendDelay = 0f;
+                    for (int i = frameForSendCnt; i > 0 && character.gameObject.activeInHierarchy; i--)
+                    {
+                        SendMoveData(_room);
+                        yield return null;
+                    }
+                }
+                sendDelay = _controller.Speed.sqrMagnitude > ImmediatePositionDataSendThreshold ? 0.033f : 0.1f;
+                yield return new WaitForSeconds(sendDelay);
+            }
         }
     }
 
@@ -170,12 +188,12 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
         {
             case "GameStart":
                 gameOn = true;
-                StartCoroutine(RequestUserMove());
+                StartRequest();
                 break;
 
             case "GameOver":
                 gameOn = false;
-                StopCoroutine(RequestUserMove());
+                StopRequest();
                 break;
         }
     }

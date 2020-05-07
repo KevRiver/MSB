@@ -49,6 +49,8 @@ MonoBehaviour:
   JumpPlatformBoost: 40
   ActivationFeedback: {fileID: 324922755749457439}
   direction: 2
+  FeedBackPlayDelay: 0.5
+  curTime: 0
 --- !u!212 &5373692472145811551
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -123,7 +125,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.5, y: 0.15983984}
+  m_Size: {x: 2, y: 0.15983984}
   m_EdgeRadius: 0
 --- !u!1 &5947499440785450056
 GameObject:
