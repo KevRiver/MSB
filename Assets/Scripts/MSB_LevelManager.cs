@@ -336,21 +336,19 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
 
         public void OnGameEventKill(int from, int to, string option)
         {
-            Debug.LogWarning(to + " slained by " + from);
             _levelManager._allPlayersCharacter.TryGetValue(to, out MSB_Character target);
             if (target == null)
             {
                 Debug.LogError("Killed Character doesnt exist");
                 return;
             }
-            Debug.LogWarning(target.cUserData.userNick+" is dead");
             target.AbilityControl(true);
             var model = target.transform.GetChild(0);
             var outlineRenderer = model.transform.GetChild(1).GetComponentInChildren<SpriteRenderer>();
             Color color;
             if(!target.IsRemote)
                 color = Color.yellow;
-            else if (target.team == MSB_LevelManager.Instance.TargetPlayer.team)
+            else if (target.team == Instance.TargetPlayer.team)
                 color = Color.green;
             else
             {
@@ -363,7 +361,6 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
             //target.gameObject.SetActive(false);
             if (_targetHealth != null)
             {
-                Debug.LogWarning("Access target health .kill");
                 _targetHealth.Kill();
                 target.gameObject.SetActive(false);
             }

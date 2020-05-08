@@ -1,4 +1,5 @@
-﻿//#define RCRECIEVER_LOG_ON
+﻿#define RCRECIEVER_LOG_ON
+//#define CLIENT_POSITION_MODIFY
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -119,7 +120,7 @@ public class RCReciever : MonoBehaviour, MMEventListener<MMGameEvent>
         }
         _positionFollower.SetFollower(p, v);
         _positionFollower.SetTarget(p, v);
-#if RCRECIEVER_LOG_ON
+#if RCRECIEVER_LOG_ON && UNITY_EDITOR
         Debug.LogFormat("ImmediatelyModifyPositionFollower:: {0} {1}, {2}, {3}, {4}", ++(GlobalData.logCnt), p.x, p.y, v.x, v.y);
 #endif
     }
@@ -178,24 +179,46 @@ public class RCReciever : MonoBehaviour, MMEventListener<MMGameEvent>
     {
         while (true)
         {
-            _positionFollower.FrameMove(Time.deltaTime);
+            if (!onSync)
+            {
+                // 플레이어 리스폰 시 target, follower 초기화
+                var initialP = new Nettention.Proud.Vector3();
+                var initialV = new Nettention.Proud.Vector3();
+                var pos = transform.position;
+                var vel = _controller.Speed;
+                initialP.x = pos.x;
+                initialP.y = pos.y;
+                initialV.x = vel.x;
+                initialV.y = vel.y;
+                _positionFollower.SetTarget(initialP,initialV);
+                _positionFollower.SetFollower(initialP,initialV);
+                //character.SetChildrenActive(true);
+                yield return null;
+            }
+            else
+            {
+                
+                _positionFollower.FrameMove(Time.deltaTime);
 
-            var p = new Nettention.Proud.Vector3();
-            var v = new Nettention.Proud.Vector3();
-            MSBCollision collisionCheck = CheckCollision();
-            if (collisionCheck != MSBCollision.None)
-                ImmediatelyModifyPositionFollower(collisionCheck);
-            _positionFollower.GetFollower(ref p, ref v);
-            transform.position = new Vector3((float) p.x, (float) p.y, (float) p.z);
+                var p = new Nettention.Proud.Vector3();
+                var v = new Nettention.Proud.Vector3();
+#if CLIENT_POSITION_MODIFY
+                MSBCollision collisionCheck = CheckCollision();
+                if (collisionCheck != MSBCollision.None)
+                    ImmediatelyModifyPositionFollower(collisionCheck);
+#endif
+                _positionFollower.GetFollower(ref p, ref v);
+                transform.position = new Vector3((float) p.x, (float) p.y, (float) p.z);
 
-#if RCRECIEVER_LOG_ON
+#if RCRECIEVER_LOG_ON && UNITY_EDITOR
             Debug.LogFormat("NewPosition:: {0},{1}", p.x, p.y);
             var targetPosition = _positionFollower.TargetPosition;
             var targetVelocity = _positionFollower.TargetVelocity;
             Debug.LogFormat("TargetPositionData:: {0}, {1}, {2}, {3}", targetPosition.x, targetPosition.y, targetVelocity.x,
             targetVelocity.y);
 #endif
-            yield return null;
+                yield return null;
+            }
         }
     }
 
@@ -243,7 +266,7 @@ public class RCReciever : MonoBehaviour, MMEventListener<MMGameEvent>
             _xSpeed = float.Parse(dataArray[4]);
             _ySpeed = float.Parse(dataArray[5]);
             _isFacingRight = bool.Parse(dataArray[6]);
-#if RCRECIEVER_LOG_ON
+#if RCRECIEVER_LOG_ON && UNITY_EDITOR
             Debug.LogFormat("ReceivedData:: {0} {1}, {2}, {3}, {4}", ++(GlobalData.logCnt),_posX, _posY, _xSpeed, _ySpeed);
 #endif
             Nettention.Proud.Vector3 pos = new Nettention.Proud.Vector3();
@@ -272,7 +295,7 @@ public class RCReciever : MonoBehaviour, MMEventListener<MMGameEvent>
 
         public OnGameUserSync(RCReciever rc)
         {
-#if RCRECIEVER_LOG_ON
+#if RCRECIEVER_LOG_ON && UNITY_EDITOR
             Debug.Log("OnGameUserSync Constructor called");
 #endif
             _rc = rc;

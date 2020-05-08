@@ -148,6 +148,8 @@ MonoBehaviour:
   JumpPlatformBoost: 5
   ActivationFeedback: {fileID: 5195713549946807683}
   direction: 4
+  FeedBackPlayDelay: 0.5
+  curTime: 0
 --- !u!212 &6179124963763336683
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -223,10 +225,10 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 1.0890903, y: -0.06934884}
-      - {x: -0.8568077, y: 0.7681986}
-      - {x: -0.91677165, y: 0.6682974}
-      - {x: 1.0488652, y: -0.20177281}
+    - - {x: 0.79666674, y: 0.097838596}
+      - {x: -0.54051256, y: 0.6666921}
+      - {x: -0.58854103, y: 0.56679076}
+      - {x: 0.7564414, y: -0.010701656}
 --- !u!1001 &4934831313793718527
 PrefabInstance:
   m_ObjectHideFlags: 0
