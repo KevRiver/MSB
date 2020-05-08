@@ -7,7 +7,6 @@
 // Do not modify this file, but modify the source .pidl file.
 
 using System;
-using Nettention.Proud;
 
 namespace MSBC2S
 {
@@ -313,7 +312,6 @@ Nettention.Proud.Marshaler.Write(__msg, data);
 	return RmiSend(remotes,rmiContext,__msg,
 		RmiName_OnGameUserSync, Common.OnGameUserSync);
 }
-
 #if USE_RMI_NAME_STRING
 // RMI name declaration.
 // It is the unique pointer that indicates RMI name such as RMI profiler.

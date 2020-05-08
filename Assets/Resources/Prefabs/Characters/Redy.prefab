@@ -648,13 +648,6 @@ MonoBehaviour:
     Physics2DPushForce: 2
     DrawRaycastsGizmos: 1
     DisplayWarnings: 1
-  IsRemote: 0
-  PositionLimitLeft: 0
-  PositionLimitRight: 0
-  PositionLimitBelow: 0
-  PositionLimitAbove: 0
-  ContactWithVectorPad: 0
-  ContactVectorPadForce: {x: 0, y: 0}
   PlatformMask:
     serializedVersion: 2
     m_Bits: 256
@@ -732,7 +725,7 @@ MonoBehaviour:
   AbilityStartFeedbacks: {fileID: 0}
   AbilityStopFeedbacks: {fileID: 0}
   AbilityPermitted: 0
-  WalkSpeed: 12
+  WalkSpeed: 10
   MovementSpeedMultiplier: 1
   PushSpeedMultiplier: 1
   InstantAcceleration: 0
