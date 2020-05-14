@@ -162,7 +162,6 @@ public class LobbyButton : MonoBehaviour
         lobbyCharacter.GetComponent<SpriteRenderer>().enabled = false;
         canvas.statsPanel.SetActive(false);
         canvas.explainPanel.SetActive(false);
-
         lobbyCharacter.orangStop();
     }
 
@@ -178,6 +177,20 @@ public class LobbyButton : MonoBehaviour
     public void onClickHomeButton_inLeaderBoardLobby()
     {
         canvas.GetComponent<Animator>().SetTrigger("LeaderBoardLobbyOutTransition");
+    }
+
+    public void onClickMedalInButton()
+    {
+        canvas.GetComponent<Animator>().SetTrigger("MedalLobbyInTransition");
+        lobbyCharacter.GetComponent<SpriteRenderer>().enabled = false;
+        canvas.statsPanel.SetActive(false);
+        canvas.explainPanel.SetActive(false);
+        lobbyCharacter.orangStop();
+    }
+
+    public void onClickMedalOutButton()
+    {
+        canvas.GetComponent<Animator>().SetTrigger("MedalLobbyOutTransition");
     }
 
 }

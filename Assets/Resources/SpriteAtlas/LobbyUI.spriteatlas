@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: LobbyUI
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 4096
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 0
+      enableTightPacking: 0
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: 772363a80fba4458aab824771ad82412, type: 3}
+    - {fileID: 2800000, guid: 32cf6d8c7f0e54b9b877525583d52e43, type: 3}
+    - {fileID: 2800000, guid: 60fec416e130a8942947741bee0dcbfd, type: 3}
+    - {fileID: 2800000, guid: 64d9cb5594594034290eeb1b42df13c7, type: 3}
+    - {fileID: 2800000, guid: d8b009ca2a7a76a4cbb3784072f001df, type: 3}
+    - {fileID: 2800000, guid: ba431ea3da42f4062be59d65a94875fa, type: 3}
+    - {fileID: 2800000, guid: cb262dc8d11f29640897500f61c51f5a, type: 3}
+    - {fileID: 2800000, guid: 9ae7e5a2a471b4925811a80fe67c4aca, type: 3}
+    - {fileID: 2800000, guid: 46d8beb93ef915546a541f2be91b21dd, type: 3}
+    - {fileID: 2800000, guid: 0f4964871c5904a1590d1edc16227224, type: 3}
+    totalSpriteSurfaceArea: 1236530
+    bindAsDefault: 1
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 9ae7e5a2a471b4925811a80fe67c4aca, type: 3}
+  - {fileID: 21300000, guid: ba431ea3da42f4062be59d65a94875fa, type: 3}
+  - {fileID: 21300000, guid: 64d9cb5594594034290eeb1b42df13c7, type: 3}
+  - {fileID: 21300000, guid: 60fec416e130a8942947741bee0dcbfd, type: 3}
+  - {fileID: 21300000, guid: 0f4964871c5904a1590d1edc16227224, type: 3}
+  - {fileID: 21300000, guid: 772363a80fba4458aab824771ad82412, type: 3}
+  - {fileID: 21300000, guid: cb262dc8d11f29640897500f61c51f5a, type: 3}
+  - {fileID: 21300000, guid: 46d8beb93ef915546a541f2be91b21dd, type: 3}
+  - {fileID: 21300000, guid: d8b009ca2a7a76a4cbb3784072f001df, type: 3}
+  - {fileID: 21300000, guid: 32cf6d8c7f0e54b9b877525583d52e43, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - soloPlay_btn
+  - play_btn
+  - icon_setting
+  - icon_ranking
+  - teamPlay_btn
+  - BG_Planet
+  - rank
+  - StatBar
+  - icon_trophy
+  - Button_Home
+  m_Tag: LobbyUI
+  m_IsVariant: 0
