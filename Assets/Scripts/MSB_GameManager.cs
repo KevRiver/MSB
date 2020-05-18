@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 using MoreMountains.Tools;
 using MoreMountains.Feedbacks;
@@ -18,6 +19,9 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
     private int[] _score = new int[2];
     public int[] _death = new int[2];
     private int _index;
+    private GameInfo _gameInfo;
+    private UserRankListener _userRankListener;
+    private MedalDataListener _medalDataListener;
     public void ScoreUpdate(int blueDeath, int redDeath,int blueScore, int redScore)
     {
         _death[0] = blueDeath;
@@ -31,47 +35,22 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
     private const int FALSE = 0;
     private const int TRUE = 1;
     
-    public void GameSet(int[] death, int[] score)
+    public string GameSet(int blueScore, int redScore)
     {
-        int blueDeath = death[0];
-        int redDeath = death[1]; 
-        Debug.LogWarning("BlueDeath : " + blueDeath + " RedDeath : " + redDeath);
+        string message = "";
 
-        int blueScore = score[0];
-       int redScore = score[1];
-       string message = "";
-       MessageBoxStyles messageBoxStyle;
-       Team _team;
+        var team = MSB_LevelManager.Instance.TargetPlayer.team;
 
-       _team = MSB_LevelManager.Instance.TargetPlayer.team;
-       
-       if (blueScore > redScore)
-       {
-           messageBoxStyle = MessageBoxStyles.Blue;
-           message = "YOU WIN";
-           if (_team == Team.Red)
-           {
-               messageBoxStyle = MessageBoxStyles.Red;
-               message = "YOU LOSE";
-           }
-       }
-       else if (blueScore == redScore)
-       {
-           messageBoxStyle = MessageBoxStyles.Green;
-           message = "DRAW";
-       }
-       else
-       {
-           messageBoxStyle = MessageBoxStyles.Blue;
-           message = "YOU LOSE";
-           if (_team == Team.Red)
-           {
-               messageBoxStyle = MessageBoxStyles.Red;
-               message = "YOU WIN";
-           }
+        int alliesScore = (team == Team.Blue) ? blueScore : redScore;
+        int enemyScore = (team == Team.Blue) ? redScore : blueScore;
+        if (alliesScore == enemyScore)
+            message = "Draw";
+        else
+        {
+            message = alliesScore > enemyScore ? "VICTORY" : "DEFEAT";
         }
-       
-       MSB_GUIManager.Instance.UpdateMessageBox(messageBoxStyle, message, 0);
+
+        return message;
     }
 
     private IEnumerator ChangeScene(float duration)
@@ -93,9 +72,12 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
 
     protected override void Awake()
     {
-        //Debug.Log("MSB_GameManager Awake");
         base.Awake();
-        //PointsOfEntry = new List<PointsOfEntryStorage>();
+        _gameInfo = GameInfo.Instance;
+        _userRankListener = new UserRankListener(_instance);
+        _medalDataListener = new MedalDataListener();
+        NetworkModule.GetInstance().AddOnEventUserStatus(_userRankListener);
+        NetworkModule.GetInstance().AddOnEventGameStatus(_medalDataListener);
     }
 
     /// <summary>
@@ -114,6 +96,62 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
         MMTimeScaleEvent.Trigger(MMTimeScaleMethods.Set, 1f, 0f, false, 0f, false);
     }
 
+    public class UserRankListener : NetworkModule.OnStatusResultListener
+    {
+        private readonly MSB_GameManager _gameManager;
+        public UserRankListener(MSB_GameManager gameManager)
+        {
+            this._gameManager = gameManager;
+        }
+
+        public void OnStatusResult(bool _result, UserData _user, int _game, string _message)
+        {
+            int savedRank = LocalUser.Instance.localUserData.userRank;
+            int newRank = _user.userRank;
+            int blueScore = _gameManager._score[0];
+            int redScore = _gameManager._score[1];
+            string result = _gameManager.GameSet(blueScore, redScore);
+            GameResultViewData data = new GameResultViewData(savedRank,newRank,blueScore,redScore,result);
+            MSB_GUIManager guiManager = MSB_GUIManager.Instance;
+            guiManager.UIActive(false);
+            guiManager.GameResultViewModel.Initialize(data);
+            guiManager.ViewActive(0, true);
+        }
+    }
+
+    public class MedalDataListener : NetworkModule.OnGameStatusListener
+    {
+        public void OnGameEventCount(int count)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnGameEventTime(int time)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnGameEventReady(string readyData)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnGameEventScore(int blueKill, int blueDeath, int bluePoint, int redKill, int redDeath, int redPoint)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void OnGameEventMessage(int type, string message)
+        {
+            if (type == 2)
+            {
+                int medalIndex = Convert.ToInt32(message);
+                AchievementViewData data = new AchievementViewData(medalIndex);
+                MSB_GUIManager.Instance.AchievementViewModel.Initialize(data);
+            }
+        }
+    }
+
     /// <summary>
     /// Catches MMGameEvents and acts on them, playing the corresponding sounds
     /// </summary>
@@ -128,12 +166,17 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
                 break;
 
             case "GameOver":
-                MSB_GUIManager.Instance.OnGameOver();
-                GameSet(_death,_score);
-                Destroy(GameObject.Find("GameInfo"));
-                Invoke("ChangeScene",3.0f);
+                OnGameOver();
+                
+                /*Destroy(_gameInfo.gameObject);
+                Invoke("ChangeScene",3.0f);*/
                 break;
         }
+    }
+    private void OnGameOver()
+    {
+        string id = LocalUser.Instance.localUserData.userID;
+        NetworkModule.GetInstance().RequestUserStatus(id);
     }
 
     IEnumerator WaitForChangeScene(float delay)
@@ -166,5 +209,7 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
         NetworkModule.GetInstance().SetOnEventGameEvent(null);
         NetworkModule.GetInstance().SetOnEventGameUserMove(null);
         NetworkModule.GetInstance().SetOnEventGameUserSync(null);
+        NetworkModule.GetInstance().SetOnEventUserStatus(null);
+        NetworkModule.GetInstance().SetOnEventGameStatus(null);
     }
 }

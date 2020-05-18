@@ -188,17 +188,17 @@ public class ManageLobbyObject : MonoBehaviour
         top_RankText.text = rank.ToString();
         if (rank < 800)
         {
-            Debug.Log("Bronze");
+            //Debug.Log("Bronze");
             top_RankImg.GetComponent<Image>().sprite = rankSprite[0];
         }
         else if(rank >= 800 && rank < 1200)
         {
-            Debug.Log("Silver");
+            //Debug.Log("Silver");
             top_RankImg.GetComponent<Image>().sprite = rankSprite[1];
         }
         else if(rank >= 1200)
         {
-            Debug.Log("Gold");
+            //Debug.Log("Gold");
             top_RankImg.GetComponent<Image>().sprite = rankSprite[2];
         }
     }

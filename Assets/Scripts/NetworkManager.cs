@@ -18,16 +18,16 @@ public class NetworkManager : MonoBehaviour
 
         void NetworkModule.OnGameMatchedListener.OnGameMatched(bool _result, int _room, string _message)
         {
-            Debug.LogWarning("OnGameMatched Called");
+            //Debug.LogWarning("OnGameMatched Called");
             lobbyButton.matchedLoading(_room);
-            Debug.LogWarning("RequestGameInfo");
+            //Debug.LogWarning("RequestGameInfo");
         }
     }
     private class OnGameInfo : NetworkModule.OnGameInfoListener
     {
         void NetworkModule.OnGameInfoListener.OnGameInfo(bool _result, int _room, int _mode, LinkedList<UserData> _users, string _message)
         {
-            Debug.LogWarning("OnGameInfo Called");
+            //Debug.LogWarning("OnGameInfo Called");
             UnityMainThreadDispatcher.Instance().Enqueue(LoadScene(_mode, _room, _users));
         }
 
@@ -42,11 +42,7 @@ public class NetworkManager : MonoBehaviour
                 PlayerInfo player = new PlayerInfo(_room, user.userNumber, user.userID, user.userNick, user.userWeapon, user.userSkin);
                 gameInfo.players.Add(player);
             }
-
-            foreach (var player in gameInfo.players)
-            {
-                Debug.LogWarning(player.number + " " + player.id);
-            }
+            
             // load play scene
             SceneManager.LoadSceneAsync("Scenes/PlayScene");
             yield return null;
@@ -54,6 +50,7 @@ public class NetworkManager : MonoBehaviour
     }
     private class OnGameStatus : NetworkModule.OnGameStatusListener
     {
+        // 플레이어가 다 준비가 되면 서버에서 뿌려주는 이벤트
         public void OnGameEventCount(int count)
         {
             MSB_GUIManager.Instance.UpdateMessageBox(count);
@@ -61,13 +58,12 @@ public class NetworkManager : MonoBehaviour
                 MMGameEvent.Trigger("GameStart");
         }
 
-        /*public void OnGameEventMessage(object _data)
-        {
-
-        }*/
-
         public void OnGameEventMessage(int type, string message)
         {
+            if (type == 2)
+            {
+                //MSB_GameManager.Instance.
+            }
         }
 
         public void OnGameEventReady(string readyData)
@@ -78,8 +74,6 @@ public class NetworkManager : MonoBehaviour
         public void OnGameEventScore(int blueKill, int blueDeath, int bluePoint, int redKill, int redDeath, int redPoint)
         {
             MSB_GameManager.Instance.ScoreUpdate(blueDeath, redDeath, bluePoint, redPoint);
-            Debug.LogWarning("Event Score - blue : " + bluePoint + " red : " + redPoint);
-
         }
         public void OnGameEventTime(int time)
         {

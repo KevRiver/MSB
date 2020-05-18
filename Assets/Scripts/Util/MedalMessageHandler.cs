@@ -55,7 +55,7 @@ public class MedalMessageHandler : MonoBehaviour
 
         public void OnGameEventMessage(int type, string message)
         {
-            if (type == 2) _medalMessageHandler.DisplayKillMessage(type, message);
+            //if (type == 2) _medalMessageHandler.DisplayKillMessage(type, message);
         }
     }
 
