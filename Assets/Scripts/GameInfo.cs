@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿#define GAMEINFO_LOG_ON
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MoreMountains.Tools;
@@ -33,15 +35,20 @@ public class GameInfo : PersistentSingleton<GameInfo>
     public int room;
     public int mode;
     public List<PlayerInfo> players;
-    private LocalUser localUser;
 
     protected override void Awake()
     {
-        //Debug.Log("GameInfo Awake");
         base.Awake();
         gameObject.name = "GameInfo";
-
-        localUser = LocalUser.Instance;
+        
         players = new List<PlayerInfo>();
+    }
+
+    public void OnDestroy()
+    {
+#if GAMEINFO_LOG_ON
+        Debug.LogFormat("Destroy room '{0}' GameInfo", room);
+#endif
+        _instance = null;
     }
 }

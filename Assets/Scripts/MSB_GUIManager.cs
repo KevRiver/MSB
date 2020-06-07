@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define GUI_LOG_ON
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,10 +44,13 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
     public Image Joystick;
     public Image AttackButton;
     public Image Cover;
+    public LoadingView LoadingViewModel;
     public GameResultView GameResultViewModel;
     public AchievementView AchievementViewModel;
+    public RespawnView RespawnViewModel;
     
     public GameObject[] _viewContainer;
+    
     private List<GameObject> _uiContainer;
     private List<Text> _messageBoxes;
 
@@ -176,6 +180,11 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
         Timer.color = color;
     }
 
+    public void ActiveMessageBox(bool activate)
+    {
+        MessageBox.gameObject.SetActive(activate);
+    }
+
     public void UpdateMessageBox(int _seq)
     {
         MessageBox.text = msgSequence[_seq];
@@ -241,44 +250,6 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
         }
     }
 
-    public Vector2 RescaleSpriteByImageSize(Vector2 origin,Image image,bool fixHeight = true)
-    {
-        RectTransform rt = image.rectTransform;
-        float sx = rt.localScale.x;
-        float sy = rt.localScale.y;
-        float fixedValue = fixHeight ? rt.sizeDelta.y * sy : rt.sizeDelta.x * sx;
-        float x = origin.x;
-        float y = origin.y;
-        Vector2 rescaled = Vector2.zero;
-        try
-        {
-            float nx = fixHeight ? x * fixedValue / y : fixedValue;
-            float ny = fixHeight ? y : y * fixedValue / x;
-            
-            rescaled.x = nx;
-            rescaled.y = ny;
-            
-        }
-        catch (Exception e)
-        {
-            Debug.Log(e);
-        }
-        return rescaled;
-        
-    }
-
-    private AsyncOperation _asyncOperation;
-    public void LoadLobbyScene()
-    {
-        _asyncOperation = SceneManager.LoadSceneAsync("Scenes/Lobby");
-        _asyncOperation.allowSceneActivation = false;
-    }
-
-    public void ChangeScene()
-    {
-        _asyncOperation.allowSceneActivation = true;
-    }
-
     private void OnEnable()
     {
         this.MMEventStartListening();
@@ -287,6 +258,7 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
     private void OnDisable()
     {
         this.MMEventStopListening();
+        _instance = null;
     }
 
     public void OnMMEvent(MMGameEvent eventType)

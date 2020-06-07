@@ -1,4 +1,4 @@
-﻿#define RCRECIEVER_LOG_ON
+﻿//#define RCRECIEVER_LOG_ON
 //#define CLIENT_POSITION_MODIFY
 using System;
 using System.Collections;
@@ -192,7 +192,6 @@ public class RCReciever : MonoBehaviour, MMEventListener<MMGameEvent>
                 initialV.y = vel.y;
                 _positionFollower.SetTarget(initialP,initialV);
                 _positionFollower.SetFollower(initialP,initialV);
-                //character.SetChildrenActive(true);
                 yield return null;
             }
             else
@@ -245,8 +244,6 @@ public class RCReciever : MonoBehaviour, MMEventListener<MMGameEvent>
 
         public OnGameUserMove(RCReciever rc)
         {
-            Debug.Log("OnGameUserMove Constructor called");
-            //Debug.LogWarning(rc.gameObject.name);
             _rc = rc;
             _userNum = _rc.userNum;
         }

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 using MoreMountains.Tools;
 using MoreMountains.Feedbacks;
 using MSBNetwork;
 using UnityEngine.SceneManagement;
+using Newtonsoft.Json.Linq;
 
 
 public class MSB_GameManager : Singleton<MSB_GameManager>,
@@ -21,7 +23,7 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
     private int _index;
     private GameInfo _gameInfo;
     private UserRankListener _userRankListener;
-    private MedalDataListener _medalDataListener;
+    private OnGameStatus _onGameStatus;
     public void ScoreUpdate(int blueDeath, int redDeath,int blueScore, int redScore)
     {
         _death[0] = blueDeath;
@@ -74,10 +76,6 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
     {
         base.Awake();
         _gameInfo = GameInfo.Instance;
-        _userRankListener = new UserRankListener(_instance);
-        _medalDataListener = new MedalDataListener();
-        NetworkModule.GetInstance().AddOnEventUserStatus(_userRankListener);
-        NetworkModule.GetInstance().AddOnEventGameStatus(_medalDataListener);
     }
 
     /// <summary>
@@ -113,13 +111,80 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
             string result = _gameManager.GameSet(blueScore, redScore);
             GameResultViewData data = new GameResultViewData(savedRank,newRank,blueScore,redScore,result);
             MSB_GUIManager guiManager = MSB_GUIManager.Instance;
+            guiManager.ViewActive(RESPAWNVIEW,false);
             guiManager.UIActive(false);
             guiManager.GameResultViewModel.Initialize(data);
             guiManager.ViewActive(0, true);
         }
     }
 
-    public class MedalDataListener : NetworkModule.OnGameStatusListener
+    public class OnGameStatus : NetworkModule.OnGameStatusListener
+    {
+        private readonly MSB_GUIManager _guiManager;
+        public OnGameStatus(MSB_GUIManager guiManager)
+        {
+            _guiManager = guiManager;
+        }
+
+        // 플레이어가 다 준비가 되면 서버에서 뿌려주는 이벤트
+        public void OnGameEventCount(int count)
+        {
+            Debug.LogWarning(count);
+            _guiManager.UpdateMessageBox(count);
+            if (count == 0)
+            {
+#if NETMANAGER_LOG_ON
+                Debug.LogWarning("GameStart Triggered");
+#endif
+                MMGameEvent.Trigger("GameStart");
+            }
+        }
+
+        public void OnGameEventMessage(int type, string message)
+        {
+            if (type == 2)
+            {
+                int medalIndex = Convert.ToInt32(message);
+                AchievementViewData data = new AchievementViewData(medalIndex);
+                _guiManager.AchievementViewModel.Initialize(data);
+            }
+        }
+
+        public void OnGameEventReady(string readyData)
+        {
+            JArray jArray = JArray.Parse(readyData);
+            bool isAllPlayerReady = true;
+            foreach (var token in jArray.Children())
+            {
+                JObject o = (JObject) token;
+                var ready = o.Properties().Select(p=>p.Value).FirstOrDefault();
+                isAllPlayerReady &= (bool)ready;
+            }
+
+            if (!isAllPlayerReady)
+                return;
+            
+            _guiManager.LoadingViewModel.PlayOutroAnimation();
+            _guiManager.MessageBox.gameObject.SetActive(true);
+            _guiManager.SmallMessageBox.gameObject.SetActive(true);
+        }
+
+        public void OnGameEventScore(int blueKill, int blueDeath, int bluePoint, int redKill, int redDeath, int redPoint)
+        {
+            Instance.ScoreUpdate(blueDeath, redDeath, bluePoint, redPoint);
+        }
+        public void OnGameEventTime(int time)
+        {
+            _guiManager.UpdateTimer(time);
+            
+            if(time == 10)
+                MMGameEvent.Trigger("HurryUp");
+            if (time == 0)
+                MMGameEvent.Trigger("GameOver");
+        }
+    }
+
+    /*public class MedalDataListener : NetworkModule.OnGameStatusListener
     {
         public void OnGameEventCount(int count)
         {
@@ -143,6 +208,7 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
 
         public void OnGameEventMessage(int type, string message)
         {
+            Debug.Log("OnGameEventMessage");
             if (type == 2)
             {
                 int medalIndex = Convert.ToInt32(message);
@@ -150,7 +216,7 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
                 MSB_GUIManager.Instance.AchievementViewModel.Initialize(data);
             }
         }
-    }
+    }*/
 
     /// <summary>
     /// Catches MMGameEvents and acts on them, playing the corresponding sounds
@@ -167,29 +233,18 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
 
             case "GameOver":
                 OnGameOver();
-                
-                /*Destroy(_gameInfo.gameObject);
-                Invoke("ChangeScene",3.0f);*/
                 break;
         }
     }
+
+    private const int RESPAWNVIEW = 2;
     private void OnGameOver()
     {
         string id = LocalUser.Instance.localUserData.userID;
         NetworkModule.GetInstance().RequestUserStatus(id);
+        Destroy(GameInfo.Instance.gameObject);
     }
-
-    IEnumerator WaitForChangeScene(float delay)
-    {
-        float time = 0f;
-        while (time < delay)
-        {
-            time += Time.deltaTime;
-            yield return null;
-        }
-
-        ChangeScene();
-    }
+    
 
     /// <summary>
     /// OnDisable, we start listening to events.
@@ -197,6 +252,12 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
     protected virtual void OnEnable()
     {
         this.MMEventStartListening<MMGameEvent>();
+        _userRankListener = new UserRankListener(_instance);
+        _onGameStatus = new OnGameStatus(MSB_GUIManager.Instance);
+        
+        NetworkModule.GetInstance().AddOnEventUserStatus(_userRankListener);
+        NetworkModule.GetInstance().AddOnEventGameStatus(_onGameStatus);
+        
         Cursor.visible = true;
     }
 
@@ -206,10 +267,14 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
     protected virtual void OnDisable()
     {
         this.MMEventStopListening<MMGameEvent>();
-        NetworkModule.GetInstance().SetOnEventGameEvent(null);
+        
+        // MoveSync, ActionSync Listener Added when each RCReceiver's initialization
+        // Clear when GameOver
         NetworkModule.GetInstance().SetOnEventGameUserMove(null);
         NetworkModule.GetInstance().SetOnEventGameUserSync(null);
         NetworkModule.GetInstance().SetOnEventUserStatus(null);
         NetworkModule.GetInstance().SetOnEventGameStatus(null);
+        
+        _instance = null;
     }
 }

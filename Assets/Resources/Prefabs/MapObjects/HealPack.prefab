@@ -193,7 +193,7 @@ Transform:
   m_GameObject: {fileID: 3782000169538072209}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3882473163875196478}
   m_Father: {fileID: 4906799936215550251}
@@ -361,8 +361,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4906799936215550251}
-  - component: {fileID: 5912030061152263103}
   - component: {fileID: 814884618796815435}
+  - component: {fileID: 5443697895962201325}
   m_Layer: 0
   m_Name: HealPack
   m_TagString: Untagged
@@ -387,22 +387,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!70 &5912030061152263103
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7494791001474940419}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1, y: 2}
-  m_Direction: 0
 --- !u!114 &814884618796815435
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -419,3 +403,19 @@ MonoBehaviour:
   ItemSpawnDelay: 0.75
   ItemSpawnFeedback: {fileID: 4516059607593064451}
   ItemTakenFeedback: {fileID: 1221873928941775905}
+--- !u!58 &5443697895962201325
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7494791001474940419}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.8

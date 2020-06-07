@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿#define ACHIEVE_LOG_ON
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using MSBNetwork;
 
 public struct AchievementViewData
 {
@@ -21,6 +23,7 @@ public class AchievementView : MonoBehaviour,MSB_View<AchievementViewData>
     [Header("Resource Cache")]
     public Sprite[] AchievementBadges;
 
+    private const int NONE = 0;
     private const int ATTBRONZE = 1;
     private const int ATTSILVER = 2;
     private const int ATTGOLD = 3;
@@ -35,11 +38,14 @@ public class AchievementView : MonoBehaviour,MSB_View<AchievementViewData>
 
     private void NextButtonOnClickMethod()
     {
-        MSB_GUIManager.Instance.ChangeScene();
+        AsyncSceneManager.ActivateScene();
     }
 
     public void ApplyData(AchievementViewData data)
     {
+#if ACHIEVE_LOG_ON
+        Debug.LogFormat("Medal Index : {0}",data.medalIndex);
+#endif
         int medalIndex = data.medalIndex;
         int achievementBadgeIndex = 0;
         string achievementMessage = "증표 획득";
@@ -72,6 +78,7 @@ public class AchievementView : MonoBehaviour,MSB_View<AchievementViewData>
                 achievementTitle = "수호의 증표 : 금";
                 break;
             default:
+                achievementBadgeIndex = NONE;
                 achievementMessage = "획득한 증표가 없습니다";
                 break;
         }

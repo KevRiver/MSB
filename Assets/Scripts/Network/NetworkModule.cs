@@ -1,4 +1,4 @@
-#define NOUNITY // COMMENT IF UNITY
+//#define NOUNITY // COMMENT IF UNITY
 #define SYNCUDP // COMMENT IF TCP ONLY
 using System;
 using System.Collections.Generic;
@@ -55,6 +55,7 @@ namespace MSBNetwork
         }
     }
 
+    public delegate void NetworkMethod(int room);
     /// <summary>
     /// Game Status Sync
     /// Server -> Client
@@ -1672,7 +1673,7 @@ namespace MSBNetwork
             onGameStatusListeners.Clear();
             AddOnEventGameStatus(_listener);
         }
-
+        
         /// <summary>
         /// 해당 OnGameStatusListener 를 콜백 목록에 등록합니다
         /// </summary>

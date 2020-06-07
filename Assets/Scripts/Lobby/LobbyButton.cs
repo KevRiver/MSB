@@ -79,7 +79,7 @@ public class LobbyButton : MonoBehaviour
         canvas.loadingCharacter.SetActive(false);
     }
 
-    // 큐 잡힘 애니메이션 추려
+    // 큐 잡힘 애니메이션
     public void matchedLoading(int _room)
     {
         canvas.homeButton.SetActive(false);

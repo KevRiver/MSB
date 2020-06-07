@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define LEVMANAGER_LOG_ON
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,12 +29,11 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
     /// the elapsed time since the start of the level
     public TimeSpan RunningTime { get { return DateTime.UtcNow - _started; } }
     public CameraController LevelCameraController { get; set; }
-
-    // private stuff
+    
     public List<MSB_Character> Players { get; protected set; }
     public MSB_Character TargetPlayer;
-    public List<MSB_SpawnPoint> Spawnpoints { get; protected set; }
-    public List<Item> Items { get; protected set; }
+    public List<MSB_SpawnPoint> Spawnpoints;
+    public List<Item> Items;
     public Dictionary<int, MSB_Character> _allPlayersCharacter;
     protected DateTime _started;
     private GameInfo gameInfo;
@@ -43,7 +43,6 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
     /// </summary>
     protected override void Awake()
     {
-        //Debug.Log("MSB_LevelManager Awake");
         base.Awake();
 
         gameInfo = GameInfo.Instance;
@@ -55,14 +54,12 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
 
         InstantiatePlayableCharacters(gameInfo.players);
     }
-
     /// <summary>
     /// Instantiate playable characters based on UserData.userWeapon
     /// </summary>
     protected virtual void InstantiatePlayableCharacters(List<PlayerInfo> users)
     {
         int localUserNum = LocalUser.Instance.localUserData.userNumber;
-        //Debug.Log("local user number : " + localUserNum);
 
         Players = new List<MSB_Character>();        
         if (PlayerPrefabs == null) { return; }
@@ -98,9 +95,12 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
             //Debug.LogWarning ("LevelManager : The Level Manager doesn't have any Player prefab to spawn. You need to select a Player prefab from its inspector.");
             return;
         }
-        NetworkModule.GetInstance().RequestGameUserActionReady(gameInfo.room);
-    }
 
+        NetworkMethod requestReady = NetworkModule.GetInstance().RequestGameUserActionReady;
+        StartCoroutine(CoroutineTimer.InvokeAfter(3.0f, requestReady, gameInfo.room));
+    }
+    
+    
     /// <summary>
     /// Initialization
     /// </summary>
@@ -125,7 +125,8 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         MMCameraEvent.Trigger(MMCameraEventTypes.SetTargetCharacter, TargetPlayer);
         MMCameraEvent.Trigger(MMCameraEventTypes.StartFollowing);
         
-        NetworkModule.GetInstance().AddOnEventGameEvent(new OnGameEvent(this));
+        OnGameEvent onGameEvent = new OnGameEvent(Instance);
+        NetworkModule.GetInstance().AddOnEventGameEvent(onGameEvent);
     }
 
     protected virtual void SpawnPlayers()
@@ -152,7 +153,6 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
 
         foreach (var player in Players)
         {
-            Debug.LogWarning("LocalPlayer Team : " + TargetPlayer.team);
             if (player.team != TargetPlayer.team)
                 player.IsEnemy = true;
             Spawnpoints[player.SpawnerIndex].SpawnPlayer(player);
@@ -191,10 +191,6 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
 
         // Hierachy에 있는 MSB_SpawnPoint 오브젝트들을 List에 저장
         // Find Spawnpoints which in level and sort by its index (ascending)
-        Spawnpoints = FindObjectsOfType<MSB_SpawnPoint>().OrderBy(o=>o.SpawnerIndex).ToList();
-        Items = FindObjectsOfType<Item>().OrderBy(o => o.ItemIndex).ToList();
-        foreach (var item in Items)
-            Debug.LogWarning("item index : " + item.ItemIndex);
     }
     
     public void RespawnPlayer(int userNum)
@@ -215,7 +211,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
 
     private class OnGameEvent : NetworkModule.OnGameEventListener
     {
-        private MSB_LevelManager _levelManager;
+        private readonly MSB_LevelManager _levelManager;
         public OnGameEvent(MSB_LevelManager levelManager)
         {
             _levelManager = levelManager;
@@ -229,16 +225,8 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         
         private int amount;
 
-        IEnumerator AbilityControl(MSB_Character target, float duration)
-        {
-            target.AbilityControl(false);
-            yield return new WaitForSeconds(duration);
-            target.AbilityControl(true);
-        }
-
         public void OnGameEventDamage(int from, int to, int amount, string option)
         {
-            Debug.LogWarning("Received Damage Event from :" + from + " to :" + to);
             string[] options = option.Split(spliter);
             CausedCCType ccType = CausedCCType.Non;
             float xForce = 0f;
@@ -248,12 +236,10 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
             xForce = float.Parse(options[1]);
             yForce = float.Parse(options[2]);
             duration = float.Parse(options[3]);
-            Debug.LogWarning("Received Damage Data" + ccType + " , " + xForce + " , " + yForce + " , " + duration);
-            
+
             _levelManager._allPlayersCharacter.TryGetValue(to, out MSB_Character target);
             if (!target)
             {
-                Debug.LogWarning("DamageEvent target is null");
                 return;
             }
 
@@ -263,7 +249,6 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
             _floatingMessageController = target.GetComponentInChildren<FloatingMessageController>();
             if (!_floatingMessageController)
             {
-                Debug.LogWarning("FMC is null");
                 return;
             }
 
@@ -293,22 +278,21 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
                 _targetHealth.DamageFeedbacks?.PlayFeedbacks();
         }
 
-        private int previousHealth;
+        private int _previousHealth;
         public void OnGameEventHealth(int num, int health)
         {
             _levelManager._allPlayersCharacter.TryGetValue(num, out MSB_Character target);
             if (!target)
             {
-                Debug.LogWarning("DamageEvent target is null");
                 return;
             }
             _targetHealth = target.GetComponent<Health>();
             if (_targetHealth != null)
             {
-                previousHealth = _targetHealth.CurrentHealth;
-                amount = Mathf.Abs(health - previousHealth);
+                _previousHealth = _targetHealth.CurrentHealth;
+                amount = Mathf.Abs(health - _previousHealth);
                 _floatingMessageType =
-                    (previousHealth > health) ? FloatingMessageType.Damage : FloatingMessageType.Heal;
+                    (_previousHealth > health) ? FloatingMessageType.Damage : FloatingMessageType.Heal;
                 
                 FloatingMessageEvent.Trigger(num, _floatingMessageType, amount);
                 _targetHealth.ChangeHealth(health);
@@ -317,17 +301,12 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         
         public void OnGameEventItem(int type, int num, int action)
         {
-            Item item;
-            //Debug.LogWarning("Item event called");
-            //Debug.Log("OnEventItem : " + type +", " + num + "," + action);
+#if LEVMANAGER_LOG_ON
+            Debug.LogFormat("Item num {0}, Type : {1},Action : {2}", num, type, action);
+#endif
 
-            Debug.LogWarning("Item List");
-            foreach (var i in _levelManager.Items)
-            {
-                Debug.LogWarning("item index : " + i.ItemIndex);
-            }
-
-            item = _levelManager.Items[num];
+            var item = _levelManager.Items[num];
+            
             if (action == 0)
             {
                 item.gameObject.SetActive(true);
@@ -336,14 +315,11 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
 
         public void OnGameEventKill(int from, int to, string option)
         {
-            Debug.LogWarning(to + " slained by " + from);
             _levelManager._allPlayersCharacter.TryGetValue(to, out MSB_Character target);
             if (target == null)
             {
-                Debug.LogError("Killed Character doesnt exist");
                 return;
             }
-            Debug.LogWarning(target.cUserData.userNick+" is dead");
             target.AbilityControl(true);
             var model = target.transform.GetChild(0);
             var outlineRenderer = model.transform.GetChild(1).GetComponentInChildren<SpriteRenderer>();
@@ -358,9 +334,7 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
             }
 
             outlineRenderer.material.SetColor("_Color", color);
-            //outlineRenderer.color = Color.white;
             _targetHealth = target.gameObject.GetComponent<Health>();
-            //target.gameObject.SetActive(false);
             if (_targetHealth != null)
             {
                 Debug.LogWarning("Access target health .kill");
@@ -375,10 +349,32 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
             
         }
 
+        const int GAMERESULTVIEW = 0;
+        const int ACHIEVEMENTVIEW = 1;
+        const int RESPAWNVIEW = 2;
         public void OnGameEventRespawn(int num, int time)
         {
+            MSB_GUIManager guiManager = MSB_GUIManager.Instance;
+            if (_levelManager.TargetPlayer.UserNum == num)
+            {
+                if (!guiManager.RespawnViewModel.gameObject.activeInHierarchy)
+                {
+                    guiManager.ViewActive(RESPAWNVIEW, true);
+                    guiManager.RespawnViewModel.Initialization(time-1);
+                }
+                guiManager.RespawnViewModel.PlayCountAnimation(time-1);
+            }
+
             if(time == 0)
+            {
+                if (_levelManager.TargetPlayer.UserNum == num)
+                {
+                    guiManager.ViewActive(RESPAWNVIEW, false);
+                    guiManager.CoverActive(false);
+                }
+
                 _levelManager.RespawnPlayer(num);
+            }
         }
     }
 
@@ -430,8 +426,12 @@ public class MSB_LevelManager : Singleton<MSB_LevelManager>
         this.gameObject.layer = LayerMask.NameToLayer("NoCollision");
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
-        //NetworkModule.GetInstance().
+        #if LEVMANAGER_LOG_ON
+        Debug.LogWarning("LevelManager disable");
+        #endif
+        _instance = null;
+        NetworkModule.GetInstance().SetOnEventGameEvent(null);
     }
 }

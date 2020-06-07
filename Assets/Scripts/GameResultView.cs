@@ -66,7 +66,7 @@ public class GameResultView : MonoBehaviour, MSB_View<GameResultViewData>
     {
 
         MSB_GUIManager guiManager = MSB_GUIManager.Instance;
-        guiManager.LoadLobbyScene();
+        AsyncSceneManager.LoadScene("Scenes/Lobby",false);
         guiManager.CoverActive(true);
         ApplyData(data);
         NextButton.onClick.AddListener(NextButtonClicked);
@@ -98,10 +98,10 @@ public class GameResultView : MonoBehaviour, MSB_View<GameResultViewData>
         RankBadge.SetNativeSize();
         Vector2 native = rt.sizeDelta;
         
-        // rescale with origin height;
+        // rescale by origin height;
         float ny = origin.y;
         float nx = native.x * origin.y / native.y;
-        RankBadge.rectTransform.sizeDelta = new Vector2(nx,ny);
+        rt.sizeDelta = new Vector2(nx,ny);
         
         RankDeltaImage.sprite = rankDelta >= 0 ? RankDeltaSprites[UP] : RankDeltaSprites[DOWN];
         RankDelta.text = Mathf.Abs(rankDelta).ToString();
