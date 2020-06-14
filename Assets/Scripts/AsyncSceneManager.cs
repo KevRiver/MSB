@@ -3,12 +3,19 @@ using UnityEngine.SceneManagement;
 
 public static class AsyncSceneManager
 {
-   private static AsyncOperation operation;
+   public static AsyncOperation operation;
 
-   public static void LoadScene(string sceneName, bool activation)
+   public static void AsyncLoad(string sceneName, bool activation)
    {
       operation = SceneManager.LoadSceneAsync(sceneName);
       operation.allowSceneActivation = activation;
+      
+      
+   }
+
+   public static void ActiveAfterOperationDone(AsyncOperation operation,GameObject obj)
+   {
+      
    }
 
    public static void ActivateScene()

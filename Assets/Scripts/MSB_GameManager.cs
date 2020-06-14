@@ -46,7 +46,7 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
         int alliesScore = (team == Team.Blue) ? blueScore : redScore;
         int enemyScore = (team == Team.Blue) ? redScore : blueScore;
         if (alliesScore == enemyScore)
-            message = "Draw";
+            message = "DRAW";
         else
         {
             message = alliesScore > enemyScore ? "VICTORY" : "DEFEAT";
@@ -113,8 +113,8 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
             MSB_GUIManager guiManager = MSB_GUIManager.Instance;
             guiManager.ViewActive(RESPAWNVIEW,false);
             guiManager.UIActive(false);
-            guiManager.GameResultViewModel.Initialize(data);
             guiManager.ViewActive(0, true);
+            guiManager.GameResultViewModel.Initialize(data);
         }
     }
 
@@ -165,8 +165,8 @@ public class MSB_GameManager : Singleton<MSB_GameManager>,
                 return;
             
             _guiManager.LoadingViewModel.PlayOutroAnimation();
-            _guiManager.MessageBox.gameObject.SetActive(true);
-            _guiManager.SmallMessageBox.gameObject.SetActive(true);
+            _guiManager.CountTextBox.gameObject.SetActive(true);
+            _guiManager.MissionTextBox.gameObject.SetActive(true);
         }
 
         public void OnGameEventScore(int blueKill, int blueDeath, int bluePoint, int redKill, int redDeath, int redPoint)

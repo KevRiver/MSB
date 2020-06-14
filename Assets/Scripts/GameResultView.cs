@@ -37,7 +37,6 @@ public class GameResultView : MonoBehaviour, MSB_View<GameResultViewData>
     
     [Header("Resource Cache")]
     public Sprite[] RankBadgeSprites;
-    public Sprite[] RankDeltaSprites;
 
     [Header("View Component Ref")]
     public GameObject Score;
@@ -45,31 +44,73 @@ public class GameResultView : MonoBehaviour, MSB_View<GameResultViewData>
     public Text RedScore;
     public Text Result;
     public Text Rank;
+    public int IntRankTemp;
+    public int IntRank;
     public Image RankPanel;
     public Image RankBadge;
     public Text RankDelta;
     public Image RankDeltaImage;
     public Button NextButton;
-    
+
+    private Animator _animator;
+    [Header("Animation Trigger")]
+    public string Trigger;
     private void NextButtonClicked()
     {
-        Debug.LogWarning("GameResultView NextButton Clicked");
         MSB_GUIManager guiManager = MSB_GUIManager.Instance;
-        guiManager.ViewActive(0,false);
-        guiManager.ViewActive(1, true);
-        guiManager.SetCover(Color.black, 1f); 
+        StartCoroutine(ViewTransition());
     }
 
-
+    private IEnumerator ViewTransition()
+    {
+        MSB_GUIManager guiManager = MSB_GUIManager.Instance;
+        yield return StartCoroutine(guiManager.SecondCoverFadeIn(1.0f));
+        guiManager.ViewActive(1, true);
+        guiManager.ViewActive(0,false);
+    }
 
     public void Initialize(GameResultViewData data)
     {
-
+        StartCoroutine(AsyncLoadScene("Scenes/Lobby"));
         MSB_GUIManager guiManager = MSB_GUIManager.Instance;
-        AsyncSceneManager.LoadScene("Scenes/Lobby",false);
         guiManager.CoverActive(true);
         ApplyData(data);
+        _animator = GetComponent<Animator>();
+        _animator.SetTrigger(Trigger);
         NextButton.onClick.AddListener(NextButtonClicked);
+    }
+
+    public void StartScoreChange()
+    {
+        StartCoroutine(ScoreChange());
+    }
+
+    private IEnumerator ScoreChange()
+    {
+        // IntRank : savedRank / IntRankTemp : changedRank
+        int sign = IntRank - IntRankTemp > 0 ? -1 : 1;
+        while (IntRank != IntRankTemp)
+        {
+            IntRank += sign;
+            Rank.text = IntRank.ToString();
+            yield return null;
+        }
+    }
+
+    IEnumerator AsyncLoadScene(string sceneName)
+    {
+        AsyncSceneManager.operation = SceneManager.LoadSceneAsync(sceneName);
+        AsyncOperation ao = AsyncSceneManager.operation;
+        ao.allowSceneActivation = false;
+        while (!ao.isDone)
+        {
+            if (ao.progress >= 0.9f)
+            {
+                break;
+            }
+            yield return null;
+        }
+        NextButton.gameObject.SetActive(true);
     }
 
     private readonly Func<int, int> BadgeIndex = rank =>
@@ -82,9 +123,11 @@ public class GameResultView : MonoBehaviour, MSB_View<GameResultViewData>
     {
         int blueScore = data._blueScore;
         int redScore = data._redScore;
-        int rank = data._rank;
-        int rankDelta = rank - data._savedRank;
-        int badgeIndex = BadgeIndex(rank);
+        int rank = data._savedRank;
+        IntRankTemp = data._rank;
+        IntRank = data._savedRank;
+        int rankDelta = IntRankTemp - data._savedRank;
+        int badgeIndex = BadgeIndex(data._rank);
         string result = data._result;
         Vector2 origin = RankBadge.rectTransform.sizeDelta;
         BlueScore.text = blueScore.ToString();
@@ -102,8 +145,13 @@ public class GameResultView : MonoBehaviour, MSB_View<GameResultViewData>
         float ny = origin.y;
         float nx = native.x * origin.y / native.y;
         rt.sizeDelta = new Vector2(nx,ny);
-        
-        RankDeltaImage.sprite = rankDelta >= 0 ? RankDeltaSprites[UP] : RankDeltaSprites[DOWN];
+
+        RectTransform rankDeltaRectTransform = RankDeltaImage.rectTransform;
+        if (rankDelta < 0)
+        {
+            rankDeltaRectTransform.Rotate(Vector3.right, 180f);
+            RankDelta.color = new Color(255f / 255f, 75f / 255f, 0f);
+        }
         RankDelta.text = Mathf.Abs(rankDelta).ToString();
     }
 }

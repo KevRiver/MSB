@@ -87,7 +87,7 @@ public class LoadingView : MonoBehaviour,MSB_View<LoadingViewData>
         }
 #endif
 
-        int playerIndex = 0;
+        int playerIndex = bluePlayers.Count > 1 ? 0 : 1;
         foreach (var player in bluePlayers)
         {
             BlueFrames[playerIndex].gameObject.SetActive(true);
@@ -97,6 +97,7 @@ public class LoadingView : MonoBehaviour,MSB_View<LoadingViewData>
             RectTransform rt = BluePlayerPortraits[playerIndex].rectTransform;
             Image image = BluePlayerPortraits[playerIndex];
             ResizePlayerPortrait(sprite, ref image, ref rt);
+            ++playerIndex;
         }
        
         // Repositioning frames
@@ -111,7 +112,7 @@ public class LoadingView : MonoBehaviour,MSB_View<LoadingViewData>
             rt.localPosition = new Vector3(px - p * d, origin.y, origin.z);
         }
 
-        playerIndex = 0;
+        playerIndex = bluePlayers.Count > 1 ? 0 : 1;
         foreach (var player in redPlayers)
         {
             RedFrames[playerIndex].gameObject.SetActive(true);
@@ -121,6 +122,7 @@ public class LoadingView : MonoBehaviour,MSB_View<LoadingViewData>
             RectTransform rt = RedPlayerPortraits[playerIndex].rectTransform;
             Image image = RedPlayerPortraits[playerIndex];
             ResizePlayerPortrait(sprite, ref image, ref rt);
+            ++playerIndex;
         }
         
         px = _redCenter.x - (portraits / 2) * d;
