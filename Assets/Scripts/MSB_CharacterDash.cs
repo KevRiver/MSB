@@ -222,7 +222,7 @@ public class MSB_CharacterDash : CharacterAbility
             // we initialize our various counters and checks
             _startTime = Time.time;
             _dashEndedNaturally = false;
-            _initialPosition = this.transform.position;
+            _initialPosition = transform.position;
             _distanceTraveled = 0;
             _shouldKeepDashing = true;
             _cooldownTimeStamp = Time.time + DashCooldown;
@@ -268,14 +268,14 @@ public class MSB_CharacterDash : CharacterAbility
         /// <returns></returns>
         private Vector2 Deg2Vec2(float z, float sx)
         {
-	        Debug.LogWarning("Deg2Vec2 z : " + z + " sx : " + sx);
+	        //Debug.LogWarning("Deg2Vec2 z : " + z + " sx : " + sx);
 	        var rad = z * Mathf.Deg2Rad;
 	        var cz = Mathf.Cos(rad);
 	        var sz = Mathf.Sin(rad);
 	        sx = sx < 0 ? -1 : 1;
 	        cz *= sx;
 	        sz *= sx;
-	        Debug.LogWarning("Dash Direction : " + "( " + cz*sx + ", " + sz + ")");
+	        //Debug.LogWarning("Dash Direction : " + "( " + cz*sx + ", " + sz + ")");
 	        return new Vector2(cz,sz);
         }
 
@@ -310,10 +310,10 @@ public class MSB_CharacterDash : CharacterAbility
 		/// </summary>
 		protected virtual IEnumerator Dash()
 		{
-			if (_rcReciever != null)
-				_rcReciever.StopMoveSync();
-			
 			EnableDamageArea();
+			// if characteris remote don't move character
+			if (_rcReciever != null)
+				yield return null;
 			
 			// if the character is not in a position where it can move freely, we do nothing.
             if ( !AbilityPermitted
@@ -362,10 +362,6 @@ public class MSB_CharacterDash : CharacterAbility
 			}
             StopDash();
             DisableDamageArea();
-
-            if(_rcReciever!=null)
-	            _rcReciever.StartMoveSync();
-            
 		}
 
         /// <summary>

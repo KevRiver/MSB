@@ -890,6 +890,13 @@ MonoBehaviour:
     Physics2DPushForce: 2
     DrawRaycastsGizmos: 1
     DisplayWarnings: 1
+  IsRemote: 0
+  PositionLimitLeft: 0
+  PositionLimitRight: 0
+  PositionLimitBelow: 0
+  PositionLimitAbove: 0
+  ContactWithVectorPad: 0
+  ContactVectorPadForce: {x: 0, y: 0}
   PlatformMask:
     serializedVersion: 2
     m_Bits: 256
@@ -1275,8 +1282,8 @@ MonoBehaviour:
   AbilityStartFeedbacks: {fileID: 1440276561127452793}
   AbilityStopFeedbacks: {fileID: 0}
   AbilityPermitted: 0
-  DashDistance: 8
-  DashForce: 35
+  DashDistance: 5
+  DashForce: 20
   ResetForcesOnExit: 0
   MinimumInputThreshold: 0.1
   FlipCharacterIfNeeded: 1
