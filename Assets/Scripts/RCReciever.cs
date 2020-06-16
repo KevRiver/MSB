@@ -61,6 +61,8 @@ public class RCReciever : MonoBehaviour, MMEventListener<MMGameEvent>
         characterModel = character.transform.GetChild(0);
         weaponAttachment = characterModel.GetChild(0);
         _aimIndicator = weaponAttachment.GetChild(0);
+        if(!(_aimIndicator = weaponAttachment.GetChild(0)))
+            _aimIndicator.gameObject.SetActive(false);
         weapon = weaponAttachment.GetComponentInChildren<Weapon>();
         _ability = GetComponent<MSB_CharacterDash>();
 
@@ -70,9 +72,6 @@ public class RCReciever : MonoBehaviour, MMEventListener<MMGameEvent>
         NetworkModule.GetInstance().AddOnEventGameUserSync(new OnGameUserSync(this));
 
         isInitialized = true;
-
-        if (_aimIndicator != null)
-            _aimIndicator.gameObject.SetActive(false);
     }
 
     private enum MSBCollision

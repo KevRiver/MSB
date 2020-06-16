@@ -1282,8 +1282,8 @@ MonoBehaviour:
   AbilityStartFeedbacks: {fileID: 1440276561127452793}
   AbilityStopFeedbacks: {fileID: 0}
   AbilityPermitted: 0
-  DashDistance: 5
-  DashForce: 20
+  DashDistance: 6.5
+  DashForce: 30
   ResetForcesOnExit: 0
   MinimumInputThreshold: 0.1
   FlipCharacterIfNeeded: 1
