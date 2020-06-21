@@ -709,6 +709,13 @@ MonoBehaviour:
     Physics2DPushForce: 2
     DrawRaycastsGizmos: 1
     DisplayWarnings: 1
+  IsRemote: 0
+  PositionLimitLeft: 0
+  PositionLimitRight: 0
+  PositionLimitBelow: 0
+  PositionLimitAbove: 0
+  ContactWithVectorPad: 0
+  ContactVectorPadForce: {x: 0, y: 0}
   PlatformMask:
     serializedVersion: 2
     m_Bits: 256
@@ -1341,6 +1348,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: AimIndicator
       objectReference: {fileID: 0}
+    - target: {fileID: 8500125456443575231, guid: 73aaa0efb92c45640b2d91db9cbde46c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 641636922648853620, guid: 73aaa0efb92c45640b2d91db9cbde46c,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1410,6 +1422,11 @@ PrefabInstance:
         type: 3}
       propertyPath: buffer
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1029982620259146164, guid: 73aaa0efb92c45640b2d91db9cbde46c,
+        type: 3}
+      propertyPath: generatesOnStart
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 558177693664805386, guid: 73aaa0efb92c45640b2d91db9cbde46c,
         type: 3}

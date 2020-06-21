@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define GUI_LOG_ON
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,15 +8,14 @@ using MoreMountains.Tools;
 using UnityEngine.UI;
 using MSBNetwork;
 using Newtonsoft.Json.Linq;
+using UnityEngine.SceneManagement;
 using UnityEngine.SocialPlatforms.Impl;
 
 public enum MessageBoxStyles
 {
-    Plain,
-    Blue,
-    Red,
-    Green,
-    Small
+    Count,
+    Mission,
+    Alarm
 }
 public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEvent>
 {
@@ -28,26 +28,32 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
 
     public Canvas rootCanvas;
     private CanvasScaler scaler;
+    
     public Text Timer;
-    public Image TimerImage;
     private bool _timeStop;
     private int _min;
     private string _minString;
     private int _sec;
     private string _secString;
+    
     public Text ScoreSign;
     public Text BlueScore, RedScore;
-    public Text MessageBox;
-    public Text MessageBox1;
-    public Text MessageBox2;
-    public Text MessageBox3;
-    public Text MessageBoxSmall;
+    public Text CountTextBox;
+    public Text MissionTextBox;
+    public Text AlarmTextBox;
     public Text YoureBlueTeam;
     public Text YoureRedTeam;
     public Image Joystick;
     public Image AttackButton;
     public Image Cover;
-
+    public Image SecondCover;
+    public LoadingView LoadingViewModel;
+    public GameResultView GameResultViewModel;
+    public AchievementView AchievementViewModel;
+    public RespawnView RespawnViewModel;
+    
+    public GameObject[] _viewContainer;
+    
     private List<GameObject> _uiContainer;
     private List<Text> _messageBoxes;
 
@@ -75,9 +81,11 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
     }
     private void Initialization()
     {
-        //Debug.LogWarning("GUIManager  Init");
+        // Init Score
         BlueScore.text = "0";
         RedScore.text = "0";
+        
+        // Init Timer
         _min = initialTime / 60;
         _minString = (_min >= 10) ? _min.ToString() : "0" + _min.ToString();
         _sec = initialTime % 60;
@@ -86,21 +94,44 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
         _timeStop = false;
 
         _messageBoxes = new List<Text>();
-        _messageBoxes.Add(MessageBox);
-        _messageBoxes.Add(MessageBox1);
-        _messageBoxes.Add(MessageBox2);
-        _messageBoxes.Add(MessageBox3);
-        _messageBoxes.Add(MessageBoxSmall);
+        _messageBoxes.Add(CountTextBox);
+        _messageBoxes.Add(MissionTextBox);
+        _messageBoxes.Add(AlarmTextBox);
         
-        // MessageBox를 제외한 UI 들을 저장
         _uiContainer = new List<GameObject>();
         _uiContainer.Add(Timer.gameObject);
-        _uiContainer.Add(TimerImage.gameObject);
         _uiContainer.Add(ScoreSign.gameObject);
         _uiContainer.Add(Joystick.gameObject);
         _uiContainer.Add(AttackButton.gameObject);
+    }
 
-       
+    public void CoverActive(bool active)
+    {
+        Cover.gameObject.SetActive(active);
+    }
+    
+    
+    public IEnumerator SecondCoverFadeIn(float duration)
+    {
+        if(!SecondCover.gameObject.activeInHierarchy)
+            SecondCover.gameObject.SetActive(true);
+        
+        float progress = 0;
+        Color color = SecondCover.color;
+        while (progress / duration < 1)
+        {
+            progress += Time.deltaTime;
+            color.a = Mathf.Lerp(0f, 1.0f, progress / duration);
+            SecondCover.color = color;
+            yield return null;
+        }
+    }
+
+    public void SetCover( Color color, float alpha)
+    {
+        Color colorApply = color;
+        colorApply.a = alpha;
+        Cover.color = colorApply;
     }
 
     private float DetermineScreenMultiplier()
@@ -131,13 +162,7 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
         joystickRt.SetLeft(-(screenWidth/(4*multiplier)));
         joystickRt.SetBottom(-(screenHeight * (0.8f / multiplier)));
     }
-
-    public void OnGameOver()
-    {
-        //_timeStop = true;
-        UIActive(false);
-    }
-
+    
     public void UIActive(bool active)
     {
         foreach (var ui in _uiContainer)
@@ -145,6 +170,14 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
             ui.SetActive(active);
         }
     }
+
+    public void ViewActive(int viewIndex,bool active)
+    {
+        if (viewIndex >= _viewContainer.Length)
+            return;
+        _viewContainer[viewIndex].SetActive(active);
+    }
+
     public void UpdateScoreSign(int b, int r)
     {
         BlueScore.text = b.ToString();
@@ -168,9 +201,14 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
         Timer.color = color;
     }
 
+    public void ActiveMessageBox(bool activate)
+    {
+        CountTextBox.gameObject.SetActive(activate);
+    }
+
     public void UpdateMessageBox(int _seq)
     {
-        MessageBox.text = msgSequence[_seq];
+        CountTextBox.text = msgSequence[_seq];
         if (_seq == 0)
             Invoke("MessageBoxReset", 0.5f);
     }
@@ -182,10 +220,10 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
     /// <param name="duration"> -1 메세지 출력 유지 / 메세지 출력 유지 시간</param>
     public void UpdateMessageBox(string message, float duration)
     {
-        if (!MessageBox.enabled)
-            MessageBox.enabled = true;
+        if (!CountTextBox.enabled)
+            CountTextBox.enabled = true;
         
-        MessageBox.text = message;
+        CountTextBox.text = message;
         if (duration > 0)
             Invoke("MessageBoxReset",duration);
     }
@@ -193,18 +231,20 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
     public void UpdateMessageBox(MessageBoxStyles style, string message, float duration)
     {
         Text messagebox = _messageBoxes[(int) style];
-        if (!messagebox.enabled)
-            messagebox.enabled = true;
+        if (!messagebox.gameObject.activeInHierarchy)
+            messagebox.gameObject.SetActive(true);
 
         messagebox.text = message;
         if (duration > 0)
-            StartCoroutine(MessageBoxReset(style,duration));
+            StartCoroutine(MessageBoxReset(style, duration));
 
     }
 
+    public delegate void TextBoxDelegate(MessageBoxStyles style, string msg);
+
     private void MessageBoxReset()
     {
-        MessageBox.text = "";
+        CountTextBox.text = "";
     }
 
     private void MessageBoxReset(MessageBoxStyles type)
@@ -241,6 +281,7 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
     private void OnDisable()
     {
         this.MMEventStopListening();
+        _instance = null;
     }
 
     public void OnMMEvent(MMGameEvent eventType)
@@ -250,12 +291,12 @@ public class MSB_GUIManager : Singleton<MSB_GUIManager>,MMEventListener<MMGameEv
             case "GameStart":
                 Cover.gameObject.SetActive(false);
                 SetPlayerTeamSign(MSB_LevelManager.Instance.TargetPlayer.team);
-                MessageBoxReset(MessageBoxStyles.Small);
+                MissionTextBox.text = "";
                 break;
             
             case "HurryUp":
                 ChangeTimerColor(Color.red);
-                UpdateMessageBox(MessageBoxStyles.Small,"Game over in 10 seconds",1.5f);
+                UpdateMessageBox(MessageBoxStyles.Alarm,"GAME ENDS AFTER 10 SECONDS!",1.5f);
                 break;
             
             case "GameOver":

@@ -12827,7 +12827,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1714618960}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.4301075
+  m_Size: 0.43010756
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -17276,13 +17276,13 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 5b6b0b5d78f43774b84b0a0645f3951f, type: 3}
+    m_Font: {fileID: 12800000, guid: da688f49ff05b174a8116da2f160f26e, type: 3}
     m_FontSize: 46
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 0
     m_MaxSize: 100
-    m_Alignment: 2
+    m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0

@@ -1,4 +1,4 @@
-﻿#define RCRECIEVER_LOG_ON
+﻿//#define RCRECIEVER_LOG_ON
 //#define CLIENT_POSITION_MODIFY
 using System;
 using System.Collections;
@@ -61,6 +61,8 @@ public class RCReciever : MonoBehaviour, MMEventListener<MMGameEvent>
         characterModel = character.transform.GetChild(0);
         weaponAttachment = characterModel.GetChild(0);
         _aimIndicator = weaponAttachment.GetChild(0);
+        if(!(_aimIndicator = weaponAttachment.GetChild(0)))
+            _aimIndicator.gameObject.SetActive(false);
         weapon = weaponAttachment.GetComponentInChildren<Weapon>();
         _ability = GetComponent<MSB_CharacterDash>();
 
@@ -70,9 +72,6 @@ public class RCReciever : MonoBehaviour, MMEventListener<MMGameEvent>
         NetworkModule.GetInstance().AddOnEventGameUserSync(new OnGameUserSync(this));
 
         isInitialized = true;
-
-        if (_aimIndicator != null)
-            _aimIndicator.gameObject.SetActive(false);
     }
 
     private enum MSBCollision
@@ -192,7 +191,6 @@ public class RCReciever : MonoBehaviour, MMEventListener<MMGameEvent>
                 initialV.y = vel.y;
                 _positionFollower.SetTarget(initialP,initialV);
                 _positionFollower.SetFollower(initialP,initialV);
-                //character.SetChildrenActive(true);
                 yield return null;
             }
             else
@@ -245,8 +243,6 @@ public class RCReciever : MonoBehaviour, MMEventListener<MMGameEvent>
 
         public OnGameUserMove(RCReciever rc)
         {
-            Debug.Log("OnGameUserMove Constructor called");
-            //Debug.LogWarning(rc.gameObject.name);
             _rc = rc;
             _userNum = _rc.userNum;
         }

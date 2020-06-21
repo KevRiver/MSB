@@ -126,10 +126,10 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
         _stringBuilder.Clear();
     }
 
-    public float ImmediatePositionDataSendThreshold = 256f; // 15^2
+    public const float ImmediatePositionDataSendThreshold = 255f; // 15^2
     IEnumerator RequestUserMove()
     {
-        int frameForSendCnt = 3;
+        int frameForSendCnt = 4;
         CorgiControllerState controllerState = _controller.State;
         // if character is active in hierachy, send message
         while (true)
@@ -139,29 +139,27 @@ public class RCSender : Singleton<RCSender>, MMEventListener<MMGameEvent>
             {
                 // if character gameobject is not active in hierachy don't send data
                 yield return null;
+                continue;
             }
-            else
-            {
-                bool controllerColliding = (controllerState.IsCollidingBelow || controllerState.IsCollidingAbove ||
+            bool controllerColliding = (controllerState.IsCollidingBelow || controllerState.IsCollidingAbove ||
                                             controllerState.IsCollidingLeft || controllerState.IsCollidingRight);
-                SendMoveData(_room);
-                if (controllerColliding)
-                {
+            SendMoveData(_room);
+            if (controllerColliding)
+            {
 #if RCSENDER_LOG_ON && UNITY_EDITOR
                     Debug.Log("RCSender::colliding");
 #endif
-                    // if controller colliding with object, immediately send next two frames' position data
+                // if controller colliding with object, immediately send next frames' position data
                     sendDelay = 0f;
-                    for (int i = frameForSendCnt; i > 0 && character.gameObject.activeInHierarchy; i--)
-                    {
-                        SendMoveData(_room);
-                        yield return null;
-                    }
+                for (int i = frameForSendCnt; i > 0 && character.gameObject.activeInHierarchy; i--)
+                {
+                    SendMoveData(_room);
+                    yield return null;
                 }
-                sendDelay = _controller.Speed.sqrMagnitude > ImmediatePositionDataSendThreshold ? 0.033f : 0.1f;
-                yield return new WaitForSeconds(sendDelay);
             }
-        }
+            sendDelay = _controller.Speed.sqrMagnitude >= ImmediatePositionDataSendThreshold ? 0.033f : 0.1f;
+            yield return new WaitForSeconds(sendDelay);
+            }
     }
 
     public void RequestUserSync()

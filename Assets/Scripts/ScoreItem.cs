@@ -20,7 +20,8 @@ public class ScoreItem : Item
         }
         ItemTakenFeedback?.PlayFeedbacks();
         if(!Target.IsRemote)
-            NetworkModule.GetInstance().RequestGameUserActionItem(Room, 0, ItemIndex);
+            NetworkModule.GetInstance().RequestGameUserActionItem(_room, 0, ItemIndex);
+        
         if (ScoreMessagePrefab != null)
         {
             float xOffset = UnityEngine.Random.Range(-1, 1);

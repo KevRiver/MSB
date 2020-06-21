@@ -8,7 +8,7 @@ using MSBNetwork;
 
 public class Item : MonoBehaviour
 {
-    protected int Room;
+    protected int _room;
     protected MSB_Character Target;
     public int ItemIndex;
     public float ItemSpawnDelay;
@@ -21,7 +21,7 @@ public class Item : MonoBehaviour
     // Start is called before the first frame update
     protected virtual  void Start()
     {
-        Room = GameInfo.Instance.room;
+        _room = GameInfo.Instance.room;
         ItemSpawnFeedback?.Initialization();
         ItemSpawnFeedback?.Initialization();
     }
@@ -36,7 +36,6 @@ public class Item : MonoBehaviour
         _circleCollider = GetComponentInParent<CircleCollider2D>();
         if (_circleCollider == null)
         {
-            Debug.LogWarning("Item.cs : circleCollider is null");
             return;
         }
 

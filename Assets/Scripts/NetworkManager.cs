@@ -1,10 +1,13 @@
-﻿using System.Collections;
+﻿#define NETMANAGER_LOG_ON
+using System;
+using System.Collections;
 using System.Collections.Generic;
-using MoreMountains.CorgiEngine;
+using System.Linq;
 using UnityEngine;
 using MoreMountains.Tools;
 using UnityEngine.SceneManagement;
 using MSBNetwork;
+using Newtonsoft.Json.Linq;
 
 public class NetworkManager : MonoBehaviour
 {
@@ -18,16 +21,13 @@ public class NetworkManager : MonoBehaviour
 
         void NetworkModule.OnGameMatchedListener.OnGameMatched(bool _result, int _room, string _message)
         {
-            Debug.LogWarning("OnGameMatched Called");
             lobbyButton.matchedLoading(_room);
-            Debug.LogWarning("RequestGameInfo");
         }
     }
     private class OnGameInfo : NetworkModule.OnGameInfoListener
     {
         void NetworkModule.OnGameInfoListener.OnGameInfo(bool _result, int _room, int _mode, LinkedList<UserData> _users, string _message)
         {
-            Debug.LogWarning("OnGameInfo Called");
             UnityMainThreadDispatcher.Instance().Enqueue(LoadScene(_mode, _room, _users));
         }
 
@@ -37,53 +37,84 @@ public class NetworkManager : MonoBehaviour
             GameInfo gameInfo = GameInfo.Instance;
             gameInfo.room = _room;
             gameInfo.mode = _mode;
+#if NETMANAGER_LOG_ON
+            Debug.LogFormat("GameInfo room :{0} mode :{1} created", gameInfo.room, gameInfo.mode);
+#endif
             foreach (UserData user in _users)
             {
                 PlayerInfo player = new PlayerInfo(_room, user.userNumber, user.userID, user.userNick, user.userWeapon, user.userSkin);
                 gameInfo.players.Add(player);
             }
-
-            foreach (var player in gameInfo.players)
-            {
-                Debug.LogWarning(player.number + " " + player.id);
-            }
+            
             // load play scene
             SceneManager.LoadSceneAsync("Scenes/PlayScene");
             yield return null;
         }
     }
+    /*
     private class OnGameStatus : NetworkModule.OnGameStatusListener
     {
-        public void OnGameEventCount(int count)
+        private MSB_GUIManager _guiManager;
+        public OnGameStatus()
         {
-            MSB_GUIManager.Instance.UpdateMessageBox(count);
-            if (count == 0)
-                MMGameEvent.Trigger("GameStart");
+            _guiManager = null;
         }
 
-        /*public void OnGameEventMessage(object _data)
+        public OnGameStatus(MSB_GUIManager guiManager)
         {
+            _guiManager = guiManager;
+        }
 
-        }*/
+        // 플레이어가 다 준비가 되면 서버에서 뿌려주는 이벤트
+        public void OnGameEventCount(int count)
+        {
+            Debug.LogWarning(count);
+            _guiManager.UpdateMessageBox(count);
+            if (count == 0)
+            {
+#if NETMANAGER_LOG_ON
+                Debug.LogWarning("GameStart Triggered");
+#endif
+                MMGameEvent.Trigger("GameStart");
+            }
+        }
 
         public void OnGameEventMessage(int type, string message)
         {
+            if (type == 2)
+            {
+                int medalIndex = Convert.ToInt32(message);
+                AchievementViewData data = new AchievementViewData(medalIndex);
+                _guiManager.AchievementViewModel.Initialize(data);
+            }
         }
 
         public void OnGameEventReady(string readyData)
         {
+            JArray jArray = JArray.Parse(readyData);
+            bool isAllPlayerReady = true;
+            foreach (var token in jArray.Children())
+            {
+                JObject o = (JObject) token;
+                var ready = o.Properties().Select(p=>p.Value).FirstOrDefault();
+                isAllPlayerReady &= (bool)ready;
+            }
 
+            if (!isAllPlayerReady)
+                return;
+            
+            _guiManager.LoadingViewModel.PlayOutroAnimation();
+            _guiManager.MessageBox.gameObject.SetActive(true);
+            _guiManager.SmallMessageBox.gameObject.SetActive(true);
         }
 
         public void OnGameEventScore(int blueKill, int blueDeath, int bluePoint, int redKill, int redDeath, int redPoint)
         {
             MSB_GameManager.Instance.ScoreUpdate(blueDeath, redDeath, bluePoint, redPoint);
-            Debug.LogWarning("Event Score - blue : " + bluePoint + " red : " + redPoint);
-
         }
         public void OnGameEventTime(int time)
         {
-            MSB_GUIManager.Instance.UpdateTimer(time);
+            _guiManager.UpdateTimer(time);
             
             if(time == 10)
                 MMGameEvent.Trigger("HurryUp");
@@ -91,6 +122,7 @@ public class NetworkManager : MonoBehaviour
                 MMGameEvent.Trigger("GameOver");
         }
     }
+    */
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
@@ -104,7 +136,7 @@ public class NetworkManager : MonoBehaviour
         gameMatchedListener = new OnGameMatched();
         _networkManager.AddOnEventGameQueue(gameMatchedListener);
         _networkManager.AddOnEventGameInfo(new OnGameInfo());
-        _networkManager.AddOnEventGameStatus(new OnGameStatus());
+        //_networkManager.AddOnEventGameStatus(new OnGameStatus());
     }
 
     // Update is called once per frame
