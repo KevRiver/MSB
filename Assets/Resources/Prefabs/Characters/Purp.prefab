@@ -1423,6 +1423,11 @@ PrefabInstance:
       propertyPath: buffer
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1029982620259146164, guid: 73aaa0efb92c45640b2d91db9cbde46c,
+        type: 3}
+      propertyPath: generatesOnStart
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 558177693664805386, guid: 73aaa0efb92c45640b2d91db9cbde46c,
         type: 3}
       propertyPath: m_Materials.Array.data[0]

@@ -1,4 +1,4 @@
-﻿//#define LOADING_VIEW_DEBUG
+﻿#define LOADING_VIEW_DEBUG
 
 using System;
 using System.Collections;
@@ -92,11 +92,19 @@ public class LoadingView : MonoBehaviour,MSB_View<LoadingViewData>
         {
             BlueFrames[playerIndex].gameObject.SetActive(true);
             string nick = player.nick;
-            Sprite sprite = PortraitsCache[player.weapon];
             BluePlayerNicks[playerIndex].text = nick;
-            RectTransform rt = BluePlayerPortraits[playerIndex].rectTransform;
+            
+            Sprite sprite = PortraitsCache[player.weapon];
             Image image = BluePlayerPortraits[playerIndex];
+            RectTransform rt = BluePlayerPortraits[playerIndex].rectTransform;
             ResizePlayerPortrait(sprite, ref image, ref rt);
+            
+            SpriteOutline spriteOutline = BluePlayerPortraits[playerIndex].GetComponent<SpriteOutline>();
+            if(!spriteOutline)Debug.LogWarning("Can't find SpriteOutline component in the gameobject");
+            else
+            {
+                spriteOutline.Regenerate();
+            }
             ++playerIndex;
         }
        
@@ -117,11 +125,19 @@ public class LoadingView : MonoBehaviour,MSB_View<LoadingViewData>
         {
             RedFrames[playerIndex].gameObject.SetActive(true);
             string nick = player.nick;
-            Sprite sprite = PortraitsCache[player.weapon];
             RedPlayerNicks[playerIndex].text = nick;
-            RectTransform rt = RedPlayerPortraits[playerIndex].rectTransform;
+            
+            Sprite sprite = PortraitsCache[player.weapon];
             Image image = RedPlayerPortraits[playerIndex];
+            RectTransform rt = RedPlayerPortraits[playerIndex].rectTransform;
             ResizePlayerPortrait(sprite, ref image, ref rt);
+
+            SpriteOutline spriteOutline = RedPlayerPortraits[playerIndex].GetComponent<SpriteOutline>();
+            if(!spriteOutline)Debug.LogWarning("Can't find SpriteOutline component in the gameobject");
+            else
+            {
+                spriteOutline.Regenerate();
+            }
             ++playerIndex;
         }
         
@@ -136,7 +152,7 @@ public class LoadingView : MonoBehaviour,MSB_View<LoadingViewData>
     }
 
     /// <summary>
-    /// 
+    /// Resizing Portrait
     /// </summary>
     /// <param name="sprite"> native sprite </param>
     /// <param name="portrait">portrait image </param>
@@ -144,17 +160,23 @@ public class LoadingView : MonoBehaviour,MSB_View<LoadingViewData>
     private void ResizePlayerPortrait(Sprite sprite,ref Image portrait, ref RectTransform rt)
     {
         Vector2 origin = rt.sizeDelta;
+#if LOADING_VIEW_DEBUG
+        Debug.LogWarning("ResizePlayerPortrait::origin : " + origin.x + " " + "origin.y");
+#endif
         portrait.sprite = sprite;
             
         portrait.SetNativeSize();
         Vector2 native = rt.sizeDelta;
+#if LOADING_VIEW_DEBUG
+        Debug.LogWarning("ResizePlayerPortrait::native : " + native.x + " " + "native.y");
+#endif
         // rescale by height
-        float nx = origin.x * origin.y / native.y;
-        float ny = origin.y;
+        float nx = origin.x;
+        float ny = native.y * origin.x / native.x;
         if (native.x > native.y)
         {
-            nx = origin.x;
-            ny = origin.y * origin.x / native.x;
+            nx = native.x * origin.y / native.y;
+            ny = origin.y;
         }
         rt.sizeDelta = new Vector2(nx,ny);
     }
