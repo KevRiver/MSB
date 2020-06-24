@@ -10,7 +10,7 @@ using Random = System.Random;
 
 public class AutoConnector : MonoBehaviour, IPointerClickHandler
 {
-    private static AutoConnector instance = null;
+    public static AutoConnector instance = null;
 
 	NetworkModule networkModule;
 
@@ -74,7 +74,7 @@ public class AutoConnector : MonoBehaviour, IPointerClickHandler
         
         AutoConnectorText.SetActive(false);
         Invoke("showMessage", 1);
-        Invoke("startConnector", 3);
+        // Invoke("startConnector", 3);
 	}
 
     public static void OnConnectResult(bool result, string msg)
@@ -108,8 +108,14 @@ public class AutoConnector : MonoBehaviour, IPointerClickHandler
 		AutoConnectorText.GetComponent<Text>().text = "서버 연결중입니다";
 	}
 	
+	public void startConnectorLazy()
+	{
+		Invoke("startConnector", 2);
+	}
+	
 	public void startConnector()
 	{
+		Debug.LogWarning("SERVER LOGIN START");
 		if (!SERVER_CONNECTED)
 		{
 			try
