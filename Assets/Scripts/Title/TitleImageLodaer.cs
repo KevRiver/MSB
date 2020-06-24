@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 public class TitleImageLodaer : MonoBehaviour
 {
+	public GameObject videoView;
+	public VideoPlayer videoPlayer;
 	public GameObject logoObject;
 	public GameObject backgroundObject;
 	public GameObject titleBackground;
@@ -19,13 +22,46 @@ public class TitleImageLodaer : MonoBehaviour
 		//canvasObject = gameObject;
 		rectTransform = backgroundObject.GetComponent<RectTransform>();
 		logoObject.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
-		loadBackgroundSprite();
-	}
+		
+		PlayerPrefs.SetInt("IntroVideo", PlayerPrefs.GetInt("IntroVideo",0));
+
+		if (PlayerPrefs.GetInt("IntroVideo") == 0)
+		{
+			Debug.Log("Detected It's first play : playing intro video");
+			videoView.SetActive(true);
+			videoPlayer.loopPointReached += OnVideoPlayEnd;
+			videoPlayer.prepareCompleted += OnVideoPrepared;
+			videoPlayer.Prepare();
+		}
+		else
+		{
+			OnVideoPlayEnd(null);
+		}
+    }
 
     // Update is called once per frame
     void Update()
     {
 	}
+
+    void OnVideoPrepared(VideoPlayer videoPlayer)
+    {
+	    Invoke("OnVideoPlayStart", 0);
+    }
+
+    void OnVideoPlayStart()
+    {
+	    videoPlayer.Play();
+	    PlayerPrefs.SetInt("IntroVideo", 1);
+	    PlayerPrefs.Save();
+    }
+
+    void OnVideoPlayEnd(VideoPlayer videoPlayer)
+    {
+	    videoView.SetActive(false);
+	    loadBackgroundSprite();
+	    AutoConnector.instance.startConnectorLazy();
+    }
 
 	public void loadBackgroundSprite()
 	{

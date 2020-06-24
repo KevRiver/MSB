@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8435300475479817875}
   - component: {fileID: 1719785530886626598}
   - component: {fileID: 2216770310841808618}
+  - component: {fileID: 1638280872633230887}
   m_Layer: 0
   m_Name: HitFeedBack
   m_TagString: Untagged
@@ -46,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Feedbacks:
   - {fileID: 2216770310841808618}
+  - {fileID: 1638280872633230887}
   InitializationMode: 2
   DebugActive: 0
 --- !u!114 &2216770310841808618
@@ -75,6 +77,30 @@ MonoBehaviour:
   ParticlesPrefab: {fileID: 19839084, guid: a67ce15f50785584d97708026f874d99, type: 3}
   InstantiateParticlesPosition: {fileID: 0}
   NestParticles: 0
+--- !u!114 &1638280872633230887
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4226656093913342089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1503d540d467c874eb716ca9a18b8bc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Active: 1
+  Label: Corgi Engine Sound
+  Chance: 100
+  Timing:
+    InitialDelay: 0
+    CooldownDuration: 0
+    NumberOfRepeats: 0
+    RepeatForever: 0
+    DelayBetweenRepeats: 1
+  DebugActive: 0
+  SoundFX: {fileID: 8300000, guid: 7b69c98bde65c6f4a9eb78fc3a5043eb, type: 3}
+  Loop: 0
 --- !u!1 &7729972403799780788
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,14 +12,21 @@ public class KillMessageHandler : MonoBehaviour
 {
     public GameObject messageBackground;
     public GameObject messageUserA;
+    public GameObject messageUserABack;
+    public GameObject messageUserABorder;
     public GameObject messageUserAImage;
     public GameObject messageUserB;
+    public GameObject messageUserBBack;
+    public GameObject messageUserBBorder;
     public GameObject messageUserBImage;
     public GameObject messageText;
 
     public Sprite purpHead;
+    public Sprite purpDead;
     public Sprite jamonHead;
+    public Sprite jamonDead;
     public Sprite titanyanHead;
+    public Sprite titanyanDead;
 
     private class OnGameStatus : NetworkModule.OnGameStatusListener
     {
@@ -67,9 +74,13 @@ public class KillMessageHandler : MonoBehaviour
 
         messageBackground.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
         messageUserA.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
+        messageUserABack.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
+        messageUserABorder.GetComponent<Image>().color = new Color(0.2f, 0.2f, 0.2f, 0f);
         messageUserAImage.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
         messageUserAImage.GetComponent<Image>().preserveAspect = true;
         messageUserB.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
+        messageUserBBack.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
+        messageUserBBorder.GetComponent<Image>().color = new Color(0.2f, 0.2f, 0.2f, 0f);
         messageUserBImage.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
         messageUserBImage.GetComponent<Image>().preserveAspect = true;
         messageText.GetComponent<Text>().color = new Color(1f, 1f, 1f, 0f);
@@ -108,9 +119,66 @@ public class KillMessageHandler : MonoBehaviour
             displayMessage = deadUser.cUserData.userNick + " 낙사!";
         }
         messageBackground.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
-        messageUserA.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.75f);
-        messageUserB.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.75f);
-        messageText.GetComponent<Text>().color = new Color(1f, 1f, 1f, 1f);
+        messageUserA.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
+        messageUserABack.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
+        messageUserABorder.GetComponent<Image>().color = new Color(0.2f, 0.2f, 0.2f, 1f);
+        messageUserB.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
+        messageUserBBack.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
+        messageUserBBorder.GetComponent<Image>().color = new Color(0.2f, 0.2f, 0.2f, 1f);
+        /*
+        foreach (var player in MSB_LevelManager.Instance.Players)
+        {
+            if (player.cUserData.userNumber == killMakerIndex)
+            {
+                if (player.team == MSB_GameManager.Team.Blue)
+                {
+                    messageUserA.GetComponent<Image>().color = new Color(0f, 0.5f, 1f, 1f);
+                    messageUserABack.GetComponent<Image>().color = new Color(0f, 0.5f, 1f, 1f);
+                }
+                if (player.team == MSB_GameManager.Team.Red)
+                {
+                    messageUserA.GetComponent<Image>().color = new Color(1f, 0f, 0f, 1f);
+                    messageUserABack.GetComponent<Image>().color = new Color(1f, 0f, 0f, 1f);
+                }
+            }
+            if (player.cUserData.userNumber == killTargetIndex)
+            {
+                if (player.team == MSB_GameManager.Team.Blue)
+                {
+                    messageUserB.GetComponent<Image>().color = new Color(0f, 0.5f, 1f, 1f);
+                    messageUserBBack.GetComponent<Image>().color = new Color(0f, 0.5f, 1f, 1f);
+                }
+                if (player.team == MSB_GameManager.Team.Red)
+                {
+                    messageUserB.GetComponent<Image>().color = new Color(1f, 0f, 0f, 1f);
+                    messageUserBBack.GetComponent<Image>().color = new Color(1f, 0f, 0f, 1f);
+                }
+                break;
+            }
+        }
+        */
+        if (killUser.team == MSB_GameManager.Team.Blue)
+        {
+            messageUserA.GetComponent<Image>().color = new Color(0f, 0.5f, 1f, 1f);
+            messageUserABack.GetComponent<Image>().color = new Color(0f, 0.5f, 1f, 1f);
+        }
+        if (killUser.team == MSB_GameManager.Team.Red)
+        {
+            messageUserA.GetComponent<Image>().color = new Color(1f, 0f, 0f, 1f);
+            messageUserABack.GetComponent<Image>().color = new Color(1f, 0f, 0f, 1f);
+        }
+        if (deadUser.team == MSB_GameManager.Team.Blue)
+        {
+            messageUserB.GetComponent<Image>().color = new Color(0f, 0.5f, 1f, 1f);
+            messageUserBBack.GetComponent<Image>().color = new Color(0f, 0.5f, 1f, 1f);
+        }
+        if (deadUser.team == MSB_GameManager.Team.Red)
+        {
+            messageUserB.GetComponent<Image>().color = new Color(1f, 0f, 0f, 1f);
+            messageUserBBack.GetComponent<Image>().color = new Color(1f, 0f, 0f, 1f);
+        }
+        
+        messageText.GetComponent<Text>().color = new Color(0f, 0f, 0f, 1f);
         if (killUser.cUserData.userWeapon == 0) // PURP
         {
             messageUserAImage.GetComponent<Image>().sprite = purpHead;
@@ -125,22 +193,26 @@ public class KillMessageHandler : MonoBehaviour
         messageUserAImage.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
         if (deadUser.cUserData.userWeapon == 0)
         {
-            messageUserBImage.GetComponent<Image>().sprite = purpHead;
+            messageUserBImage.GetComponent<Image>().sprite = purpDead;
         } else if (deadUser.cUserData.userWeapon == 1)
         {
-            messageUserBImage.GetComponent<Image>().sprite = titanyanHead;
+            messageUserBImage.GetComponent<Image>().sprite = titanyanDead;
         }
         else
         {
-            messageUserBImage.GetComponent<Image>().sprite = jamonHead;
+            messageUserBImage.GetComponent<Image>().sprite = jamonDead;
         }
         messageUserBImage.GetComponent<Image>().color = new Color(1f, 1f, 1f, 1f);
         messageText.GetComponent<Text>().text = displayMessage;
 
         StartCoroutine(fadeObject(false, messageBackground.GetComponent<Image>(), 1f, 1f));
         StartCoroutine(fadeObject(false, messageUserA.GetComponent<Image>(), 1f, 1f));
+        StartCoroutine(fadeObject(false, messageUserABack.GetComponent<Image>(), 1f, 1f));
+        StartCoroutine(fadeObject(false, messageUserABorder.GetComponent<Image>(), 1f, 1f));
         StartCoroutine(fadeObject(false, messageUserAImage.GetComponent<Image>(), 1f, 1f));
         StartCoroutine(fadeObject(false, messageUserB.GetComponent<Image>(), 1f, 1f));
+        StartCoroutine(fadeObject(false, messageUserBBack.GetComponent<Image>(), 1f, 1f));
+        StartCoroutine(fadeObject(false, messageUserBBorder.GetComponent<Image>(), 1f, 1f));
         StartCoroutine(fadeObject(false, messageUserBImage.GetComponent<Image>(), 1f, 1f));
         StartCoroutine(fadeObject(false, messageText.GetComponent<Text>(), 1f, 1f));
     }
