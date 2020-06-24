@@ -64,7 +64,7 @@ Main Server Developer
 Main Graphic Designer  
 Main Art Illustrator  
 
-### [OChangHan](https://github.com/OChangHan)
+### [OChangHan](https://github.com/PlugDev77)
 
 Map Designer  
 Sub Client Developer  
