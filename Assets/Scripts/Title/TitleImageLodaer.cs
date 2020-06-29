@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 public class TitleImageLodaer : MonoBehaviour
 {
+	public GameObject videoView;
+	public VideoPlayer videoPlayer;
+	public GameObject skipVideoButton;
 	public GameObject logoObject;
 	public GameObject backgroundObject;
 	public GameObject titleBackground;
@@ -13,19 +17,62 @@ public class TitleImageLodaer : MonoBehaviour
 	RectTransform rectTransform;
 	GameObject[] backgrounds = new GameObject[9];
 
+	private bool IS_AUTOLOAD_START = false;
+
     // Start is called before the first frame update
     void Start()
     {
 		//canvasObject = gameObject;
 		rectTransform = backgroundObject.GetComponent<RectTransform>();
 		logoObject.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
-		loadBackgroundSprite();
-	}
+
+		PlayerPrefs.SetInt("IntroVideo", PlayerPrefs.GetInt("IntroVideo",0));
+
+		if (PlayerPrefs.GetInt("IntroVideo") == 0)
+		{
+			Debug.Log("Detected It's first play : playing intro video");
+			videoView.SetActive(true);
+			videoPlayer.loopPointReached += OnVideoPlayEnd;
+			videoPlayer.prepareCompleted += OnVideoPrepared;
+			videoPlayer.Prepare();
+		}
+		else
+		{
+			OnVideoPlayEnd(null);
+		}
+    }
 
     // Update is called once per frame
     void Update()
     {
 	}
+
+    void OnVideoPrepared(VideoPlayer videoPlayer)
+    {
+	    Invoke("OnVideoPlayStart", 0);
+    }
+
+    void OnVideoPlayStart()
+    {
+	    skipVideoButton.GetComponent<Button>().onClick.AddListener(OnVideoSkip);
+	    videoPlayer.Play();
+	    PlayerPrefs.SetInt("IntroVideo", 1);
+	    PlayerPrefs.Save();
+    }
+
+    void OnVideoSkip()
+    {
+	    OnVideoPlayEnd(videoPlayer);
+    }
+    
+    void OnVideoPlayEnd(VideoPlayer _videoPlayer)
+    {
+	    videoView.SetActive(false);
+	    if (IS_AUTOLOAD_START) return;
+	    loadBackgroundSprite();
+	    AutoConnector.instance.startConnectorLazy();
+	    IS_AUTOLOAD_START = true;
+    }
 
 	public void loadBackgroundSprite()
 	{
