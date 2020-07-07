@@ -1,3 +1,7 @@
+<div align="center">
+<img src="https://user-images.githubusercontent.com/8467374/86801992-8ae08080-c0af-11ea-8392-38b683cd2852.png" width="80%"></img>
+</div>
+
 # Mad Square's Brawl
 
 MSB, Mad Square's Brawl, is the online 2D Android Platformer PVP game.
