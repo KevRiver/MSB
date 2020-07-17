@@ -1,10 +1,30 @@
-<div align="center">
-<img src="https://user-images.githubusercontent.com/8467374/86801992-8ae08080-c0af-11ea-8392-38b683cd2852.png" width="80%"></img>
-</div>
+<h1 align="center">
+  <img src="logo.png" alt="MSB" width="480">
+  <br>
+  <p>MSB : Mad Square's Brawl</p>
+</h1>
 
-# Mad Square's Brawl
+<p align="center">
+    <a href="https://unity.com">
+        <img src="https://img.shields.io/badge/Powered%20by-Unity-black?style=flat-square&logo=unity" />
+    </a>
+    <a href="#license">
+        <img src="https://img.shields.io/github/license/7kQon/MSB?style=flat-square" />
+    </a>
+    <a href="https://github.com/7kQon/MSB/releases">
+        <img src="https://img.shields.io/github/v/release/7kQon/MSB?style=flat-square" />
+    </a>
+    <a href="https://github.com/7kQon/MSB/releases">
+        <img src="https://img.shields.io/badge/DOWNLOAD-lastest-green?style=flat-square" />
+    </a>
+    <a href="https://github.com/7kQon/MSB/issues">
+        <img src="https://img.shields.io/badge/SUPPORT-LIVE-green?style=flat-square" />
+    </a>
+</p>
 
+<p align="center">
 MSB, Mad Square's Brawl, is the online 2D Android Platformer PVP game.
+</p>
 
 ## ScreenShots
 
@@ -84,3 +104,6 @@ Main Art Illustrator
 
 Map Designer  
 Sub Client Developer  
+
+## License
+[Apache](LICENSE) © 2020 Team Squarian <teamsquarian@gmail.com>
