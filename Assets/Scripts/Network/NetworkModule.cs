@@ -78,6 +78,7 @@ namespace MSBNetwork
     public class NetworkModule
     {
         private static NetworkModule INSTANCE;
+        public static bool IS_OFFLINE_MODE = false;
 
         public interface OnServerConnectListener
         {
@@ -424,8 +425,16 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("RequestUserLogin");
 #endif
-                JObject data = new JObject {{"id", _id}, {"pw", _pw}};
-                netC2SProxy.OnLoginRequest(HostID.HostID_Server, RmiContext.ReliableSend, data.ToString());
+                if (IS_OFFLINE_MODE)
+                {
+                    string offlineData = "{\"result\": 1,\"num\": 204,\"id\": \"235ecbadeb8e3ccac7b86a01ca09d85d23880e95\",\"nick\": \"SQUARIAN\",\"rank\": 1383,\"money\": 20000,\"cash\": 10000,\"weapon\": 0,\"skin\": 0,\"game\": -1,\"message\": \"오프라인 모드로 입장합니다!\"}";
+                    OnEventUserLogin(0, null, offlineData);
+                }
+                else
+                {
+                    JObject data = new JObject {{"id", _id}, {"pw", _pw}};
+                    netC2SProxy.OnLoginRequest(HostID.HostID_Server, RmiContext.ReliableSend, data.ToString());
+                }
             }
             catch (Exception e)
             {
@@ -453,8 +462,16 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("RequestUserStatus");
 #endif
-                JObject data = new JObject {{"id", _id}};
-                netC2SProxy.OnStatusRequest(HostID.HostID_Server, RmiContext.ReliableSend, data.ToString());
+                if (IS_OFFLINE_MODE)
+                {
+                    string offlineData = "{\n\"result\": 1,\n\"num\": 204,\n\"id\": \"235ecbadeb8e3ccac7b86a01ca09d85d23880e95\",\n\"nick\": \"DEBUGGER\",\n\"rank\": 1383,\n\"money\": 20000,\n\"cash\": 10000,\n\"weapon\": 0,\n\"skin\": 0,\n\"game\": -1,\n\"message\": \"\"\n}";
+                    OnEventUserStatus(0, null, offlineData);
+                }
+                else
+                {
+                    JObject data = new JObject {{"id", _id}};
+                    netC2SProxy.OnStatusRequest(HostID.HostID_Server, RmiContext.ReliableSend, data.ToString());
+                }
             }
             catch (Exception e)
             {
@@ -512,8 +529,17 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("RequestUserSystemRank");
 #endif
-                JObject data = new JObject { { "type", "rank" }, { "id", _id } };
-                netC2SProxy.OnSystemRequest(HostID.HostID_Server, RmiContext.ReliableSend, data.ToString());
+                if (IS_OFFLINE_MODE)
+                {
+                    //string offlineData = "{\n\"result\": 1,\n\"type\": \"rank\",\n\"data\": \"{\r\n  \"global_ranking\": [\r\n    {\r\n      \"user_id\": \"03575f09481fb807951a37f3531a929c\",\r\n      \"user_nick\": \"RAZER\",\r\n      \"user_rank\": 2794,\r\n      \"user_played\": 41,\r\n      \"user_win\": 21,\r\n      \"user_lose\": 15,\r\n      \"user_kill\": 26,\r\n      \"user_death\": 26,\r\n      \"user_assist\": 0,\r\n      \"user_damage_give\": 4750,\r\n      \"user_damage_take\": 3910,\r\n      \"user_character_1\": 15,\r\n      \"user_character_2\": 8,\r\n      \"user_character_3\": 18\r\n    },\r\n    {\r\n      \"user_id\": \"a8f7003546104473bbbefe4fb8bc614d105545e5\",\r\n      \"user_nick\": \"faedf\",\r\n      \"user_rank\": 1891,\r\n      \"user_played\": 246,\r\n      \"user_win\": 74,\r\n      \"user_lose\": 105,\r\n      \"user_kill\": 79,\r\n      \"user_death\": 137,\r\n      \"user_assist\": 0,\r\n      \"user_damage_give\": 10715,\r\n      \"user_damage_take\": 17185,\r\n      \"user_character_1\": 145,\r\n      \"user_character_2\": 45,\r\n      \"user_character_3\": 56\r\n    },\r\n    {\r\n      \"user_id\": \"ff1b9a99c8db6c5bf37c577f2bd6cf44\",\r\n      \"user_nick\": \"LIMECAKE\",\r\n      \"user_rank\": 1854,\r\n      \"user_played\": 23,\r\n      \"user_win\": 13,\r\n      \"user_lose\": 6,\r\n      \"user_kill\": 59,\r\n      \"user_death\": 30,\r\n      \"user_assist\": 23,\r\n      \"user_damage_give\": 6460,\r\n      \"user_damage_take\": 5625,\r\n      \"user_character_1\": 4,\r\n      \"user_character_2\": 6,\r\n      \"user_character_3\": 13\r\n    }\r\n  ],\r\n  \"user_id\": \"235ecbadeb8e3ccac7b86a01ca09d85d23880e95\",\r\n  \"user_nick\": \"SQUARIAN\",\r\n  \"user_rank\": 1383,\r\n  \"user_played\": 36,\r\n  \"user_win\": 11,\r\n  \"user_lose\": 19,\r\n  \"user_kill\": 22,\r\n  \"user_death\": 36,\r\n  \"user_assist\": 3,\r\n  \"user_damage_give\": 6095,\r\n  \"user_damage_take\": 3335,\r\n  \"user_character_1\": 18,\r\n  \"user_character_2\": 12,\r\n  \"user_character_3\": 5,\r\n  \"user_ranking\": 6,\r\n  \"winner_rank\": 1532,\r\n  \"winner_nick\": \"DEB9\",\r\n  \"winner_character_1\": 0,\r\n  \"winner_character_2\": 0,\r\n  \"winner_character_3\": 11,\r\n  \"loser_rank\": 1283,\r\n  \"loser_nick\": \"의현\",\r\n  \"loser_character_1\": 21,\r\n  \"loser_character_2\": 2,\r\n  \"loser_character_3\": 2\r\n}\"\n}";
+                    string offlineData = "{\r\n\"result\": 1,\r\n\"type\": \"rank\",\r\n\"data\": \"{\\r\\n  \\\"global_ranking\\\": [\\r\\n    {\\r\\n      \\\"user_id\\\": \\\"03575f09481fb807951a37f3531a929c\\\",\\r\\n      \\\"user_nick\\\": \\\"RAZER\\\",\\r\\n      \\\"user_rank\\\": 2794,\\r\\n      \\\"user_played\\\": 41,\\r\\n      \\\"user_win\\\": 21,\\r\\n      \\\"user_lose\\\": 15,\\r\\n      \\\"user_kill\\\": 26,\\r\\n      \\\"user_death\\\": 26,\\r\\n      \\\"user_assist\\\": 0,\\r\\n      \\\"user_damage_give\\\": 4750,\\r\\n      \\\"user_damage_take\\\": 3910,\\r\\n      \\\"user_character_1\\\": 15,\\r\\n      \\\"user_character_2\\\": 18,\\r\\n      \\\"user_character_3\\\": 14\\r\\n    },\\r\\n    {\\r\\n      \\\"user_id\\\": \\\"a8f7003546104473bbbefe4fb8bc614d105545e5\\\",\\r\\n      \\\"user_nick\\\": \\\"NAMOO\\\",\\r\\n      \\\"user_rank\\\": 1891,\\r\\n      \\\"user_played\\\": 246,\\r\\n      \\\"user_win\\\": 74,\\r\\n      \\\"user_lose\\\": 105,\\r\\n      \\\"user_kill\\\": 79,\\r\\n      \\\"user_death\\\": 137,\\r\\n      \\\"user_assist\\\": 0,\\r\\n      \\\"user_damage_give\\\": 10715,\\r\\n      \\\"user_damage_take\\\": 17185,\\r\\n      \\\"user_character_1\\\": 145,\\r\\n      \\\"user_character_2\\\": 45,\\r\\n      \\\"user_character_3\\\": 56\\r\\n    },\\r\\n    {\\r\\n      \\\"user_id\\\": \\\"ff1b9a99c8db6c5bf37c577f2bd6cf44\\\",\\r\\n      \\\"user_nick\\\": \\\"LIMECAKE\\\",\\r\\n      \\\"user_rank\\\": 1854,\\r\\n      \\\"user_played\\\": 23,\\r\\n      \\\"user_win\\\": 13,\\r\\n      \\\"user_lose\\\": 6,\\r\\n      \\\"user_kill\\\": 59,\\r\\n      \\\"user_death\\\": 30,\\r\\n      \\\"user_assist\\\": 23,\\r\\n      \\\"user_damage_give\\\": 6460,\\r\\n      \\\"user_damage_take\\\": 5625,\\r\\n      \\\"user_character_1\\\": 4,\\r\\n      \\\"user_character_2\\\": 6,\\r\\n      \\\"user_character_3\\\": 13\\r\\n    }\\r\\n  ],\\r\\n  \\\"user_id\\\": \\\"235ecbadeb8e3ccac7b86a01ca09d85d23880e95\\\",\\r\\n  \\\"user_nick\\\": \\\"SQUARIAN\\\",\\r\\n  \\\"user_rank\\\": 1383,\\r\\n  \\\"user_played\\\": 44,\\r\\n  \\\"user_win\\\": 23,\\r\\n  \\\"user_lose\\\": 19,\\r\\n  \\\"user_kill\\\": 42,\\r\\n  \\\"user_death\\\": 36,\\r\\n  \\\"user_assist\\\": 3,\\r\\n  \\\"user_damage_give\\\": 4595,\\r\\n  \\\"user_damage_take\\\": 3335,\\r\\n  \\\"user_character_1\\\": 18,\\r\\n  \\\"user_character_2\\\": 12,\\r\\n  \\\"user_character_3\\\": 5,\\r\\n  \\\"user_ranking\\\": 6,\\r\\n  \\\"winner_rank\\\": 1532,\\r\\n  \\\"winner_nick\\\": \\\"PANDORA\\\",\\r\\n  \\\"winner_character_1\\\": 0,\\r\\n  \\\"winner_character_2\\\": 0,\\r\\n  \\\"winner_character_3\\\": 11,\\r\\n  \\\"loser_rank\\\": 1283,\\r\\n  \\\"loser_nick\\\": \\\"CUBE\\\",\\r\\n  \\\"loser_character_1\\\": 21,\\r\\n  \\\"loser_character_2\\\": 2,\\r\\n  \\\"loser_character_3\\\": 2\\r\\n}\"\r\n}";
+                    OnEventSystem(0, null, offlineData);
+                }
+                else
+                {
+                    JObject data = new JObject { { "type", "rank" }, { "id", _id } };
+                    netC2SProxy.OnSystemRequest(HostID.HostID_Server, RmiContext.ReliableSend, data.ToString());
+                }
             }
             catch (Exception e)
             {
@@ -541,8 +567,17 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("RequestUserSystemMedal");
 #endif
-                JObject data = new JObject { { "type", "medal" }, { "index", _userIndex } };
-                netC2SProxy.OnSystemRequest(HostID.HostID_Server, RmiContext.ReliableSend, data.ToString());
+                if (IS_OFFLINE_MODE)
+                {
+                    //string offlineData = "{\"result\": 1,\"type\": \"medal\",\"data\": \"{\r\n  \"medal_status\": [\r\n    {\r\n      \"medal_type\": 1,\r\n      \"medal_count\": 2\r\n    },\r\n    {\r\n      \"medal_type\": 2,\r\n      \"medal_count\": 1\r\n    },\r\n    {\r\n      \"medal_type\": 4,\r\n      \"medal_count\": 1\r\n    },\r\n    {\r\n      \"medal_type\": 5,\r\n      \"medal_count\": 18\r\n    },\r\n    {\r\n      \"medal_type\": 7,\r\n      \"medal_count\": 2\r\n    },\r\n    {\r\n      \"medal_type\": 8,\r\n      \"medal_count\": 1\r\n    },\r\n    {\r\n      \"medal_type\": 9,\r\n      \"medal_count\": 5\r\n    },\r\n    {\r\n      \"medal_type\": 10,\r\n      \"medal_count\": 1\r\n    },\r\n    {\r\n      \"medal_type\": 11,\r\n      \"medal_count\": 2\r\n    },\r\n    {\r\n      \"medal_type\": 12,\r\n      \"medal_count\": 14\r\n    }\r\n  ],\r\n  \"user_played\": 36,\r\n  \"user_win\": 11,\r\n  \"user_kill\": 22,\r\n  \"user_death\": 36,\r\n  \"user_assist\": 3,\r\n  \"user_damage_give\": 6095,\r\n  \"user_damage_take\": 3335,\r\n  \"user_character_1\": 18,\r\n  \"user_character_2\": 12,\r\n  \"user_character_3\": 5,\r\n  \"user_character_1_win\": 54,\r\n  \"user_character_2_win\": 7,\r\n  \"user_character_3_win\": 14\r\n}\" }";
+                    string offlineData = "{\r\n  \"result\": 1,\r\n  \"type\": \"medal\",\r\n  \"data\": \"{\\r\\n    \\\"medal_status\\\": [\\r\\n      {\\r\\n        \\\"medal_type\\\": 1,\\r\\n        \\\"medal_count\\\": 2\\r\\n      },\\r\\n      {\\r\\n        \\\"medal_type\\\": 2,\\r\\n        \\\"medal_count\\\": 1\\r\\n      },\\r\\n      {\\r\\n        \\\"medal_type\\\": 4,\\r\\n        \\\"medal_count\\\": 1\\r\\n      },\\r\\n      {\\r\\n        \\\"medal_type\\\": 5,\\r\\n        \\\"medal_count\\\": 18\\r\\n      },\\r\\n      {\\r\\n        \\\"medal_type\\\": 7,\\r\\n        \\\"medal_count\\\": 2\\r\\n      },\\r\\n      {\\r\\n        \\\"medal_type\\\": 8,\\r\\n        \\\"medal_count\\\": 1\\r\\n      },\\r\\n      {\\r\\n        \\\"medal_type\\\": 9,\\r\\n        \\\"medal_count\\\": 5\\r\\n      },\\r\\n      {\\r\\n        \\\"medal_type\\\": 10,\\r\\n        \\\"medal_count\\\": 1\\r\\n      },\\r\\n      {\\r\\n        \\\"medal_type\\\": 11,\\r\\n        \\\"medal_count\\\": 2\\r\\n      },\\r\\n      {\\r\\n        \\\"medal_type\\\": 12,\\r\\n        \\\"medal_count\\\": 14\\r\\n      }\\r\\n    ],\\r\\n    \\\"user_played\\\": 36,\\r\\n    \\\"user_win\\\": 11,\\r\\n    \\\"user_kill\\\": 22,\\r\\n    \\\"user_death\\\": 36,\\r\\n    \\\"user_assist\\\": 3,\\r\\n    \\\"user_damage_give\\\": 6095,\\r\\n    \\\"user_damage_take\\\": 3335,\\r\\n    \\\"user_character_1\\\": 18,\\r\\n    \\\"user_character_2\\\": 12,\\r\\n    \\\"user_character_3\\\": 5,\\r\\n    \\\"user_character_1_win\\\": 54,\\r\\n    \\\"user_character_2_win\\\": 7,\\r\\n    \\\"user_character_3_win\\\": 14\\r\\n}\" \r\n}";
+                    OnEventSystem(0, null, offlineData);
+                }
+                else
+                {
+                    JObject data = new JObject { { "type", "medal" }, { "index", _userIndex } }; 
+                    netC2SProxy.OnSystemRequest(HostID.HostID_Server, RmiContext.ReliableSend, data.ToString());
+                }
             }
             catch (Exception e)
             {
@@ -845,6 +880,7 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventUserLogin");
 #endif
+                Debug.Log("Requested Network data : \n" + _data);
                 JObject data = JObject.Parse(_data);
                 int result = data.GetValue("result").Value<int>();
                 int user_num = data.GetValue("num").Value<int>();
@@ -889,6 +925,7 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventUserStatus");
 #endif
+                Debug.Log("Requested Network data : \n" + _data);
                 JObject data = JObject.Parse(_data);
                 int result = data.GetValue("result").Value<int>();
                 int user_num = data.GetValue("num").Value<int>();
@@ -933,6 +970,7 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventSystem");
 #endif
+                Debug.Log("Requested Network data : \n" + _data);
                 JObject data = JObject.Parse(_data);
                 int result = data.GetValue("result").Value<int>();
                 string type = data.GetValue("type").Value<string>();
@@ -980,6 +1018,7 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameQueue");
 #endif
+                Debug.Log("Requested Network data : \n" + _data);
                 JObject data = JObject.Parse(_data);
                 int result = data.GetValue("result").Value<int>();
                 int room = data.GetValue("room").Value<int>();
@@ -1014,6 +1053,7 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameInfo");
 #endif
+                Debug.Log("Requested Network data : \n" + _data);
                 JObject data = JObject.Parse(_data);
                 int result = data.GetValue("result").Value<int>();
                 int room = data.GetValue("room").Value<int>();
@@ -1062,6 +1102,7 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameStatusCountdown");
 #endif
+                Debug.Log("Requested Network data : \n" + _data);
                 JObject data = JObject.Parse(_data);
                 int count = data.GetValue("count").Value<int>();
                 if (onGameStatusListeners != null && onGameStatusListeners.Count > 0)
@@ -1094,6 +1135,7 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameStatusTime");
 #endif
+                Debug.Log("Requested Network data : \n" + _data);
                 JObject data = JObject.Parse(_data);
                 int time = data.GetValue("time").Value<int>();
                 if (onGameStatusListeners != null && onGameStatusListeners.Count > 0)
@@ -1127,6 +1169,7 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameStatusReady");
 #endif
+                Debug.Log("Requested Network data : \n" + _data);
                 if (onGameStatusListeners != null && onGameStatusListeners.Count > 0)
                 {
                     foreach (OnGameStatusListener listener in onGameStatusListeners)
@@ -1157,6 +1200,7 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameStatusScore");
 #endif
+                Debug.Log("Requested Network data : \n" + _data);
                 JObject data = JObject.Parse(_data);
                 int blueKill = data.GetValue("blueKill").Value<int>();
                 int blueDeath = data.GetValue("blueDeath").Value<int>();
@@ -1194,6 +1238,7 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameStatus");
 #endif
+                Debug.Log("Requested Network data : \n" + _data);
                 JObject data = JObject.Parse(_data);
                 int type = data.GetValue("type").Value<int>();
                 string message = data.GetValue("message").ToString();
@@ -1227,6 +1272,7 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameEventHealth");
 #endif
+                Debug.Log("Requested Network data : \n" + _data);
                 JObject data = JObject.Parse(_data);
                 int num = data.GetValue("num").Value<int>();
                 int health = data.GetValue("health").Value<int>();
@@ -1260,6 +1306,7 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameEventDamage");
 #endif
+                Debug.Log("Requested Network data : \n" + _data);
                 JObject data = JObject.Parse(_data);
                 int from = data.GetValue("from").Value<int>();
                 int to = data.GetValue("to").Value<int>();
@@ -1295,6 +1342,7 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameEventObject");
 #endif
+                Debug.Log("Requested Network data : \n" + _data);
                 JObject data = JObject.Parse(_data);
                 int num = data.GetValue("num").Value<int>();
                 int health = data.GetValue("health").Value<int>();
@@ -1328,6 +1376,7 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameEventItem");
 #endif
+                Debug.Log("Requested Network data : \n" + _data);
                 JObject data = JObject.Parse(_data);
                 int type = data.GetValue("type").Value<int>();
                 int num = data.GetValue("num").Value<int>();
@@ -1362,6 +1411,7 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameEventKill");
 #endif
+                Debug.Log("Requested Network data : \n" + _data);
                 JObject data = JObject.Parse(_data);
                 int from = data.GetValue("from").Value<int>();
                 int to = data.GetValue("to").Value<int>();
@@ -1396,6 +1446,7 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameEventRespawn");
 #endif
+                Debug.Log("Requested Network data : \n" + _data);
                 JObject data = JObject.Parse(_data);
                 int num = data.GetValue("num").Value<int>();
                 int time = data.GetValue("time").Value<int>();
@@ -1429,6 +1480,7 @@ namespace MSBNetwork
 #else
                 Debug.WriteLine("OnEventGameResult");
 #endif
+                Debug.Log("Requested Network data : \n" + _data);
                 JObject data = JObject.Parse(_data);
                 string resultData = data.GetValue("resultData").ToString();
                 if (onGameResultListeners != null && onGameResultListeners.Count > 0)
@@ -1452,22 +1504,23 @@ namespace MSBNetwork
             return true;
         }
 
-        private static bool OnEventGameUserMove(HostID remote, RmiContext rmiContext, string data)
+        private static bool OnEventGameUserMove(HostID remote, RmiContext rmiContext, string _data)
         {
             try
             {
-                if (onGameUserMoveListeners != null && onGameUserMoveListeners.Count > 0)
-                {
-                    foreach (OnGameUserMoveListener listener in onGameUserMoveListeners)
-                    {
-                        listener?.OnGameUserMove(data);
-                    }
-                }
 #if (!NOUNITY)
                 Debug.Log("OnEventGameUserMove");
 #else
                 Debug.WriteLine("OnEventGameUserMove");
 #endif
+                Debug.Log("Requested Network data : \n" + _data);
+                if (onGameUserMoveListeners != null && onGameUserMoveListeners.Count > 0)
+                {
+                    foreach (OnGameUserMoveListener listener in onGameUserMoveListeners)
+                    {
+                        listener?.OnGameUserMove(_data);
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -1482,22 +1535,24 @@ namespace MSBNetwork
             return true;
         }
 
-        private static bool OnEventGameUserSync(HostID remote, RmiContext rmiContext, string data)
+        private static bool OnEventGameUserSync(HostID remote, RmiContext rmiContext, string _data)
         {
             try
             {
-                if (onGameUserSyncListeners != null && onGameUserSyncListeners.Count > 0)
-                {
-                    foreach (OnGameUserSyncListener listener in onGameUserSyncListeners)
-                    {
-                        listener?.OnGameUserSync(data);
-                    }
-                }
 #if (!NOUNITY)
                 Debug.Log("OnEventGameUserSync");
 #else
                 Debug.WriteLine("OnEventGameUserSync");
 #endif
+                Debug.Log("Requested Network data : \n" + _data);
+                if (onGameUserSyncListeners != null && onGameUserSyncListeners.Count > 0)
+                {
+                    foreach (OnGameUserSyncListener listener in onGameUserSyncListeners)
+                    {
+                        listener?.OnGameUserSync(_data);
+                    }
+                }
+
             }
             catch (Exception e)
             {

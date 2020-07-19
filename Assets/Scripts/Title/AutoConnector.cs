@@ -89,10 +89,8 @@ public class AutoConnector : MonoBehaviour, IPointerClickHandler
             SERVER_CONNECTED = false;
             instance.AutoConnectorText.GetComponent<Text>().text = "서버 연결 실패";
             AUTO_FAILED = true;
-            try
-            {
-	            NetworkModule.GetInstance().Disconnect();
-            } catch (Exception) { }
+            NetworkModule.IS_OFFLINE_MODE = true;
+            attemptLogin();
         }
     }
 
@@ -126,6 +124,8 @@ public class AutoConnector : MonoBehaviour, IPointerClickHandler
 			catch (Exception e)
 			{
 				AutoConnectorText.GetComponent<Text>().text = "서버 연결 실패";
+				NetworkModule.IS_OFFLINE_MODE = true;
+				attemptLogin();
 				return;
 			}
 		}
@@ -144,7 +144,7 @@ public class AutoConnector : MonoBehaviour, IPointerClickHandler
 		playerPW = playerID;
 	}
 	
-	public void attemptLogin()
+	public static void attemptLogin()
 	{
 		//AutoConnectorText.GetComponent<Text>().text = "로그인 중입니다";
 		if (string.IsNullOrEmpty(playerID) && string.IsNullOrEmpty(playerPW))
@@ -161,7 +161,7 @@ public class AutoConnector : MonoBehaviour, IPointerClickHandler
 				playerPW = envArguments[3];
 			}
 		}
-        networkModule.RequestUserLogin(playerID, playerPW);
+        NetworkModule.GetInstance().RequestUserLogin(playerID, playerPW);
     }
 
 	public static void loginResult(bool _result, UserData _user, int _game, string _message)
@@ -189,6 +189,7 @@ public class AutoConnector : MonoBehaviour, IPointerClickHandler
             }
 
             instance.AutoConnectorText.GetComponent<Text>().text = LocalUser.Instance.localUserData.userNick + "님, 환영합니다!";
+            if (LocalUser.Instance.localUserData.userNick.Equals("SQUARIAN")) instance.AutoConnectorText.GetComponent<Text>().text = "오프라인 모드로 입장합니다";
             instance.StartCoroutine(switchLobbyScene());
         } else
         {
