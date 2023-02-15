@@ -67,7 +67,7 @@ Essential Assets
 
 ### ProudNet with WindowsOS
 
-[MSB Server Project](https://github.com/LIMECAKE/MSB-SERVER)  
+[MSB Server Project](https://github.com/AzelyFox/MSB-SERVER)  
 ProudNet : Version 1.7.47302  
 WindowsOS : DotNetFramework 4.6 or higher 
 
@@ -90,7 +90,7 @@ Main Game Designer
 Main Game Designer  
 Sub Client Developer  
 
-### [LimeCake](https://github.com/LIMECAKE)
+### [AzelyFox](https://github.com/AzelyFox)
 
 Main Server Developer  
 Sub Client Developer  
